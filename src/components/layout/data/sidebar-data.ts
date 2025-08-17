@@ -31,7 +31,7 @@ export const sidebarData: SidebarData = {
   },
   teams: [
     {
-      name: 'Shadcn Admin',
+      name: 'Kokonaat',
       logo: Command,
       plan: 'Vite + ShadcnUI',
     },
@@ -106,10 +106,6 @@ export const sidebarData: SidebarData = {
             {
               title: 'Sign In',
               url: '/sign-in',
-            },
-            {
-              title: 'Sign In (2 Col)',
-              url: '/sign-in-2',
             },
             {
               title: 'Sign Up',

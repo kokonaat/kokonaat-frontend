@@ -1,7 +1,7 @@
 import { useNavigate, useRouter } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 
-export function ForbiddenError() {
+const ForbiddenError = () => {
   const navigate = useNavigate()
   const { history } = useRouter()
   return (
@@ -23,3 +23,5 @@ export function ForbiddenError() {
     </div>
   )
 }
+
+export default ForbiddenError

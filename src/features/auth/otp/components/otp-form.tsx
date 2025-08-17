@@ -30,7 +30,7 @@ const formSchema = z.object({
 
 type OtpFormProps = React.HTMLAttributes<HTMLFormElement>
 
-export function OtpForm({ className, ...props }: OtpFormProps) {
+const OtpForm = ({ className, ...props }: OtpFormProps) => {
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -97,3 +97,5 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
     </Form>
   )
 }
+
+export default OtpForm

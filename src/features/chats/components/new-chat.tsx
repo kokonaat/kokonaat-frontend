@@ -26,7 +26,7 @@ type NewChatProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
-export function NewChat({ users, onOpenChange, open }: NewChatProps) {
+const NewChat = ({ users, onOpenChange, open }: NewChatProps) => {
   const [selectedUsers, setSelectedUsers] = useState<User[]>([])
 
   const handleSelectUser = (user: User) => {
@@ -123,3 +123,5 @@ export function NewChat({ users, onOpenChange, open }: NewChatProps) {
     </Dialog>
   )
 }
+
+export default NewChat

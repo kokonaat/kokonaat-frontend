@@ -10,12 +10,12 @@ type PasswordInputProps = Omit<
   ref?: React.Ref<HTMLInputElement>
 }
 
-export function PasswordInput({
+const PasswordInput = ({
   className,
   disabled,
   ref,
   ...props
-}: PasswordInputProps) {
+}: PasswordInputProps) => {
   const [showPassword, setShowPassword] = React.useState(false)
 
   return (
@@ -40,3 +40,5 @@ export function PasswordInput({
     </div>
   )
 }
+
+export default PasswordInput

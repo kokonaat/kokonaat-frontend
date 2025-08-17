@@ -22,7 +22,7 @@ type AuthenticatedLayoutProps = {
   children?: React.ReactNode
 }
 
-export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
+const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   const defaultOpen = getCookie('sidebar_state') !== 'false'
   return (
     <SearchProvider>
@@ -65,3 +65,5 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
     </SearchProvider>
   )
 }
+
+export default AuthenticatedLayout

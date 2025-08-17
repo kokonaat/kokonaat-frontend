@@ -6,10 +6,10 @@ type GeneralErrorProps = React.HTMLAttributes<HTMLDivElement> & {
   minimal?: boolean
 }
 
-export function GeneralError({
+const GeneralError = ({
   className,
   minimal = false,
-}: GeneralErrorProps) {
+}: GeneralErrorProps) => {
   const navigate = useNavigate()
   const { history } = useRouter()
   return (
@@ -34,3 +34,5 @@ export function GeneralError({
     </div>
   )
 }
+
+export default GeneralError

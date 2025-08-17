@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
-export function RecentSales() {
+const RecentSales = () => {
   return (
     <div className='space-y-8'>
       <div className='flex items-center gap-4'>
@@ -81,3 +81,5 @@ export function RecentSales() {
     </div>
   )
 }
+
+export default RecentSales

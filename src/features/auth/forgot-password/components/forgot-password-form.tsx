@@ -20,10 +20,10 @@ const formSchema = z.object({
   }),
 })
 
-export function ForgotPasswordForm({
+const ForgotPasswordForm = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLFormElement>) {
+}: React.HTMLAttributes<HTMLFormElement>) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -68,3 +68,5 @@ export function ForgotPasswordForm({
     </Form>
   )
 }
+
+export default ForgotPasswordForm

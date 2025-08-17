@@ -1,7 +1,7 @@
-import { ContentSection } from '../components/content-section'
-import { DisplayForm } from './display-form'
+import ContentSection from '../components/content-section'
+import DisplayForm from './display-form'
 
-export function SettingsDisplay() {
+const SettingsDisplay = () => {
   return (
     <ContentSection
       title='Display'
@@ -11,3 +11,5 @@ export function SettingsDisplay() {
     </ContentSection>
   )
 }
+
+export default SettingsDisplay

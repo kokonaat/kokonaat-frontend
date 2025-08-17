@@ -29,7 +29,7 @@ const appText = new Map<AppType, string>([
   ['notConnected', 'Not Connected'],
 ])
 
-export function Apps() {
+const Apps = () => {
   const {
     filter = '',
     type = 'all',
@@ -177,3 +177,5 @@ export function Apps() {
     </>
   )
 }
+
+export default Apps

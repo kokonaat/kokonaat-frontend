@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 
-export function MaintenanceError() {
+const MaintenanceError = () => {
   return (
     <div className='h-svh'>
       <div className='m-auto flex h-full w-full flex-col items-center justify-center gap-2'>
@@ -17,3 +17,5 @@ export function MaintenanceError() {
     </div>
   )
 }
+
+export default MaintenanceError

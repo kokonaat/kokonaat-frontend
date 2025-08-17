@@ -20,7 +20,7 @@ type SidebarNavProps = React.HTMLAttributes<HTMLElement> & {
   }[]
 }
 
-export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
+const SidebarNav = ({ className, items, ...props }: SidebarNavProps) => {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const [val, setVal] = useState(pathname ?? '/settings')
@@ -83,3 +83,5 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
     </>
   )
 }
+
+export default SidebarNav

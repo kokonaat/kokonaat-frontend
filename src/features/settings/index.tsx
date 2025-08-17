@@ -7,7 +7,7 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { SidebarNav } from './components/sidebar-nav'
+import SidebarNav from './components/sidebar-nav'
 
 const sidebarNavItems = [
   {
@@ -37,7 +37,7 @@ const sidebarNavItems = [
   },
 ]
 
-export function Settings() {
+const Settings = () => {
   return (
     <>
       {/* ===== Top Heading ===== */}
@@ -72,3 +72,5 @@ export function Settings() {
     </>
   )
 }
+
+export default Settings

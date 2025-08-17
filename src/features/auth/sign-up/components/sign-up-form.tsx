@@ -13,14 +13,17 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { PasswordInput } from '@/components/password-input'
+import PasswordInput from '@/components/password-input'
 
 const formSchema = z
   .object({
-    email: z.email({
-      error: (iss) =>
-        iss.input === '' ? 'Please enter your email' : undefined,
-    }),
+    name: z.string()
+      .min(1, "Please enter your name")
+      .min(3, "Name must be at least 3 characters long"),
+    phone: z
+      .string()
+      .min(1, "Please enter your phone number")
+      .regex(/^\d{10,15}$/, "Phone number must be between 10–15 digits"),
     password: z
       .string()
       .min(1, 'Please enter your password')
@@ -32,16 +35,17 @@ const formSchema = z
     path: ['confirmPassword'],
   })
 
-export function SignUpForm({
+const SignUpForm = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLFormElement>) {
+}: React.HTMLAttributes<HTMLFormElement>) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
+      name: '',
+      phone: '',
       password: '',
       confirmPassword: '',
     },
@@ -66,12 +70,25 @@ export function SignUpForm({
       >
         <FormField
           control={form.control}
-          name='email'
+          name='name'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder='name@example.com' {...field} />
+                <Input placeholder='Rahul Roy' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='phone'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone</FormLabel>
+              <FormControl>
+                <Input placeholder='0171*******' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -121,3 +138,5 @@ export function SignUpForm({
     </Form>
   )
 }
+
+export default SignUpForm

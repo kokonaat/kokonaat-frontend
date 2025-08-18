@@ -1,30 +1,42 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
-import { AxiosError } from 'axios'
-import {
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { useAuthStore } from '@/stores/auth-store'
-import { handleServerError } from '@/utils/handle-server-error'
-import { DirectionProvider } from './context/direction-provider'
-import { FontProvider } from './context/font-provider'
-import { ThemeProvider } from './context/theme-provider'
-// Generated Routes
-import { routeTree } from './routeTree.gen'
-// Styles
-import './styles/index.css'
 
+// Context Providers
+import { ThemeProvider } from './context/theme-provider'
+import { FontProvider } from './context/font-provider'
+import { DirectionProvider } from './context/direction-provider'
+import { SidebarProvider } from './components/ui/sidebar'
+import { AxiosError } from 'axios'
+import { LayoutProvider } from './context/layout-provider'
+import { SearchProvider } from './context/search-provider'
+import { handleServerError } from './utils/handle-server-error'
+import Dashboard from './features/dashboard'
+import SignIn from './features/auth/sign-in'
+import SignUp from './features/auth/sign-up'
+import ForgotPassword from './features/auth/forgot-password'
+import Otp from './features/auth/otp'
+import './styles/index.css'
+import { Tasks } from './features/tasks'
+import Apps from './features/apps'
+import { Users } from './features/users'
+import AuthenticatedLayout from './components/layout/authenticated-layout'
+import UnauthorisedError from './features/errors/unauthorized-error'
+import ForbiddenError from './features/errors/forbidden'
+import NotFoundError from './features/errors/not-found-error'
+import MaintenanceError from './features/errors/maintenance-error'
+import GeneralError from './features/errors/general-error'
+import Settings from './features/settings'
+import ComingSoon from './components/coming-soon'
+
+// --- React Query Setup ---
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: (failureCount, error) => {
-        // eslint-disable-next-line no-console
         if (import.meta.env.DEV) console.log({ failureCount, error })
-
         if (failureCount >= 0 && import.meta.env.DEV) return false
         if (failureCount > 3 && import.meta.env.PROD) return false
 
@@ -34,57 +46,20 @@ const queryClient = new QueryClient({
         )
       },
       refetchOnWindowFocus: import.meta.env.PROD,
-      staleTime: 10 * 1000, // 10s
+      staleTime: 10000,
     },
     mutations: {
       onError: (error) => {
         handleServerError(error)
-
-        if (error instanceof AxiosError) {
-          if (error.response?.status === 304) {
-            toast.error('Content not modified!')
-          }
+        if (error instanceof AxiosError && error.response?.status === 304) {
+          toast.error('Content not modified!')
         }
       },
     },
   },
-  queryCache: new QueryCache({
-    onError: (error) => {
-      if (error instanceof AxiosError) {
-        if (error.response?.status === 401) {
-          toast.error('Session expired!')
-          useAuthStore.getState().auth.reset()
-          const redirect = `${router.history.location.href}`
-          router.navigate({ to: '/sign-in', search: { redirect } })
-        }
-        if (error.response?.status === 500) {
-          toast.error('Internal Server Error!')
-          router.navigate({ to: '/500' })
-        }
-        if (error.response?.status === 403) {
-          // router.navigate("/forbidden", { replace: true });
-        }
-      }
-    },
-  }),
 })
 
-// Create a new router instance
-const router = createRouter({
-  routeTree,
-  context: { queryClient },
-  defaultPreload: 'intent',
-  defaultPreloadStaleTime: 0,
-})
-
-// Register the router instance for type safety
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router
-  }
-}
-
-// Render the app
+// --- Render App ---
 const rootElement = document.getElementById('root')!
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
@@ -94,7 +69,35 @@ if (!rootElement.innerHTML) {
         <ThemeProvider>
           <FontProvider>
             <DirectionProvider>
-              <RouterProvider router={router} />
+              <BrowserRouter>
+                <LayoutProvider>
+                  <SidebarProvider>
+                    <SearchProvider>
+                      <Routes>
+                        <Route element={<AuthenticatedLayout />}>
+                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/users" element={<Users />} />
+                          <Route path="/apps" element={<Apps />} />
+                          <Route path="/tasks" element={<Tasks />} />
+                          {/* Public routes */}
+                          <Route path="/sign-in" element={<SignIn />} />
+                          <Route path="/sign-up" element={<SignUp />} />
+                          <Route path="/forgot-password" element={<ForgotPassword />} />
+                          <Route path="/otp" element={<Otp />} />
+                          <Route path="/errors/unauthorized" element={<UnauthorisedError />} />
+                          <Route path="/errors/forbidden" element={<ForbiddenError />} />
+                          <Route path="/errors/maintenance-error" element={<MaintenanceError />} />
+                          <Route path="/errors/not-found" element={<NotFoundError />} />
+                          <Route path="/errors/internal-server-error" element={<GeneralError />} />
+                          <Route path="/settings" element={<Settings />} />
+                          <Route path="/help-center" element={<ComingSoon />} />
+                          <Route path="*" element={<Navigate to="/" replace />} />
+                        </Route>
+                      </Routes>
+                    </SearchProvider>
+                  </SidebarProvider>
+                </LayoutProvider>
+              </BrowserRouter>
             </DirectionProvider>
           </FontProvider>
         </ThemeProvider>

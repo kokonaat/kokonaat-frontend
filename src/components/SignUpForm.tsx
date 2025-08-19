@@ -1,18 +1,19 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 import PasswordInput from '@/components/password-input'
 
 const formSchema = z
@@ -39,6 +40,7 @@ const SignUpForm = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLFormElement>) => {
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -58,7 +60,8 @@ const SignUpForm = ({
 
     setTimeout(() => {
       setIsLoading(false)
-    }, 3000)
+      navigate('/create-shop')
+    }, 1000)
   }
 
   return (

@@ -28,8 +28,10 @@ import GeneralError from './features/errors/general-error'
 import Settings from './features/settings'
 import ComingSoon from './components/coming-soon'
 import CreateShop from './pages/CreateShop'
+import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
 import Dashboard from './pages/Dashboard'
+
 
 // --- React Query Setup ---
 const queryClient = new QueryClient({

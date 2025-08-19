@@ -59,7 +59,7 @@ const defaultValues: Partial<AccountFormValues> = {
   name: '',
 }
 
-export function AccountForm() {
+const AccountForm = () => {
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
     defaultValues,
@@ -171,3 +171,5 @@ export function AccountForm() {
     </Form>
   )
 }
+
+export default AccountForm

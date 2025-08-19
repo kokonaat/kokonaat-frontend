@@ -6,10 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { AuthLayout } from '../auth-layout'
-import { UserAuthForm } from './components/user-auth-form'
+import AuthLayout from '../auth-layout'
+import UserAuthForm  from './components/user-auth-form'
 
-export function SignIn() {
+const SignIn = () => {
   return (
     <AuthLayout>
       <Card className='gap-4'>
@@ -46,3 +46,5 @@ export function SignIn() {
     </AuthLayout>
   )
 }
+
+export default SignIn

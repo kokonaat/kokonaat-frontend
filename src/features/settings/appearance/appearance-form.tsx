@@ -26,7 +26,7 @@ const appearanceFormSchema = z.object({
 
 type AppearanceFormValues = z.infer<typeof appearanceFormSchema>
 
-export function AppearanceForm() {
+const AppearanceForm = () => {
   const { font, setFont } = useFont()
   const { theme, setTheme } = useTheme()
 
@@ -160,3 +160,5 @@ export function AppearanceForm() {
     </Form>
   )
 }
+
+export default AppearanceForm

@@ -1,6 +1,6 @@
 import { Telescope } from 'lucide-react'
 
-export function ComingSoon() {
+const ComingSoon = () => {
   return (
     <div className='h-svh'>
       <div className='m-auto flex h-full w-full flex-col items-center justify-center gap-2'>
@@ -14,3 +14,5 @@ export function ComingSoon() {
     </div>
   )
 }
+
+export default ComingSoon

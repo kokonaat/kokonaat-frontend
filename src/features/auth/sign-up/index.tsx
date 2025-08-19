@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link } from 'react-router-dom'
 import {
   Card,
   CardContent,
@@ -7,10 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { AuthLayout } from '../auth-layout'
-import { SignUpForm } from './components/sign-up-form'
+import SignUpForm from './components/sign-up-form'
+import AuthLayout from '../auth-layout'
 
-export function SignUp() {
+const SignUp = () => {
   return (
     <AuthLayout>
       <Card className='gap-4'>
@@ -55,3 +55,5 @@ export function SignUp() {
     </AuthLayout>
   )
 }
+
+export default SignUp

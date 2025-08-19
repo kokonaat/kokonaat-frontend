@@ -1,7 +1,7 @@
-import { ContentSection } from '../components/content-section'
-import { NotificationsForm } from './notifications-form'
+import ContentSection from '../components/content-section'
+import NotificationsForm from './notifications-form'
 
-export function SettingsNotifications() {
+const SettingsNotifications = () => {
   return (
     <ContentSection
       title='Notifications'
@@ -11,3 +11,5 @@ export function SettingsNotifications() {
     </ContentSection>
   )
 }
+
+export default SettingsNotifications

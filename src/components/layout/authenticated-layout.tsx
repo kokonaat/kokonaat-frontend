@@ -1,67 +1,40 @@
-import { Outlet } from '@tanstack/react-router'
-import { getCookie } from '@/lib/cookies'
-import { cn } from '@/lib/utils'
-import { LayoutProvider } from '@/context/layout-provider'
-import { SearchProvider } from '@/context/search-provider'
-import {
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarInset,
-  SidebarProvider,
-  SidebarRail,
-} from '@/components/ui/sidebar'
-import { AppSidebar } from '@/components/layout/app-sidebar'
-import { SkipToMain } from '@/components/skip-to-main'
-import { sidebarData } from './data/sidebar-data'
+import { Outlet } from 'react-router-dom'
+import { SidebarProvider, SidebarContent, SidebarHeader, SidebarFooter } from '@/components/ui/sidebar'
+import { AppSidebar } from './app-sidebar'
+import { TeamSwitcher } from './team-switcher'
 import { NavGroup } from './nav-group'
 import { NavUser } from './nav-user'
-import { TeamSwitcher } from './team-switcher'
+import { sidebarData } from './data/sidebar-data'
 
 type AuthenticatedLayoutProps = {
   children?: React.ReactNode
 }
 
-export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
-  const defaultOpen = getCookie('sidebar_state') !== 'false'
+export default function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
   return (
-    <SearchProvider>
-      <SidebarProvider defaultOpen={defaultOpen}>
-        <LayoutProvider>
-          <SkipToMain />
-          <AppSidebar>
-            <SidebarHeader>
-              <TeamSwitcher teams={sidebarData.teams} />
-            </SidebarHeader>
-            <SidebarContent>
-              {sidebarData.navGroups.map((props) => (
-                <NavGroup key={props.title} {...props} />
-              ))}
-            </SidebarContent>
-            <SidebarFooter>
-              <NavUser user={sidebarData.user} />
-            </SidebarFooter>
-            <SidebarRail />
-          </AppSidebar>
-          <SidebarInset
-            className={cn(
-              // If layout is fixed, set the height
-              // to 100svh to prevent overflow
-              'has-[[data-layout=fixed]]:h-svh',
+    <SidebarProvider defaultOpen={true}>
+      <div className="flex h-screen w-screen overflow-hidden">
+        {/* ===== Sidebar ===== */}
+        <AppSidebar>
+          <SidebarHeader>
+            <TeamSwitcher teams={sidebarData.teams} />
+          </SidebarHeader>
+          <SidebarContent className="overflow-y-auto">
+            {sidebarData.navGroups.map((group) => (
+              <NavGroup key={group.title} {...group} />
+            ))}
+          </SidebarContent>
+          <SidebarFooter>
+            <NavUser user={sidebarData.user} />
+          </SidebarFooter>
+        </AppSidebar>
 
-              // If layout is fixed and sidebar is inset,
-              // set the height to 100svh - 1rem (total margins) to prevent overflow
-              // 'peer-data-[variant=inset]:has-[[data-layout=fixed]]:h-[calc(100svh-1rem)]',
-              'peer-data-[variant=inset]:has-[[data-layout=fixed]]:h-[calc(100svh-(var(--spacing)*4))]',
-
-              // Set content container, so we can use container queries
-              '@container/content'
-            )}
-          >
-            {children ?? <Outlet />}
-          </SidebarInset>
-        </LayoutProvider>
-      </SidebarProvider>
-    </SearchProvider>
+        {/* ===== Main Content ===== */}
+        <main className="flex-1 min-w-0 h-full overflow-auto">
+          {/* Use children if passed, otherwise render Outlet */}
+          {children ?? <Outlet />}
+        </main>
+      </div>
+    </SidebarProvider>
   )
 }

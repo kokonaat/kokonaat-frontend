@@ -14,10 +14,10 @@ import { TopNav } from '@/components/layout/top-nav'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { Overview } from './components/overview'
-import { RecentSales } from './components/recent-sales'
+import Overview from './components/overview'
+import RecentSales from './components/recent-sales'
 
-export function Dashboard() {
+const Dashboard = () => {
   return (
     <>
       {/* ===== Top Heading ===== */}
@@ -190,6 +190,8 @@ export function Dashboard() {
   )
 }
 
+export default Dashboard
+
 const topNav = [
   {
     title: 'Overview',
@@ -216,3 +218,6 @@ const topNav = [
     disabled: true,
   },
 ]
+
+
+

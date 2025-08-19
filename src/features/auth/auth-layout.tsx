@@ -2,7 +2,7 @@ type AuthLayoutProps = {
   children: React.ReactNode
 }
 
-export function AuthLayout({ children }: AuthLayoutProps) {
+const AuthLayout = ({ children }: AuthLayoutProps) => {
   return (
     <div className='container grid h-svh max-w-none items-center justify-center'>
       <div className='mx-auto flex w-full flex-col justify-center space-y-2 py-8 sm:w-[480px] sm:p-8'>
@@ -19,10 +19,12 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           >
             <path d='M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3' />
           </svg>
-          <h1 className='text-xl font-medium'>Shadcn Admin</h1>
+          <h1 className='text-xl font-medium'>Kokonaat Admin</h1>
         </div>
         {children}
       </div>
     </div>
   )
 }
+
+export default AuthLayout

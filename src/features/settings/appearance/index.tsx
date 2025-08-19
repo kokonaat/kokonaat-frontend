@@ -1,7 +1,7 @@
-import { ContentSection } from '../components/content-section'
-import { AppearanceForm } from './appearance-form'
+import ContentSection from '../components/content-section'
+import AppearanceForm from './appearance-form'
 
-export function SettingsAppearance() {
+const SettingsAppearance = () => {
   return (
     <ContentSection
       title='Appearance'
@@ -12,3 +12,5 @@ export function SettingsAppearance() {
     </ContentSection>
   )
 }
+
+export default SettingsAppearance

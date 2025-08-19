@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link } from 'react-router-dom'
 import {
   Card,
   CardContent,
@@ -7,10 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { AuthLayout } from '../auth-layout'
-import { OtpForm } from './components/otp-form'
+import AuthLayout from '../auth-layout'
+import OtpForm from './components/otp-form'
 
-export function Otp() {
+const Otp = () => {
   return (
     <AuthLayout>
       <Card className='gap-4'>
@@ -42,3 +42,5 @@ export function Otp() {
     </AuthLayout>
   )
 }
+
+export default Otp

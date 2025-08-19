@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { showSubmittedData } from '@/utils/show-submitted-data'
 import { Button } from '@/components/ui/button'
@@ -30,7 +30,7 @@ const formSchema = z.object({
 
 type OtpFormProps = React.HTMLAttributes<HTMLFormElement>
 
-export function OtpForm({ className, ...props }: OtpFormProps) {
+const OtpForm = ({ className, ...props }: OtpFormProps) => {
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -47,7 +47,7 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
 
     setTimeout(() => {
       setIsLoading(false)
-      navigate({ to: '/' })
+      navigate('/')
     }, 1000)
   }
 
@@ -97,3 +97,5 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
     </Form>
   )
 }
+
+export default OtpForm

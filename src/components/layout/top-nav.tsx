@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -32,9 +32,12 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
             {links.map(({ title, href, isActive, disabled }) => (
               <DropdownMenuItem key={`${title}-${href}`} asChild>
                 <Link
-                  to={href}
-                  className={!isActive ? 'text-muted-foreground' : ''}
-                  disabled={disabled}
+                  to={disabled ? '#' : href} // prevent navigation if disabled
+                  onClick={(e) => disabled && e.preventDefault()} // block click
+                  className={cn(
+                    !isActive ? 'text-muted-foreground' : '',
+                    disabled ? 'cursor-not-allowed opacity-50' : ''
+                  )}
                 >
                   {title}
                 </Link>
@@ -54,9 +57,13 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
         {links.map(({ title, href, isActive, disabled }) => (
           <Link
             key={`${title}-${href}`}
-            to={href}
-            disabled={disabled}
-            className={`hover:text-primary text-sm font-medium transition-colors ${isActive ? '' : 'text-muted-foreground'}`}
+            to={disabled ? '#' : href}
+            onClick={(e) => disabled && e.preventDefault()}
+            className={cn(
+              `hover:text-primary text-sm font-medium transition-colors`,
+              !isActive ? 'text-muted-foreground' : '',
+              disabled ? 'cursor-not-allowed opacity-50' : ''
+            )}
           >
             {title}
           </Link>

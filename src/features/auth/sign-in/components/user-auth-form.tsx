@@ -65,7 +65,7 @@ const UserAuthForm = ({
             <FormItem>
               <FormLabel>Phone</FormLabel>
               <FormControl>
-                <Input placeholder='0171********' {...field} />
+                <Input placeholder='01711111111' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

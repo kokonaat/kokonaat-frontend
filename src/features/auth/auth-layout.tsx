@@ -19,7 +19,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
           >
             <path d='M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3' />
           </svg>
-          <h1 className='text-xl font-medium'>Kokonaat Admin</h1>
+          <h1 className='text-xl font-medium'>Kokonaat</h1>
         </div>
         {children}
       </div>

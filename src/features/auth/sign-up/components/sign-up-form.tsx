@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import PasswordInput from '@/components/password-input'
+import { useNavigate } from 'react-router-dom'
 
 const formSchema = z
   .object({
@@ -39,6 +40,7 @@ const SignUpForm = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLFormElement>) => {
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -58,7 +60,8 @@ const SignUpForm = ({
 
     setTimeout(() => {
       setIsLoading(false)
-    }, 3000)
+      navigate('/create-shop')
+    }, 1000)
   }
 
   return (

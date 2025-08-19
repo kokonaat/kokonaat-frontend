@@ -13,8 +13,6 @@ import { AxiosError } from 'axios'
 import { LayoutProvider } from './context/layout-provider'
 import { SearchProvider } from './context/search-provider'
 import { handleServerError } from './utils/handle-server-error'
-import Dashboard from './features/dashboard'
-import SignUp from './features/auth/sign-up'
 import ForgotPassword from './features/auth/forgot-password'
 import Otp from './features/auth/otp'
 import './styles/index.css'
@@ -31,6 +29,7 @@ import Settings from './features/settings'
 import ComingSoon from './components/coming-soon'
 import CreateShop from './pages/CreateShop'
 import SignIn from './pages/SignIn'
+import Dashboard from './pages/Dashboard'
 
 // --- React Query Setup ---
 const queryClient = new QueryClient({

@@ -51,7 +51,7 @@ const data = [
   },
 ]
 
-const Overview = () => {
+const DashboardOverview = () => {
   return (
     <ResponsiveContainer width='100%' height={350}>
       <BarChart data={data}>
@@ -80,4 +80,4 @@ const Overview = () => {
   )
 }
 
-export default Overview
+export default DashboardOverview

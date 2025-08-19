@@ -11,7 +11,7 @@ import { UsersProvider } from './components/users-provider'
 import { UsersTable } from './components/users-table'
 import { users } from './data/users'
 
-export function Users() {
+const Users = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
 
@@ -54,3 +54,5 @@ export function Users() {
     </UsersProvider>
   )
 }
+
+export default Users

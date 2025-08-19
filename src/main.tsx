@@ -2,9 +2,9 @@ import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { toast, Toaster } from 'sonner'
 
-// Context Providers
+// context provider
 import { ThemeProvider } from './context/theme-provider'
 import { FontProvider } from './context/font-provider'
 import { DirectionProvider } from './context/direction-provider'
@@ -13,12 +13,13 @@ import { AxiosError } from 'axios'
 import { LayoutProvider } from './context/layout-provider'
 import { SearchProvider } from './context/search-provider'
 import { handleServerError } from './utils/handle-server-error'
+import Tasks from './features/tasks'
+import Users from './features/users'
+
+// components
+import Apps from './features/apps'
 import ForgotPassword from './features/auth/forgot-password'
 import Otp from './features/auth/otp'
-import './styles/index.css'
-import { Tasks } from './features/tasks'
-import Apps from './features/apps'
-import { Users } from './features/users'
 import AuthenticatedLayout from './components/layout/authenticated-layout'
 import UnauthorisedError from './features/errors/unauthorized-error'
 import ForbiddenError from './features/errors/forbidden'
@@ -31,7 +32,8 @@ import CreateShop from './pages/CreateShop'
 import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
 import Dashboard from './pages/Dashboard'
-
+import ProtectedRoute from './routes/ProtectedRoute'
+import './styles/index.css'
 
 // --- React Query Setup ---
 const queryClient = new QueryClient({
@@ -75,26 +77,28 @@ if (!rootElement.innerHTML) {
                 <LayoutProvider>
                   <SidebarProvider>
                     <SearchProvider>
+                      <Toaster position='top-center' />
                       <Routes>
                         <Route path="/sign-in" element={<SignIn />} />
                         <Route path="/sign-up" element={<SignUp />} />
-                        <Route path="/create-shop" element={<CreateShop />} />
-                        <Route element={<AuthenticatedLayout />}>
-                          <Route path="/" element={<Dashboard />} />
-                          <Route path="/users" element={<Users />} />
-                          <Route path="/apps" element={<Apps />} />
-                          <Route path="/tasks" element={<Tasks />} />
-                          {/* Public routes */}
-                          <Route path="/forgot-password" element={<ForgotPassword />} />
-                          <Route path="/otp" element={<Otp />} />
-                          <Route path="/errors/unauthorized" element={<UnauthorisedError />} />
-                          <Route path="/errors/forbidden" element={<ForbiddenError />} />
-                          <Route path="/errors/maintenance-error" element={<MaintenanceError />} />
-                          <Route path="/errors/not-found" element={<NotFoundError />} />
-                          <Route path="/errors/internal-server-error" element={<GeneralError />} />
-                          <Route path="/settings" element={<Settings />} />
-                          <Route path="/help-center" element={<ComingSoon />} />
-                          <Route path="*" element={<Navigate to="/" replace />} />
+                        <Route element={<ProtectedRoute />}>
+                          <Route path="/create-shop" element={<CreateShop />} />
+                          <Route element={<AuthenticatedLayout />}>
+                            <Route path="/" element={<Dashboard />} />
+                            <Route path="/users" element={<Users />} />
+                            <Route path="/apps" element={<Apps />} />
+                            <Route path="/tasks" element={<Tasks />} />
+                            <Route path="/forgot-password" element={<ForgotPassword />} />
+                            <Route path="/otp" element={<Otp />} />
+                            <Route path="/errors/unauthorized" element={<UnauthorisedError />} />
+                            <Route path="/errors/forbidden" element={<ForbiddenError />} />
+                            <Route path="/errors/maintenance-error" element={<MaintenanceError />} />
+                            <Route path="/errors/not-found" element={<NotFoundError />} />
+                            <Route path="/errors/internal-server-error" element={<GeneralError />} />
+                            <Route path="/settings" element={<Settings />} />
+                            <Route path="/help-center" element={<ComingSoon />} />
+                            <Route path="*" element={<Navigate to="/" replace />} />
+                          </Route>
                         </Route>
                       </Routes>
                     </SearchProvider>

@@ -30,6 +30,7 @@ import MaintenanceError from './features/errors/maintenance-error'
 import GeneralError from './features/errors/general-error'
 import Settings from './features/settings'
 import ComingSoon from './components/coming-soon'
+import CreateShop from './pages/CreateShop'
 
 // --- React Query Setup ---
 const queryClient = new QueryClient({
@@ -74,14 +75,15 @@ if (!rootElement.innerHTML) {
                   <SidebarProvider>
                     <SearchProvider>
                       <Routes>
+                        <Route path="/sign-in" element={<SignIn />} />
+                        <Route path="/sign-up" element={<SignUp />} />
+                        <Route path="/create-shop" element={<CreateShop />} />
                         <Route element={<AuthenticatedLayout />}>
                           <Route path="/" element={<Dashboard />} />
                           <Route path="/users" element={<Users />} />
                           <Route path="/apps" element={<Apps />} />
                           <Route path="/tasks" element={<Tasks />} />
                           {/* Public routes */}
-                          <Route path="/sign-in" element={<SignIn />} />
-                          <Route path="/sign-up" element={<SignUp />} />
                           <Route path="/forgot-password" element={<ForgotPassword />} />
                           <Route path="/otp" element={<Otp />} />
                           <Route path="/errors/unauthorized" element={<UnauthorisedError />} />

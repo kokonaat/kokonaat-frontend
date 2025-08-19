@@ -14,8 +14,8 @@ import { TopNav } from '@/components/layout/top-nav'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import Overview from './components/overview'
-import RecentSales from './components/recent-sales'
+import DashboardOverview from '@/components/DashboardOverview'
+import RecentSales from '@/components/RecenetSales'
 
 const Dashboard = () => {
   return (
@@ -168,7 +168,7 @@ const Dashboard = () => {
                   <CardTitle>Overview</CardTitle>
                 </CardHeader>
                 <CardContent className='ps-2'>
-                  <Overview />
+                  <DashboardOverview />
                 </CardContent>
               </Card>
               <Card className='col-span-1 lg:col-span-3'>
@@ -218,6 +218,3 @@ const topNav = [
     disabled: true,
   },
 ]
-
-
-

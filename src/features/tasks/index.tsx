@@ -10,7 +10,7 @@ import { TasksProvider } from './components/tasks-provider'
 import { TasksTable } from './components/tasks-table'
 import { tasks } from './data/tasks'
 
-export function Tasks() {
+const Tasks = () => {
   return (
     <TasksProvider>
       <Header fixed>
@@ -41,3 +41,5 @@ export function Tasks() {
     </TasksProvider>
   )
 }
+
+export default Tasks

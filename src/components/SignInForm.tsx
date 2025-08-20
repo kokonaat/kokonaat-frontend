@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/hooks/useAuth'
 import PasswordInput from '@/components/password-input'
 
 const formSchema = z.object({
@@ -24,42 +25,41 @@ const formSchema = z.object({
   password: z
     .string()
     .min(1, 'Please enter your password')
-    .min(7, 'Password must be at least 7 characters long'),
+    .min(6, 'Password must be at least 6 characters long'),
 })
 
-const SignInForm = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLFormElement>) => {
+type FormValues = z.infer<typeof formSchema>
+
+const SignInForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElement>) => {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const { signInMutation } = useAuth()
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      phone: '',
-      password: '',
-    },
+    defaultValues: { phone: '', password: '' },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  const onSubmit = (data: FormValues) => {
     setIsLoading(true)
-    // eslint-disable-next-line no-console
-    console.log(data)
-
-    setTimeout(() => {
-      setIsLoading(false)
-      navigate('/')
-    }, 1000)
+    signInMutation.mutate(
+      {
+        phone: data.phone,
+        password: data.password
+      },
+      {
+        onSuccess: () => {
+          setIsLoading(false)
+          navigate('/')
+        },
+        onError: () => setIsLoading(false),
+      }
+    )
   }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className={cn('grid gap-3', className)}
-        {...props}
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className={cn('grid gap-3', className)} {...props}>
         <FormField
           control={form.control}
           name='phone'
@@ -73,6 +73,7 @@ const SignInForm = ({
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name='password'
@@ -92,8 +93,9 @@ const SignInForm = ({
             </FormItem>
           )}
         />
-        <Button className='mt-2' disabled={isLoading}>
-          Login
+
+        <Button type='submit' className='mt-2' disabled={isLoading}>
+          {isLoading ? 'Logging in...' : 'Login'}
         </Button>
 
         <div className='relative my-2'>

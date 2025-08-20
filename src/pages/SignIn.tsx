@@ -24,7 +24,7 @@ const SignIn = () => {
                             to='/sign-up'
                             className='hover:text-primary underline underline-offset-4'
                         >
-                            Sign In
+                            Sign Up
                         </Link>
                     </CardDescription>
                 </CardHeader>

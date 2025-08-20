@@ -8,6 +8,7 @@ import {
     CardTitle,
 } from '@/components/ui/card'
 import AuthLayout from '@/features/auth/auth-layout'
+import { Link } from 'react-router-dom'
 
 const SignIn = () => {
     return (
@@ -16,8 +17,15 @@ const SignIn = () => {
                 <CardHeader>
                     <CardTitle className='text-lg tracking-tight'>Login</CardTitle>
                     <CardDescription>
-                        Enter your email and password below to <br />
-                        log into your account
+                        Enter your email and password below to
+                        log into your account <br />
+                        Haven't signup yet?{' '}
+                        <Link
+                            to='/sign-up'
+                            className='hover:text-primary underline underline-offset-4'
+                        >
+                            Sign In
+                        </Link>
                     </CardDescription>
                 </CardHeader>
                 <CardContent>

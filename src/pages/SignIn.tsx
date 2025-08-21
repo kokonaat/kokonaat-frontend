@@ -1,4 +1,5 @@
 import SignInForm from '@/components/SignInForm'
+import { Link } from 'react-router-dom'
 import {
     Card,
     CardContent,
@@ -8,7 +9,6 @@ import {
     CardTitle,
 } from '@/components/ui/card'
 import AuthLayout from '@/features/auth/auth-layout'
-import { Link } from 'react-router-dom'
 
 const SignIn = () => {
     return (

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   BadgeCheck,
   Bell,
@@ -23,6 +23,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { useAuthStore } from '@/stores/authStore'
 
 type NavUserProps = {
   user: {
@@ -34,6 +35,13 @@ type NavUserProps = {
 
 export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar()
+  const {clearTokens} = useAuthStore()
+  const navigate = useNavigate()
+
+  const handleLogOut = () => {
+    clearTokens()
+    navigate('/sign-in')
+  }
 
   return (
     <SidebarMenu>
@@ -61,7 +69,7 @@ export function NavUser({ user }: NavUserProps) {
             align='end'
             sideOffset={4}
           >
-            <DropdownMenuLabel className='p-0 font-normal'>
+            <DropdownMenuLabel className='p-0 font-normal cursor-pointer'>
               <div className='flex items-center gap-2 px-1 py-1.5 text-start text-sm'>
                 <Avatar className='h-8 w-8 rounded-lg'>
                   <AvatarImage src={user.avatar} alt={user.name} />
@@ -75,7 +83,7 @@ export function NavUser({ user }: NavUserProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem className='cursor-pointer'>
                 <Sparkles />
                 Upgrade to Pro
               </DropdownMenuItem>
@@ -83,26 +91,26 @@ export function NavUser({ user }: NavUserProps) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link to='/settings/account'>
+                <Link to='#' className='cursor-pointer'>
                   <BadgeCheck />
                   Account
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to='/settings'>
+                <Link to='#' className='cursor-pointer'>
                   <CreditCard />
                   Billing
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to='/settings/notifications'>
+                <Link to='#' className='cursor-pointer'>
                   <Bell />
                   Notifications
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogOut} className='cursor-pointer'>
               <LogOut />
               Log out
             </DropdownMenuItem>

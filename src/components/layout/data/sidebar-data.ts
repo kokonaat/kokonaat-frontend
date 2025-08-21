@@ -17,8 +17,11 @@ import {
   UserX,
   Users,
   ShieldCheck,
+  ShoppingBag,
+  AudioWaveform, 
+  Command, 
+  GalleryVerticalEnd
 } from 'lucide-react'
-import { AudioWaveform, Command, GalleryVerticalEnd } from 'lucide-react'
 import { type SidebarData } from '../types'
 
 export const sidebarData: SidebarData = {
@@ -52,6 +55,11 @@ export const sidebarData: SidebarData = {
           title: 'Dashboard',
           url: '/',
           icon: LayoutDashboard,
+        },
+        {
+          title: 'Shops',
+          url: '/shops',
+          icon: ShoppingBag,
         },
         {
           title: 'Tasks',

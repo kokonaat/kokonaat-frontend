@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import z from "zod"
 import {
     Card,
     CardContent,
@@ -13,7 +14,6 @@ import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import AuthLayout from "@/features/auth/auth-layout"
-import z from "zod"
 import { useCreateShop } from "@/hooks/useShop"
 
 // Validation schema

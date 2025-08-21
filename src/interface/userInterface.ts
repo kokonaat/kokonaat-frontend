@@ -14,3 +14,11 @@ export interface AuthResponseInterface {
     access_token: string,
     refresh_token: string
 }
+
+export interface AuthState {
+    access_token: string | null
+    refresh_token: string | null
+    isAuthenticated: boolean
+    setTokens: (access: string, refresh: string) => void
+    clearTokens: () => void
+}

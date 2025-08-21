@@ -1555,33 +1555,6 @@
   dependencies:
     "@tanstack/query-core" "5.85.3"
 
-"@tanstack/react-router-devtools@^1.131.16":
-  version "1.131.24"
-  resolved "https://registry.npmjs.org/@tanstack/react-router-devtools/-/react-router-devtools-1.131.24.tgz"
-  integrity sha512-JOTzToYFnFOWZlgWmV7d7YkNEAD2qaWWIRjSMBA85hEvuExK5M9PEbn/ceg27wKrR5UympRmp+XbVuPuLYBlAw==
-  dependencies:
-    "@tanstack/router-devtools-core" "1.131.24"
-
-"@tanstack/react-router@^1.131.16":
-  version "1.131.24"
-  resolved "https://registry.npmjs.org/@tanstack/react-router/-/react-router-1.131.24.tgz"
-  integrity sha512-NtkfIDErcN6eB7wO5wNTSwYCn4MWkDWrfUeBAZk/6INx4D7digQRWsIAehPsTOjysVp5qgLW60DVZkbaM9i2yA==
-  dependencies:
-    "@tanstack/history" "1.131.2"
-    "@tanstack/react-store" "^0.7.0"
-    "@tanstack/router-core" "1.131.24"
-    isbot "^5.1.22"
-    tiny-invariant "^1.3.3"
-    tiny-warning "^1.0.3"
-
-"@tanstack/react-store@^0.7.0":
-  version "0.7.3"
-  resolved "https://registry.npmjs.org/@tanstack/react-store/-/react-store-0.7.3.tgz"
-  integrity sha512-3Dnqtbw9P2P0gw8uUM8WP2fFfg8XMDSZCTsywRPZe/XqqYW8PGkXKZTvP0AHkE4mpqP9Y43GpOg9vwO44azu6Q==
-  dependencies:
-    "@tanstack/store" "0.7.2"
-    use-sync-external-store "^1.5.0"
-
 "@tanstack/react-table@^8.21.3":
   version "8.21.3"
   resolved "https://registry.npmjs.org/@tanstack/react-table/-/react-table-8.21.3.tgz"
@@ -1601,15 +1574,6 @@
     seroval-plugins "^1.3.2"
     tiny-invariant "^1.3.3"
     tiny-warning "^1.0.3"
-
-"@tanstack/router-devtools-core@1.131.24":
-  version "1.131.24"
-  resolved "https://registry.npmjs.org/@tanstack/router-devtools-core/-/router-devtools-core-1.131.24.tgz"
-  integrity sha512-wiCbLixw7/hLHoF12BVkwymApU501gAwS+1K4Hrk8J1eYeETP3R2pGWjjiIdB7XorxXQKufcWtR1htqcgBKyxA==
-  dependencies:
-    clsx "^2.1.1"
-    goober "^2.1.16"
-    solid-js "^1.9.5"
 
 "@tanstack/router-generator@1.131.24":
   version "1.131.24"
@@ -1657,7 +1621,7 @@
     ansis "^4.1.0"
     diff "^8.0.2"
 
-"@tanstack/store@0.7.2", "@tanstack/store@^0.7.0":
+"@tanstack/store@^0.7.0":
   version "0.7.2"
   resolved "https://registry.npmjs.org/@tanstack/store/-/store-0.7.2.tgz"
   integrity sha512-RP80Z30BYiPX2Pyo0Nyw4s1SJFH2jyM6f9i3HfX4pA+gm5jsnYryscdq2aIQLnL4TaGuQMO+zXmN9nh1Qck+Pg==
@@ -2123,7 +2087,7 @@ cross-spawn@^7.0.6:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-csstype@3.1.3, csstype@^3.0.2, csstype@^3.1.0:
+csstype@3.1.3, csstype@^3.0.2:
   version "3.1.3"
   resolved "https://registry.npmjs.org/csstype/-/csstype-3.1.3.tgz"
   integrity sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==
@@ -2642,11 +2606,6 @@ globals@^16.3.0:
   resolved "https://registry.npmjs.org/globals/-/globals-16.3.0.tgz"
   integrity sha512-bqWEnJ1Nt3neqx2q5SFfGS8r/ahumIakg3HcwtNlrVlwXIeNumWn/c7Pn/wKzGhf6SaW6H6uWXLqC30STCMchQ==
 
-goober@^2.1.16:
-  version "2.1.16"
-  resolved "https://registry.npmjs.org/goober/-/goober-2.1.16.tgz"
-  integrity sha512-erjk19y1U33+XAMe1VTvIONHYoSqE4iS7BYUZfHaqeohLmnC0FdxEh7rQU+6MZ4OajItzjZFSRtVANrQwNq6/g==
-
 gopd@^1.2.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/gopd/-/gopd-1.2.0.tgz"
@@ -2747,11 +2706,6 @@ is-number@^7.0.0:
   version "7.0.0"
   resolved "https://registry.npmjs.org/is-number/-/is-number-7.0.0.tgz"
   integrity sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==
-
-isbot@^5.1.22:
-  version "5.1.29"
-  resolved "https://registry.npmjs.org/isbot/-/isbot-5.1.29.tgz"
-  integrity sha512-DelDWWoa3mBoyWTq3wjp+GIWx/yZdN7zLUE7NFhKjAiJ+uJVRkbLlwykdduCE4sPUUy8mlTYTmdhBUYu91F+sw==
 
 isexe@^2.0.0:
   version "2.0.0"
@@ -3375,12 +3329,12 @@ semver@^7.6.0:
   resolved "https://registry.npmjs.org/semver/-/semver-7.7.2.tgz"
   integrity sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==
 
-seroval-plugins@^1.3.2, seroval-plugins@~1.3.0:
+seroval-plugins@^1.3.2:
   version "1.3.2"
   resolved "https://registry.npmjs.org/seroval-plugins/-/seroval-plugins-1.3.2.tgz"
   integrity sha512-0QvCV2lM3aj/U3YozDiVwx9zpH0q8A60CTWIv4Jszj/givcudPb48B+rkU5D51NJ0pTpweGMttHjboPa9/zoIQ==
 
-seroval@^1.3.2, seroval@~1.3.0:
+seroval@^1.3.2:
   version "1.3.2"
   resolved "https://registry.npmjs.org/seroval/-/seroval-1.3.2.tgz"
   integrity sha512-RbcPH1n5cfwKrru7v7+zrZvjLurgHhGyso3HTyGtRivGWgYjbOmGuivCQaORNELjNONoK35nj28EoWul9sb1zQ==
@@ -3406,15 +3360,6 @@ smol-toml@^1.3.4:
   version "1.4.2"
   resolved "https://registry.npmjs.org/smol-toml/-/smol-toml-1.4.2.tgz"
   integrity sha512-rInDH6lCNiEyn3+hH8KVGFdbjc099j47+OSgbMrfDYX1CmXLfdKd7qi6IfcWj2wFxvSVkuI46M+wPGYfEOEj6g==
-
-solid-js@^1.9.5:
-  version "1.9.9"
-  resolved "https://registry.npmjs.org/solid-js/-/solid-js-1.9.9.tgz"
-  integrity sha512-A0ZBPJQldAeGCTW0YRYJmt7RCeh5rbFfPZ2aOttgYnctHE7HgKeHCBB/PVc2P7eOfmNXqMFFFoYYdm3S4dcbkA==
-  dependencies:
-    csstype "^3.1.0"
-    seroval "~1.3.0"
-    seroval-plugins "~1.3.0"
 
 sonner@^2.0.7:
   version "2.0.7"

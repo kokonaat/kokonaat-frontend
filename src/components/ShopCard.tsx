@@ -10,7 +10,7 @@ import {
 import { ShopProps } from "@/interface/shopInterface"
 
 
-const Shop = ({ shop, onEdit }: ShopProps) => {
+const ShopCard = ({ shop, onEdit }: ShopProps) => {
     return (
         <Card className="list-none rounded-lg border p-4 hover:shadow-md cursor-pointer">
             <div className="mb-8 flex items-center justify-between">
@@ -44,4 +44,4 @@ const Shop = ({ shop, onEdit }: ShopProps) => {
     )
 }
 
-export default Shop
+export default ShopCard

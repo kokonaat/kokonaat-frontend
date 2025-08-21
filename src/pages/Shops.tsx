@@ -9,20 +9,15 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { Shop } from "@/interface/shopInterface"
-import ShopCard from "@/components/Shop"
+import { useShopList } from "@/hooks/useShop"
+import { ShopInterface } from "@/interface/shopInterface"
+import ShopCard from "@/components/ShopCard"
 import ShopDrawer from "@/components/ShopDrawer"
 
 const Shops = () => {
     const [drawerOpen, setDrawerOpen] = useState(false)
-    const [currentShop, setCurrentShop] = useState<Shop | undefined>(undefined)
-
-    const demoShops: Shop[] = [
-        { id: "1", name: "Demo Shop 1", address: "123 Street, City" },
-        { id: "2", name: "Demo Shop 2", address: "456 Avenue, City" },
-        { id: "3", name: "Demo Shop 3", address: "789 Boulevard, City" },
-        { id: "4", name: "Demo Shop 4", address: "101 Road, City" },
-    ]
+    const [currentShop, setCurrentShop] = useState<ShopInterface | undefined>(undefined)
+    const { data, isLoading } = useShopList()
 
     return (
         <div>
@@ -35,7 +30,7 @@ const Shops = () => {
                 </div>
             </Header>
 
-            <Main fixed className="flex flex-col h-[calc(100svh-4rem)]">
+            <Main fixed className="flex flex-col h-[calc(100svh-4rem)] overflow-y-auto">
                 <div className="flex justify-between items-center mb-4">
                     <div>
                         <div className="mb-4">
@@ -63,16 +58,21 @@ const Shops = () => {
                 <Separator className="shadow-sm" />
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mt-4">
-                    {demoShops.map((shop) => (
-                        <ShopCard
-                            key={shop.id}
-                            shop={shop}
-                            onEdit={(s) => {
-                                setCurrentShop(s)
-                                setDrawerOpen(true)
-                            }}
-                        />
-                    ))}
+                    {isLoading ? (
+                        <p>Loading shops...</p>
+                    ) : (
+                        data?.shops?.map((shop: ShopInterface) => (
+                            <ShopCard
+                                key={shop.id}
+                                shop={shop}
+                                onEdit={(s) => {
+                                    // store full shop object
+                                    setCurrentShop(s)
+                                    setDrawerOpen(true)
+                                }}
+                            />
+                        ))
+                    )}
                 </div>
             </Main>
 

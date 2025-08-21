@@ -2,19 +2,30 @@ export interface CreateShopInterface {
     name: string
 }
 
-export interface Shop {
+export interface ShopInterface {
     id?: string
     name: string
+    address: string
+}
+
+export interface ShopListInterface {
+    shops: ShopInterface[]
+    total: number
+}
+
+export interface UpdateShopInterface {
+    id: string
+    name?: string
     address: string
 }
 
 export interface ShopDrawerProps {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentShop?: Shop
+    currentShop?: ShopInterface
 }
 
 export interface ShopProps {
-    shop: Shop
-    onEdit: (shop: Shop) => void
+    shop: ShopInterface
+    onEdit: (shop: ShopInterface) => void
 }

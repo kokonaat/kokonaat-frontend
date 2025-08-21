@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -32,7 +32,6 @@ type FormValues = z.infer<typeof formSchema>
 
 const SignInForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElement>) => {
   const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
   const { signInMutation } = useAuth()
 
   const form = useForm<FormValues>({
@@ -50,7 +49,6 @@ const SignInForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
       {
         onSuccess: () => {
           setIsLoading(false)
-          navigate('/')
         },
         onError: () => setIsLoading(false),
       }

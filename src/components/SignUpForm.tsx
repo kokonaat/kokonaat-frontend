@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils"
 import { useAuth } from "@/hooks/useAuth"
 import PasswordInput from "@/components/password-input"
 
-// ✅ Custom user-friendly validation messages
+// custom user-friendly validation messages
 const formSchema = z.object({
   name: z.string().min(3, "Please enter your full name (at least 3 characters)"),
   phone: z

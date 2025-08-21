@@ -1,20 +1,31 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, UseMutationResult } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { UserSignUpInterface, UserSignInInterface } from "@/interface/userInterface"
+import {
+    UserSignUpInterface,
+    UserSignInInterface,
+    AuthResponseInterface
+} from "@/interface/userInterface"
 import { signUpUser, signInUser } from "@/api/userAuthApi"
 import { useAuthStore } from "@/stores/authStore"
+import { shopList } from "@/api/shopApi"
+import { ShopInterface } from "@/interface/shopInterface"
 
 export const useAuth = () => {
     const { setTokens } = useAuthStore()
     const navigate = useNavigate()
 
-    // signup mutation
-    const signUpMutation = useMutation({
+    // sign in
+    const signUpMutation: UseMutationResult<
+        AuthResponseInterface,
+        unknown,
+        UserSignUpInterface,
+        unknown
+    > = useMutation({
         mutationFn: async (data: UserSignUpInterface) => {
             await signUpUser(data)
-            const signInRes = await signInUser({ phone: data.phone, password: data.password })
-            return signInRes
+            // auto sign in
+            return signInUser({ phone: data.phone, password: data.password })
         },
         onSuccess: (data) => {
             if (data.access_token && data.refresh_token) {
@@ -24,24 +35,38 @@ export const useAuth = () => {
             }
         },
         onError: (err: any) => {
-            toast.error(err?.response?.data?.message)
+            toast.error(err?.response?.data?.message || "Failed to sign up")
         },
     })
 
-    // signin mutation
-    const signInMutation = useMutation({
+    // sign in
+    const signInMutation: UseMutationResult<{
+        authRes: AuthResponseInterface
+        shopsRes: ShopInterface[]
+    }, unknown, UserSignInInterface, unknown> = useMutation({
         mutationFn: async (data: UserSignInInterface) => {
-            const res = await signInUser(data)
-            return res
+            const authRes = await signInUser(data)
+
+            // save token in ls
+            if (authRes.access_token && authRes.refresh_token) {
+                setTokens(authRes.access_token, authRes.refresh_token)
+            }
+
+            // fetch shops list
+            const shopsRes = await shopList()
+            return { authRes, shopsRes }
         },
-        onSuccess: (data) => {
-            if (data.access_token && data.refresh_token) {
-                setTokens(data.access_token, data.refresh_token)
-                toast.success("Logged in successfully!")
+        onSuccess: ({ shopsRes }) => {
+            toast.success("Logged in successfully!")
+            // if multiple shops then redirect to shops page
+            if (shopsRes.total > 1) {
+                navigate("/shops")
+            } else {
+                navigate("/")
             }
         },
         onError: (err: any) => {
-            toast.error(err?.response?.data?.message)
+            toast.error(err?.response?.data?.message || "Failed to log in")
         },
     })
 

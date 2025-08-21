@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,8 +11,17 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useAuthStore } from '@/stores/authStore'
 
 export function ProfileDropdown() {
+  const { clearTokens } = useAuthStore()
+  const navigate = useNavigate()
+
+  const handleLogOut = () => {
+    clearTokens()
+    navigate('/sign-in')
+  }
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -38,21 +47,21 @@ export function ProfileDropdown() {
 
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link to="/" className="flex justify-between w-full">
+            <Link to="#" className="flex justify-between w-full cursor-pointer">
               Profile
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </Link>
           </DropdownMenuItem>
 
           <DropdownMenuItem asChild>
-            <Link to="/" className="flex justify-between w-full">
+            <Link to="#" className="flex justify-between w-full cursor-pointer">
               Billing
               <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
             </Link>
           </DropdownMenuItem>
 
           <DropdownMenuItem asChild>
-            <Link to="/" className="flex justify-between w-full">
+            <Link to="#" className="flex justify-between w-full cursor-pointer">
               Settings
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </Link>
@@ -63,7 +72,7 @@ export function ProfileDropdown() {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogOut}>
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>

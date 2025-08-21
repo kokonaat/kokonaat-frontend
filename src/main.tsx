@@ -33,6 +33,7 @@ import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
 import Dashboard from './pages/Dashboard'
 import ProtectedRoute from './routes/ProtectedRoute'
+import Shops from './pages/Shops'
 import './styles/index.css'
 
 // --- React Query Setup ---
@@ -85,6 +86,7 @@ if (!rootElement.innerHTML) {
                           <Route path="/create-shop" element={<CreateShop />} />
                           <Route element={<AuthenticatedLayout />}>
                             <Route path="/" element={<Dashboard />} />
+                            <Route path="/shops" element={<Shops />} />
                             <Route path="/users" element={<Users />} />
                             <Route path="/apps" element={<Apps />} />
                             <Route path="/tasks" element={<Tasks />} />

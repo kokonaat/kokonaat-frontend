@@ -1,12 +1,5 @@
 import { create } from "zustand"
-
-interface AuthState {
-    access_token: string | null
-    refresh_token: string | null
-    isAuthenticated: boolean
-    setTokens: (access: string, refresh: string) => void
-    clearTokens: () => void
-}
+import { AuthState } from "@/interface/userInterface"
 
 export const useAuthStore = create<AuthState>((set) => ({
     access_token: localStorage.getItem("access_token"),

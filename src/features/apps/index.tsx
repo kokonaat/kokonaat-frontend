@@ -1,5 +1,5 @@
 import { type ChangeEvent, useState, useEffect } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { SlidersHorizontal, ArrowUpAZ, ArrowDownAZ } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -29,7 +29,6 @@ const appText = new Map<AppType, string>([
 
 const Apps = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const navigate = useNavigate()
 
   const initialFilter = searchParams.get('filter') ?? ''
   const initialType = (searchParams.get('type') as AppType) ?? 'all'
@@ -153,8 +152,8 @@ const Apps = () => {
                   variant="outline"
                   size="sm"
                   className={`${app.connected
-                      ? 'border border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900'
-                      : ''
+                    ? 'border border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900'
+                    : ''
                     }`}
                 >
                   {app.connected ? 'Connected' : 'Connect'}

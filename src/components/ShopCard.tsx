@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ShopProps } from "@/interface/shopInterface"
 
-
 const ShopCard = ({ shop, onEdit }: ShopProps) => {
     return (
         <Card className="list-none rounded-lg border p-4 hover:shadow-md cursor-pointer">
@@ -36,9 +35,16 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
                 </DropdownMenu>
             </div>
 
-            <div>
-                <h2 className="mb-1 font-semibold">{shop.name}</h2>
-                <p className="line-clamp-2 text-gray-500">{shop.address}</p>
+            <div className="min-h-[80px]">
+                <h2 className="mb-1 font-semibold truncate" title={shop.name}>
+                    {shop.name}
+                </h2>
+                <p
+                    className="text-gray-500 overflow-hidden text-ellipsis line-clamp-2"
+                    title={shop.address}
+                >
+                    {shop.address}
+                </p>
             </div>
         </Card>
     )

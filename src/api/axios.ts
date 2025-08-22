@@ -1,9 +1,9 @@
-import { API } from "@/config/api"
+import { BASE_URL } from "@/config/api"
 import axios from "axios"
 
 // axios instance
 export const axiosInstance = axios.create({
-    baseURL: API.BASE_URL,
+    baseURL: BASE_URL,
     headers: {
         "Content-Type": "application/json",
     },
@@ -30,7 +30,9 @@ axiosInstance.interceptors.response.use(
             const refreshToken = localStorage.getItem("refresh_token")
             if (!refreshToken) {
                 localStorage.clear()
-                window.location.href = "/sign-in"
+                if (window.location.pathname !== '/sign-in') {
+                    window.location.href = '/sign-in'
+                }
                 return Promise.reject(error)
             }
 

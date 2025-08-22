@@ -57,6 +57,7 @@ const ShopDrawer = ({ open, onOpenChange, currentShop }: ShopDrawerProps) => {
             updateMutate({ id: currentShop.id, address: data.address }, {
                 onSuccess: () => {
                     setLoading(false)
+                    form.reset()
                     onOpenChange(false)
                 }
             })
@@ -65,6 +66,7 @@ const ShopDrawer = ({ open, onOpenChange, currentShop }: ShopDrawerProps) => {
             createMutate(data, {
                 onSuccess: () => {
                     setLoading(false)
+                    form.reset()
                     onOpenChange(false)
                 }
             })

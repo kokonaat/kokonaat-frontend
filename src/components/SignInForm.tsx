@@ -57,7 +57,11 @@ const SignInForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={cn('grid gap-3', className)} {...props}>
+      <form 
+        onSubmit={form.handleSubmit(onSubmit)} 
+        noValidate
+        className={cn('grid gap-3', className)} 
+        {...props}>
         <FormField
           control={form.control}
           name='phone'
@@ -83,7 +87,7 @@ const SignInForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
               </FormControl>
               <FormMessage />
               <Link
-                to='/forgot-password'
+                to='#'
                 className='text-muted-foreground absolute end-0 -top-0.5 text-sm font-medium hover:opacity-75'
               >
                 Forgot password?

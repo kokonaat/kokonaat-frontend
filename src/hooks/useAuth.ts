@@ -9,7 +9,7 @@ import {
 import { signUpUser, signInUser } from "@/api/userAuthApi"
 import { useAuthStore } from "@/stores/authStore"
 import { shopList } from "@/api/shopApi"
-import { ShopInterface } from "@/interface/shopInterface"
+import { ShopListInterface } from "@/interface/shopInterface"
 
 export const useAuth = () => {
     const { setTokens } = useAuthStore()
@@ -42,7 +42,7 @@ export const useAuth = () => {
     // sign in
     const signInMutation: UseMutationResult<{
         authRes: AuthResponseInterface
-        shopsRes: ShopInterface[]
+        shopsRes: ShopListInterface[]
     }, unknown, UserSignInInterface, unknown> = useMutation({
         mutationFn: async (data: UserSignInInterface) => {
             const authRes = await signInUser(data)

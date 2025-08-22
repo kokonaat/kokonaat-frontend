@@ -57,7 +57,7 @@ const Shops = () => {
 
                 <Separator className="shadow-sm" />
 
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mt-4">
+                <div className="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">   
                     {isLoading ? (
                         <p>Loading shops...</p>
                     ) : (
@@ -66,7 +66,6 @@ const Shops = () => {
                                 key={shop.id}
                                 shop={shop}
                                 onEdit={(s) => {
-                                    // store full shop object
                                     setCurrentShop(s)
                                     setDrawerOpen(true)
                                 }}

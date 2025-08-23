@@ -14,19 +14,13 @@ import { AxiosError } from 'axios'
 import { LayoutProvider } from './context/layout-provider'
 import { SearchProvider } from './context/search-provider'
 import { handleServerError } from './utils/handle-server-error'
-import Tasks from './features/tasks'
-import Users from './features/users'
 
 // components
+import Users from './features/users'
 import Apps from './features/apps'
 import ForgotPassword from './features/auth/forgot-password'
 import Otp from './features/auth/otp'
 import AuthenticatedLayout from './components/layout/authenticated-layout'
-import UnauthorisedError from './features/errors/unauthorized-error'
-import ForbiddenError from './features/errors/forbidden'
-import NotFoundError from './features/errors/not-found-error'
-import MaintenanceError from './features/errors/maintenance-error'
-import GeneralError from './features/errors/general-error'
 import Settings from './features/settings'
 import ComingSoon from './components/coming-soon'
 import CreateShop from './pages/CreateShop'
@@ -35,6 +29,7 @@ import SignIn from './pages/SignIn'
 import Dashboard from './pages/Dashboard'
 import ProtectedRoute from './routes/ProtectedRoute'
 import Shops from './pages/Shops'
+import Designation from './pages/Designation'
 import './styles/index.css'
 
 // --- React Query Setup ---
@@ -89,16 +84,16 @@ if (!rootElement.innerHTML) {
                           <Route element={<AuthenticatedLayout />}>
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/shops" element={<Shops />} />
+                            <Route path="/user/designation" element={<Designation />} />
                             <Route path="/users" element={<Users />} />
                             <Route path="/apps" element={<Apps />} />
-                            <Route path="/tasks" element={<Tasks />} />
                             <Route path="/forgot-password" element={<ForgotPassword />} />
                             <Route path="/otp" element={<Otp />} />
-                            <Route path="/errors/unauthorized" element={<UnauthorisedError />} />
+                            {/* <Route path="/errors/unauthorized" element={<UnauthorisedError />} />
                             <Route path="/errors/forbidden" element={<ForbiddenError />} />
                             <Route path="/errors/maintenance-error" element={<MaintenanceError />} />
                             <Route path="/errors/not-found" element={<NotFoundError />} />
-                            <Route path="/errors/internal-server-error" element={<GeneralError />} />
+                            <Route path="/errors/internal-server-error" element={<GeneralError />} /> */}
                             <Route path="/settings" element={<Settings />} />
                             <Route path="/help-center" element={<ComingSoon />} />
                             <Route path="*" element={<Navigate to="/" replace />} />

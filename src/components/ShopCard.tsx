@@ -8,10 +8,18 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ShopProps } from "@/interface/shopInterface"
+import { useShopStore } from "@/stores/shopStore"
 
 const ShopCard = ({ shop, onEdit }: ShopProps) => {
+    const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
+
     return (
-        <Card className="list-none rounded-lg border p-4 hover:shadow-md cursor-pointer">
+        <Card
+            onClick={() => {
+                if (shop.id) setCurrentShopId(shop.id)
+            }}
+            className="list-none rounded-lg border p-4 hover:shadow-md cursor-pointer"
+        >
             <div className="mb-8 flex items-center justify-between">
                 <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-lg p-2">
                     <ShoppingBag className="h-6 w-6" />

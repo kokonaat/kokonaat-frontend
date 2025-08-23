@@ -12,13 +12,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useAuthStore } from '@/stores/authStore'
+import { useShopStore } from '@/stores/shopStore'
 
 export function ProfileDropdown() {
   const { clearTokens } = useAuthStore()
+  const { clearCurrentShopId } = useShopStore()
   const navigate = useNavigate()
 
   const handleLogOut = () => {
     clearTokens()
+    clearCurrentShopId()
     navigate('/sign-in')
   }
 

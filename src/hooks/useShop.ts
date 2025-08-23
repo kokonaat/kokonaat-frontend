@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { createShop, shopList, updateShop } from "@/api/shopApi"
 import { CreateShopInterface, ShopInterface, UpdateShopInterface } from "@/interface/shopInterface"
+import { useShopStore } from "@/stores/shopStore"
 
 // query key
 const SHOP_KEYS = {
@@ -22,6 +23,8 @@ export const useShopList = () => {
 export const useCreateShop = () => {
     const navigate = useNavigate()
     const queryClient = useQueryClient()
+    // set shoopId in ls
+    const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
 
     return useMutation({
         mutationFn: async (data: CreateShopInterface) => {
@@ -30,7 +33,11 @@ export const useCreateShop = () => {
             const shopsRes = await shopList()
             return { createShopRes, shopsRes }
         },
-        onSuccess: ({ shopsRes }) => {
+        onSuccess: ({ shopsRes, createShopRes }) => {
+            // store the created shop ID in Zustand (and persist via localStorage if using persist)
+            if (createShopRes?.id) {
+                setCurrentShopId(createShopRes.id)
+            }
             // if multiple shops then redirect to shops page
             if (shopsRes.total > 1) {
                 navigate("/shops")

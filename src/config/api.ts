@@ -1,14 +1,4 @@
-export interface ApiEndpoints {
-    auth: {
-        signUp: string,
-        signIn: string,
-    },
-    shop: {
-        createShop: string,
-        shopList: string,
-        updateShop: string
-    }
-}
+import { ApiEndpoints } from "@/interface/apiEndpointsInterface"
 
 export const BASE_URL = import.meta.env.VITE_API_BASE_URL!
 

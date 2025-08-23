@@ -39,10 +39,10 @@ type TaskImportDialogProps = {
   onOpenChange: (open: boolean) => void
 }
 
-export function TasksImportDialog({
+const DesignationImportDialog = ({
   open,
   onOpenChange,
-}: TaskImportDialogProps) {
+}: TaskImportDialogProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { file: undefined },
@@ -108,3 +108,5 @@ export function TasksImportDialog({
     </Dialog>
   )
 }
+
+export default DesignationImportDialog

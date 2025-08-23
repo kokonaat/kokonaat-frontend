@@ -21,15 +21,16 @@ import {
 } from '@/components/ui/table'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { DataTablePagination } from './data-table-pagination'
-import { DataTableToolbar } from './data-table-toolbar'
 import { tasksColumns as columns } from './tasks-columns'
 import { type Task } from '../data/schema'
+import { Input } from '@/components/ui/input'
+import { DataTableViewOptions } from './data-table-view-options'
 
 type DataTableProps = {
   data: Task[]
 }
 
-export function TasksTable({ data }: DataTableProps) {
+const DesignationTable = ({ data }: DataTableProps) => {
   // Table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -79,7 +80,17 @@ export function TasksTable({ data }: DataTableProps) {
 
   return (
     <div className='space-y-4 max-sm:has-[div[role="toolbar"]]:mb-16'>
-      <DataTableToolbar table={table} />
+      <div className='flex items-center justify-between'>
+        <div className='flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2'>
+          <Input
+            placeholder='Filter by title or ID...'
+            value={table.getState().globalFilter ?? ''}
+            onChange={(event) => table.setGlobalFilter(event.target.value)}
+            className='h-8 w-[150px] lg:w-[250px]'
+          />
+        </div>
+        <DataTableViewOptions table={table} />
+      </div>
       <div className='overflow-hidden rounded-md border'>
         <Table>
           <TableHeader>
@@ -121,3 +132,5 @@ export function TasksTable({ data }: DataTableProps) {
     </div>
   )
 }
+
+export default DesignationTable

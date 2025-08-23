@@ -1,29 +1,29 @@
 import { showSubmittedData } from '@/utils/show-submitted-data'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { TasksImportDialog } from './tasks-import-dialog'
-import { TasksMutateDrawer } from './tasks-mutate-drawer'
+import DesignationsMutateDrawer from './DesignationsMutateDrawer'
+import DesignationImportDialog from './DesignationImportDialog'
 import { useTasks } from './tasks-provider'
 
-export function TasksDialogs() {
+const DesignationDialogs = () => {
   const { open, setOpen, currentRow, setCurrentRow } = useTasks()
   return (
     <>
-      <TasksMutateDrawer
-        key='task-create'
+      <DesignationsMutateDrawer
+        key='designation-create'
         open={open === 'create'}
         onOpenChange={() => setOpen('create')}
       />
 
-      <TasksImportDialog
-        key='tasks-import'
+      <DesignationImportDialog
+        key='designations-import'
         open={open === 'import'}
         onOpenChange={() => setOpen('import')}
       />
 
       {currentRow && (
         <>
-          <TasksMutateDrawer
-            key={`task-update-${currentRow.id}`}
+          <DesignationsMutateDrawer
+            key={`designation-update-${currentRow.id}`}
             open={open === 'update'}
             onOpenChange={() => {
               setOpen('update')
@@ -35,7 +35,7 @@ export function TasksDialogs() {
           />
 
           <ConfirmDialog
-            key='task-delete'
+            key='designation-delete'
             destructive
             open={open === 'delete'}
             onOpenChange={() => {
@@ -51,14 +51,14 @@ export function TasksDialogs() {
               }, 500)
               showSubmittedData(
                 currentRow,
-                'The following task has been deleted:'
+                'The following designation has been deleted:'
               )
             }}
             className='max-w-md'
-            title={`Delete this task: ${currentRow.id} ?`}
+            title={`Delete this designation: ${currentRow.id} ?`}
             desc={
               <>
-                You are about to delete a task with the ID{' '}
+                You are about to delete a designation with the ID{' '}
                 <strong>{currentRow.id}</strong>. <br />
                 This action cannot be undone.
               </>
@@ -70,3 +70,5 @@ export function TasksDialogs() {
     </>
   )
 }
+
+export default DesignationDialogs

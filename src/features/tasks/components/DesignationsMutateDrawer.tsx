@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/utils/show-submitted-data'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -21,12 +20,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { type Task } from '../data/schema'
+import { useCreateDesignation } from '@/hooks/useDesignation'
+import { getCurrentShopId } from '@/lib/getCurrentShopId'
 
 type TaskMutateDrawerProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  currentRow?: Task
+  currentRow?: { id: string; title: string }
 }
 
 const formSchema = z.object({
@@ -40,19 +40,29 @@ const DesignationsMutateDrawer = ({
   currentRow,
 }: TaskMutateDrawerProps) => {
   const isUpdate = !!currentRow
+  const shopId = getCurrentShopId()
+  const createDesignation = useCreateDesignation(shopId || "")
 
   const form = useForm<TaskForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: currentRow ?? {
-      title: '',
-    },
+    defaultValues: currentRow ?? { title: "" },
   })
 
   const onSubmit = (data: TaskForm) => {
-    // do something with the form data
-    onOpenChange(false)
-    form.reset()
-    showSubmittedData(data)
+    if (!shopId) {
+      console.error("Shop ID not found")
+      return
+    }
+
+    createDesignation.mutate(
+      { title: data.title, shop: shopId },
+      {
+        onSuccess: () => {
+          onOpenChange(false)
+          form.reset()
+        },
+      }
+    )
   }
 
   return (

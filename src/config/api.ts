@@ -11,5 +11,9 @@ export const apiEndpoints: ApiEndpoints = {
         createShop: "/shop",
         shopList: "/shop",
         updateShop: "/shop/"
+    },
+    designation: {
+        designationList: "/designation",
+        createDesignation: "/designation",
     }
 }

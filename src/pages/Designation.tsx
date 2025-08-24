@@ -5,12 +5,28 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { TasksProvider } from '../features/tasks/components/tasks-provider'
-import { tasks } from '../features/tasks/data/tasks'
 import DesignationTable from '../features/tasks/components/DesignationTable'
 import DesignationDialogs from '../features/tasks/components/DesignationDialogs'
 import DesignationPrimaryButtons from '../features/tasks/components/DesignationPrimaryButtons'
+import { useDesignationList } from '@/hooks/useDesignation'
+
+// get and parsed shopId from ls
+const getCurrentShopId = (): string | null => {
+  const lsData = localStorage.getItem("shop-storage")
+  if (!lsData) return null
+  try {
+    const parsed = JSON.parse(lsData)
+    return parsed.state?.currentShopId || null
+  } catch {
+    return null
+  }
+}
 
 const Designation = () => {
+  const shopId = getCurrentShopId()
+  const { data, isLoading } = useDesignationList(shopId || "")
+  console.log(data)
+
   return (
     <TasksProvider>
       <Header fixed>
@@ -33,7 +49,11 @@ const Designation = () => {
           <DesignationPrimaryButtons />
         </div>
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          <DesignationTable data={tasks} />
+          {isLoading ? (
+            <p>Loading designations...</p>
+          ) : (
+            <DesignationTable data={data} />
+          )}
         </div>
       </Main>
 

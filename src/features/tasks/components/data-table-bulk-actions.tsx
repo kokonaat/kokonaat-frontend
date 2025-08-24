@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/tooltip'
 import { BulkActionsToolbar } from '@/components/bulk-actions-toolbar'
 import { priorities, statuses } from '../data/data'
-import { type Task } from '../data/schema'
+import { type Task } from '../data/designationSchema'
 import { TasksMultiDeleteDialog } from './tasks-multi-delete-dialog'
 
 type DataTableBulkActionsProps<TData> = {

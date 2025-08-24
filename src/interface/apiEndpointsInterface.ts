@@ -8,4 +8,9 @@ export interface ApiEndpoints {
         shopList: string,
         updateShop: string
     }
+    ,
+    designation: {
+        designationList: string,
+        createDesignation: string,
+    }
 }

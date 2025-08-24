@@ -21,13 +21,14 @@ import {
 } from '@/components/ui/table'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { DataTablePagination } from './data-table-pagination'
-import { tasksColumns as columns } from './tasks-columns'
-import { type Task } from '../data/schema'
+import { DesignationColumns as columns } from './DesignationColumns'
 import { Input } from '@/components/ui/input'
 import { DataTableViewOptions } from './data-table-view-options'
+import { DesignationInterface } from '@/interface/designationInterface'
+import { ColumnFiltersState } from '@tanstack/react-table'
 
 type DataTableProps = {
-  data: Task[]
+  data: DesignationInterface[]
 }
 
 const DesignationTable = ({ data }: DataTableProps) => {
@@ -36,7 +37,7 @@ const DesignationTable = ({ data }: DataTableProps) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [globalFilter, setGlobalFilter] = useState('')
-  const [columnFilters, setColumnFilters] = useState([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
 
   const table = useReactTable({

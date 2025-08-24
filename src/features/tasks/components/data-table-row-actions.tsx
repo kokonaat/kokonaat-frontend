@@ -9,8 +9,8 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { taskSchema } from '../data/schema'
 import { useTasks } from './tasks-provider'
+import { designationSchema } from '../data/designationSchema'
 
 type DataTableRowActionsProps<TData> = {
   row: Row<TData>
@@ -19,7 +19,7 @@ type DataTableRowActionsProps<TData> = {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = taskSchema.parse(row.original)
+  const task = designationSchema.parse(row.original)
 
   const { setOpen, setCurrentRow } = useTasks()
 

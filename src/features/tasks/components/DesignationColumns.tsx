@@ -2,11 +2,11 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { labels } from '../data/data'
-import { type Task } from '../data/schema'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
+import { DesignationInterface } from '@/interface/designationInterface'
 
-export const tasksColumns: ColumnDef<Task>[] = [
+export const DesignationColumns: ColumnDef<DesignationInterface>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -34,7 +34,7 @@ export const tasksColumns: ColumnDef<Task>[] = [
   {
     accessorKey: 'id',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Task' />
+      <DataTableColumnHeader column={column} title='ID' />
     ),
     cell: ({ row }) => <div className='w-[80px]'>{row.getValue('id')}</div>,
     enableSorting: false,

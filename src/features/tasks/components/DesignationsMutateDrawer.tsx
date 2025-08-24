@@ -23,30 +23,25 @@ import {
 import { useCreateDesignation, useUpdateDesignation } from '@/hooks/useDesignation'
 import { getCurrentShopId } from '@/lib/getCurrentShopId'
 import { useEffect } from 'react'
-
-type TaskMutateDrawerProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  currentRow?: { id: string; title: string }
-}
+import { DesignationFormInterface, DesignationMutateDrawerProps } from '@/interface/designationInterface'
+import { toast } from 'sonner'
 
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required.'),
 })
-type TaskForm = z.infer<typeof formSchema>
 
 const DesignationsMutateDrawer = ({
   open,
   onOpenChange,
   currentRow,
-}: TaskMutateDrawerProps) => {
+}: DesignationMutateDrawerProps) => {
   const shopId = getCurrentShopId()
   const isUpdate = !!currentRow
 
   const createMutation = useCreateDesignation(shopId || '')
   const updateMutation = useUpdateDesignation(shopId || '')
 
-  const form = useForm<TaskForm>({
+  const form = useForm<DesignationFormInterface>({
     resolver: zodResolver(formSchema),
     defaultValues: { title: '' },
   })
@@ -56,7 +51,7 @@ const DesignationsMutateDrawer = ({
     form.reset(currentRow ?? { title: '' })
   }, [currentRow])
 
-  const onSubmit = (data: TaskForm) => {
+  const onSubmit = (data: DesignationFormInterface) => {
     if (!shopId) return
 
     if (isUpdate && currentRow) {
@@ -79,6 +74,9 @@ const DesignationsMutateDrawer = ({
             onOpenChange(false)
             form.reset()
           },
+          onError: (err: any) => {
+            toast.error(err?.response?.data?.message)
+          }
         }
       )
     }

@@ -1,22 +1,15 @@
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
-import { Trash2, CircleArrowUp, ArrowUpDown, Download } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { sleep } from '@/utils/sleep'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { BulkActionsToolbar } from '@/components/bulk-actions-toolbar'
-import { priorities, statuses } from '../data/data'
 import { type Task } from '../data/designationSchema'
 import { TasksMultiDeleteDialog } from './tasks-multi-delete-dialog'
 
@@ -62,7 +55,7 @@ export function DataTableBulkActions<TData>({
       loading: 'Exporting tasks...',
       success: () => {
         table.resetRowSelection()
-        return `Exported ${selectedTasks.length} task${selectedTasks.length > 1 ? 's' : ''} to CSV.`
+        return `Exported ${selectedTasks.length} designation${selectedTasks.length > 1 ? 's' : ''} to CSV.`
       },
       error: 'Error',
     })
@@ -71,8 +64,8 @@ export function DataTableBulkActions<TData>({
 
   return (
     <>
-      <BulkActionsToolbar table={table} entityName='task'>
-        <DropdownMenu>
+      <BulkActionsToolbar table={table} entityName='designation'>
+        {/* <DropdownMenu>
           <Tooltip>
             <TooltipTrigger asChild>
               <DropdownMenuTrigger asChild>
@@ -161,7 +154,7 @@ export function DataTableBulkActions<TData>({
           <TooltipContent>
             <p>Export tasks</p>
           </TooltipContent>
-        </Tooltip>
+        </Tooltip> */}
 
         <Tooltip>
           <TooltipTrigger asChild>
@@ -170,15 +163,15 @@ export function DataTableBulkActions<TData>({
               size='icon'
               onClick={() => setShowDeleteConfirm(true)}
               className='size-8'
-              aria-label='Delete selected tasks'
-              title='Delete selected tasks'
+              aria-label='Delete selected Designations'
+              title='Delete selected Designations'
             >
               <Trash2 />
-              <span className='sr-only'>Delete selected tasks</span>
+              <span className='sr-only'>Delete selected Designations</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Delete selected tasks</p>
+            <p>Delete selected Designations</p>
           </TooltipContent>
         </Tooltip>
       </BulkActionsToolbar>

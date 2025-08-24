@@ -5,10 +5,10 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { TasksProvider } from '../features/tasks/components/tasks-provider'
+import { useDesignationList } from '@/hooks/useDesignation'
 import DesignationTable from '../features/tasks/components/DesignationTable'
 import DesignationDialogs from '../features/tasks/components/DesignationDialogs'
 import DesignationPrimaryButtons from '../features/tasks/components/DesignationPrimaryButtons'
-import { useDesignationList } from '@/hooks/useDesignation'
 
 // get and parsed shopId from ls
 const getCurrentShopId = (): string | null => {
@@ -25,7 +25,6 @@ const getCurrentShopId = (): string | null => {
 const Designation = () => {
   const shopId = getCurrentShopId()
   const { data, isLoading } = useDesignationList(shopId || "")
-  console.log(data)
 
   return (
     <TasksProvider>
@@ -52,11 +51,10 @@ const Designation = () => {
           {isLoading ? (
             <p>Loading designations...</p>
           ) : (
-            <DesignationTable data={data} />
+            <DesignationTable data={data || []} />
           )}
         </div>
       </Main>
-
       <DesignationDialogs />
     </TasksProvider>
   )

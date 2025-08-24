@@ -92,7 +92,7 @@ const DesignationTable = ({ data }: DataTableProps) => {
         </div>
         <DataTableViewOptions table={table} />
       </div>
-      <div className='overflow-hidden rounded-md border'>
+      <div className='rounded-md border'>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

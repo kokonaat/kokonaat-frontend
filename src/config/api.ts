@@ -15,5 +15,7 @@ export const apiEndpoints: ApiEndpoints = {
     designation: {
         designationList: "/designation",
         createDesignation: "/designation",
+        updateDesignation: "/designation",
+        deleteDesignation: "/designation",
     }
 }

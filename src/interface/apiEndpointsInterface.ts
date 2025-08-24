@@ -1,16 +1,17 @@
 export interface ApiEndpoints {
     auth: {
-        signUp: string,
-        signIn: string,
-    },
+        signUp: string
+        signIn: string
+    }
     shop: {
-        createShop: string,
-        shopList: string,
+        createShop: string
+        shopList: string
         updateShop: string
     }
-    ,
     designation: {
-        designationList: string,
-        createDesignation: string,
+        designationList: string
+        createDesignation: string
+        updateDesignation: string
+        deleteDesignation: string
     }
 }

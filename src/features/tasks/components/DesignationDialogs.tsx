@@ -3,63 +3,85 @@ import { ConfirmDialog } from '@/components/confirm-dialog'
 import DesignationsMutateDrawer from './DesignationsMutateDrawer'
 import DesignationImportDialog from './DesignationImportDialog'
 import { useTasks } from './tasks-provider'
+import { useDeleteDesignation, useUpdateDesignation } from '@/hooks/useDesignation'
 
 const DesignationDialogs = () => {
   const { open, setOpen, currentRow, setCurrentRow } = useTasks()
+  const shopId = localStorage.getItem('shop-storage')
+    ? JSON.parse(localStorage.getItem('shop-storage')!).state?.currentShopId
+    : null
+
+  const deleteMutation = useDeleteDesignation(shopId || '')
+  const updateMutation = useUpdateDesignation(shopId || '')
+
   return (
     <>
+      {/* Create modal */}
       <DesignationsMutateDrawer
         key='designation-create'
         open={open === 'create'}
         onOpenChange={() => setOpen('create')}
       />
 
+      {/* Import modal */}
       <DesignationImportDialog
         key='designations-import'
         open={open === 'import'}
         onOpenChange={() => setOpen('import')}
       />
 
+      {/* Update & Delete modals */}
       {currentRow && (
         <>
+          {/* Update modal */}
           <DesignationsMutateDrawer
             key={`designation-update-${currentRow.id}`}
             open={open === 'update'}
-            onOpenChange={() => {
-              setOpen('update')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
+            onOpenChange={(val: boolean) => setOpen(val ? 'update' : null)}
             currentRow={currentRow}
+            onSave={(updatedData: { title: string }) => {
+              if (!shopId || !currentRow) return
+              updateMutation.mutate(
+                { id: currentRow.id, data: updatedData },
+                {
+                  onSuccess: () => {
+                    showSubmittedData(
+                      updatedData,
+                      'Designation updated successfully:'
+                    )
+                    setOpen(null)
+                    setCurrentRow(null)
+                  },
+                }
+              )
+            }}
           />
 
+          {/* Delete modal */}
           <ConfirmDialog
             key='designation-delete'
             destructive
             open={open === 'delete'}
-            onOpenChange={() => {
-              setOpen('delete')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
+            onOpenChange={(val: boolean) => setOpen(val ? 'delete' : null)}
             handleConfirm={() => {
-              setOpen(null)
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-              showSubmittedData(
-                currentRow,
-                'The following designation has been deleted:'
-              )
+              if (!shopId || !currentRow) return
+              deleteMutation.mutate(currentRow.id, {
+                onSuccess: () => {
+                  showSubmittedData(
+                    currentRow,
+                    'The following designation has been deleted:'
+                  )
+                  setOpen(null)
+                  setCurrentRow(null)
+                },
+              })
             }}
             className='max-w-md'
-            title={`Delete this designation: ${currentRow.id} ?`}
+            title={`Delete this designation: ${currentRow.title} ?`}
             desc={
               <>
-                You are about to delete a designation with the ID{' '}
-                <strong>{currentRow.id}</strong>. <br />
+                You are about to delete a designation with the Title{' '}
+                <strong>{currentRow.title}</strong>. <br />
                 This action cannot be undone.
               </>
             }

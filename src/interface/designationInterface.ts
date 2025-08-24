@@ -1,5 +1,4 @@
 export interface DesignationInterface {
-    [x: string]: string
     id: string
     title: string
     createdAt: string

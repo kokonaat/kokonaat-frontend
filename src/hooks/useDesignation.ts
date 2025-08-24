@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { DesignationInterface } from '@/interface/designationInterface'
-import { createDesignation, designationList } from '@/api/designationApi'
+import { createDesignation, deleteDesignation, designationList, updateDesignation } from '@/api/designationApi'
 
 const DESIGNATION_KEYS = {
     all: ['designations'] as const,
 }
 
+// show list
 export const useDesignationList = (shopId: string) => {
     return useQuery<{ designations: DesignationInterface[] }>({
         queryKey: [...DESIGNATION_KEYS.all, shopId],
@@ -14,6 +15,7 @@ export const useDesignationList = (shopId: string) => {
     })
 }
 
+// create
 export const useCreateDesignation = (shopId: string) => {
     const queryClient = useQueryClient()
     return useMutation({
@@ -21,5 +23,24 @@ export const useCreateDesignation = (shopId: string) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [...DESIGNATION_KEYS.all, shopId] })
         },
+    })
+}
+
+// update
+export const useUpdateDesignation = (shopId: string) => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: ({ id, data }: { id: string; data: { title: string } }) =>
+            updateDesignation({ id, data, shopId }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: [...DESIGNATION_KEYS.all, shopId] }),
+    })
+}
+
+// delete
+export const useDeleteDesignation = (shopId: string) => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: deleteDesignation,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: [...DESIGNATION_KEYS.all, shopId] }),
     })
 }

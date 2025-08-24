@@ -20,8 +20,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { useCreateDesignation } from '@/hooks/useDesignation'
+import { useCreateDesignation, useUpdateDesignation } from '@/hooks/useDesignation'
 import { getCurrentShopId } from '@/lib/getCurrentShopId'
+import { useEffect } from 'react'
 
 type TaskMutateDrawerProps = {
   open: boolean
@@ -39,30 +40,48 @@ const DesignationsMutateDrawer = ({
   onOpenChange,
   currentRow,
 }: TaskMutateDrawerProps) => {
-  const isUpdate = !!currentRow
   const shopId = getCurrentShopId()
-  const createDesignation = useCreateDesignation(shopId || "")
+  const isUpdate = !!currentRow
+
+  const createMutation = useCreateDesignation(shopId || '')
+  const updateMutation = useUpdateDesignation(shopId || '')
 
   const form = useForm<TaskForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: currentRow ?? { title: "" },
+    defaultValues: { title: '' },
   })
 
-  const onSubmit = (data: TaskForm) => {
-    if (!shopId) {
-      console.error("Shop ID not found")
-      return
-    }
+  // Reset form values whenever currentRow changes
+  useEffect(() => {
+    form.reset(currentRow ?? { title: '' })
+  }, [currentRow])
 
-    createDesignation.mutate(
-      { title: data.title, shop: shopId },
-      {
-        onSuccess: () => {
-          onOpenChange(false)
-          form.reset()
-        },
-      }
-    )
+  const onSubmit = (data: TaskForm) => {
+    if (!shopId) return
+
+    if (isUpdate && currentRow) {
+      // Update existing designation
+      updateMutation.mutate(
+        { id: currentRow.id, data },
+        {
+          onSuccess: () => {
+            onOpenChange(false)
+            form.reset()
+          },
+        }
+      )
+    } else {
+      // Create new designation
+      createMutation.mutate(
+        { title: data.title, shop: shopId },
+        {
+          onSuccess: () => {
+            onOpenChange(false)
+            form.reset()
+          },
+        }
+      )
+    }
   }
 
   return (
@@ -70,7 +89,7 @@ const DesignationsMutateDrawer = ({
       open={open}
       onOpenChange={(v) => {
         onOpenChange(v)
-        form.reset()
+        form.reset(currentRow ?? { title: '' })
       }}
     >
       <SheetContent className='flex flex-col'>

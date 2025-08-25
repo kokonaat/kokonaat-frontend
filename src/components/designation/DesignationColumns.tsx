@@ -1,13 +1,13 @@
+import { useState } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import { ClipboardIcon, CheckIcon } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { Badge } from '@/components/ui/badge'
+// import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { labels } from '../data/data'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
 import { DesignationInterface } from '@/interface/designationInterface'
-import { useState } from 'react'
+// import { labels } from './data/data'
 
 export const DesignationColumns: ColumnDef<DesignationInterface>[] = [
   {
@@ -100,18 +100,18 @@ export const DesignationColumns: ColumnDef<DesignationInterface>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Title' />
     ),
-    cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.label)
+    // cell: ({ row }) => {
+    //   const label = labels.find((label) => label.value === row.original.label)
 
-      return (
-        <div className='flex space-x-2'>
-          {label && <Badge variant='outline'>{label.label}</Badge>}
-          <span className='max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]'>
-            {row.getValue('title')}
-          </span>
-        </div>
-      )
-    },
+    //   return (
+    //     <div className='flex space-x-2'>
+    //       {label && <Badge variant='outline'>{label.label}</Badge>}
+    //       <span className='max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]'>
+    //         {row.getValue('title')}
+    //       </span>
+    //     </div>
+    //   )
+    // },
   },
   {
     id: 'actions',

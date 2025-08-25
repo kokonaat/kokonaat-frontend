@@ -8,7 +8,7 @@ const DESIGNATION_KEYS = {
 
 // show list
 export const useDesignationList = (shopId: string) => {
-    return useQuery<{ designations: DesignationInterface[] }>({
+    return useQuery<DesignationInterface[]>({
         queryKey: [...DESIGNATION_KEYS.all, shopId],
         queryFn: () => designationList(shopId),
         enabled: !!shopId,

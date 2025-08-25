@@ -102,7 +102,7 @@ const DesignationsMutateDrawer = ({
         </SheetHeader>
         <Form {...form}>
           <form
-            id='tasks-form'
+            id='designation-form'
             onSubmit={form.handleSubmit(onSubmit)}
             className='flex-1 space-y-6 overflow-y-auto px-4'
           >
@@ -125,7 +125,7 @@ const DesignationsMutateDrawer = ({
           <SheetClose asChild>
             <Button variant='outline'>Close</Button>
           </SheetClose>
-          <Button form='tasks-form' type='submit'>
+          <Button form='designation-form' type='submit'>
             Save changes
           </Button>
         </SheetFooter>

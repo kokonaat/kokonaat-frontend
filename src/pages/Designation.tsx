@@ -4,11 +4,11 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { TasksProvider } from '../features/tasks/components/tasks-provider'
+import { TasksProvider } from '../components/designation/tasks-provider'
 import { useDesignationList } from '@/hooks/useDesignation'
-import DesignationTable from '../features/tasks/components/DesignationTable'
-import DesignationDialogs from '../features/tasks/components/DesignationDialogs'
-import DesignationPrimaryButtons from '../features/tasks/components/DesignationPrimaryButtons'
+import DesignationTable from '../components/designation/DesignationTable'
+import DesignationDialogs from '@/components/designation/DesignationDialogs'
+import DesignationPrimaryButtons from '@/components/designation/DesignationPrimaryButtons'
 
 // get and parsed shopId from ls
 const getCurrentShopId = (): string | null => {

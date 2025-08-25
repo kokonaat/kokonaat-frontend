@@ -1,6 +1,6 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useTasks } from './tasks-provider'
+import { useTasks } from '@/components/designation/tasks-provider'
 
 const DesignationPrimaryButtons = () => {
   const { setOpen } = useTasks()

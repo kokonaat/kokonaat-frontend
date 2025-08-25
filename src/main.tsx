@@ -30,6 +30,7 @@ import ProtectedRoute from './routes/ProtectedRoute'
 import Shops from './pages/Shops'
 import Designation from './pages/Designation'
 import './styles/index.css'
+import Customers from './pages/Customers'
 
 // --- React Query Setup ---
 const queryClient = new QueryClient({
@@ -75,6 +76,7 @@ if (!rootElement.innerHTML) {
                           <Route element={<AuthenticatedLayout />}>
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/shops" element={<Shops />} />
+                            <Route path="/customers" element={<Customers />} />
                             <Route path="/user/designation" element={<Designation />} />
                             <Route path="/users" element={<Users />} />
                             <Route path="/apps" element={<Apps />} />

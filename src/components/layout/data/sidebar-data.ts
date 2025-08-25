@@ -13,9 +13,10 @@ import {
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
-  IdCardLanyard
+  IdCardLanyard,
+  UsersRound,
 } from 'lucide-react'
-import { type SidebarData } from '../types'
+import { SidebarData } from '@/interface/sidebarDataInerface'
 
 export const sidebarData: SidebarData = {
   user: {
@@ -58,6 +59,11 @@ export const sidebarData: SidebarData = {
           title: 'Designation',
           url: '/user/designation',
           icon: IdCardLanyard,
+        },
+        {
+          title: 'Customer',
+          url: '/customers',
+          icon: UsersRound,
         },
         {
           title: 'Apps',

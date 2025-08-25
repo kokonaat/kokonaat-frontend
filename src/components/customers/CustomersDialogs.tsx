@@ -1,11 +1,10 @@
 import { showSubmittedData } from '@/utils/show-submitted-data'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import DesignationsMutateDrawer from './DesignationsMutateDrawer'
-import DesignationImportDialog from './DesignationImportDialog'
-import { useTasks } from './tasks-provider'
 import { useDeleteDesignation, useUpdateDesignation } from '@/hooks/useDesignation'
+import { useTasks } from '@/components/designation/tasks-provider'
+import CustomersMutateDrawer from './CustomersMutateDrawer'
 
-const DesignationDialogs = () => {
+const CustomersDialogs = () => {
   const { open, setOpen, currentRow, setCurrentRow } = useTasks()
   const shopId = localStorage.getItem('shop-storage')
     ? JSON.parse(localStorage.getItem('shop-storage')!).state?.currentShopId
@@ -17,25 +16,18 @@ const DesignationDialogs = () => {
   return (
     <>
       {/* Create modal */}
-      <DesignationsMutateDrawer
-        key='designation-create'
+      <CustomersMutateDrawer
+        key='customer-create'
         open={open === 'create'}
         onOpenChange={() => setOpen('create')}
-      />
-
-      {/* Import modal */}
-      <DesignationImportDialog
-        key='designations-import'
-        open={open === 'import'}
-        onOpenChange={() => setOpen('import')}
       />
 
       {/* Update & Delete modals */}
       {currentRow && (
         <>
           {/* Update modal */}
-          <DesignationsMutateDrawer
-            key={`designation-update-${currentRow.id}`}
+          <CustomersMutateDrawer
+            key={`customer-update-${currentRow.id}`}
             open={open === 'update'}
             onOpenChange={(val: boolean) => setOpen(val ? 'update' : null)}
             currentRow={currentRow}
@@ -47,7 +39,7 @@ const DesignationDialogs = () => {
                   onSuccess: () => {
                     showSubmittedData(
                       updatedData,
-                      'Designation updated successfully:'
+                      'customer updated successfully:'
                     )
                     setOpen(null)
                     setCurrentRow(null)
@@ -59,7 +51,7 @@ const DesignationDialogs = () => {
 
           {/* Delete modal */}
           <ConfirmDialog
-            key='designation-delete'
+            key='customer-delete'
             destructive
             open={open === 'delete'}
             onOpenChange={(val: boolean) => setOpen(val ? 'delete' : null)}
@@ -77,10 +69,10 @@ const DesignationDialogs = () => {
               })
             }}
             className='max-w-md'
-            title={`Delete this designation: ${currentRow.title} ?`}
+            title={`Delete this customer: ${currentRow.title} ?`}
             desc={
               <>
-                You are about to delete a designation with the Title{' '}
+                You are about to delete a customer with the Title{' '}
                 <strong>{currentRow.title}</strong>. <br />
                 This action cannot be undone.
               </>
@@ -93,4 +85,4 @@ const DesignationDialogs = () => {
   )
 }
 
-export default DesignationDialogs
+export default CustomersDialogs

@@ -5,12 +5,12 @@ import { apiEndpoints } from "@/config/api"
 // show list
 export const designationList = async (
     shopId: string
-): Promise<{ designations: DesignationInterface[] }> => {
+): Promise<DesignationInterface[]> => {
     if (!shopId) throw new Error("Shop ID is required")
     const res = await axiosInstance.get(
         `${apiEndpoints.designation.designationList}?shopId=${shopId}`
     )
-    return res.data
+    return res.data as DesignationInterface[]
 }
 
 // create

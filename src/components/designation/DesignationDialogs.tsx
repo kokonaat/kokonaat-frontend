@@ -1,7 +1,7 @@
 import { showSubmittedData } from '@/utils/show-submitted-data'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteDesignation, useUpdateDesignation } from '@/hooks/useDesignation'
-import { useTasks } from '@/features/tasks/components/tasks-provider'
+import { useTasks } from './tasks-provider'
 import DesignationsMutateDrawer from './DesignationsMutateDrawer'
 
 const DesignationDialogs = () => {

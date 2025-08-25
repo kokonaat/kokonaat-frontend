@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom"
 import { Toaster } from "sonner"
 import ProtectedRoute from "./ProtectedRoute"
 import AuthenticatedLayout from "@/components/layout/authenticated-layout"
+import Loader from "@/components/layout/Loader"
 
 // Lazy load pages
 const SignIn = lazy(() => import("@/pages/SignIn"))
@@ -23,7 +24,7 @@ const AppRoutes = () => {
     return (
         <>
             <Toaster position="top-center" />
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<Loader />}>
                 <Routes>
                     <Route path="/sign-in" element={<SignIn />} />
                     <Route path="/sign-up" element={<SignUp />} />

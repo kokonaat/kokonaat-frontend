@@ -1,14 +1,12 @@
-'use client'
-
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/utils/sleep'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { useDeleteDesignation } from '@/hooks/useDesignation'
 
 type TaskMultiDeleteDialogProps<TData> = {
   open: boolean
@@ -27,7 +25,10 @@ export function TasksMultiDeleteDialog<TData>({
 
   const selectedRows = table.getFilteredSelectedRowModel().rows
 
-  const handleDelete = () => {
+  // passing shopId dynamically
+  const deleteMutation = useDeleteDesignation("your-shop-id") 
+
+  const handleDelete = async () => {
     if (value.trim() !== CONFIRM_WORD) {
       toast.error(`Please type "${CONFIRM_WORD}" to confirm.`)
       return
@@ -35,16 +36,20 @@ export function TasksMultiDeleteDialog<TData>({
 
     onOpenChange(false)
 
-    toast.promise(sleep(2000), {
-      loading: 'Deleting tasks...',
-      success: () => {
-        table.resetRowSelection()
-        return `Deleted ${selectedRows.length} ${
-          selectedRows.length > 1 ? 'tasks' : 'task'
-        }`
-      },
-      error: 'Error',
-    })
+    toast.promise(
+      Promise.all(
+        selectedRows.map((row) => deleteMutation.mutateAsync(row.original.id))
+      ),
+      {
+        loading: 'Deleting Designations...',
+        success: () => {
+          table.resetRowSelection()
+          return `Deleted ${selectedRows.length} ${selectedRows.length > 1 ? 'Designations' : 'Designation'
+            }`
+        },
+        error: 'Error deleting Designation',
+      }
+    )
   }
 
   return (
@@ -60,13 +65,13 @@ export function TasksMultiDeleteDialog<TData>({
             size={18}
           />{' '}
           Delete {selectedRows.length}{' '}
-          {selectedRows.length > 1 ? 'tasks' : 'task'}
+          {selectedRows.length > 1 ? 'Designations' : 'Designation'}
         </span>
       }
       desc={
         <div className='space-y-4'>
           <p className='mb-2'>
-            Are you sure you want to delete the selected tasks? <br />
+            Are you sure you want to delete the selected Designations? <br />
             This action cannot be undone.
           </p>
 

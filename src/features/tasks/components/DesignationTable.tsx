@@ -21,21 +21,23 @@ import {
 } from '@/components/ui/table'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { DataTablePagination } from './data-table-pagination'
-import { DataTableToolbar } from './data-table-toolbar'
-import { tasksColumns as columns } from './tasks-columns'
-import { type Task } from '../data/schema'
+import { DesignationColumns as columns } from './DesignationColumns'
+import { Input } from '@/components/ui/input'
+import { DataTableViewOptions } from './data-table-view-options'
+import { DesignationInterface } from '@/interface/designationInterface'
+import { ColumnFiltersState } from '@tanstack/react-table'
 
 type DataTableProps = {
-  data: Task[]
+  data: DesignationInterface[]
 }
 
-export function TasksTable({ data }: DataTableProps) {
+const DesignationTable = ({ data }: DataTableProps) => {
   // Table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [globalFilter, setGlobalFilter] = useState('')
-  const [columnFilters, setColumnFilters] = useState([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
 
   const table = useReactTable({
@@ -79,8 +81,18 @@ export function TasksTable({ data }: DataTableProps) {
 
   return (
     <div className='space-y-4 max-sm:has-[div[role="toolbar"]]:mb-16'>
-      <DataTableToolbar table={table} />
-      <div className='overflow-hidden rounded-md border'>
+      <div className='flex items-center justify-between'>
+        <div className='flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2'>
+          <Input
+            placeholder='Filter by title or ID...'
+            value={table.getState().globalFilter ?? ''}
+            onChange={(event) => table.setGlobalFilter(event.target.value)}
+            className='h-8 w-[150px] lg:w-[250px]'
+          />
+        </div>
+        <DataTableViewOptions table={table} />
+      </div>
+      <div className='rounded-md border'>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -121,3 +133,5 @@ export function TasksTable({ data }: DataTableProps) {
     </div>
   )
 }
+
+export default DesignationTable

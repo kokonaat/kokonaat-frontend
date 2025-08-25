@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ConfigDrawer } from "@/components/config-drawer"
 import { Header } from "@/components/layout/header"
 import { Main } from "@/components/layout/main"
@@ -13,11 +13,19 @@ import { useShopList } from "@/hooks/useShop"
 import { ShopInterface } from "@/interface/shopInterface"
 import ShopCard from "@/components/ShopCard"
 import ShopDrawer from "@/components/ShopDrawer"
+import { useShopStore } from "@/stores/shopStore"
 
 const Shops = () => {
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [currentShop, setCurrentShop] = useState<ShopInterface | undefined>(undefined)
     const { data, isLoading } = useShopList()
+    const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
+
+    useEffect(() => {
+        if (data?.shops?.length === 1 && data.shops[0].id) {
+            setCurrentShopId(data.shops[0].id)
+        }
+    }, [data, setCurrentShopId])
 
     return (
         <div>
@@ -57,7 +65,7 @@ const Shops = () => {
 
                 <Separator className="shadow-sm" />
 
-                <div className="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">   
+                <div className="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {isLoading ? (
                         <p>Loading shops...</p>
                     ) : (

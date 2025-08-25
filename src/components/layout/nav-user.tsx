@@ -24,6 +24,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { useAuthStore } from '@/stores/authStore'
+import { useShopStore } from '@/stores/shopStore'
 
 type NavUserProps = {
   user: {
@@ -35,11 +36,13 @@ type NavUserProps = {
 
 export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar()
-  const {clearTokens} = useAuthStore()
+  const { clearTokens } = useAuthStore()
+  const { clearCurrentShopId } = useShopStore()
   const navigate = useNavigate()
 
   const handleLogOut = () => {
     clearTokens()
+    clearCurrentShopId()
     navigate('/sign-in')
   }
 

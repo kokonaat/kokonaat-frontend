@@ -29,3 +29,9 @@ export interface ShopProps {
     shop: ShopInterface
     onEdit: (shop: ShopInterface) => void
 }
+
+export interface ShopStoreInterface {
+    currentShopId: string | null
+    setCurrentShopId: (id: string) => void
+    clearCurrentShopId: () => void
+}

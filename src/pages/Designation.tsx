@@ -28,7 +28,7 @@ const Designation = () => {
 
   return (
     <TasksProvider>
-      <Header fixed>
+      <Header>
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
           <ThemeSwitch />

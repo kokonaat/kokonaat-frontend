@@ -1,4 +1,4 @@
-import SignInForm from '@/components/SignInForm'
+import SignInForm from '@/components/signIn/SignInForm'
 import { Link } from 'react-router-dom'
 import {
     Card,

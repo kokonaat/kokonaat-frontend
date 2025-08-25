@@ -14,8 +14,8 @@ import { TopNav } from '@/components/layout/top-nav'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import DashboardOverview from '@/components/DashboardOverview'
-import RecentSales from '@/components/RecenetSales'
+import DashboardOverview from '@/components/dashboard/DashboardOverview'
+import RecentSales from '@/components/dashboard/RecenetSales'
 
 const Dashboard = () => {
   return (

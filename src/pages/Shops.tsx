@@ -11,8 +11,8 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { useShopList } from "@/hooks/useShop"
 import { ShopInterface } from "@/interface/shopInterface"
-import ShopCard from "@/components/ShopCard"
-import ShopDrawer from "@/components/ShopDrawer"
+import ShopCard from "@/components/shop/ShopCard"
+import ShopDrawer from "@/components/shop/ShopDrawer"
 import { useShopStore } from "@/stores/shopStore"
 
 const Shops = () => {

@@ -1,5 +1,6 @@
+import { Table } from "@tanstack/react-table"
+
 export interface DesignationInterface {
-    // [x: string]: string
     id: string
     title: string
     createdAt: string
@@ -20,3 +21,14 @@ export interface DesignationMutateDrawerProps {
 export interface DesignationFormInterface {
     title: string
 }
+
+export interface TaskMultiDeleteDialogProps<TData extends { id: string }> {
+    open: boolean
+    onOpenChange: (open: boolean) => void
+    table: Table<TData>
+}
+
+export interface DesignationDataTableProps {
+    data: DesignationInterface[]
+  }
+  

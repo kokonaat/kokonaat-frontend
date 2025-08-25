@@ -17,5 +17,11 @@ export const apiEndpoints: ApiEndpoints = {
         createDesignation: "/designation",
         updateDesignation: "/designation",
         deleteDesignation: "/designation",
+    },
+    customer: {
+        customerList: "/customer",
+        createCustomer: "/customer",
+        updateCustomer: "/customer",
+        deleteCustomer: "/customer",
     }
 }

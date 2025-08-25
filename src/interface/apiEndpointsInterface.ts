@@ -14,4 +14,10 @@ export interface ApiEndpoints {
         updateDesignation: string
         deleteDesignation: string
     }
+    customer: {
+        customerList: string
+        createCustomer: string
+        updateCustomer: string
+        deleteCustomer: string
+    }
 }

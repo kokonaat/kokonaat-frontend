@@ -24,14 +24,10 @@ import { DataTablePagination } from './data-table-pagination'
 import { DesignationColumns as columns } from './DesignationColumns'
 import { Input } from '@/components/ui/input'
 import { DataTableViewOptions } from './data-table-view-options'
-import { DesignationInterface } from '@/interface/designationInterface'
+import { DesignationDataTableProps } from '@/interface/designationInterface'
 import { ColumnFiltersState } from '@tanstack/react-table'
 
-type DataTableProps = {
-  data: DesignationInterface[]
-}
-
-const DesignationTable = ({ data }: DataTableProps) => {
+const DesignationTable = ({ data }: DesignationDataTableProps) => {
   // Table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])

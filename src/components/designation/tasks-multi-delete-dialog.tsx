@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { type Table } from '@tanstack/react-table'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -7,26 +6,25 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteDesignation } from '@/hooks/useDesignation'
-
-type TaskMultiDeleteDialogProps<TData> = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  table: Table<TData>
-}
+import { TaskMultiDeleteDialogProps } from '@/interface/designationInterface'
 
 const CONFIRM_WORD = 'DELETE'
 
-export function TasksMultiDeleteDialog<TData>({
+export function TasksMultiDeleteDialog<TData extends { id: string }>({
   open,
   onOpenChange,
   table,
 }: TaskMultiDeleteDialogProps<TData>) {
   const [value, setValue] = useState('')
 
+  const shopId = localStorage.getItem('shop-storage')
+    ? JSON.parse(localStorage.getItem('shop-storage')!).state?.currentShopId
+    : null
+
   const selectedRows = table.getFilteredSelectedRowModel().rows
 
   // passing shopId dynamically
-  const deleteMutation = useDeleteDesignation("your-shop-id") 
+  const deleteMutation = useDeleteDesignation(shopId)
 
   const handleDelete = async () => {
     if (value.trim() !== CONFIRM_WORD) {

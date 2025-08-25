@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import AuthLayout from '@/features/auth/auth-layout'
-import SignUpForm from '@/components/SignUpForm'
+import SignUpForm from '@/components/signUp/SignUpForm'
 
 const SignUp = () => {
   return (

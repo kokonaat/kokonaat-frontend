@@ -1,11 +1,11 @@
 import { showSubmittedData } from '@/utils/show-submitted-data'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteDesignation, useUpdateDesignation } from '@/hooks/useDesignation'
-import { useTasks } from '@/components/designation/tasks-provider'
+import { useCustomers } from './customer-provider'
 import CustomersMutateDrawer from './CustomersMutateDrawer'
 
 const CustomersDialogs = () => {
-  const { open, setOpen, currentRow, setCurrentRow } = useTasks()
+  const { open, setOpen, currentRow, setCurrentRow } = useCustomers()
   const shopId = localStorage.getItem('shop-storage')
     ? JSON.parse(localStorage.getItem('shop-storage')!).state?.currentShopId
     : null
@@ -61,7 +61,7 @@ const CustomersDialogs = () => {
                 onSuccess: () => {
                   showSubmittedData(
                     currentRow,
-                    'The following designation has been deleted:'
+                    'The following customer has been deleted:'
                   )
                   setOpen(null)
                   setCurrentRow(null)

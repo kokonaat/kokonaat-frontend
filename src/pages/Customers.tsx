@@ -4,13 +4,14 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { TasksProvider } from '../components/designation/tasks-provider'
+import { CustomersProvider } from '@/components/customers/customer-provider'
 import CustomerCreateButton from '@/components/customers/CustomerCreateButton'
 import CustomerTable from '@/components/customers/CustomerTable'
+import CustomersDialogs from '@/components/customers/CustomersDialogs'
 
 const Customers = () => {
   return (
-    <TasksProvider>
+    <CustomersProvider>
       <Header fixed>
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
@@ -34,8 +35,8 @@ const Customers = () => {
           <CustomerTable data={[]} />
         </div>
       </Main>
-      {/* <DesignationDialogs /> */}
-    </TasksProvider>
+      <CustomersDialogs />
+    </CustomersProvider>
   )
 }
 

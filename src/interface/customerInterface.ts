@@ -1,0 +1,35 @@
+export interface Shop {
+    id: string;
+    name: string;
+}
+
+export interface CustomerFormInterface {
+    shop: any;
+    name: string;
+    email?: string | null;
+    phone: string;
+    address: string;
+    city?: string | null;
+    country?: string | null;
+    isB2B?: boolean;
+    contactPerson?: string | null;
+    contactPersonPhone?: string | null;
+    shopId: string;
+}
+
+
+export interface Customer {
+    id: string;
+    name: string;
+    email: string | null;
+    phone: string;
+    address: string;
+    city: string | null;
+    country: string | null;
+    isB2B: boolean;
+    contactPerson: string | null;
+    contactPersonPhone: string | null;
+    shop: Shop;
+}
+
+export type CustomerListInterface = Customer[]

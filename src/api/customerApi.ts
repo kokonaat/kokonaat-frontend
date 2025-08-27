@@ -29,7 +29,7 @@ export const updateCustomer = async ({
     shopId: string
 }) => {
     if (!shopId) throw new Error("Shop ID is required")
-    const res = await axiosInstance.patch(
+    const res = await axiosInstance.put(
         `${apiEndpoints.customer.updateCustomer}/${id}?shopId=${shopId}`,
         data
     )

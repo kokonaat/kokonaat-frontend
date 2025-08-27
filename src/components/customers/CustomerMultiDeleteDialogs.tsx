@@ -39,7 +39,7 @@ export function CustomersMultiDeleteDialog<TData extends { id: string }>({
         selectedRows.map((row) => deleteMutation.mutateAsync(row.original.id))
       ),
       {
-        loading: 'Deleting Designations...',
+        loading: 'Deleting Customers...',
         success: () => {
           table.resetRowSelection()
           return `Deleted ${selectedRows.length} ${selectedRows.length > 1 ? 'Customers' : 'Designation'

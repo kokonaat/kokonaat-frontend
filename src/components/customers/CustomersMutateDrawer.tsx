@@ -25,6 +25,7 @@ import { toast } from "sonner"
 import { useCreateCustomer, useUpdateCustomer } from "@/hooks/useCustomer"
 import { CustomerMutateDrawerProps } from "@/interface/customerInterface"
 import { getCurrentShopId } from "@/lib/getCurrentShopId"
+import { Checkbox } from "../ui/checkbox"
 
 // zod schema form
 const formSchema = z.object({
@@ -86,7 +87,7 @@ const CustomersMutateDrawer = ({
   //  submit data
   const onSubmit: SubmitHandler<CustomerFormSchema> = (data) => {
     if (!shopId) return toast.error("Shop ID not found!")
-
+      
     const normalizedData = {
       ...data,
       email: data.email ?? null,
@@ -97,15 +98,13 @@ const CustomersMutateDrawer = ({
       contactPersonPhone: data.contactPersonPhone ?? null,
       shopId,
     }
-
+    
     if (isUpdate && currentRow?.id) {
-      // if (updateMutation.isLoading) return
       updateMutation.mutate(
         // submitting with shopId
         { id: currentRow.id, data: normalizedData },
         {
           onSuccess: () => {
-            toast.success("Customer updated successfully!")
             onOpenChange(false)
             form.reset()
             onSave?.(normalizedData)
@@ -253,15 +252,14 @@ const CustomersMutateDrawer = ({
               control={form.control}
               name="isB2B"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>B2B</FormLabel>
+                <FormItem className="flex items-center space-x-3">
                   <FormControl>
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={field.value ?? false}
-                      onChange={(e) => field.onChange(e.target.checked)}
+                      onCheckedChange={(checked) => field.onChange(checked)}
                     />
                   </FormControl>
+                  <FormLabel className="m-0">B2B</FormLabel>
                   <FormMessage />
                 </FormItem>
               )}

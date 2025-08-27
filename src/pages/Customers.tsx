@@ -5,11 +5,27 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { CustomersProvider } from '@/components/customers/customer-provider'
+import { useCustomerList } from '@/hooks/useCustomer'
 import CustomerCreateButton from '@/components/customers/CustomerCreateButton'
 import CustomerTable from '@/components/customers/CustomerTable'
 import CustomersDialogs from '@/components/customers/CustomersDialogs'
 
+// get and parsed shopId from ls
+const getCurrentShopId = (): string | null => {
+  const lsData = localStorage.getItem("shop-storage")
+  if (!lsData) return null
+  try {
+    const parsed = JSON.parse(lsData)
+    return parsed.state?.currentShopId || null
+  } catch {
+    return null
+  }
+}
+
 const Customers = () => {
+  const shopId = getCurrentShopId()
+  const { data, isLoading } = useCustomerList(shopId || "")
+
   return (
     <CustomersProvider>
       <Header fixed>
@@ -32,7 +48,11 @@ const Customers = () => {
           <CustomerCreateButton />
         </div>
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          <CustomerTable data={[]} />
+          {isLoading ? (
+            <p>Loading customers data...</p>
+          ) : (
+            <CustomerTable data={data || []} />
+          )}
         </div>
       </Main>
       <CustomersDialogs />

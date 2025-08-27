@@ -13,7 +13,7 @@ export const customerList = async (shopId: string): Promise<CustomerListInterfac
 
 // create
 export const createCustomer = async (data: CustomerFormInterface) => {
-    if (!data.shop) throw new Error("Shop ID is required")
+    if (!data.shopId) throw new Error("Shop ID is required")
     const res = await axiosInstance.post(apiEndpoints.customer.createCustomer, data)
     return res.data
 }
@@ -37,7 +37,10 @@ export const updateCustomer = async ({
 }
 
 // delete
-export const deleteCustomer = async (id: string) => {
-    const res = await axiosInstance.delete(`${apiEndpoints.customer.deleteCustomer}/${id}`)
+export const deleteCustomer = async ({ id, shopId }: { id: string; shopId: string }) => {
+    if (!shopId) throw new Error("Shop ID is required")
+    const res = await axiosInstance.delete(
+        `${apiEndpoints.customer.deleteCustomer}/${id}?shopId=${shopId}`
+    )
     return res.data
 }

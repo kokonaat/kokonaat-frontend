@@ -5,7 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { useDeleteDesignation } from '@/hooks/useDesignation'
+import { useDeleteCustomer } from '@/hooks/useCustomer'
 import { TaskMultiDeleteDialogProps } from '@/interface/designationInterface'
 
 const CONFIRM_WORD = 'DELETE'
@@ -24,7 +24,7 @@ export function CustomersMultiDeleteDialog<TData extends { id: string }>({
   const selectedRows = table.getFilteredSelectedRowModel().rows
 
   // passing shopId dynamically
-  const deleteMutation = useDeleteDesignation(shopId)
+  const deleteMutation = useDeleteCustomer(shopId)
 
   const handleDelete = async () => {
     if (value.trim() !== CONFIRM_WORD) {
@@ -42,10 +42,10 @@ export function CustomersMultiDeleteDialog<TData extends { id: string }>({
         loading: 'Deleting Designations...',
         success: () => {
           table.resetRowSelection()
-          return `Deleted ${selectedRows.length} ${selectedRows.length > 1 ? 'Designations' : 'Designation'
+          return `Deleted ${selectedRows.length} ${selectedRows.length > 1 ? 'Customers' : 'Designation'
             }`
         },
-        error: 'Error deleting Designation',
+        error: 'Error deleting Customer',
       }
     )
   }
@@ -63,13 +63,13 @@ export function CustomersMultiDeleteDialog<TData extends { id: string }>({
             size={18}
           />{' '}
           Delete {selectedRows.length}{' '}
-          {selectedRows.length > 1 ? 'Designations' : 'Designation'}
+          {selectedRows.length > 1 ? 'Customers' : 'Customer'}
         </span>
       }
       desc={
         <div className='space-y-4'>
           <p className='mb-2'>
-            Are you sure you want to delete the selected Designations? <br />
+            Are you sure you want to delete the selected Customers? <br />
             This action cannot be undone.
           </p>
 

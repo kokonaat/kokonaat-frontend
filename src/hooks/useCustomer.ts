@@ -19,10 +19,9 @@ export const useCustomerList = (shopId: string) => {
 export const useCreateCustomer = (shopId: string) => {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: createCustomer,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [...CUSTOMER_KEYS.all, shopId] })
-        }
+        mutationFn: (data: Omit<CustomerFormInterface, 'shopId'>) =>
+            createCustomer({ ...data, shopId }),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: [...CUSTOMER_KEYS.all, shopId] }),
     })
 }
 
@@ -40,7 +39,7 @@ export const useUpdateCustomer = (shopId: string) => {
 export const useDeleteCustomer = (shopId: string) => {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: deleteCustomer,
+        mutationFn: ({ id }: { id: string }) => deleteCustomer({ id, shopId }),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: [...CUSTOMER_KEYS.all, shopId] }),
     })
 }

@@ -1,0 +1,61 @@
+export interface Shop {
+    id: string;
+    name: string;
+}
+
+export interface CustomerFormInterface {
+  shop?: any;
+  name: string;
+  email?: string | null;
+  phone: string;
+  address: string;
+  city?: string | null;
+  country?: string | null;
+  isB2B?: boolean;
+  contactPerson?: string | null;
+  contactPersonPhone?: string | null;
+}
+
+export interface Customer {
+    id: string;
+    name: string;
+    email: string | null;
+    phone: string;
+    address: string;
+    city: string | null;
+    country: string | null;
+    isB2B: boolean;
+    contactPerson: string | null;
+    contactPersonPhone: string | null;
+    shop: Shop;
+}
+
+export type CustomerListInterface = Customer[]
+
+export interface CustomerMutateDrawerProps {
+    open: boolean
+    onOpenChange: (open: boolean) => void
+    currentRow?: {
+      id: string
+      name: string
+      email: string | null
+      phone: string
+      address: string
+      city: string | null
+      country: string | null
+      isB2B: boolean
+      contactPerson: string | null
+      contactPersonPhone: string | null
+    }
+    onSave?: (updatedData: {
+      name: string
+      email: string | null
+      phone: string
+      address: string
+      city: string | null
+      country: string | null
+      isB2B: boolean
+      contactPerson: string | null
+      contactPersonPhone: string | null
+    }) => void
+  }  

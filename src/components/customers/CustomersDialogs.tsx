@@ -1,17 +1,18 @@
 import { showSubmittedData } from '@/utils/show-submitted-data'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { useDeleteDesignation, useUpdateDesignation } from '@/hooks/useDesignation'
-import { useTasks } from '@/components/designation/tasks-provider'
-import CustomersMutateDrawer from './CustomersMutateDrawer'
+import { useCustomers } from './customer-provider'
+import { useDeleteCustomer, useUpdateCustomer, useCreateCustomer } from '@/hooks/useCustomer'
+import CustomersMutateDrawer from "./CustomersMutateDrawer"
 
 const CustomersDialogs = () => {
-  const { open, setOpen, currentRow, setCurrentRow } = useTasks()
+  const { open, setOpen, currentRow, setCurrentRow } = useCustomers()
   const shopId = localStorage.getItem('shop-storage')
     ? JSON.parse(localStorage.getItem('shop-storage')!).state?.currentShopId
     : null
 
-  const deleteMutation = useDeleteDesignation(shopId || '')
-  const updateMutation = useUpdateDesignation(shopId || '')
+  const createMutation = useCreateCustomer(shopId || '')
+  const deleteMutation = useDeleteCustomer(shopId || '')
+  const updateMutation = useUpdateCustomer(shopId || '')
 
   return (
     <>
@@ -19,7 +20,19 @@ const CustomersDialogs = () => {
       <CustomersMutateDrawer
         key='customer-create'
         open={open === 'create'}
-        onOpenChange={() => setOpen('create')}
+        onOpenChange={(val) => setOpen(val ? 'create' : null)}
+        onSave={(data) => {
+          if (!shopId) return
+          createMutation.mutate(data, {
+            onSuccess: () => {
+              showSubmittedData(data, 'Customer created successfully:')
+              setOpen(null)
+            },
+            onError: (err: any) => {
+              console.error(err)
+            },
+          })
+        }}
       />
 
       {/* Update & Delete modals */}
@@ -31,16 +44,13 @@ const CustomersDialogs = () => {
             open={open === 'update'}
             onOpenChange={(val: boolean) => setOpen(val ? 'update' : null)}
             currentRow={currentRow}
-            onSave={(updatedData: { title: string }) => {
+            onSave={(updatedData) => {
               if (!shopId || !currentRow) return
               updateMutation.mutate(
                 { id: currentRow.id, data: updatedData },
                 {
                   onSuccess: () => {
-                    showSubmittedData(
-                      updatedData,
-                      'customer updated successfully:'
-                    )
+                    showSubmittedData(updatedData, 'Customer updated successfully:')
                     setOpen(null)
                     setCurrentRow(null)
                   },
@@ -57,23 +67,23 @@ const CustomersDialogs = () => {
             onOpenChange={(val: boolean) => setOpen(val ? 'delete' : null)}
             handleConfirm={() => {
               if (!shopId || !currentRow) return
-              deleteMutation.mutate(currentRow.id, {
-                onSuccess: () => {
-                  showSubmittedData(
-                    currentRow,
-                    'The following designation has been deleted:'
-                  )
-                  setOpen(null)
-                  setCurrentRow(null)
-                },
-              })
+              deleteMutation.mutate(
+                { id: currentRow.id },
+                {
+                  onSuccess: () => {
+                    showSubmittedData(currentRow, 'The following customer has been deleted:')
+                    setOpen(null)
+                    setCurrentRow(null)
+                  },
+                }
+              )
             }}
             className='max-w-md'
-            title={`Delete this customer: ${currentRow.title} ?`}
+            title={`Delete this customer: ${currentRow.name} ?`}
             desc={
               <>
-                You are about to delete a customer with the Title{' '}
-                <strong>{currentRow.title}</strong>. <br />
+                You are about to delete a customer with the name{' '}
+                <strong>{currentRow.name}</strong>. <br />
                 This action cannot be undone.
               </>
             }

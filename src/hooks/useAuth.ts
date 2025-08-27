@@ -10,6 +10,7 @@ import { signUpUser, signInUser } from "@/api/userAuthApi"
 import { useAuthStore } from "@/stores/authStore"
 import { shopList } from "@/api/shopApi"
 import { ShopListInterface } from "@/interface/shopInterface"
+import { useShopStore } from "@/stores/shopStore"
 
 export const useAuth = () => {
     const { setTokens } = useAuthStore()
@@ -58,14 +59,18 @@ export const useAuth = () => {
         },
         onSuccess: ({ shopsRes }) => {
             toast.success("Logged in successfully!")
+            console.log(shopsRes)
             // if multiple shops then redirect to shops page
             if (shopsRes.total > 1) {
                 navigate("/shops")
-            } else {
-                navigate("/")
+            } else if (shopsRes.total === 1) {
+                // set the single shop ID in shop store and persist in LS
+                useShopStore.getState().setCurrentShopId(shopsRes.shops[0].id)
+                navigate("/") 
             }
         },
         onError: (err: any) => {
+            console.log(err.response.data.message)
             toast.error(err?.response?.data?.message || "Failed to log in")
         },
     })

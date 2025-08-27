@@ -19,18 +19,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-// import { DataTableBulkActions } from './data-table-bulk-actions'
-// import { DataTablePagination } from './data-table-pagination'
-import { DesignationColumns as columns } from '../designation/DesignationColumns'
+import { CustomerColumns as columns } from './CustomerColumns'
 import { Input } from '@/components/ui/input'
-import { DesignationInterface } from '@/interface/designationInterface'
 import { ColumnFiltersState } from '@tanstack/react-table'
 import { DataTableViewOptions } from '@/components/designation/data-table-view-options'
 import { DataTablePagination } from '@/components/designation/data-table-pagination'
 import { DataTableBulkActions } from '@/components/designation/data-table-bulk-actions'
+import { CustomerListInterface } from '@/interface/customerInterface'
 
 type DataTableProps = {
-  data: DesignationInterface[]
+  data: CustomerListInterface[]
 }
 
 const CustomerTable = ({ data }: DataTableProps) => {
@@ -62,9 +60,14 @@ const CustomerTable = ({ data }: DataTableProps) => {
     onPaginationChange: setPagination,
     globalFilterFn: (row, _columnId, filterValue) => {
       const id = String(row.getValue('id')).toLowerCase()
-      const title = String(row.getValue('title')).toLowerCase()
+      const name = String(row.getValue('name')).toLowerCase()
+      // const email = String(row.getValue('email')).toLowerCase()
+      // const phone = String(row.getValue('phone')).toLowerCase()
+      // const address = String(row.getValue('address')).toLowerCase()
+      // const city = String(row.getValue('city')).toLowerCase()
+      // const country = String(row.getValue('country')).toLowerCase()
       const searchValue = String(filterValue).toLowerCase()
-      return id.includes(searchValue) || title.includes(searchValue)
+      return id.includes(searchValue) || name.includes(searchValue)
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

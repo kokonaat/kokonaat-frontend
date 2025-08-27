@@ -16,6 +16,8 @@ export const shopList = async () => {
 
 // update
 export const updateShop = async (data: UpdateShopInterface) => {
-    const response = await axiosInstance.put(`${apiEndpoints.shop.updateShop}${data.id}`, data)
+    // removing shop id
+    const { id, ...payload } = data
+    const response = await axiosInstance.put(`${apiEndpoints.shop.updateShop}${data.id}`, payload)
     return response.data
 }

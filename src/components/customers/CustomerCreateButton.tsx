@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useTasks } from '@/components/designation/tasks-provider'
+import { useCustomers } from './customer-provider'
 
 const CustomerCreateButton = () => {
-  const { setOpen } = useTasks()
+  const { setOpen } = useCustomers()
 
   return (
     <div className='flex gap-2'>

@@ -61,11 +61,6 @@ const CustomerTable = ({ data }: DataTableProps) => {
     globalFilterFn: (row, _columnId, filterValue) => {
       const id = String(row.getValue('id')).toLowerCase()
       const name = String(row.getValue('name')).toLowerCase()
-      // const email = String(row.getValue('email')).toLowerCase()
-      // const phone = String(row.getValue('phone')).toLowerCase()
-      // const address = String(row.getValue('address')).toLowerCase()
-      // const city = String(row.getValue('city')).toLowerCase()
-      // const country = String(row.getValue('country')).toLowerCase()
       const searchValue = String(filterValue).toLowerCase()
       return id.includes(searchValue) || name.includes(searchValue)
     },

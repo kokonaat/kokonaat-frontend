@@ -22,10 +22,10 @@ import {
 } from "@/components/ui/sheet"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-import { useCreateCustomer, useUpdateCustomer } from "@/hooks/useCustomer"
 import { CustomerMutateDrawerProps } from "@/interface/customerInterface"
 import { getCurrentShopId } from "@/lib/getCurrentShopId"
 import { Checkbox } from "../ui/checkbox"
+import { useCreateVendor, useUpdateVendor } from "@/hooks/useVendor"
 
 // zod schema form
 const formSchema = z.object({
@@ -42,7 +42,7 @@ const formSchema = z.object({
 
 type CustomerFormSchema = z.infer<typeof formSchema>
 
-const CustomersMutateDrawer = ({
+const VendorMutateDrawer = ({
   open,
   onOpenChange,
   currentRow,
@@ -51,8 +51,8 @@ const CustomersMutateDrawer = ({
   const shopId = getCurrentShopId()
   const isUpdate = !!currentRow
 
-  const createMutation = useCreateCustomer(shopId || "")
-  const updateMutation = useUpdateCustomer(shopId || "")
+  const createMutation = useCreateVendor(shopId || "")
+  const updateMutation = useUpdateVendor(shopId || "")
 
   const form = useForm<CustomerFormSchema>({
     resolver: zodResolver(formSchema),
@@ -148,18 +148,18 @@ const CustomersMutateDrawer = ({
     >
       <SheetContent className="flex flex-col">
         <SheetHeader className="text-start">
-          <SheetTitle>{isUpdate ? "Update" : "Create"} Customer</SheetTitle>
+          <SheetTitle>{isUpdate ? "Update" : "Create"} Vendor</SheetTitle>
           <SheetDescription>
             {isUpdate
-              ? "Update the customer by providing necessary info."
-              : "Add a new customer by providing necessary info."}{" "}
+              ? "Update the vendor by providing necessary info."
+              : "Add a new vendor by providing necessary info."}{" "}
             Click save when you're done.
           </SheetDescription>
         </SheetHeader>
 
         <Form {...form}>
           <form
-            id="customer-form"
+            id="vendor-form"
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex-1 space-y-6 overflow-y-auto px-4"
           >
@@ -298,7 +298,7 @@ const CustomersMutateDrawer = ({
           <SheetClose asChild>
             <Button variant="outline">Close</Button>
           </SheetClose>
-          <Button form="customer-form" type="submit">
+          <Button form="vendor-form" type="submit">
             Save changes
           </Button>
         </SheetFooter>
@@ -307,4 +307,4 @@ const CustomersMutateDrawer = ({
   )
 }
 
-export default CustomersMutateDrawer
+export default VendorMutateDrawer

@@ -12,6 +12,7 @@ const CreateShop = lazy(() => import("@/pages/CreateShop"))
 const Dashboard = lazy(() => import("@/pages/Dashboard"))
 const Shops = lazy(() => import("@/pages/Shops"))
 const Customers = lazy(() => import("@/pages/Customers"))
+const Vendors = lazy(() => import("@/pages/Vendors"))
 const Designation = lazy(() => import("@/pages/Designation"))
 const Apps = lazy(() => import("@/features/apps"))
 const ForgotPassword = lazy(() => import("@/features/auth/forgot-password"))
@@ -35,6 +36,7 @@ const AppRoutes = () => {
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/shops" element={<Shops />} />
                             <Route path="/customers" element={<Customers />} />
+                            <Route path="/vendors" element={<Vendors />} />
                             <Route path="/user/designation" element={<Designation />} />
                             <Route path="/users" element={<Users />} />
                             <Route path="/apps" element={<Apps />} />

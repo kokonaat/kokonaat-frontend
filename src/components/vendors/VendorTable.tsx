@@ -19,19 +19,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { CustomerColumns as columns } from './CustomerColumns'
+import { VendorColumns as columns } from './VendorColumns'
 import { Input } from '@/components/ui/input'
 import { ColumnFiltersState } from '@tanstack/react-table'
-import { DataTableViewOptions } from '@/components/designation/data-table-view-options'
-import { DataTablePagination } from '@/components/designation/data-table-pagination'
-import { DataTableBulkActions } from '@/components/designation/data-table-bulk-actions'
-import { CustomerListInterface } from '@/interface/customerInterface'
+import { VendorListInterface } from '@/interface/vendorInterface'
+import { DataTableViewOptions } from '../designation/data-table-view-options'
+import { DataTablePagination } from '../designation/data-table-pagination'
+import { DataTableBulkActions } from '../designation/data-table-bulk-actions'
 
 type DataTableProps = {
-  data: CustomerListInterface[]
+  data: VendorListInterface[]
 }
 
-const CustomerTable = ({ data }: DataTableProps) => {
+const VendorTable = ({ data }: DataTableProps) => {
   // Table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -134,4 +134,4 @@ const CustomerTable = ({ data }: DataTableProps) => {
   )
 }
 
-export default CustomerTable
+export default VendorTable

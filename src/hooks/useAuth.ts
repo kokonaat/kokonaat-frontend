@@ -59,7 +59,6 @@ export const useAuth = () => {
         },
         onSuccess: ({ shopsRes }) => {
             toast.success("Logged in successfully!")
-            console.log(shopsRes)
             // if multiple shops then redirect to shops page
             if (shopsRes.total > 1) {
                 navigate("/shops")

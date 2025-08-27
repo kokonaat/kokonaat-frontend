@@ -20,4 +20,10 @@ export interface ApiEndpoints {
         updateCustomer: string
         deleteCustomer: string
     }
+    vendor: {
+        vendorList: string
+        createVendor: string
+        updateVendor: string
+        deleteVendor: string
+    }
 }

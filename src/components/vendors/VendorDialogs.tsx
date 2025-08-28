@@ -1,4 +1,4 @@
-import { showSubmittedData } from '@/utils/show-submitted-data'
+import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useCustomers } from '../customers/customer-provider'
 import { useCreateVendor, useUpdateVendor, useDeleteVendor } from '@/hooks/useVendor'
@@ -25,8 +25,8 @@ const VendorDialogs = () => {
           if (!shopId) return
           createMutation.mutate(data, {
             onSuccess: () => {
-              showSubmittedData(data, 'Vendor created successfully:')
               setOpen(null)
+              toast.success("Vendor created successfully")
             },
             onError: (err: any) => {
               console.error(err)
@@ -50,9 +50,9 @@ const VendorDialogs = () => {
                 { id: currentRow.id, data: updatedData },
                 {
                   onSuccess: () => {
-                    showSubmittedData(updatedData, 'Vendor updated successfully:')
                     setOpen(null)
                     setCurrentRow(null)
+                    toast.success("Vendor updated successfully")
                   },
                 }
               )
@@ -71,9 +71,9 @@ const VendorDialogs = () => {
                 { id: currentRow.id },
                 {
                   onSuccess: () => {
-                    showSubmittedData(currentRow, 'The following vendor has been deleted:')
                     setOpen(null)
                     setCurrentRow(null)
+                    toast.success("The following vendor has been deleted")
                   },
                 }
               )

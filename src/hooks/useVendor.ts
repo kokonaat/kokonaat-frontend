@@ -1,6 +1,6 @@
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { createVendor, deleteVendor, updateVendor, vendorList } from "@/api/vendorApi"
 import { CustomerFormInterface, CustomerListInterface } from "@/interface/customerInterface"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 
 const VENDOR_KEYS = {
     all: ['vendors'] as const,

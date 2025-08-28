@@ -30,9 +30,12 @@ import { useCreateVendor, useUpdateVendor } from "@/hooks/useVendor"
 // zod schema form
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  email: z.string().email().optional().nullable(),
   phone: z.string().min(1, "Phone is required"),
-  address: z.string().min(1, "Address is required"),
+  email: z
+    .union([z.string().email(), z.string().length(0)])
+    .optional()
+    .nullable(),
+  address: z.string().optional().nullable(),
   city: z.string().optional().nullable(),
   country: z.string().optional().nullable(),
   isB2B: z.boolean().optional(),
@@ -84,21 +87,25 @@ const VendorMutateDrawer = ({
     })
   }, [currentRow])
 
+  // track isB2B field
+  const isB2BChecked = form.watch("isB2B")
+
   //  submit data
   const onSubmit: SubmitHandler<CustomerFormSchema> = (data) => {
     if (!shopId) return toast.error("Shop ID not found!")
-      
+
     const normalizedData = {
       ...data,
-      email: data.email ?? null,
-      city: data.city ?? null,
-      country: data.country ?? null,
+      email: data.email?.trim() || null,
+      address: data.address?.trim() || "",
+      city: data.city?.trim() || null,
+      country: data.country?.trim() || null,
       isB2B: data.isB2B ?? false,
-      contactPerson: data.contactPerson ?? null,
-      contactPersonPhone: data.contactPersonPhone ?? null,
+      contactPerson: data.contactPerson?.trim() || null,
+      contactPersonPhone: data.contactPersonPhone?.trim() || null,
       shopId,
     }
-    
+
     if (isUpdate && currentRow?.id) {
       updateMutation.mutate(
         // submitting with shopId
@@ -106,8 +113,8 @@ const VendorMutateDrawer = ({
         {
           onSuccess: () => {
             onOpenChange(false)
-            form.reset()
             onSave?.(normalizedData)
+            form.reset()
           },
           onError: (err: any) => {
             toast.error(err?.response?.data?.message || "Update failed")
@@ -118,8 +125,8 @@ const VendorMutateDrawer = ({
       createMutation.mutate(normalizedData, {
         onSuccess: () => {
           onOpenChange(false)
-          form.reset()
           onSave?.(normalizedData)
+          form.reset()
         },
         onError: (err: any) => {
           toast.error(err?.response?.data?.message || "Creation failed")
@@ -212,7 +219,7 @@ const VendorMutateDrawer = ({
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Shyamoli,Dhaka" />
+                    <Input {...field} value={field.value ?? ""} placeholder="Shyamoli,Dhaka" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -264,33 +271,39 @@ const VendorMutateDrawer = ({
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="contactPerson"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Contact Person</FormLabel>
-                  <FormControl>
-                    <Input {...field} value={field.value ?? ""} placeholder="Ramesh Roy" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {
+              isB2BChecked && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="contactPerson"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contact Person</FormLabel>
+                        <FormControl>
+                          <Input {...field} value={field.value ?? ""} placeholder="Ramesh Roy" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="contactPersonPhone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contact Person Phone</FormLabel>
+                        <FormControl>
+                          <Input {...field} value={field.value ?? ""} placeholder="01711111111" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
 
-            <FormField
-              control={form.control}
-              name="contactPersonPhone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Contact Person Phone</FormLabel>
-                  <FormControl>
-                    <Input {...field} value={field.value ?? ""} placeholder="01711111111" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              )
+            }
           </form>
         </Form>
 

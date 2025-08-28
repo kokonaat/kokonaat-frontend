@@ -59,7 +59,7 @@ const VendorTable = ({ data }: DataTableProps) => {
     onColumnFiltersChange: setColumnFilters,
     onPaginationChange: setPagination,
     globalFilterFn: (row, _columnId, filterValue) => {
-      const id = String(row.getValue('id')).toLowerCase()
+      const id = `ven${row.index + 1}`.toLowerCase()
       const name = String(row.getValue('name')).toLowerCase()
       const searchValue = String(filterValue).toLowerCase()
       return id.includes(searchValue) || name.includes(searchValue)

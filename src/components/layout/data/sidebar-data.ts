@@ -56,11 +56,6 @@ export const sidebarData: SidebarData = {
           icon: ShoppingBag,
         },
         {
-          title: 'Designation',
-          url: '/user/designation',
-          icon: IdCardLanyard,
-        },
-        {
           title: 'Customer',
           url: '/customers',
           icon: UsersRound,
@@ -75,20 +70,25 @@ export const sidebarData: SidebarData = {
           url: '/apps',
           icon: Package,
         },
-        {
-          title: 'Users',
-          url: '/users',
-          icon: Users,
-        },
       ],
     },
     {
       title: 'Other',
       items: [
         {
-          title: 'Settings',
+          title: 'Users',
           icon: Settings,
           items: [
+            {
+              title: 'Designation',
+              url: '/users/designation',
+              icon: IdCardLanyard,
+            },
+            {
+              title: 'Employee',
+              url: '/users/employee',
+              icon: Users,
+            },
             {
               title: 'Profile',
               url: '/settings',

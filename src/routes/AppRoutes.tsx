@@ -37,8 +37,8 @@ const AppRoutes = () => {
                             <Route path="/shops" element={<Shops />} />
                             <Route path="/customers" element={<Customers />} />
                             <Route path="/vendors" element={<Vendors />} />
-                            <Route path="/user/designation" element={<Designation />} />
-                            <Route path="/users" element={<Users />} />
+                            <Route path="/users/designation" element={<Designation />} />
+                            <Route path="/users/employee" element={<Users />} />
                             <Route path="/apps" element={<Apps />} />
                             <Route path="/forgot-password" element={<ForgotPassword />} />
                             <Route path="/otp" element={<Otp />} />

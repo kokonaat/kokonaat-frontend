@@ -88,6 +88,7 @@ const ShopDrawer = ({ open, onOpenChange, currentShop }: ShopDrawerProps) => {
 
                 <Form {...form}>
                     <form
+                        id="shop-form"
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="flex-1 space-y-6 overflow-y-auto px-4"
                     >
@@ -102,7 +103,7 @@ const ShopDrawer = ({ open, onOpenChange, currentShop }: ShopDrawerProps) => {
                                         <Input
                                             {...field}
                                             placeholder="Barnick Pracharani"
-                                            disabled={isEdit} 
+                                            disabled={isEdit}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -128,22 +129,23 @@ const ShopDrawer = ({ open, onOpenChange, currentShop }: ShopDrawerProps) => {
                             )}
                         />
 
-                        <SheetFooter className="gap-2">
-                            <SheetClose asChild>
-                                <Button variant="outline">Close</Button>
-                            </SheetClose>
-                            <Button
-                                type="submit"
-                                disabled={loading}
-                            >
-                                {
-                                    loading ? (isEdit ? "Updating..." : "Creating...") 
-                                    : isEdit ? "Update Address" : "Create Shop"
-                                }
-                            </Button>
-                        </SheetFooter>
                     </form>
                 </Form>
+                <SheetFooter className="gap-2">
+                    <SheetClose asChild>
+                        <Button variant="outline">Close</Button>
+                    </SheetClose>
+                    <Button
+                        type="submit"
+                        form="shop-form"
+                        disabled={loading}
+                    >
+                        {
+                            loading ? (isEdit ? "Updating..." : "Creating...")
+                                : isEdit ? "Update Address" : "Create Shop"
+                        }
+                    </Button>
+                </SheetFooter>
             </SheetContent>
         </Sheet>
     )

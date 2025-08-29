@@ -1,4 +1,3 @@
-import { showSubmittedData } from '@/utils/show-submitted-data'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteDesignation, useUpdateDesignation } from '@/hooks/useDesignation'
 import { useTasks } from './tasks-provider'
@@ -37,10 +36,6 @@ const DesignationDialogs = () => {
                 { id: currentRow.id, data: updatedData },
                 {
                   onSuccess: () => {
-                    showSubmittedData(
-                      updatedData,
-                      'Designation updated successfully:'
-                    )
                     setOpen(null)
                     setCurrentRow(null)
                   },
@@ -59,10 +54,6 @@ const DesignationDialogs = () => {
               if (!shopId || !currentRow) return
               deleteMutation.mutate(currentRow.id, {
                 onSuccess: () => {
-                  showSubmittedData(
-                    currentRow,
-                    'The following designation has been deleted:'
-                  )
                   setOpen(null)
                   setCurrentRow(null)
                 },

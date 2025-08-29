@@ -35,7 +35,12 @@ const CustomerTable = ({ data }: DataTableProps) => {
   // Table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    city: false,
+    country: false,
+    contactPerson: false,
+    contactPersonPhone: false,
+  })
   const [globalFilter, setGlobalFilter] = useState('')
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
@@ -59,7 +64,8 @@ const CustomerTable = ({ data }: DataTableProps) => {
     onColumnFiltersChange: setColumnFilters,
     onPaginationChange: setPagination,
     globalFilterFn: (row, _columnId, filterValue) => {
-      const id = String(row.getValue('id')).toLowerCase()
+      // const id = String(row.getValue('id')).toLowerCase()
+      const id = `des${row.index + 1}`.toLowerCase()
       const name = String(row.getValue('name')).toLowerCase()
       const searchValue = String(filterValue).toLowerCase()
       return id.includes(searchValue) || name.includes(searchValue)

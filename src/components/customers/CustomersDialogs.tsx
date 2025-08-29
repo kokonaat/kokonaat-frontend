@@ -1,4 +1,3 @@
-import { showSubmittedData } from '@/utils/show-submitted-data'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useCustomers } from './customer-provider'
 import { useDeleteCustomer, useUpdateCustomer, useCreateCustomer } from '@/hooks/useCustomer'
@@ -25,7 +24,6 @@ const CustomersDialogs = () => {
           if (!shopId) return
           createMutation.mutate(data, {
             onSuccess: () => {
-              showSubmittedData(data, 'Customer created successfully:')
               setOpen(null)
             },
             onError: (err: any) => {
@@ -50,7 +48,6 @@ const CustomersDialogs = () => {
                 { id: currentRow.id, data: updatedData },
                 {
                   onSuccess: () => {
-                    showSubmittedData(updatedData, 'Customer updated successfully:')
                     setOpen(null)
                     setCurrentRow(null)
                   },
@@ -71,7 +68,6 @@ const CustomersDialogs = () => {
                 { id: currentRow.id },
                 {
                   onSuccess: () => {
-                    showSubmittedData(currentRow, 'The following customer has been deleted:')
                     setOpen(null)
                     setCurrentRow(null)
                   },

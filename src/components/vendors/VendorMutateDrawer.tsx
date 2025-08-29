@@ -115,6 +115,7 @@ const VendorMutateDrawer = ({
             onOpenChange(false)
             onSave?.(normalizedData)
             form.reset()
+            toast.success("Vendor updated successfully.")
           },
           onError: (err: any) => {
             toast.error(err?.response?.data?.message || "Update failed")
@@ -127,6 +128,7 @@ const VendorMutateDrawer = ({
           onOpenChange(false)
           onSave?.(normalizedData)
           form.reset()
+          toast.success("Vendor created successfully.")
         },
         onError: (err: any) => {
           toast.error(err?.response?.data?.message || "Creation failed")

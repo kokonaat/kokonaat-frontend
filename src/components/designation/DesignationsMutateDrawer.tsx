@@ -20,11 +20,11 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { toast } from 'sonner'
 import { useCreateDesignation, useUpdateDesignation } from '@/hooks/useDesignation'
 import { getCurrentShopId } from '@/lib/getCurrentShopId'
 import { useEffect } from 'react'
 import { DesignationFormInterface, DesignationMutateDrawerProps } from '@/interface/designationInterface'
-import { toast } from 'sonner'
 
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required.'),
@@ -62,6 +62,7 @@ const DesignationsMutateDrawer = ({
           onSuccess: () => {
             onOpenChange(false)
             form.reset()
+            toast.success("Designation updated successfully.")
           },
         }
       )
@@ -73,6 +74,7 @@ const DesignationsMutateDrawer = ({
           onSuccess: () => {
             onOpenChange(false)
             form.reset()
+            toast.success("Designation created successfully.")
           },
           onError: (err: any) => {
             toast.error(err?.response?.data?.message)

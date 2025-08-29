@@ -97,7 +97,7 @@ export const DesignationColumns: ColumnDef<DesignationInterface>[] = [
     ),
     cell: ({ row }) => {
       const serialNumber = row.index + 1
-      return <div>{`ven${serialNumber}`}</div>
+      return <div>{`des${serialNumber}`}</div>
     },
     enableSorting: false,
     enableHiding: false,

@@ -32,6 +32,8 @@ export const updateDesignation = async ({ id, data, shopId }: { id: string, data
 
 // delete
 export const deleteDesignation = async (id: string) => {
-    const res = await axiosInstance.delete(`${apiEndpoints.designation.updateDesignation}/${id}`)
+    const res = await axiosInstance.delete(
+        `${apiEndpoints.designation.deleteDesignation}/${id}`
+    )
     return res.data
 }

@@ -1,14 +1,14 @@
 import { Main } from '@/components/layout/main'
-import { CustomersProvider } from '@/components/customers/customer-provider'
-import CustomerCreateButton from '@/components/customers/CustomerCreateButton'
 import { Search } from '@/components/search'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { CustomersProvider } from '@/components/customers/customer-provider'
+import { useVendorList } from '@/hooks/useVendor'
+import CustomerCreateButton from '@/components/customers/CustomerCreateButton'
 import VendorTable from '@/components/vendors/VendorTable'
 import VendorDialogs from '@/components/vendors/VendorDialogs'
-import { useVendorList } from '@/hooks/useVendor'
 
 // get and parsed shopId from ls
 const getCurrentShopId = (): string | null => {

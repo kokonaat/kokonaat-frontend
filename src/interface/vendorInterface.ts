@@ -1,3 +1,5 @@
+import { Table } from "@tanstack/react-table";
+
 export interface Shop {
     id: string;
     name: string;
@@ -60,3 +62,9 @@ export interface VendorMutateDrawerProps {
       contactPersonPhone: string | null
     }) => void
   }  
+
+export interface VendorMultiDeleteDialogProps<TData extends { id: string }> {
+    open: boolean
+    onOpenChange: (open: boolean) => void
+    table: Table<TData>
+}

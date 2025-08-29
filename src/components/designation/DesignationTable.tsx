@@ -55,7 +55,8 @@ const DesignationTable = ({ data }: DesignationDataTableProps) => {
     onColumnFiltersChange: setColumnFilters,
     onPaginationChange: setPagination,
     globalFilterFn: (row, _columnId, filterValue) => {
-      const id = String(row.getValue('id')).toLowerCase()
+      // const id = String(row.getValue('id')).toLowerCase()
+      const id = `des${row.index + 1}`.toLowerCase()
       const title = String(row.getValue('title')).toLowerCase()
       const searchValue = String(filterValue).toLowerCase()
       return id.includes(searchValue) || title.includes(searchValue)

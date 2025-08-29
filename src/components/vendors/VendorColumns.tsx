@@ -1,13 +1,10 @@
-// import { useState } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-// import { ClipboardIcon, CheckIcon } from 'lucide-react'
-// import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Checkbox } from '@/components/ui/checkbox'
-import { DesignationInterface } from '@/interface/designationInterface'
+import { VendorListInterface } from '@/interface/vendorInterface'
 import { DataTableColumnHeader } from '../customers/DataTableColumnHeader'
 import { DataTableRowActions } from './DataTableRowActions'
 
-export const VendorColumns: ColumnDef<DesignationInterface>[] = [
+export const VendorColumns: ColumnDef<VendorListInterface>[] = [
   {
     id: 'select',
     header: ({ table }) => (

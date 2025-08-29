@@ -25,7 +25,7 @@ import { ColumnFiltersState } from '@tanstack/react-table'
 import { VendorListInterface } from '@/interface/vendorInterface'
 import { DataTableViewOptions } from '../designation/data-table-view-options'
 import { DataTablePagination } from '../designation/data-table-pagination'
-import { DataTableBulkActions } from '../designation/data-table-bulk-actions'
+import { VendorTableBulkActions } from './VendorTableBulkActions'
 
 type DataTableProps = {
   data: VendorListInterface[]
@@ -134,7 +134,7 @@ const VendorTable = ({ data }: DataTableProps) => {
         </Table>
       </div>
       <DataTablePagination table={table} />
-      <DataTableBulkActions table={table} />
+      <VendorTableBulkActions table={table} />
     </div>
   )
 }

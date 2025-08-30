@@ -1,7 +1,7 @@
 import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useCustomers } from '../customers/customer-provider'
-import { useCreateVendor, useUpdateVendor, useDeleteVendor } from '@/hooks/useVendor'
+import { useDeleteVendor } from '@/hooks/useVendor'
 import VendorMutateDrawer from './VendorMutateDrawer'
 
 const VendorDialogs = () => {
@@ -10,9 +10,7 @@ const VendorDialogs = () => {
     ? JSON.parse(localStorage.getItem('shop-storage')!).state?.currentShopId
     : null
 
-  const createMutation = useCreateVendor(shopId || '')
   const deleteMutation = useDeleteVendor(shopId || '')
-  const updateMutation = useUpdateVendor(shopId || '')
 
   return (
     <>
@@ -21,18 +19,7 @@ const VendorDialogs = () => {
         key='vendor-create'
         open={open === 'create'}
         onOpenChange={(val) => setOpen(val ? 'create' : null)}
-        onSave={(data) => {
-          if (!shopId) return
-          createMutation.mutate(data, {
-            onSuccess: () => {
-              setOpen(null)
-              toast.success("Vendor created successfully")
-            },
-            onError: (err: any) => {
-              console.error(err)
-            },
-          })
-        }}
+        onSave={() => setOpen(null)}
       />
 
       {/* Update & Delete modals */}
@@ -44,19 +31,7 @@ const VendorDialogs = () => {
             open={open === 'update'}
             onOpenChange={(val: boolean) => setOpen(val ? 'update' : null)}
             currentRow={currentRow}
-            onSave={(updatedData) => {
-              if (!shopId || !currentRow) return
-              updateMutation.mutate(
-                { id: currentRow.id, data: updatedData },
-                {
-                  onSuccess: () => {
-                    setOpen(null)
-                    setCurrentRow(null)
-                    toast.success("Vendor updated successfully")
-                  },
-                }
-              )
-            }}
+            onSave={() => setOpen(null)}
           />
 
           {/* Delete modal */}

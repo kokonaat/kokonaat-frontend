@@ -8,7 +8,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card'
-import AuthLayout from '@/features/auth/auth-layout'
+import AuthLayout from '@/components/layout/AuthLayout'
 
 const SignIn = () => {
     return (

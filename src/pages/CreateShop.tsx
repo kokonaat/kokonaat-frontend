@@ -25,9 +25,10 @@ const CreateShop = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
         defaultValues: { name: "" },
     })
 
-    const { mutate, isLoading } = useCreateShop()
+    const { mutate, isPending } = useCreateShop()
 
     const onSubmit = (data: FormValues) => {
+        if(isPending) return
         mutate(data)
     }
 
@@ -62,8 +63,8 @@ const CreateShop = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
                                         </FormItem>
                                     )}
                                 />
-                                <Button type="submit" className="mt-2" disabled={isLoading}>
-                                    {isLoading ? "Creating..." : "Create Shop"}
+                                <Button type="submit" className="mt-2" disabled={isPending}>
+                                    {isPending ? "Creating..." : "Create Shop"}
                                 </Button>
                             </form>
                         </Form>

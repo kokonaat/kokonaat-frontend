@@ -44,7 +44,7 @@ export function CustomersMultiDeleteDialog<TData extends { id: string }>({
         loading: 'Deleting Customers...',
         success: () => {
           table.resetRowSelection()
-          return `Deleted ${selectedRows.length} ${selectedRows.length > 1 ? 'Customers' : 'Designation'
+          return `Deleted ${selectedRows.length} ${selectedRows.length > 1 ? 'Customers' : 'Customer'
             }`
         },
         error: 'Error deleting Customer',

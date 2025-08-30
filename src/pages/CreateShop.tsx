@@ -13,22 +13,15 @@ import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import AuthLayout from "@/features/auth/auth-layout"
 import { useCreateShop } from "@/hooks/useShop"
+import { createShopFormSchema } from "@/schema/createShopFormSchema"
+import AuthLayout from "@/features/auth/auth-layout"
 
-// Validation schema
-const formSchema = z.object({
-    name: z
-        .string()
-        .min(1, "Please enter your shop name")
-        .max(50, "Shop name must be less than 50 characters"),
-})
-
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof createShopFormSchema>
 
 const CreateShop = ({ className, ...props }: React.HTMLAttributes<HTMLFormElement>) => {
     const form = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(createShopFormSchema),
         defaultValues: { name: "" },
     })
 

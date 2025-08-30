@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,27 +14,17 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/hooks/useAuth'
+import { signInFormSchema } from '@/schema/signInFormSchema'
 import PasswordInput from '@/components/password-input'
 
-const formSchema = z.object({
-  phone: z
-    .string()
-    .min(1, "Please enter your phone number")
-    .regex(/^\d{10,15}$/, "Phone number must be between 10–15 digits"),
-  password: z
-    .string()
-    .min(1, 'Please enter your password')
-    .min(6, 'Password must be at least 6 characters long'),
-})
-
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof signInFormSchema>
 
 const SignInForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElement>) => {
   const [isLoading, setIsLoading] = useState(false)
   const { signInMutation } = useAuth()
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(signInFormSchema),
     defaultValues: { phone: '', password: '' },
   })
 
@@ -86,12 +75,12 @@ const SignInForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
                 <PasswordInput placeholder='********' {...field} />
               </FormControl>
               <FormMessage />
-              <Link
+              {/* <Link
                 to='#'
                 className='text-muted-foreground absolute end-0 -top-0.5 text-sm font-medium hover:opacity-75'
               >
                 Forgot password?
-              </Link>
+              </Link> */}
             </FormItem>
           )}
         />

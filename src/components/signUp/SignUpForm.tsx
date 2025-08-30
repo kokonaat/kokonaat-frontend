@@ -7,29 +7,17 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/hooks/useAuth"
+import { signUpFormSchema } from "@/schema/signUpFormSchema"
 import PasswordInput from "@/components/password-input"
 
-// custom user-friendly validation messages
-const formSchema = z.object({
-  name: z.string().min(3, "Please enter your full name (at least 3 characters)"),
-  phone: z
-    .string()
-    .regex(/^\d{10,15}$/, "Please enter a valid phone number (10–15 digits)"),
-  password: z.string().min(6, "Password must be at least 6 characters long"),
-  confirmPassword: z.string().min(6, "Please confirm your password"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-})
-
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof signUpFormSchema>
 
 const SignUpForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElement>) => {
   const [isLoading, setIsLoading] = useState(false)
   const { signUpMutation } = useAuth()
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(signUpFormSchema),
     defaultValues: { name: "", phone: "", password: "", confirmPassword: "" },
   })
 

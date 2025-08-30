@@ -10,11 +10,11 @@ import {
 import { BulkActionsToolbar } from '@/components/bulk-actions-toolbar'
 import { CustomersMultiDeleteDialog } from './CustomerMultiDeleteDialogs'
 
-type DataTableBulkActionsProps<TData> = {
+export interface DataTableBulkActionsProps<TData extends { id: string }> {
     table: Table<TData>
 }
 
-export function DataTableBulkActions<TData>({
+export function DataTableBulkActions<TData extends { id: string }>({
     table,
 }: DataTableBulkActionsProps<TData>) {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)

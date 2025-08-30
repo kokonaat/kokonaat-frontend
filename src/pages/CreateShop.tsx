@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useCreateShop } from "@/hooks/useShop"
 import { createShopFormSchema } from "@/schema/createShopFormSchema"
-import AuthLayout from "@/features/auth/auth-layout"
+import AuthLayout from "@/components/layout/AuthLayout"
 
 type FormValues = z.infer<typeof createShopFormSchema>
 
@@ -28,7 +28,7 @@ const CreateShop = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
     const { mutate, isPending } = useCreateShop()
 
     const onSubmit = (data: FormValues) => {
-        if(isPending) return
+        if (isPending) return
         mutate(data)
     }
 

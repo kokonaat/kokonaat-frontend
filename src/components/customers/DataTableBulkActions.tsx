@@ -21,7 +21,7 @@ export function DataTableBulkActions<TData>({
 
     return (
         <>
-            <BulkActionsToolbar table={table} entityName='designation'>
+            <BulkActionsToolbar table={table} entityName='customer'>
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button
@@ -29,15 +29,15 @@ export function DataTableBulkActions<TData>({
                             size='icon'
                             onClick={() => setShowDeleteConfirm(true)}
                             className='size-8'
-                            aria-label='Delete selected Designations'
-                            title='Delete selected Designations'
+                            aria-label='Delete selected Customers'
+                            title='Delete selected Customers'
                         >
                             <Trash2 />
-                            <span className='sr-only'>Delete selected Designations</span>
+                            <span className='sr-only'>Delete selected Customers</span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Delete selected Designations</p>
+                        <p>Delete selected Customers</p>
                     </TooltipContent>
                 </Tooltip>
             </BulkActionsToolbar>

@@ -15,8 +15,6 @@ const Customers = lazy(() => import("@/pages/Customers"))
 const Vendors = lazy(() => import("@/pages/Vendors"))
 const Designation = lazy(() => import("@/pages/Designation"))
 const Apps = lazy(() => import("@/features/apps"))
-const ForgotPassword = lazy(() => import("@/features/auth/forgot-password"))
-const Otp = lazy(() => import("@/features/auth/otp"))
 const Settings = lazy(() => import("@/features/settings"))
 const ComingSoon = lazy(() => import("@/components/coming-soon"))
 const Users = lazy(() => import("@/features/users"))
@@ -40,8 +38,6 @@ const AppRoutes = () => {
                             <Route path="/users/designation" element={<Designation />} />
                             <Route path="/users/employee" element={<Users />} />
                             <Route path="/apps" element={<Apps />} />
-                            <Route path="/forgot-password" element={<ForgotPassword />} />
-                            <Route path="/otp" element={<Otp />} />
                             <Route path="/settings" element={<Settings />} />
                             <Route path="/help-center" element={<ComingSoon />} />
                             <Route path="*" element={<Navigate to="/" replace />} />

@@ -36,7 +36,9 @@ export function CustomersMultiDeleteDialog<TData extends { id: string }>({
 
     toast.promise(
       Promise.all(
-        selectedRows.map((row) => deleteMutation.mutateAsync(row.original.id))
+        selectedRows.map((row) =>
+          deleteMutation.mutateAsync({ id: row.original.id })
+        )
       ),
       {
         loading: 'Deleting Customers...',

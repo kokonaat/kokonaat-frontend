@@ -24,8 +24,8 @@ import { Input } from '@/components/ui/input'
 import { ColumnFiltersState } from '@tanstack/react-table'
 import { DataTableViewOptions } from '@/components/designation/data-table-view-options'
 import { DataTablePagination } from '@/components/designation/data-table-pagination'
-import { DataTableBulkActions } from '@/components/designation/data-table-bulk-actions'
 import { CustomerListInterface } from '@/interface/customerInterface'
+import { DataTableBulkActions } from './DataTableBulkActions'
 
 type DataTableProps = {
   data: CustomerListInterface[]

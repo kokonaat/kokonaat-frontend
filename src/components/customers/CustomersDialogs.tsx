@@ -1,6 +1,6 @@
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useCustomers } from './customer-provider'
-import { useDeleteCustomer, useUpdateCustomer, useCreateCustomer } from '@/hooks/useCustomer'
+import { useDeleteCustomer } from '@/hooks/useCustomer'
 import CustomersMutateDrawer from "./CustomersMutateDrawer"
 
 const CustomersDialogs = () => {
@@ -9,9 +9,7 @@ const CustomersDialogs = () => {
     ? JSON.parse(localStorage.getItem('shop-storage')!).state?.currentShopId
     : null
 
-  const createMutation = useCreateCustomer(shopId || '')
   const deleteMutation = useDeleteCustomer(shopId || '')
-  const updateMutation = useUpdateCustomer(shopId || '')
 
   return (
     <>
@@ -20,17 +18,7 @@ const CustomersDialogs = () => {
         key='customer-create'
         open={open === 'create'}
         onOpenChange={(val) => setOpen(val ? 'create' : null)}
-        onSave={(data) => {
-          if (!shopId) return
-          createMutation.mutate(data, {
-            onSuccess: () => {
-              setOpen(null)
-            },
-            onError: (err: any) => {
-              console.error(err)
-            },
-          })
-        }}
+        onSave={() => setOpen(null)}
       />
 
       {/* Update & Delete modals */}
@@ -42,18 +30,7 @@ const CustomersDialogs = () => {
             open={open === 'update'}
             onOpenChange={(val: boolean) => setOpen(val ? 'update' : null)}
             currentRow={currentRow}
-            onSave={(updatedData) => {
-              if (!shopId || !currentRow) return
-              updateMutation.mutate(
-                { id: currentRow.id, data: updatedData },
-                {
-                  onSuccess: () => {
-                    setOpen(null)
-                    setCurrentRow(null)
-                  },
-                }
-              )
-            }}
+            onSave={() => setOpen(null)}
           />
 
           {/* Delete modal */}

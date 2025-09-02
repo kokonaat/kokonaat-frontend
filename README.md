@@ -2,7 +2,7 @@
 
 Admin Dashboard UI crafted with Shadcn and Vite. Built with responsiveness and accessibility in mind.
 
-![alt text](public/images/shadcn-admin.png)
+![alt text]
 
 I've been creating dashboard UIs at work and for my personal projects. I always wanted to make a reusable collection of dashboard UI for future projects; and here it is now. While I've created a few custom components, some of the code is directly adapted from ShadcnUI examples.
 
@@ -58,19 +58,17 @@ If you want to update components using the Shadcn CLI (e.g., `npx shadcn@latest 
 
 ## Tech Stack
 
-**UI:** [ShadcnUI](https://ui.shadcn.com) (TailwindCSS + RadixUI)
+**UI:** [ShadcnUI](TailwindCSS + RadixUI)
 
-**Build Tool:** [Vite](https://vitejs.dev/)
+**Build Tool:** [Vite]
 
-**Routing:** [TanStack Router](https://tanstack.com/router/latest)
+**Routing:** [React Router Dom]
 
-**Type Checking:** [TypeScript](https://www.typescriptlang.org/)
+**Type Checking:** [TypeScript]
 
-**Linting/Formatting:** [Eslint](https://eslint.org/) & [Prettier](https://prettier.io/)
+**Linting/Formatting:** [Eslint] & [Prettier]
 
-**Icons:** [Lucide Icons](https://lucide.dev/icons/), [Tabler Icons](https://tabler.io/icons) (Brand icons only)
-
-**Auth (partial):** [Clerk](https://go.clerk.com/GttUAaK)
+**Icons:** [Lucide Icons], [Tabler Icons] (Brand icons only)
 
 ## Run Locally
 
@@ -98,21 +96,12 @@ Start the server
   pnpm run dev
 ```
 
-## Sponsoring this project ❤️
-
-If you find this project helpful or use this in your own work, consider [sponsoring me](https://github.com/sponsors/satnaing) to support development and maintenance. You can [buy me a coffee](https://buymeacoffee.com/satnaing) as well. Don’t worry, every penny helps. Thank you! 🙏
-
-For questions or sponsorship inquiries, feel free to reach out at [contact@satnaing.dev](mailto:contact@satnaing.dev).
-
-### Current Sponsor
-
-- [Clerk](https://go.clerk.com/GttUAaK) - for backing the implementation of Clerk in this project
+For questions or sponsorship inquiries, feel free to reach out at [sajibdas.sd@gmail.com](mailto:sajibdas.sd@gmail.com).
 
 ## Author
 
-Crafted with 🤍 by [@satnaing](https://github.com/satnaing)
+Crafted with 🤍 by 
 
 ## License
 
-Licensed under the [MIT License](https://choosealicense.com/licenses/mit/)
 # kokonaat-frontend

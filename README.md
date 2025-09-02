@@ -75,25 +75,25 @@ If you want to update components using the Shadcn CLI (e.g., `npx shadcn@latest 
 Clone the project
 
 ```bash
-  git clone https://github.com/satnaing/shadcn-admin.git
+  git@github.com:kokonaat/kokonaat-frontend.git
 ```
 
 Go to the project directory
 
 ```bash
-  cd shadcn-admin
+  cd kokonaat-frontend
 ```
 
 Install dependencies
 
 ```bash
-  pnpm install
+  npm install
 ```
 
 Start the server
 
 ```bash
-  pnpm run dev
+  npm run dev
 ```
 
 For questions or sponsorship inquiries, feel free to reach out at [sajibdas.sd@gmail.com](mailto:sajibdas.sd@gmail.com).

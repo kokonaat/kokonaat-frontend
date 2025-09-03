@@ -29,27 +29,11 @@ export const VendorColumns: ColumnDef<VendorListInterface>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  // {
-  //   accessorKey: 'id',
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title='ID' />
-  //   ),
-  //   cell: ({ row }) => <div className='w-[80px]'>{row.getValue('id')}</div>,
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
-  // actual ID is used for filtering/searching
   {
-    accessorKey: 'id',
+    accessorKey: 'no',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='ID' />
     ),
-    cell: ({ row }) => {
-      const serialNumber = row.index + 1
-      return <div>{`ven${serialNumber}`}</div>
-    },
-    enableSorting: false,
-    enableHiding: false,
   },
   {
     accessorKey: 'name',

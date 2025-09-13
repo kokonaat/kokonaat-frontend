@@ -66,8 +66,8 @@ export const sidebarData: SidebarData = {
           icon: UsersRound,
         },
         {
-          title: 'Apps',
-          url: '/apps',
+          title: 'Transaction Board',
+          url: '/transactions',
           icon: Package,
         },
       ],

@@ -14,7 +14,7 @@ const Shops = lazy(() => import("@/pages/Shops"))
 const Customers = lazy(() => import("@/pages/Customers"))
 const Vendors = lazy(() => import("@/pages/Vendors"))
 const Designation = lazy(() => import("@/pages/Designation"))
-const Apps = lazy(() => import("@/features/apps"))
+const TransactionsPage = lazy(() => import("@/pages/TransactionsPage"))
 const Settings = lazy(() => import("@/features/settings"))
 const ComingSoon = lazy(() => import("@/components/coming-soon"))
 const Users = lazy(() => import("@/features/users"))
@@ -35,9 +35,9 @@ const AppRoutes = () => {
                             <Route path="/shops" element={<Shops />} />
                             <Route path="/customers" element={<Customers />} />
                             <Route path="/vendors" element={<Vendors />} />
+                            <Route path="/transactions" element={<TransactionsPage />} />
                             <Route path="/users/designation" element={<Designation />} />
                             <Route path="/users/employee" element={<Users />} />
-                            <Route path="/apps" element={<Apps />} />
                             <Route path="/settings" element={<Settings />} />
                             <Route path="/help-center" element={<ComingSoon />} />
                             <Route path="*" element={<Navigate to="/" replace />} />

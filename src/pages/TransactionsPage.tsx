@@ -4,11 +4,30 @@ import { Main } from "@/components/layout/main"
 import { ProfileDropdown } from "@/components/profile-dropdown"
 import { Search } from "@/components/search"
 import { ThemeSwitch } from "@/components/theme-switch"
-import { TasksProvider } from "@/components/transactions/tasks-provider"
+import { TransactionProvider } from "@/components/transactions/transaction-provider"
+import TransactionDialogs from "@/components/transactions/TransactionDialogs"
+import TransactionPrimaryButtons from "@/components/transactions/TransactionPrimaryButtons"
+import TransactionTable from "@/components/transactions/TransactionTable"
+
+// get and parsed shopId from ls
+const getCurrentShopId = (): string | null => {
+  const lsData = localStorage.getItem("shop-storage")
+  if (!lsData) return null
+  try {
+    const parsed = JSON.parse(lsData)
+    return parsed.state?.currentShopId || null
+  } catch {
+    return null
+  }
+}
 
 const TransactionsPage = () => {
+  const shopId = getCurrentShopId()
+  console.log(shopId)
+  // const { data, isLoading } = useDesignationList(shopId || "")
+
   return (
-    <TasksProvider>
+    <TransactionProvider>
       <Header>
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
@@ -26,9 +45,14 @@ const TransactionsPage = () => {
               Here is a list of your all Transactions
             </p>
           </div>
+          <TransactionPrimaryButtons />
+        </div>
+        <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
+          <TransactionTable data={[]} />
         </div>
       </Main>
-    </TasksProvider>
+      <TransactionDialogs />
+    </TransactionProvider>
   )
 }
 

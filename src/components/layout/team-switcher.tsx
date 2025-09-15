@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useState } from 'react'
 import { ChevronsUpDown, Plus } from 'lucide-react'
 import {
   DropdownMenu,
@@ -15,18 +15,14 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-
-type TeamSwitcherProps = {
-  teams: {
-    name: string
-    logo: React.ElementType
-    plan: string
-  }[]
-}
+import { useShopStore } from '@/stores/shopStore'
+import { TeamSwitcherProps } from '@/interface/sidebarDataInerface'
 
 export function TeamSwitcher({ teams }: TeamSwitcherProps) {
+
+  const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
   const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+  const [activeTeam, setActiveTeam] = useState(teams[0])
 
   return (
     <SidebarMenu>
@@ -44,7 +40,6 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
                 <span className='truncate font-semibold'>
                   {activeTeam.name}
                 </span>
-                <span className='truncate text-xs'>{activeTeam.plan}</span>
               </div>
               <ChevronsUpDown className='ms-auto' />
             </SidebarMenuButton>
@@ -61,7 +56,10 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
             {teams.map((team, index) => (
               <DropdownMenuItem
                 key={team.name}
-                onClick={() => setActiveTeam(team)}
+                onClick={() => {
+                  setActiveTeam(team)
+                  setCurrentShopId(team.id)
+                }}
                 className='gap-2 p-2'
               >
                 <div className='flex size-6 items-center justify-center rounded-sm border'>
@@ -82,5 +80,6 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
+    
   )
 }

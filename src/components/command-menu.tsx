@@ -38,14 +38,16 @@ export function CommandMenu() {
           {sidebarData.navGroups.map((group) => (
             <CommandGroup key={group.title} heading={group.title}>
               {group.items.map((navItem, i) => {
-                // Top-level link
+                // top level link
                 if (navItem.url)
                   return (
                     <CommandItem
                       key={`${navItem.url}-${i}`}
                       value={navItem.title}
                       onSelect={() => {
-                        runCommand(() => navigate(navItem.url))
+                        runCommand(() => {
+                          if (navItem.url) navigate(navItem.url)
+                        })
                       }}
                     >
                       <div className="flex size-4 items-center justify-center">
@@ -55,21 +57,23 @@ export function CommandMenu() {
                     </CommandItem>
                   )
 
-                // Sub-items
-                return navItem.items?.map((subItem, j) => (
-                  <CommandItem
-                    key={`${navItem.title}-${subItem.url}-${j}`}
-                    value={`${navItem.title}-${subItem.url}`}
-                    onSelect={() => {
-                      runCommand(() => navigate(subItem.url))
-                    }}
-                  >
-                    <div className="flex size-4 items-center justify-center">
-                      <ArrowRight className="text-muted-foreground/80 size-2" />
-                    </div>
-                    {navItem.title} <ChevronRight /> {subItem.title}
-                  </CommandItem>
-                ))
+                // sub items
+                return navItem.items?.map((subItem, j) => {
+                  if (!subItem.url) return null 
+
+                  return (
+                    <CommandItem
+                      key={`${navItem.title}-${subItem.url}-${j}`}
+                      value={`${navItem.title}-${subItem.url}`}
+                      onSelect={() => runCommand(() => navigate(subItem.url!))}
+                    >
+                      <div className="flex size-4 items-center justify-center">
+                        <ArrowRight className="text-muted-foreground/80 size-2" />
+                      </div>
+                      {navItem.title} <ChevronRight /> {subItem.title}
+                    </CommandItem>
+                  )
+                })
               })}
             </CommandGroup>
           ))}

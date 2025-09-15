@@ -23,7 +23,6 @@ const getCurrentShopId = (): string | null => {
 
 const TransactionsPage = () => {
   const shopId = getCurrentShopId()
-  console.log(shopId)
   // const { data, isLoading } = useDesignationList(shopId || "")
 
   return (

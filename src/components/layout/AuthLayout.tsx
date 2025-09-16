@@ -1,4 +1,4 @@
-type AuthLayoutProps = {
+interface AuthLayoutProps {
   children: React.ReactNode
 }
 

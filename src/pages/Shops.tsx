@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react"
-import { ConfigDrawer } from "@/components/config-drawer"
-import { Header } from "@/components/layout/header"
 import { Main } from "@/components/layout/main"
-import { ProfileDropdown } from "@/components/profile-dropdown"
-import { Search } from "@/components/search"
-import { ThemeSwitch } from "@/components/theme-switch"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -29,15 +24,6 @@ const Shops = () => {
 
     return (
         <div>
-            <Header>
-                <Search />
-                <div className="ms-auto flex items-center gap-4">
-                    <ThemeSwitch />
-                    <ConfigDrawer />
-                    <ProfileDropdown />
-                </div>
-            </Header>
-
             <Main fixed className="flex flex-col h-[calc(100svh-4rem)] overflow-y-auto">
                 <div className="flex justify-between items-center mb-4">
                     <div>

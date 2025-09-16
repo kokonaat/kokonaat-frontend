@@ -1,9 +1,4 @@
 import { Main } from '@/components/layout/main'
-import { Search } from '@/components/search'
-import { ConfigDrawer } from '@/components/config-drawer'
-import { Header } from '@/components/layout/header'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { ThemeSwitch } from '@/components/theme-switch'
 import { CustomersProvider } from '@/components/customers/customer-provider'
 import { useVendorList } from '@/hooks/useVendor'
 import CustomerCreateButton from '@/components/customers/CustomerCreateButton'
@@ -28,15 +23,6 @@ const Vendors = () => {
 
   return (
     <CustomersProvider>
-      <Header>
-        <Search />
-        <div className='ms-auto flex items-center space-x-4'>
-          <ThemeSwitch />
-          <ConfigDrawer />
-          <ProfileDropdown />
-        </div>
-      </Header>
-
       <Main>
         <div className='mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4'>
           <div>

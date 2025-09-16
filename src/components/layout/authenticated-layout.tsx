@@ -7,6 +7,11 @@ import {
 } from '@/components/ui/sidebar'
 import { AppSidebar } from './app-sidebar'
 import { TeamSwitcher } from './team-switcher'
+import { Header } from './header'
+import { Search } from '../search'
+import { ThemeSwitch } from '../theme-switch'
+import { ConfigDrawer } from '../config-drawer'
+import { ProfileDropdown } from '../profile-dropdown'
 import { NavGroup } from './nav-group'
 import { NavUser } from './nav-user'
 import { sidebarData as staticSidebarData } from './data/sidebar-data'
@@ -54,9 +59,21 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
         </AppSidebar>
 
         {/* ===== Main Content ===== */}
-        <main className="flex-1 min-w-0 h-full overflow-auto">
-          {children ?? <Outlet />}
-        </main>
+        <div className="flex flex-1 flex-col min-w-0 h-full overflow-hidden">
+          {/* top header (now shared globally) */}
+          <Header>
+            <Search />
+            <div className="ms-auto flex items-center space-x-4">
+              <ThemeSwitch />
+              <ConfigDrawer />
+              <ProfileDropdown />
+            </div>
+          </Header>
+
+          <main className="flex-1 min-w-0 h-full overflow-auto">
+            {children ?? <Outlet />}
+          </main>
+        </div>
       </div>
     </SidebarProvider>
   )

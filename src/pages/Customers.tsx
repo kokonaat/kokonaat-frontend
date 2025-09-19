@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Main } from '@/components/layout/main'
 import { CustomersProvider } from '@/components/customers/customer-provider'
 import { useCustomerList } from '@/hooks/useCustomer'
@@ -19,7 +20,10 @@ const getCurrentShopId = (): string | null => {
 
 const Customers = () => {
   const shopId = getCurrentShopId()
-  const { data, isLoading } = useCustomerList(shopId || "")
+  const [pageIndex, setPageIndex] = useState(0)
+  const pageSize = 10
+
+  const { data, isLoading } = useCustomerList(shopId || "", pageIndex + 1, pageSize)
 
   return (
     <CustomersProvider>
@@ -37,7 +41,13 @@ const Customers = () => {
           {isLoading ? (
             <p>Loading customers data...</p>
           ) : (
-            <CustomerTable data={data || []} />
+            <CustomerTable
+              data={data?.customers || []}
+              pageIndex={pageIndex}
+              pageSize={pageSize}
+              total={data?.total || 0}
+              onPageChange={setPageIndex}
+            />
           )}
         </div>
       </Main>

@@ -1,14 +1,20 @@
 import { apiEndpoints } from "@/config/api"
 import { axiosInstance } from "./axios"
-import { CustomerFormInterface, CustomerListInterface } from "@/interface/customerInterface"
+import type { CustomerFormInterface, CustomerListInterface } from "@/interface/customerInterface"
 
 // customer list
-export const customerList = async (shopId: string): Promise<CustomerListInterface[]> => {
-    if (!shopId) throw new Error("Shop ID is required")
+export const customerList = async (
+    shopId: string,
+    page: number,
+    limit: number
+): Promise<{ customers: CustomerListInterface[]; total: number }> => {
     const res = await axiosInstance.get(
-        `${apiEndpoints.customer.customerList}?shopId=${shopId}`
+        `${apiEndpoints.customer.customerList}?shopId=${shopId}&page=${page}&limit=${limit}`
     )
-    return res.data
+    return {
+        customers: res.data.data.customers,
+        total: res.data.data.pagination.total,
+    }
 }
 
 // create

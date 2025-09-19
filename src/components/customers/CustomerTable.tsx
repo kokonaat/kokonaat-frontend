@@ -21,17 +21,15 @@ import {
 } from '@/components/ui/table'
 import { CustomerColumns as columns } from './CustomerColumns'
 import { Input } from '@/components/ui/input'
-import { ColumnFiltersState } from '@tanstack/react-table'
+import type { ColumnFiltersState } from '@tanstack/react-table'
 import { DataTableViewOptions } from '@/components/designation/data-table-view-options'
 import { DataTablePagination } from '@/components/designation/data-table-pagination'
-import { CustomerListInterface } from '@/interface/customerInterface'
+import type { DataTableProps } from '@/interface/customerInterface'
 import { DataTableBulkActions } from './DataTableBulkActions'
 
-type DataTableProps = {
-  data: CustomerListInterface[]
-}
 
-const CustomerTable = ({ data }: DataTableProps) => {
+
+const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataTableProps) => {
   // Table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -43,7 +41,6 @@ const CustomerTable = ({ data }: DataTableProps) => {
   })
   const [globalFilter, setGlobalFilter] = useState('')
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
 
   const table = useReactTable({
     data,
@@ -54,22 +51,36 @@ const CustomerTable = ({ data }: DataTableProps) => {
       rowSelection,
       columnFilters,
       globalFilter,
-      pagination,
+      pagination: { pageIndex, pageSize },
     },
+    // server-side pagination
+    manualPagination: true,
+    pageCount: Math.ceil(total / pageSize),
+
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
-    onPaginationChange: setPagination,
+
+    // when user changes page
+    onPaginationChange: (updater) => {
+      if (typeof updater === 'function') {
+        const newState = updater({ pageIndex, pageSize })
+        onPageChange(newState.pageIndex)
+      } else {
+        onPageChange(updater.pageIndex)
+      }
+    },
+
     globalFilterFn: (row, _columnId, filterValue) => {
-      // const id = String(row.getValue('id')).toLowerCase()
       const id = `des${row.index + 1}`.toLowerCase()
       const name = String(row.getValue('name')).toLowerCase()
       const searchValue = String(filterValue).toLowerCase()
       return id.includes(searchValue) || name.includes(searchValue)
     },
+
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -78,12 +89,14 @@ const CustomerTable = ({ data }: DataTableProps) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
-  // Ensure current page is within range
+  // ensure current page is within range
+  const pageCount = table.getPageCount()
+
   useEffect(() => {
-    if (table.getState().pagination.pageIndex >= table.getPageCount()) {
-      setPagination({ ...pagination, pageIndex: table.getPageCount() - 1 })
+    if (table.getState().pagination.pageIndex >= pageCount) {
+      table.setPageIndex(pageCount - 1)
     }
-  }, [table.getPageCount()])
+  }, [table, pageCount])
 
   return (
     <div className='space-y-4 max-sm:has-[div[role="toolbar"]]:mb-16'>

@@ -36,14 +36,14 @@ const SignUp = () => {
           <p className='text-muted-foreground px-8 text-center text-sm'>
             By creating an account, you agree to our{' '}
             <a
-              href='/terms'
+              href='#'
               className='hover:text-primary underline underline-offset-4'
             >
               Terms of Service
             </a>{' '}
             and{' '}
             <a
-              href='/privacy'
+              href='#'
               className='hover:text-primary underline underline-offset-4'
             >
               Privacy Policy

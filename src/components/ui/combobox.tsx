@@ -28,6 +28,7 @@ interface ComboboxProps {
   emptyMessage?: string
   onSelect?: (value: string) => void
   className?: string
+  disabled?: boolean
 }
 
 export function Combobox({
@@ -36,6 +37,7 @@ export function Combobox({
   emptyMessage = "No results found.",
   onSelect,
   className,
+  disabled = false,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState("")
@@ -48,6 +50,7 @@ export function Combobox({
           role="combobox"
           aria-expanded={open}
           className={cn("justify-between", className)}
+          disabled={disabled}
         >
           {value
             ? options.find((option) => option.value === value)?.label

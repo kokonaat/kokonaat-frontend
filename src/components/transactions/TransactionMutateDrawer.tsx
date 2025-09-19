@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { z } from 'zod'
+import type { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
@@ -24,46 +24,19 @@ import {
 import { Combobox } from '../ui/combobox'
 import { Checkbox } from '@/components/ui/checkbox'
 import { getCurrentShopId } from '@/lib/getCurrentShopId'
-import { TransactionMutateDrawerProps } from '@/interface/transactionInterface'
+import type { ComboboxOptionInterface, TransactionMutateDrawerProps, TransactionRowInterface } from '@/interface/transactionInterface'
+import type { Customer } from '@/interface/customerInterface'
+import type { Vendor } from '@/interface/vendorInterface'
+import { CUSTOMER_TRANSACTION_TYPES, DEFAULT_VALUES, FORM_ID, VENDOR_TRANSACTION_TYPES } from '@/constance/transactionTypes'
 import { BusinessEntityType } from '@/utils/enums/trasaction.enum'
 import { transactionFormSchema } from '@/schema/transactionFormSchema'
 import { useVendorList } from '@/hooks/useVendor'
 import { useCustomerList } from '@/hooks/useCustomer'
-import { Customer } from '@/interface/customerInterface'
-import { Vendor } from '@/interface/vendorInterface'
-
-// combobox option type
-type ComboboxOption = {
-  value: string
-  label: string
-}
 
 type TransactionFormValues = z.infer<typeof transactionFormSchema>
 
-// transaction type options
-const VENDOR_TRANSACTION_TYPES = [
-  { value: 'payment', label: 'Payment' },
-  { value: 'purchase', label: 'Purchase' },
-  { value: 'commission', label: 'Commission' }
-]
-
-const CUSTOMER_TRANSACTION_TYPES = [
-  { value: 'payment', label: 'Payment' },
-  { value: 'sell_out', label: 'Sell Out' },
-  { value: 'commission', label: 'Commission' }
-]
-
-// constants
-const FORM_ID = 'transaction-form'
-const DEFAULT_VALUES: TransactionFormValues = {
-  transaction: '',
-  entityTypeId: '',
-  transactionType: '',
-  transactionPaymentStatus: undefined,
-}
-
 // helper functions
-const createBusinessEntityOptions = (): ComboboxOption[] => 
+const createBusinessEntityOptions = (): ComboboxOptionInterface[] =>
   Object.values(BusinessEntityType).map((entity) => ({
     value: entity,
     label: entity,
@@ -73,23 +46,23 @@ const createEntityOptions = (
   selectedBusinessEntity: BusinessEntityType | null,
   vendorList: Vendor[],
   customerList: Customer[]
-): ComboboxOption[] => {
+): ComboboxOptionInterface[] => {
   if (!selectedBusinessEntity) return []
-  
+
   if (selectedBusinessEntity === BusinessEntityType.VENDOR) {
-    return vendorList.map((vendor) => ({ 
-      value: vendor.id, 
-      label: vendor.name 
+    return vendorList.map((vendor) => ({
+      value: vendor.id,
+      label: vendor.name
     }))
   }
-  
+
   if (selectedBusinessEntity === BusinessEntityType.CUSTOMER) {
-    return customerList.map((customer) => ({ 
-      value: customer.id, 
-      label: customer.name 
+    return customerList.map((customer) => ({
+      value: customer.id,
+      label: customer.name
     }))
   }
-  
+
   return []
 }
 
@@ -105,26 +78,31 @@ const getEntityPlaceholder = (entityType: BusinessEntityType | null): string => 
   return 'Select entity...'
 }
 
-const getTransactionTypeOptions = (entityType: BusinessEntityType | null): ComboboxOption[] => {
+const getTransactionTypeOptions = (entityType: BusinessEntityType | null): ComboboxOptionInterface[] => {
   if (entityType === BusinessEntityType.VENDOR) return VENDOR_TRANSACTION_TYPES
   if (entityType === BusinessEntityType.CUSTOMER) return CUSTOMER_TRANSACTION_TYPES
   return []
 }
 
 // hook
-const useTransactionForm = (currentRow?: any) => {
+const useTransactionForm = (currentRow?: TransactionRowInterface) => {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
-    defaultValues: DEFAULT_VALUES,
+    defaultValues: {
+      transaction: '',
+      entityTypeId: '',
+      transactionType: '',
+      transactionPaymentStatus: undefined,
+    },
   })
 
   useEffect(() => {
     if (currentRow) {
       form.reset({
-        transaction: currentRow.transaction || '',
-        entityTypeId: currentRow.entityTypeId || '',
+        transaction: currentRow.title || '',
+        entityTypeId: currentRow.id || '',
         transactionType: currentRow.transactionType || '',
-        transactionPaymentStatus: currentRow.transactionPaymentStatus || undefined,
+        transactionPaymentStatus: currentRow.transactionPaymentStatus,
       })
     }
   }, [currentRow, form])
@@ -148,9 +126,9 @@ const TransactionMutateDrawer = ({
   onOpenChange,
   currentRow,
 }: TransactionMutateDrawerProps) => {
-  
+
   const [selectedBusinessEntity, setSelectedBusinessEntity] = useState<BusinessEntityType | null>(null)
-  
+
   // hooks
   const shopId = getCurrentShopId()
   const form = useTransactionForm(currentRow)
@@ -158,7 +136,7 @@ const TransactionMutateDrawer = ({
 
   // watch transactionType to conditionally render Payment Status
   const transactionType = form.watch("transactionType")
-  
+
   // computed values
   const isUpdate = !!currentRow
   const businessEntityOptions = createBusinessEntityOptions()
@@ -178,12 +156,13 @@ const TransactionMutateDrawer = ({
   const handleBusinessEntitySelect = (value: string) => {
     setSelectedBusinessEntity(value as BusinessEntityType)
     // reset
-    form.setValue('entityTypeId', '') 
+    form.setValue('entityTypeId', '')
     form.setValue('transactionType', '')
     form.setValue('transactionPaymentStatus', undefined)
   }
 
   const handleFormSubmit = (values: TransactionFormValues) => {
+    // eslint-disable-next-line no-console
     console.log('Form submitted:', values)
   }
 
@@ -251,28 +230,48 @@ const TransactionMutateDrawer = ({
               />
             )}
 
-            {/* conditional transaction type field */}
-            {selectedBusinessEntity && transactionTypeOptions.length > 0 && (
+            {/* conditional transaction type field with empty check */}
+            {selectedBusinessEntity && (
               <FormField
                 control={form.control}
                 name="transactionType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Transaction Type</FormLabel>
-                    <FormControl>
-                      <Combobox
-                        options={transactionTypeOptions}
-                        placeholder="Select transactions type..."
-                        onSelect={field.onChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const isEmpty =
+                    (selectedBusinessEntity === BusinessEntityType.VENDOR && flatVendorList.length === 0) ||
+                    (selectedBusinessEntity === BusinessEntityType.CUSTOMER && flatCustomerList.length === 0)
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Transaction Type</FormLabel>
+                      <FormControl>
+                        <Combobox
+                          options={transactionTypeOptions}
+                          placeholder={
+                            isEmpty
+                              ? selectedBusinessEntity === BusinessEntityType.VENDOR
+                                ? 'No vendor available'
+                                : 'No customer available'
+                              : 'Select transaction type...'
+                          }
+                          onSelect={field.onChange}
+                          disabled={isEmpty}
+                        />
+                      </FormControl>
+                      {isEmpty && (
+                        <p className="text-sm text-red-500 ml-1">
+                          {selectedBusinessEntity === BusinessEntityType.VENDOR
+                            ? 'Please add a vendor first.'
+                            : 'Please add a customer first.'}
+                        </p>
+                      )}
+                      <FormMessage />
+                    </FormItem>
+                  )
+                }}
               />
             )}
 
-            {/* ✅ Paid / Received field */}
+            {/* paid or received field */}
             {transactionType === "payment" && (
               <FormField
                 control={form.control}

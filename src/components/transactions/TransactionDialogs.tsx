@@ -26,7 +26,7 @@ const TransactionDialogs = () => {
         <>
           {/* Update modal */}
           <TransactionMutateDrawer
-            key={`designation-update-${currentRow.id}`}
+            key={`transaction-update-${currentRow.id}`}
             open={open === 'update'}
             onOpenChange={(val: boolean) => setOpen(val ? 'update' : null)}
             currentRow={currentRow}
@@ -46,7 +46,7 @@ const TransactionDialogs = () => {
 
           {/* Delete modal */}
           <ConfirmDialog
-            key='designation-delete'
+            key='transaction-delete'
             destructive
             open={open === 'delete'}
             onOpenChange={(val: boolean) => setOpen(val ? 'delete' : null)}
@@ -60,10 +60,10 @@ const TransactionDialogs = () => {
               })
             }}
             className='max-w-md'
-            title={`Delete this designation: ${currentRow.title} ?`}
+            title={`Delete this transaction: ${currentRow.title} ?`}
             desc={
               <>
-                You are about to delete a designation with the Title{' '}
+                You are about to delete a transaction with the Title{' '}
                 <strong>{currentRow.title}</strong>. <br />
                 This action cannot be undone.
               </>

@@ -23,7 +23,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { useCreateCustomer, useUpdateCustomer } from "@/hooks/useCustomer"
-import { CustomerMutateDrawerProps } from "@/interface/customerInterface"
+import type { CustomerMutateDrawerProps } from "@/interface/customerInterface"
 import { getCurrentShopId } from "@/lib/getCurrentShopId"
 import { Checkbox } from "../ui/checkbox"
 

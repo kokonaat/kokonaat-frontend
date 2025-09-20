@@ -1,15 +1,17 @@
-import { useMutation, UseMutationResult } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
+import type { UseMutationResult } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import {
+import type {
     UserSignUpInterface,
     UserSignInInterface,
     AuthResponseInterface
 } from "@/interface/userInterface"
 import { signUpUser, signInUser } from "@/api/userAuthApi"
 import { useAuthStore } from "@/stores/authStore"
+import type { AxiosError } from "axios"
+import type { ShopListInterface } from "@/interface/shopInterface"
 import { shopList } from "@/api/shopApi"
-import { ShopListInterface } from "@/interface/shopInterface"
 import { useShopStore } from "@/stores/shopStore"
 
 export const useAuth = () => {
@@ -35,7 +37,7 @@ export const useAuth = () => {
                 navigate("/create-shop")
             }
         },
-        onError: (err: any) => {
+        onError: (err: AxiosError<{message: string}>) => {
             toast.error(err?.response?.data?.message || "Failed to sign up")
         },
     })
@@ -68,8 +70,7 @@ export const useAuth = () => {
                 navigate("/") 
             }
         },
-        onError: (err: any) => {
-            console.log(err.response.data.message)
+        onError: (err: AxiosError<{message: string}>) => {
             toast.error(err?.response?.data?.message || "Failed to log in")
         },
     })

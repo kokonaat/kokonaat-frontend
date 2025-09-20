@@ -1,6 +1,6 @@
-import { ShopStoreInterface } from '@/interface/shopInterface'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import type { ShopStoreInterface } from '@/interface/shopInterface'
 
 export const useShopStore = create<ShopStoreInterface>()(
     persist(
@@ -10,6 +10,7 @@ export const useShopStore = create<ShopStoreInterface>()(
             clearCurrentShopId: () => set({ currentShopId: null }),
         }),
         {
+            // ls key name
             name: 'shop-storage',
         }
     )

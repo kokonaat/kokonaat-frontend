@@ -1,24 +1,13 @@
 import { Main } from '@/components/layout/main'
 import { TasksProvider } from '../components/designation/tasks-provider'
 import { useDesignationList } from '@/hooks/useDesignation'
+import { useShopStore } from '@/stores/shopStore'
 import DesignationTable from '../components/designation/DesignationTable'
 import DesignationDialogs from '@/components/designation/DesignationDialogs'
 import DesignationPrimaryButtons from '@/components/designation/DesignationPrimaryButtons'
 
-// get and parsed shopId from ls
-const getCurrentShopId = (): string | null => {
-  const lsData = localStorage.getItem("shop-storage")
-  if (!lsData) return null
-  try {
-    const parsed = JSON.parse(lsData)
-    return parsed.state?.currentShopId || null
-  } catch {
-    return null
-  }
-}
-
 const Designation = () => {
-  const shopId = getCurrentShopId()
+  const shopId = useShopStore((s) => s.currentShopId)
   const { data, isLoading } = useDesignationList(shopId || "")
 
   return (

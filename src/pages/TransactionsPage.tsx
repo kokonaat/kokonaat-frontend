@@ -1,23 +1,12 @@
 import { Main } from "@/components/layout/main"
 import { TransactionProvider } from "@/components/transactions/transaction-provider"
+import { useShopStore } from "@/stores/shopStore"
 import TransactionDialogs from "@/components/transactions/TransactionDialogs"
 import TransactionPrimaryButtons from "@/components/transactions/TransactionPrimaryButtons"
 import TransactionTable from "@/components/transactions/TransactionTable"
 
-// get and parsed shopId from ls
-const getCurrentShopId = (): string | null => {
-  const lsData = localStorage.getItem("shop-storage")
-  if (!lsData) return null
-  try {
-    const parsed = JSON.parse(lsData)
-    return parsed.state?.currentShopId || null
-  } catch {
-    return null
-  }
-}
-
 const TransactionsPage = () => {
-  const shopId = getCurrentShopId()
+  const shopId = useShopStore((s) => s.currentShopId)
   // const { data, isLoading } = useDesignationList(shopId || "")
 
   return (

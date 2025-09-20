@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { DesignationInterface } from '@/interface/designationInterface'
+import type { DesignationInterface } from '@/interface/designationInterface'
 import { createDesignation, deleteDesignation, designationList, updateDesignation } from '@/api/designationApi'
 
 const DESIGNATION_KEYS = {

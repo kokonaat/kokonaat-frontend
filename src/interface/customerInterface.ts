@@ -4,7 +4,7 @@ export interface Shop {
 }
 
 export interface CustomerFormInterface {
-  shop?: any;
+  shop?: Shop;
   name: string;
   email?: string | null;
   phone: string;
@@ -31,7 +31,7 @@ export interface Customer {
   shop: Shop;
 }
 
-export type CustomerListInterface = Customer[]
+export type CustomerListInterface = Customer
 
 export interface CustomerMutateDrawerProps {
   open: boolean
@@ -61,7 +61,7 @@ export interface CustomerMutateDrawerProps {
   }) => void
 }  
 
-export interface DataTableProps {
+export interface DataTablePropsInterface {
   data: CustomerListInterface[]
   pageIndex: number
   pageSize: number

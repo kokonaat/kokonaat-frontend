@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { AuthState } from "@/interface/userInterface"
+import type { AuthState } from "@/interface/userInterface"
 
 export const useAuthStore = create<AuthState>((set) => ({
     access_token: localStorage.getItem("access_token"),

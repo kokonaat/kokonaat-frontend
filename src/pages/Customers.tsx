@@ -2,24 +2,13 @@ import { useState } from 'react'
 import { Main } from '@/components/layout/main'
 import { CustomersProvider } from '@/components/customers/customer-provider'
 import { useCustomerList } from '@/hooks/useCustomer'
+import { useShopStore } from '@/stores/shopStore'
 import CustomerCreateButton from '@/components/customers/CustomerCreateButton'
 import CustomerTable from '@/components/customers/CustomerTable'
 import CustomersDialogs from '@/components/customers/CustomersDialogs'
 
-// get and parsed shopId from ls
-const getCurrentShopId = (): string | null => {
-  const lsData = localStorage.getItem("shop-storage")
-  if (!lsData) return null
-  try {
-    const parsed = JSON.parse(lsData)
-    return parsed.state?.currentShopId || null
-  } catch {
-    return null
-  }
-}
-
 const Customers = () => {
-  const shopId = getCurrentShopId()
+  const shopId = useShopStore((s) => s.currentShopId)
   const [pageIndex, setPageIndex] = useState(0)
   const pageSize = 10
 

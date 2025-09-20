@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import z from "zod"
+import type z from "zod"
 import {
     Card,
     CardContent,

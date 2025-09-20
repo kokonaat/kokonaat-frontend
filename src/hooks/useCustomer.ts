@@ -1,6 +1,6 @@
 import { createCustomer, customerList, deleteCustomer, updateCustomer } from "@/api/customerApi"
 import type { CustomerFormInterface } from "@/interface/customerInterface"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 const CUSTOMER_KEYS = {
     all: ['customers'] as const,
@@ -12,7 +12,7 @@ export const useCustomerList = (shopId: string, page: number, limit: number) =>
         queryKey: [...CUSTOMER_KEYS.all, shopId, page, limit],
         queryFn: () => customerList(shopId, page, limit),
         enabled: !!shopId,
-        keepPreviousData: true,
+        placeholderData: keepPreviousData,
     })
 
 

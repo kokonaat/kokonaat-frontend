@@ -13,7 +13,7 @@ import {
   IdCardLanyard,
   UsersRound,
 } from 'lucide-react'
-import { SidebarData } from '@/interface/sidebarDataInerface'
+import type { SidebarData } from '@/interface/sidebarDataInerface'
 
 export const sidebarData: Omit<SidebarData, 'teams'> = {
   user: {

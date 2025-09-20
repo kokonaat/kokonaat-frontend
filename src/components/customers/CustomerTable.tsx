@@ -22,14 +22,12 @@ import {
 import { CustomerColumns as columns } from './CustomerColumns'
 import { Input } from '@/components/ui/input'
 import type { ColumnFiltersState } from '@tanstack/react-table'
+import type { DataTablePropsInterface } from '@/interface/customerInterface'
 import { DataTableViewOptions } from '@/components/designation/data-table-view-options'
 import { DataTablePagination } from '@/components/designation/data-table-pagination'
-import type { DataTableProps } from '@/interface/customerInterface'
 import { DataTableBulkActions } from './DataTableBulkActions'
 
-
-
-const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataTableProps) => {
+const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataTablePropsInterface) => {
   // Table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])

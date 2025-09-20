@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import type { AxiosError } from "axios"
+import type { CreateShopInterface, ShopInterface, UpdateShopInterface } from "@/interface/shopInterface"
 import { createShop, shopList, updateShop } from "@/api/shopApi"
-import { CreateShopInterface, ShopInterface, UpdateShopInterface } from "@/interface/shopInterface"
 import { useShopStore } from "@/stores/shopStore"
 
 // query key
@@ -48,7 +49,7 @@ export const useCreateShop = () => {
             toast.success("Shop created successfully")
             queryClient.invalidateQueries({ queryKey: SHOP_KEYS.all })
         },
-        onError: (err: any) => {
+        onError: (err: AxiosError<{ message: string }>) => {
             toast.error(err?.response?.data?.message || "Failed to create shop")
         }
     })
@@ -64,7 +65,7 @@ export const useUpdateShop = () => {
             toast.success("Shop updated successfully!")
             queryClient.invalidateQueries({ queryKey: SHOP_KEYS.all })
         },
-        onError: (err: any) => {
+        onError: (err: AxiosError<{ message: string }>) => {
             toast.error(err?.response?.data?.message || "Failed to update shop")
         }
     })

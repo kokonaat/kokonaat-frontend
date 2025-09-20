@@ -1,6 +1,7 @@
 import { useEffect } from "react"
-import { z } from "zod"
-import { useForm, SubmitHandler } from "react-hook-form"
+import type z from "zod"
+import { useForm } from "react-hook-form"
+import type { SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,28 +23,14 @@ import {
 } from "@/components/ui/sheet"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-import { useCreateCustomer, useUpdateCustomer } from "@/hooks/useCustomer"
-import type { CustomerMutateDrawerProps } from "@/interface/customerInterface"
-import { getCurrentShopId } from "@/lib/getCurrentShopId"
 import { Checkbox } from "../ui/checkbox"
+import type { AxiosError } from "axios"
+import type { CustomerMutateDrawerProps } from "@/interface/customerInterface"
+import { customerFormSchema } from "@/schema/customerFormSchema"
+import { useCreateCustomer, useUpdateCustomer } from "@/hooks/useCustomer"
+import { getCurrentShopId } from "@/lib/getCurrentShopId"
 
-// zod schema form
-const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  phone: z.string().min(1, "Phone is required"),
-  email: z
-    .union([z.string().email(), z.string().length(0)])
-    .optional()
-    .nullable(),
-  address: z.string().min(1, "Address is required"),
-  city: z.string().optional().nullable(),
-  country: z.string().optional().nullable(),
-  isB2B: z.boolean().optional(),
-  contactPerson: z.string().optional().nullable(),
-  contactPersonPhone: z.string().optional().nullable(),
-})
-
-type CustomerFormSchema = z.infer<typeof formSchema>
+type CustomerFormSchema = z.infer<typeof customerFormSchema>
 
 const CustomersMutateDrawer = ({
   open,
@@ -58,7 +45,7 @@ const CustomersMutateDrawer = ({
   const updateMutation = useUpdateCustomer(shopId || "")
 
   const form = useForm<CustomerFormSchema>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(customerFormSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -85,7 +72,7 @@ const CustomersMutateDrawer = ({
       contactPerson: "",
       contactPersonPhone: "",
     })
-  }, [currentRow])
+  }, [currentRow, form])
 
   // tract inB2B
   const isCheckedIsB2B = form.watch("isB2B")
@@ -116,8 +103,9 @@ const CustomersMutateDrawer = ({
             form.reset()
             toast.success("Customer updated successfully.")
           },
-          onError: (err: any) => {
-            toast.error(err?.response?.data?.message || "Update failed")
+          onError: (err: unknown) => {
+            const error = err as AxiosError<{message: string}>
+            toast.error(error?.response?.data?.message || "Update failed")
           },
         }
       )
@@ -129,8 +117,9 @@ const CustomersMutateDrawer = ({
           form.reset()
           toast.success("Customer created successfully.")
         },
-        onError: (err: any) => {
-          toast.error(err?.response?.data?.message || "Creation failed")
+        onError: (err: unknown) => {
+          const error = err as AxiosError<{message: string}>
+          toast.error(error?.response?.data?.message || "Creation failed")
         },
       })
     }

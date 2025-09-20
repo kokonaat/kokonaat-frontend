@@ -21,17 +21,13 @@ import {
 } from '@/components/ui/table'
 import { VendorColumns as columns } from './VendorColumns'
 import { Input } from '@/components/ui/input'
-import { ColumnFiltersState } from '@tanstack/react-table'
-import { VendorListInterface } from '@/interface/vendorInterface'
+import type { ColumnFiltersState } from '@tanstack/react-table'
+import type { DataTablePropsInterface } from '@/interface/vendorInterface'
 import { DataTableViewOptions } from '../designation/data-table-view-options'
 import { DataTablePagination } from '../designation/data-table-pagination'
 import { VendorTableBulkActions } from './VendorTableBulkActions'
 
-type DataTableProps = {
-  data: VendorListInterface[]
-}
-
-const VendorTable = ({ data }: DataTableProps) => {
+const VendorTable = ({ data }: DataTablePropsInterface) => {
   // Table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -77,12 +73,14 @@ const VendorTable = ({ data }: DataTableProps) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
-  // Ensure current page is within range
+  // ensure current page is within range
+  const pageCount = table.getPageCount()
+
   useEffect(() => {
-    if (table.getState().pagination.pageIndex >= table.getPageCount()) {
-      setPagination({ ...pagination, pageIndex: table.getPageCount() - 1 })
+    if (table.getState().pagination.pageIndex >= pageCount) {
+      table.setPageIndex(pageCount - 1)
     }
-  }, [table.getPageCount()])
+  }, [table, pageCount])
 
   return (
     <div className='space-y-4 max-sm:has-[div[role="toolbar"]]:mb-16'>

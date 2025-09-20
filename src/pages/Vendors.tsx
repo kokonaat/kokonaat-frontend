@@ -1,24 +1,13 @@
 import { Main } from '@/components/layout/main'
 import { CustomersProvider } from '@/components/customers/customer-provider'
 import { useVendorList } from '@/hooks/useVendor'
+import { useShopStore } from '@/stores/shopStore'
 import CustomerCreateButton from '@/components/customers/CustomerCreateButton'
 import VendorTable from '@/components/vendors/VendorTable'
 import VendorDialogs from '@/components/vendors/VendorDialogs'
 
-// get and parsed shopId from ls
-const getCurrentShopId = (): string | null => {
-  const lsData = localStorage.getItem("shop-storage")
-  if (!lsData) return null
-  try {
-    const parsed = JSON.parse(lsData)
-    return parsed.state?.currentShopId || null
-  } catch {
-    return null
-  }
-}
-
 const Vendors = () => {
-  const shopId = getCurrentShopId()
+  const shopId = useShopStore((s) => s.currentShopId)
   const { data, isLoading } = useVendorList(shopId || "")
 
   return (

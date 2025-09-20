@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronsUpDown, Plus } from 'lucide-react'
 import {
   DropdownMenu,
@@ -16,13 +16,28 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { useShopStore } from '@/stores/shopStore'
-import { TeamSwitcherProps } from '@/interface/sidebarDataInerface'
+import type { TeamSwitcherProps } from '@/interface/sidebarDataInerface'
 
 export function TeamSwitcher({ teams }: TeamSwitcherProps) {
-
+  const currentShopId =  useShopStore((s) => s.currentShopId)
   const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
   const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = useState(teams[0])
+  
+  const [activeTeam, setActiveTeam] = useState(() => {
+    // try to match with saved shopId
+    return teams.find((t) => t.id === currentShopId) ?? teams[0]
+  })
+
+  // sync when teams or shopId change
+  useEffect(() => {
+    const selected = teams.find((t) => t.id === currentShopId)
+    if (selected) {
+      setActiveTeam(selected)
+    } else if (teams.length > 0) {
+      setActiveTeam(teams[0])
+      setCurrentShopId(teams[0].id)
+    }
+  }, [teams, currentShopId, setCurrentShopId])
 
   return (
     <SidebarMenu>
@@ -51,7 +66,7 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
             sideOffset={4}
           >
             <DropdownMenuLabel className='text-muted-foreground text-xs'>
-              Teams
+              Your Shops
             </DropdownMenuLabel>
             {teams.map((team, index) => (
               <DropdownMenuItem
@@ -74,7 +89,7 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
               <div className='bg-background flex size-6 items-center justify-center rounded-md border'>
                 <Plus className='size-4' />
               </div>
-              <div className='text-muted-foreground font-medium'>Add team</div>
+              <div className='text-muted-foreground font-medium'>Add Shop</div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

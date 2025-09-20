@@ -1,4 +1,4 @@
-import { ApiEndpoints } from "@/interface/apiEndpointsInterface"
+import type { ApiEndpoints } from "@/interface/apiEndpointsInterface"
 
 export const BASE_URL = import.meta.env.VITE_API_BASE_URL!
 

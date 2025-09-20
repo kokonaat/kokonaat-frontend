@@ -14,10 +14,10 @@ import { ConfigDrawer } from '../config-drawer'
 import { ProfileDropdown } from '../profile-dropdown'
 import { NavGroup } from './nav-group'
 import { NavUser } from './nav-user'
-import { sidebarData as staticSidebarData } from './data/sidebar-data'
+import { sidebarData as staticSidebarData } from '../../constance/sidebarContances'
 import { useShopList } from '@/hooks/useShop'
 import { Command, GalleryVerticalEnd, AudioWaveform } from 'lucide-react'
-import { AuthenticatedLayoutProps } from '@/interface/sidebarDataInerface'
+import type { AuthenticatedLayoutProps } from '@/interface/sidebarDataInerface'
 
 export default function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
 

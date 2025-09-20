@@ -33,34 +33,27 @@ export interface Vendor {
   shop: Shop;
 }
 
-export type VendorListInterface = Vendor
+export interface VendorListResponseInterface {
+  vendors: Vendor[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface VendorListApiResponseInterface {
+  msg: string;
+  statusCode: number;
+  data: VendorListResponseInterface;
+}
 
 export interface VendorMutateDrawerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  currentRow?: {
-    id: string
-    name: string
-    email: string | null
-    phone: string
-    address: string
-    city: string | null
-    country: string | null
-    isB2B: boolean
-    contactPerson: string | null
-    contactPersonPhone: string | null
-  }
-  onSave?: (updatedData: {
-    name: string
-    email: string | null
-    phone: string
-    address: string
-    city: string | null
-    country: string | null
-    isB2B: boolean
-    contactPerson: string | null
-    contactPersonPhone: string | null
-  }) => void
+  currentRow?: Vendor
+  onSave?: (updatedData: VendorFormInterface) => void
 }
 
 export interface VendorMultiDeleteDialogProps<TData extends { id: string }> {
@@ -70,5 +63,9 @@ export interface VendorMultiDeleteDialogProps<TData extends { id: string }> {
 }
 
 export interface DataTablePropsInterface {
-  data: VendorListInterface[]
+  data: Vendor[]
+  pageIndex: number
+  pageSize: number
+  total: number
+  onPageChange: (page: number) => void
 }

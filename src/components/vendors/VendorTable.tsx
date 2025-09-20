@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import {
   type SortingState,
   type VisibilityState,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -11,23 +12,15 @@ import {
   getFacetedUniqueValues,
   useReactTable,
 } from '@tanstack/react-table'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { VendorColumns as columns } from './VendorColumns'
 import { Input } from '@/components/ui/input'
-import type { ColumnFiltersState } from '@tanstack/react-table'
 import type { DataTablePropsInterface } from '@/interface/vendorInterface'
 import { DataTableViewOptions } from '../designation/data-table-view-options'
 import { DataTablePagination } from '../designation/data-table-pagination'
 import { VendorTableBulkActions } from './VendorTableBulkActions'
 
-const VendorTable = ({ data }: DataTablePropsInterface) => {
+const VendorTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataTablePropsInterface) => {
   // Table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -39,28 +32,29 @@ const VendorTable = ({ data }: DataTablePropsInterface) => {
   })
   const [globalFilter, setGlobalFilter] = useState('')
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
 
   const table = useReactTable({
     data,
     columns,
-    state: {
-      sorting,
-      columnVisibility,
-      rowSelection,
-      columnFilters,
-      globalFilter,
-      pagination,
-    },
+    state: { sorting, columnVisibility, rowSelection, columnFilters, globalFilter, pagination: { pageIndex, pageSize } },
+    manualPagination: true,
+    pageCount: Math.ceil(total / pageSize),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
-    onPaginationChange: setPagination,
+    onPaginationChange: updater => {
+      if (typeof updater === 'function') {
+        const newState = updater({ pageIndex, pageSize })
+        onPageChange(newState.pageIndex)
+      } else {
+        onPageChange(updater.pageIndex)
+      }
+    },
     globalFilterFn: (row, _columnId, filterValue) => {
-      const id = `ven${row.index + 1}`.toLowerCase()
+      const id = `des${row.index + 1}`.toLowerCase()
       const name = String(row.getValue('name')).toLowerCase()
       const searchValue = String(filterValue).toLowerCase()
       return id.includes(searchValue) || name.includes(searchValue)
@@ -73,7 +67,6 @@ const VendorTable = ({ data }: DataTablePropsInterface) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
-  // ensure current page is within range
   const pageCount = table.getPageCount()
 
   useEffect(() => {
@@ -89,7 +82,7 @@ const VendorTable = ({ data }: DataTablePropsInterface) => {
           <Input
             placeholder='Filter by name or ID...'
             value={table.getState().globalFilter ?? ''}
-            onChange={(event) => table.setGlobalFilter(event.target.value)}
+            onChange={event => table.setGlobalFilter(event.target.value)}
             className='h-8 w-[150px] lg:w-[250px]'
           />
         </div>
@@ -98,23 +91,21 @@ const VendorTable = ({ data }: DataTablePropsInterface) => {
       <div className='rounded-md border'>
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
+                {headerGroup.headers.map(header => (
                   <TableHead key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map(row => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>

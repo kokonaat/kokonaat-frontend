@@ -1,4 +1,4 @@
 export enum BusinessEntityType {
-  VENDOR = "Vendor",
-  CUSTOMER = "Customer",
+  VENDOR = "VENDOR",
+  CUSTOMER = "CUSTOMER",
 }

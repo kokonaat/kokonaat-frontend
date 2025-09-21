@@ -13,6 +13,7 @@ const Dashboard = lazy(() => import("@/pages/Dashboard"))
 const Shops = lazy(() => import("@/pages/Shops"))
 const Customers = lazy(() => import("@/pages/Customers"))
 const Vendors = lazy(() => import("@/pages/Vendors"))
+const VendorTransactionsProfile = lazy(() => import("@/components/vendors/VendorTransactionsProfile"))
 const Designation = lazy(() => import("@/pages/Designation"))
 const TransactionsPage = lazy(() => import("@/pages/TransactionsPage"))
 const Settings = lazy(() => import("@/features/settings"))
@@ -35,6 +36,7 @@ const AppRoutes = () => {
                             <Route path="/shops" element={<Shops />} />
                             <Route path="/customers" element={<Customers />} />
                             <Route path="/vendors" element={<Vendors />} />
+                            <Route path="/transaction/vendor/:id" element={<VendorTransactionsProfile />} />
                             <Route path="/transactions" element={<TransactionsPage />} />
                             <Route path="/users/designation" element={<Designation />} />
                             <Route path="/users/employee" element={<Users />} />

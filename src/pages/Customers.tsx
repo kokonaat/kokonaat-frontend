@@ -12,7 +12,12 @@ const Customers = () => {
   const [pageIndex, setPageIndex] = useState(0)
   const pageSize = 10
 
-  const { data, isLoading } = useCustomerList(shopId || "", pageIndex + 1, pageSize)
+  const { data, isLoading, isError } = useCustomerList(shopId || '', pageIndex + 1, pageSize)
+
+  if (isError) return <p>Error loading customers.</p>
+
+  const customers = data?.customers || []
+  const total = data?.total || 0
 
   return (
     <CustomersProvider>
@@ -31,10 +36,10 @@ const Customers = () => {
             <p>Loading customers data...</p>
           ) : (
             <CustomerTable
-              data={data?.customers || []}
+              data={customers}
               pageIndex={pageIndex}
               pageSize={pageSize}
-              total={data?.total || 0}
+              total={total}
               onPageChange={setPageIndex}
             />
           )}

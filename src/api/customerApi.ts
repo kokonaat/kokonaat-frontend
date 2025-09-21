@@ -11,9 +11,10 @@ export const customerList = async (
     const res = await axiosInstance.get(
         `${apiEndpoints.customer.customerList}?shopId=${shopId}&page=${page}&limit=${limit}`
     )
+
     return {
-        customers: res.data.data.customers,
-        total: res.data.data.pagination.total,
+        customers: res.data.data ?? [],
+        total: res.data.total ?? 0,
     }
 }
 

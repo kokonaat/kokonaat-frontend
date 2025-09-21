@@ -1,6 +1,6 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
-import { Trash2 } from 'lucide-react'
+import { Eye, Pencil, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -35,6 +35,17 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-[160px]'>
+        {/* view */}
+        <DropdownMenuItem
+          className='cursor-pointer'
+        >
+          View
+          <DropdownMenuShortcut>
+            <Eye size={16} />
+          </DropdownMenuShortcut>
+        </DropdownMenuItem>
+
+        {/* edit */}
         <DropdownMenuItem
           className='cursor-pointer'
           onClick={() => {
@@ -43,7 +54,12 @@ export function DataTableRowActions<TData>({
           }}
         >
           Edit
+          <DropdownMenuShortcut>
+            <Pencil size={16} />
+          </DropdownMenuShortcut>
         </DropdownMenuItem>
+
+        {/* delete */}
         <DropdownMenuItem
           className='cursor-pointer'
           onClick={() => {

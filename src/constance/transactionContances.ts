@@ -1,11 +1,13 @@
 export const VENDOR_TRANSACTION_TYPES = [
-  { value: 'payment', label: 'Payment' },
+  { value: 'pay', label: 'Pay' },
+  { value: 'receive', label: 'Receive' },
   { value: 'purchase', label: 'Purchase' },
   { value: 'commission', label: 'Commission' }
 ]
 
 export const CUSTOMER_TRANSACTION_TYPES = [
-  { value: 'payment', label: 'Payment' },
+  { value: 'pay', label: 'Pay' },
+  { value: 'collect', label: 'Collect' },
   { value: 'sell_out', label: 'Sell Out' },
   { value: 'commission', label: 'Commission' }
 ]

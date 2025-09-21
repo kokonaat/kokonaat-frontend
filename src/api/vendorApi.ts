@@ -12,7 +12,7 @@ export const vendorList = async (
   const res = await axiosInstance.get<VendorListApiResponseInterface>(
     `${apiEndpoints.vendor.vendorList}?shopId=${shopId}&page=${page}&limit=${limit}`
   );
-  return res.data.data
+  return res.data;
 }
 
 // create

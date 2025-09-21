@@ -16,8 +16,8 @@ const Vendors = () => {
 
   if (isError) return <p>Error loading vendors.</p>
 
-  const vendors = data?.vendors || []
-  const total = data?.pagination?.total || 0
+  const vendors = data?.data || []
+  const total = data?.total || 0
 
   return (
     <CustomersProvider>

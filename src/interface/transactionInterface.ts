@@ -9,7 +9,7 @@ export interface TransactionRowInterface {
     id: string
     title: string
     transactionType?: string
-    transactionPaymentStatus?: 'paid' | 'received'
+    transactionAmount?: number
 }
 
 export interface ComboboxOptionInterface {

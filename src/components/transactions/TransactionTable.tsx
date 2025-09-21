@@ -22,44 +22,49 @@ import {
 import { DataTablePagination } from '../designation/data-table-pagination'
 import { TransactionColumns as columns } from './TransactionColumns'
 import { Input } from '@/components/ui/input'
-import { DesignationDataTableProps } from '@/interface/designationInterface'
-import { ColumnFiltersState } from '@tanstack/react-table'
+import type { DesignationDataTableProps } from '@/interface/designationInterface'
+import type { ColumnFiltersState } from '@tanstack/react-table'
 import { DataTableBulkActions } from '../designation/data-table-bulk-actions'
 import { DataTableViewOptions } from './DataTableViewOption'
 
-const TransactionTable = ({ data }: DesignationDataTableProps) => {
+const TransactionTable = ({ data, pageIndex, pageSize, total, onPageChange }: any) => {
   // Table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    city: false,
+    country: false,
+    contactPerson: false,
+    contactPersonPhone: false,
+  })
   const [globalFilter, setGlobalFilter] = useState('')
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
 
   const table = useReactTable({
     data,
     columns,
-    state: {
-      sorting,
-      columnVisibility,
-      rowSelection,
-      columnFilters,
-      globalFilter,
-      pagination,
-    },
+    state: { sorting, columnVisibility, rowSelection, columnFilters, globalFilter, pagination: { pageIndex, pageSize } },
+    manualPagination: true,
+    pageCount: Math.ceil(total / pageSize),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
-    onPaginationChange: setPagination,
+    onPaginationChange: updater => {
+      if (typeof updater === 'function') {
+        const newState = updater({ pageIndex, pageSize })
+        onPageChange(newState.pageIndex)
+      } else {
+        onPageChange(updater.pageIndex)
+      }
+    },
     globalFilterFn: (row, _columnId, filterValue) => {
-      // const id = String(row.getValue('id')).toLowerCase()
       const id = `des${row.index + 1}`.toLowerCase()
-      const title = String(row.getValue('title')).toLowerCase()
+      const name = String(row.getValue('name')).toLowerCase()
       const searchValue = String(filterValue).toLowerCase()
-      return id.includes(searchValue) || title.includes(searchValue)
+      return id.includes(searchValue) || name.includes(searchValue)
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -69,12 +74,13 @@ const TransactionTable = ({ data }: DesignationDataTableProps) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
-  // Ensure current page is within range
+  const pageCount = table.getPageCount()
+
   useEffect(() => {
-    if (table.getState().pagination.pageIndex >= table.getPageCount()) {
-      setPagination({ ...pagination, pageIndex: table.getPageCount() - 1 })
+    if (table.getState().pagination.pageIndex >= pageCount) {
+      table.setPageIndex(pageCount - 1)
     }
-  }, [table.getPageCount()])
+  }, [table, pageCount])
 
   return (
     <div className='space-y-4 max-sm:has-[div[role="toolbar"]]:mb-16'>

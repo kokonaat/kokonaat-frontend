@@ -22,7 +22,6 @@ import {
 } from '@/components/ui/sheet'
 
 import { Combobox } from '../ui/combobox'
-import { Checkbox } from '@/components/ui/checkbox'
 import { getCurrentShopId } from '@/lib/getCurrentShopId'
 import type { ComboboxOptionInterface, TransactionMutateDrawerProps, TransactionRowInterface } from '@/interface/transactionInterface'
 import type { Customer } from '@/interface/customerInterface'
@@ -32,6 +31,7 @@ import { BusinessEntityType } from '@/utils/enums/trasaction.enum'
 import { transactionFormSchema } from '@/schema/transactionFormSchema'
 import { useVendorList } from '@/hooks/useVendor'
 import { useCustomerList } from '@/hooks/useCustomer'
+import { Input } from '../ui/input'
 
 type TransactionFormValues = z.infer<typeof transactionFormSchema>
 
@@ -92,7 +92,7 @@ const useTransactionForm = (currentRow?: TransactionRowInterface) => {
       transaction: '',
       entityTypeId: '',
       transactionType: '',
-      transactionPaymentStatus: undefined,
+      transactionAmount: undefined,
     },
   })
 
@@ -102,7 +102,7 @@ const useTransactionForm = (currentRow?: TransactionRowInterface) => {
         transaction: currentRow.title || '',
         entityTypeId: currentRow.id || '',
         transactionType: currentRow.transactionType || '',
-        transactionPaymentStatus: currentRow.transactionPaymentStatus,
+        transactionAmount: currentRow.transactionAmount,
       })
     }
   }, [currentRow, form])
@@ -111,11 +111,11 @@ const useTransactionForm = (currentRow?: TransactionRowInterface) => {
 }
 
 const useEntityData = (shopId: string | null) => {
-  const { data: vendorList } = useVendorList(shopId || '')
-  const { data: customerList } = useCustomerList(shopId || '')
+  const { data: vendorResponse } = useVendorList(shopId || '', 1, 10)
+  const { data: customerResponse } = useCustomerList(shopId || '', 1, 10)
 
-  const flatVendorList = (vendorList || []).flat() as Vendor[]
-  const flatCustomerList = (customerList || []).flat() as Customer[]
+  const flatVendorList = (vendorResponse?.data || []) as Vendor[]
+  const flatCustomerList = (customerResponse?.customers || []) as Customer[]
 
   return { flatVendorList, flatCustomerList }
 }
@@ -134,7 +134,6 @@ const TransactionMutateDrawer = ({
   const form = useTransactionForm(currentRow)
   const { flatVendorList, flatCustomerList } = useEntityData(shopId)
 
-  // watch transactionType to conditionally render Payment Status
   const transactionType = form.watch("transactionType")
 
   // computed values
@@ -155,14 +154,13 @@ const TransactionMutateDrawer = ({
 
   const handleBusinessEntitySelect = (value: string) => {
     setSelectedBusinessEntity(value as BusinessEntityType)
-    // reset
+    // reset dependent fields
     form.setValue('entityTypeId', '')
     form.setValue('transactionType', '')
-    form.setValue('transactionPaymentStatus', undefined)
+    form.setValue('transactionAmount', undefined)
   }
 
   const handleFormSubmit = (values: TransactionFormValues) => {
-    // eslint-disable-next-line no-console
     console.log('Form submitted:', values)
   }
 
@@ -187,7 +185,7 @@ const TransactionMutateDrawer = ({
             className="flex-1 space-y-6 overflow-y-auto px-4"
             onSubmit={form.handleSubmit(handleFormSubmit)}
           >
-            {/* business entity fields */}
+            {/* Business entity selection */}
             <FormField
               control={form.control}
               name="transaction"
@@ -209,7 +207,7 @@ const TransactionMutateDrawer = ({
               )}
             />
 
-            {/* conditional entity field */}
+            {/* Conditional entity selection */}
             {selectedBusinessEntity && entityOptions.length > 0 && (
               <FormField
                 control={form.control}
@@ -230,7 +228,7 @@ const TransactionMutateDrawer = ({
               />
             )}
 
-            {/* conditional transaction type field with empty check */}
+            {/* Transaction type selection */}
             {selectedBusinessEntity && (
               <FormField
                 control={form.control}
@@ -271,35 +269,38 @@ const TransactionMutateDrawer = ({
               />
             )}
 
-            {/* paid or received field */}
-            {transactionType === "payment" && (
+            {/* Amount input field */}
+            {selectedBusinessEntity && transactionType && (
               <FormField
                 control={form.control}
-                name="transactionPaymentStatus"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Payment Status</FormLabel>
-                    <FormControl>
-                      <div className="flex gap-4">
-                        <label className="flex items-center space-x-2">
-                          <Checkbox
-                            checked={field.value === "paid"}
-                            onCheckedChange={() => field.onChange("paid")}
-                          />
-                          <span>Paid</span>
-                        </label>
-                        <label className="flex items-center space-x-2">
-                          <Checkbox
-                            checked={field.value === "received"}
-                            onCheckedChange={() => field.onChange("received")}
-                          />
-                          <span>Received</span>
-                        </label>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                name="transactionAmount"
+                render={({ field }) => {
+                  const showAmountField =
+                    (selectedBusinessEntity === BusinessEntityType.VENDOR &&
+                      ["pay", "receive", "commission"].includes(transactionType)) ||
+                    (selectedBusinessEntity === BusinessEntityType.CUSTOMER &&
+                      ["pay", "collect", "commission"].includes(transactionType))
+
+                  return (
+                    <FormItem>
+                      {showAmountField && (
+                        <>
+                          <FormLabel>Enter Amount</FormLabel>
+                          <FormControl>
+                              <Input
+                                type="number"
+                                {...field}
+                                placeholder="0.00"
+                                value={field.value ?? ''}
+                                onChange={(e) => field.onChange(Number(e.target.value))}
+                              />
+                          </FormControl>
+                          <FormMessage />
+                        </>
+                      )}
+                    </FormItem>
+                  )
+                }}
               />
             )}
           </form>

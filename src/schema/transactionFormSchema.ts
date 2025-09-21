@@ -4,18 +4,29 @@ export const transactionFormSchema = z.object({
   transaction: z.string().min(1, "Please select a transaction"),
   entityTypeId: z.string().min(1, "Please select an entity type").optional(),
   transactionType: z.string().min(1, "Please select a transaction type").optional(),
-  transactionPaymentStatus: z.enum(["paid", "received"]).optional(),
+  transactionAmount: z
+    .number()
+    .positive({ message: "Amount must be positive" })
+    .optional(),
 }).refine(
   (data) => {
-    // if transactionType is "payment", then transactionPaymentStatus must be selected
-    if (data.transactionType === "payment") {
-      return !!data.transactionPaymentStatus
+    // If transaction type requires amount, it must be provided
+    const amountRequiredForVendor = ["pay", "receive", "commission"]
+    const amountRequiredForCustomer = ["pay", "receive", "collect"]
+
+    if (
+      (data.transactionType &&
+        amountRequiredForVendor.includes(data.transactionType)) ||
+      (data.transactionType &&
+        amountRequiredForCustomer.includes(data.transactionType))
+    ) {
+      return !!data.transactionAmount
     }
+
     return true
   },
   {
-    // show error under that field
-    path: ["transactionPaymentStatus"],
-    message: "Please select Paid or Received",
+    path: ["transactionAmount"],
+    message: "Please enter the amount",
   }
 )

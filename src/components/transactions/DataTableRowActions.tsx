@@ -1,5 +1,5 @@
-import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
+import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,18 +10,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useTransactions } from './transaction-provider'
-import { designationSchema } from '../designation/data/designationSchema'
 
 type DataTableRowActionsProps<TData> = {
   row: Row<TData>
 }
 
-export function DataTableRowActions<TData>({
-  row,
-}: DataTableRowActionsProps<TData>) {
-  const task = designationSchema.parse(row.original)
-
+export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TData>) {
   const { setOpen, setCurrentRow } = useTransactions()
+
+  const data = row.original
 
   return (
     <DropdownMenu modal={false}>
@@ -38,7 +35,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuItem
           className='cursor-pointer'
           onClick={() => {
-            setCurrentRow(task)
+            setCurrentRow(data)
             setOpen('update')
           }}
         >
@@ -47,7 +44,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuItem
           className='cursor-pointer'
           onClick={() => {
-            setCurrentRow(task)
+            setCurrentRow(data)
             setOpen('delete')
           }}
         >

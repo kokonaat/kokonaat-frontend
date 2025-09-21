@@ -10,12 +10,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useTransactions } from './transaction-provider'
+import type { Transaction } from './TransactionColumns'
 
-type DataTableRowActionsProps<TData> = {
+type DataTableRowActionsProps<TData extends Transaction> = {
   row: Row<TData>
 }
 
-export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TData>) {
+export function DataTableRowActions<TData extends Transaction>({
+  row,
+}: DataTableRowActionsProps<TData>) {
   const { setOpen, setCurrentRow } = useTransactions()
 
   const data = row.original

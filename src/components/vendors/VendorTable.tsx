@@ -19,6 +19,7 @@ import type { DataTablePropsInterface } from '@/interface/vendorInterface'
 import { DataTableViewOptions } from '../designation/data-table-view-options'
 import { DataTablePagination } from '../designation/data-table-pagination'
 import { VendorTableBulkActions } from './VendorTableBulkActions'
+import { useNavigate } from 'react-router-dom'
 
 const VendorTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataTablePropsInterface) => {
   // Table states
@@ -32,6 +33,8 @@ const VendorTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataTab
   })
   const [globalFilter, setGlobalFilter] = useState('')
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+
+  const navigate = useNavigate()
 
   const table = useReactTable({
     data,
@@ -75,6 +78,11 @@ const VendorTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataTab
     }
   }, [table, pageCount])
 
+  // vendor transaction profile page
+  const handleClick = (id: string) => {
+    navigate(`/transaction/vendor/${id}`)
+  }
+
   return (
     <div className='space-y-4 max-sm:has-[div[role="toolbar"]]:mb-16'>
       <div className='flex items-center justify-between'>
@@ -104,7 +112,12 @@ const VendorTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataTab
           <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map(row => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  onClick={() => handleClick(row.original.id)}
+                  className="cursor-pointer"
+                >
                   {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

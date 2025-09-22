@@ -33,7 +33,7 @@ const TransactionTable = ({ shopId }: TransactionTableProps) => {
   const { data, isLoading, isError } = useTransactionList(shopId, pageIndex + 1)
   const transactions = data?.data || []
   const total = data?.total || 0
-  const pageSize = 10 // API default
+  const pageSize = 10
 
   const table = useReactTable({
     data: transactions,

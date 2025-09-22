@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import type { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -22,7 +23,6 @@ import {
 } from "@/components/ui/sheet"
 import { Combobox } from "../ui/combobox"
 import { Input } from "../ui/input"
-import { getCurrentShopId } from "@/lib/getCurrentShopId"
 import type {
   ComboboxOptionInterface,
   TransactionMutateDrawerProps,
@@ -41,27 +41,9 @@ import { transactionFormSchema } from "@/schema/transactionFormSchema"
 import { useVendorList } from "@/hooks/useVendor"
 import { useCustomerList } from "@/hooks/useCustomer"
 import { useCreateTransaction } from "@/hooks/useTransaction"
-import { toast } from "sonner"
+import { useShopStore } from "@/stores/shopStore"
 
 type TransactionFormValues = z.infer<typeof transactionFormSchema>
-
-// Helper: map frontend transactionType to backend enum
-const mapTransactionType = (
-  type: string,
-  entity: BusinessEntityType
-): "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" => {
-  const t = type.toLowerCase()
-  if (entity === BusinessEntityType.VENDOR) {
-    if (t === "pay" || t === "payment") return "PAYMENT"
-    if (t === "purchase") return "PURCHASE"
-    if (t === "commission") return "COMMISSION"
-  } else if (entity === BusinessEntityType.CUSTOMER) {
-    if (t === "pay" || t === "payment" || t === "collect") return "PAYMENT"
-    if (t === "sale") return "SALE"
-    if (t === "commission") return "COMMISSION"
-  }
-  return "PAYMENT" // default fallback
-}
 
 // Helper: create options
 const createBusinessEntityOptions = (): ComboboxOptionInterface[] =>
@@ -155,7 +137,7 @@ const TransactionMutateDrawer = ({
   const [selectedBusinessEntity, setSelectedBusinessEntity] =
     useState<BusinessEntityType | null>(null)
 
-  const shopId = getCurrentShopId()
+  const shopId = useShopStore((s) => s.currentShopId)
   const form = useTransactionForm(currentRow)
   const { flatVendorList, flatCustomerList } = useEntityData(shopId)
   const { mutate: createTransaction, isPending } = useCreateTransaction(shopId!)
@@ -199,27 +181,20 @@ const TransactionMutateDrawer = ({
       return
     }
 
-    // Prepare payload according to partner type
     const payload =
       selectedBusinessEntity === BusinessEntityType.VENDOR
         ? {
           shopId,
           partnerType: "VENDOR" as const,
           vendorId: entityId,
-          transactionType: mapTransactionType(
-            selectedTransactionType,
-            selectedBusinessEntity
-          ),
+          transactionType: selectedTransactionType,
           amount,
         }
         : {
           shopId,
           partnerType: "CUSTOMER" as const,
           customerId: entityId,
-          transactionType: mapTransactionType(
-            selectedTransactionType,
-            selectedBusinessEntity
-          ),
+          transactionType: selectedTransactionType,
           amount,
         }
 

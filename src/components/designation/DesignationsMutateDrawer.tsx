@@ -22,9 +22,9 @@ import {
 } from '@/components/ui/sheet'
 import { toast } from 'sonner'
 import { useCreateDesignation, useUpdateDesignation } from '@/hooks/useDesignation'
-import { getCurrentShopId } from '@/lib/getCurrentShopId'
 import { useEffect } from 'react'
-import { DesignationFormInterface, DesignationMutateDrawerProps } from '@/interface/designationInterface'
+import type { DesignationFormInterface, DesignationMutateDrawerProps } from '@/interface/designationInterface'
+import { useShopStore } from '@/stores/shopStore'
 
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required.'),
@@ -35,7 +35,7 @@ const DesignationsMutateDrawer = ({
   onOpenChange,
   currentRow,
 }: DesignationMutateDrawerProps) => {
-  const shopId = getCurrentShopId()
+  const shopId = useShopStore((s) => s.currentShopId)
   const isUpdate = !!currentRow
 
   const createMutation = useCreateDesignation(shopId || '')

@@ -16,3 +16,17 @@ export interface ComboboxOptionInterface {
     value: string
     label: string
 }
+
+export interface CreateTransactionDto {
+  shopId: string
+  partnerType: "VENDOR" | "CUSTOMER"
+  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE"
+  amount: number
+  vendorId?: string
+  customerId?: string
+}
+
+export interface TransactionListResponse {
+  data: TransactionRowInterface[]
+  total: number
+}

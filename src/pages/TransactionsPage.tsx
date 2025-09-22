@@ -3,10 +3,10 @@ import { TransactionProvider } from "@/components/transactions/transaction-provi
 import TransactionDialogs from "@/components/transactions/TransactionDialogs"
 import TransactionPrimaryButtons from "@/components/transactions/TransactionPrimaryButtons"
 import TransactionTable from "@/components/transactions/TransactionTable"
-import { getCurrentShopId } from "@/lib/getCurrentShopId"
+import { useShopStore } from "@/stores/shopStore"
 
 const TransactionsPage = () => {
-  const shopId = getCurrentShopId()
+  const shopId = useShopStore((s) => s.currentShopId)
   if (!shopId) return <div>No shop selected</div>
 
   return (

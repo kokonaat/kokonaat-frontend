@@ -1,6 +1,6 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createTransaction, getTransactions, type CreateTransactionDto } from "@/api/transactionApi"
-import type { TransactionListResponse } from "@/api/transactionApi"
+import { createTransaction, getTransactions } from "@/api/transactionApi"
+import type { CreateTransactionDto, TransactionListResponse } from "@/interface/transactionInterface"
 
 const TRANSACTIONS_KEYS = {
     all: ["transactions"] as const,
@@ -24,6 +24,7 @@ export const useCreateTransaction = (shopId: string) => {
             queryClient.invalidateQueries({ queryKey: [...TRANSACTIONS_KEYS.all, shopId] })
         },
         onError: (error) => {
+            // eslint-disable-next-line no-console
             console.error("Failed to create transaction:", error)
         },
     })

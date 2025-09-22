@@ -26,6 +26,7 @@ import type { DataTablePropsInterface } from '@/interface/customerInterface'
 import { DataTableViewOptions } from '@/components/designation/data-table-view-options'
 import { DataTablePagination } from '@/components/designation/data-table-pagination'
 import { DataTableBulkActions } from './DataTableBulkActions'
+import { useNavigate } from 'react-router-dom'
 
 const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataTablePropsInterface) => {
   // Table states
@@ -39,6 +40,8 @@ const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataT
   })
   const [globalFilter, setGlobalFilter] = useState('')
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+
+  const navigate = useNavigate()
 
   const table = useReactTable({
     data,
@@ -96,6 +99,11 @@ const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataT
     }
   }, [table, pageCount])
 
+  // customer transaction profile page
+  const handleClick = (id: string) => {
+    navigate(`/transaction/customer/${id}`)
+  }
+
   return (
     <div className='space-y-4 max-sm:has-[div[role="toolbar"]]:mb-16'>
       <div className='flex items-center justify-between'>
@@ -127,7 +135,12 @@ const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataT
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  onClick={() => handleClick(row.original.id)}
+                  className="cursor-pointer"
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

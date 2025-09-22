@@ -23,6 +23,7 @@ export const apiEndpoints: ApiEndpoints = {
         createCustomer: "/customer",
         updateCustomer: "/customer",
         deleteCustomer: "/customer",
+        customerTransactions: "/transaction/customer/id"
     },
     vendor: {
         vendorList: "/vendor",

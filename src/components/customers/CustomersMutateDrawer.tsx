@@ -28,7 +28,7 @@ import type { AxiosError } from "axios"
 import type { CustomerMutateDrawerProps } from "@/interface/customerInterface"
 import { customerFormSchema } from "@/schema/customerFormSchema"
 import { useCreateCustomer, useUpdateCustomer } from "@/hooks/useCustomer"
-import { getCurrentShopId } from "@/lib/getCurrentShopId"
+import { useShopStore } from "@/stores/shopStore"
 
 type CustomerFormSchema = z.infer<typeof customerFormSchema>
 
@@ -38,7 +38,7 @@ const CustomersMutateDrawer = ({
   currentRow,
   onSave,
 }: CustomerMutateDrawerProps) => {
-  const shopId = getCurrentShopId()
+  const shopId = useShopStore((s) => s.currentShopId)
   const isUpdate = !!currentRow
 
   const createMutation = useCreateCustomer(shopId || "")

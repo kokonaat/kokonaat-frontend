@@ -25,10 +25,10 @@ import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import type { AxiosError } from "axios"
 import type { CustomerMutateDrawerProps } from "@/interface/customerInterface"
-import { getCurrentShopId } from "@/lib/getCurrentShopId"
 import { Checkbox } from "../ui/checkbox"
 import { vendorFormSchema } from "@/schema/vendorFormSchema"
 import { useCreateVendor, useUpdateVendor } from "@/hooks/useVendor"
+import { useShopStore } from "@/stores/shopStore"
 
 type CustomerFormSchema = z.infer<typeof vendorFormSchema>
 
@@ -38,7 +38,7 @@ const VendorMutateDrawer = ({
   currentRow,
   onSave,
 }: CustomerMutateDrawerProps) => {
-  const shopId = getCurrentShopId()
+  const shopId = useShopStore((s) => s.currentShopId)
   const isUpdate = !!currentRow
 
   const createMutation = useCreateVendor(shopId || "")
@@ -119,7 +119,7 @@ const VendorMutateDrawer = ({
           toast.success("Vendor created successfully.")
         },
         onError: (err: unknown) => {
-          const error = err as AxiosError<{message: string}>
+          const error = err as AxiosError<{ message: string }>
           toast.error(error?.response?.data?.message || "Creation failed")
         },
       })

@@ -13,10 +13,12 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useAuthStore } from '@/stores/authStore'
 import { useShopStore } from '@/stores/shopStore'
+import { useUserStore } from '@/stores/userStore'
 
 export function ProfileDropdown() {
   const { clearTokens } = useAuthStore()
   const { clearCurrentShopId } = useShopStore()
+  const user = useUserStore((s) => s.user)
   const navigate = useNavigate()
 
   const handleLogOut = () => {
@@ -31,7 +33,15 @@ export function ProfileDropdown() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
             <AvatarImage src="/avatars/01.png" alt="@shadcn" />
-            <AvatarFallback>SN</AvatarFallback>
+            <AvatarFallback>
+              {user?.name
+                ? user.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .toUpperCase()
+                : "U"}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -39,10 +49,8 @@ export function ProfileDropdown() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col gap-1.5">
-            <p className="text-sm leading-none font-medium">satnaing</p>
-            <p className="text-muted-foreground text-xs leading-none">
-              satnaingdev@gmail.com
-            </p>
+            <p className="text-sm leading-none font-medium"> {user?.name} </p>
+            <p className="text-muted-foreground text-xs leading-none"> {user?.phone} </p>
           </div>
         </DropdownMenuLabel>
 

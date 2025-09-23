@@ -9,6 +9,7 @@ export interface Shop {
 export interface VendorFormInterface {
   shop?: Shop
   name: string
+  no: string
   email?: string | null
   phone: string
   address: string
@@ -75,4 +76,43 @@ export interface DataTablePropsInterface {
   pageSize: number
   total: number
   onPageChange: (page: number) => void
+}
+
+export interface VendorTransactionVendor {
+  id: string
+  name: string
+}
+
+export interface VendorTransactionInterface {
+  no: string
+  id: string
+  partnerType: string
+  vendor: {
+    id: string
+    name: string
+  }
+  vendorId: string
+  transactionType: string
+  transactionStatus: string
+  amount: number
+  pending: number
+  advancePaid: number
+  paymentType: string
+  isPaid: boolean
+  remarks: string
+  payable: number
+  receivable: number
+  shopId: string
+  createdAt: string
+  updatedAt: string
+  details: any[]
+}
+
+export interface VendorTransactionApiResponse {
+  msg: string
+  statusCode: number
+  data: VendorTransactionInterface[]
+  page: number
+  limit: number
+  total: number
 }

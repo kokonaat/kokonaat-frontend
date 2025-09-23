@@ -26,6 +26,7 @@ export interface ApiEndpoints {
         createVendor: string
         updateVendor: string
         deleteVendor: string
+        getVendorById: string
         vendorTransactions: string
     }
     transactions: {

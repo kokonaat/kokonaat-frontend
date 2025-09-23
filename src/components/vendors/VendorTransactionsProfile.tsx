@@ -1,46 +1,139 @@
-import { useState } from 'react'
-import { Main } from '@/components/layout/main'
-import { CustomersProvider } from '@/components/customers/customer-provider'
-import { useVendorList } from '@/hooks/useVendor'
-import { useShopStore } from '@/stores/shopStore'
-import VendorTable from '@/components/vendors/VendorTable'
-import VendorDialogs from '@/components/vendors/VendorDialogs'
+import { useState } from "react"
+import { useParams } from "react-router-dom"
+import { Main } from "@/components/layout/main"
+import { CustomersProvider } from "@/components/customers/customer-provider"
+import VendorDialogs from "@/components/vendors/VendorDialogs"
+import VendorTransactionsTable from "./VendorTransactionsTable"
+import { useShopStore } from "@/stores/shopStore"
+import { useVendorById, useVendorTransactions } from "@/hooks/useVendor"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+} from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { Mail, Phone, MapPin, User } from "lucide-react"
 
 const VendorTransactionsProfile = () => {
-  const shopId = useShopStore(s => s.currentShopId)
+  const shopId = useShopStore((s) => s.currentShopId)
+  const { id } = useParams<{ id: string }>()
   const [pageIndex, setPageIndex] = useState(0)
-  const pageSize = 10
+  const pageSize = 10 // Can make dynamic later
 
-  const { data, isLoading, isError } = useVendorList(shopId || '', pageIndex + 1, pageSize)
+  // Fetch vendor info
+  const { data: vendor, isLoading: isVendorLoading, isError: isVendorError } =
+    useVendorById(shopId ?? "", id ?? "")
 
-  if (isError) return <p>Error loading vendors.</p>
+  // Fetch vendor transactions
+  const {
+    data: transactionsResponse,
+    isLoading: isTransactionsLoading,
+    isError: isTransactionsError,
+  } = useVendorTransactions(id ?? "", pageIndex, pageSize)
 
-  const vendors = data?.data || []
-  const total = data?.total || 0
+  const transactions = transactionsResponse?.data ?? []
+  const total = transactionsResponse?.total ?? 0
 
   return (
     <CustomersProvider>
       <Main>
-        <div className='mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4'>
-          <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Vendor's transactions profile</h2>
-            <p className='text-muted-foreground'>Here is Vendor's transactions profile</p>
-          </div>
-        </div>
-        <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          {isLoading ? (
-            <p>Loading vendors data...</p>
-          ) : (
-            <VendorTable
-              data={vendors}
-              pageIndex={pageIndex}
-              pageSize={pageSize}
-              total={total}
-              onPageChange={setPageIndex}
-            />
-          )}
-        </div>
+        {isVendorLoading && <p>Loading vendor details...</p>}
+        {isVendorError && <p className="text-red-500">Failed to load vendor</p>}
+
+        {vendor && (
+          <Card className="rounded-2xl shadow-sm border bg-card">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-3">
+                <User className="h-8 w-8 text-primary" />
+                {vendor.name}
+              </CardTitle>
+              <CardDescription>No: {vendor.no}</CardDescription>
+            </CardHeader>
+
+            <CardContent className="space-y-6">
+              {/* Basic Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <p className="flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-muted-foreground" />
+                    <span>{vendor.email ?? "N/A"}</span>
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Phone className="h-5 w-5 text-muted-foreground" />
+                    <span>{vendor.phone ?? "N/A"}</span>
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <MapPin className="h-5 w-5 text-muted-foreground" />
+                    <span>{vendor.address ?? "N/A"}</span>
+                  </p>
+                  <p>
+                    <strong>City:</strong>{" "}
+                    {vendor.city ?? <span className="text-muted-foreground">N/A</span>}
+                  </p>
+                  <p>
+                    <strong>Country:</strong>{" "}
+                    {vendor.country ?? <span className="text-muted-foreground">N/A</span>}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <p>
+                    <strong>Shop:</strong>{" "}
+                    <span className="text-muted-foreground">{vendor.shop?.name}</span>
+                  </p>
+                  <p>
+                    <strong>Business Type:</strong>{" "}
+                    {vendor.isB2B ? (
+                      <Badge variant="default">B2B</Badge>
+                    ) : (
+                      <Badge variant="secondary">Individual</Badge>
+                    )}
+                  </p>
+                  <p>
+                    <strong>Contact Person:</strong>{" "}
+                    {vendor.contactPerson ?? (
+                      <span className="text-muted-foreground">Not Provided</span>
+                    )}
+                  </p>
+                  <p>
+                    <strong>Contact Phone:</strong>{" "}
+                    {vendor.contactPersonPhone ?? (
+                      <span className="text-muted-foreground">Not Provided</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Transactions Table */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Transactions</h3>
+                {isTransactionsLoading && <p>Loading transactions...</p>}
+                {isTransactionsError && (
+                  <p className="text-red-500">Failed to load transactions</p>
+                )}
+                {!isTransactionsLoading && transactions.length > 0 && (
+                  <VendorTransactionsTable
+                    data={transactions}
+                    pageIndex={pageIndex}
+                    pageSize={pageSize}
+                    total={total}
+                    onPageChange={setPageIndex}
+                  />
+                )}
+                {!isTransactionsLoading && transactions.length === 0 && (
+                  <p>No transactions found.</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </Main>
+
       <VendorDialogs />
     </CustomersProvider>
   )

@@ -30,6 +30,7 @@ export const apiEndpoints: ApiEndpoints = {
         createVendor: "/vendor",
         updateVendor: "/vendor",
         deleteVendor: "/vendor",
+        getVendorById: "/vendor/id",
         vendorTransactions: "/transaction/vendor/id"
     },
     transactions: {

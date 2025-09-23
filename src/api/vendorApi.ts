@@ -1,18 +1,33 @@
 import { apiEndpoints } from "@/config/api"
 import { axiosInstance } from "./axios"
-import type { VendorFormInterface, VendorListApiResponseInterface, VendorListResponseInterface } from "@/interface/vendorInterface"
+import type { VendorFormInterface, VendorListApiResponseInterface, VendorListResponseInterface, VendorTransactionApiResponse } from "@/interface/vendorInterface"
 
 // vendor list
 export const vendorList = async (
-  shopId: string,
-  page: number,
-  limit: number
+    shopId: string,
+    page: number,
+    limit: number
 ): Promise<VendorListResponseInterface> => {
-  if (!shopId) throw new Error("Shop ID is required");
-  const res = await axiosInstance.get<VendorListApiResponseInterface>(
-    `${apiEndpoints.vendor.vendorList}?shopId=${shopId}&page=${page}&limit=${limit}`
-  );
-  return res.data;
+    if (!shopId) throw new Error("Shop ID is required");
+    const res = await axiosInstance.get<VendorListApiResponseInterface>(
+        `${apiEndpoints.vendor.vendorList}?shopId=${shopId}&page=${page}&limit=${limit}`
+    );
+    return res.data;
+}
+
+// get vendor by id
+export const getVendorById = async (
+    id: string,
+    shopId: string
+): Promise<VendorFormInterface> => {
+    if (!id) throw new Error("Vendor ID is required")
+    if (!shopId) throw new Error("Shop ID is required")
+
+    const res = await axiosInstance.get<VendorFormInterface>(
+        `${apiEndpoints.vendor.getVendorById.replace("id", id)}?shopId=${shopId}`
+    )
+
+    return res.data
 }
 
 // create
@@ -46,5 +61,23 @@ export const deleteVendor = async ({ id, shopId }: { id: string; shopId: string 
     const res = await axiosInstance.delete<VendorListApiResponseInterface>(
         `${apiEndpoints.vendor.deleteVendor}/${id}?shopId=${shopId}`
     )
+    return res.data
+}
+
+// get vendor transactions by vendorId
+export const getVendorTransactions = async (
+    vendorId: string,
+    page: number = 1,
+    limit: number = 10
+): Promise<VendorTransactionApiResponse> => {
+    if (!vendorId) throw new Error("Vendor ID is required")
+
+    const res = await axiosInstance.get<VendorTransactionApiResponse>(
+        apiEndpoints.vendor.vendorTransactions.replace("id", vendorId),
+        {
+            params: { page, limit },
+        }
+    )
+
     return res.data
 }

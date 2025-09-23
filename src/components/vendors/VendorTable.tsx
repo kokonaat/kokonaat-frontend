@@ -80,7 +80,7 @@ const VendorTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataTab
 
   // vendor transaction profile page
   const handleClick = (id: string) => {
-    navigate(`/transaction/vendor/${id}`)
+    navigate(`/vendor/${id}`)
   }
 
   return (

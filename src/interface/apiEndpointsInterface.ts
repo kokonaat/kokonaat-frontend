@@ -32,4 +32,5 @@ export interface ApiEndpoints {
         transactionsList: string
         createTransactions: string
     }
+    user: string
 }

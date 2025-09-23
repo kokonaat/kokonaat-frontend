@@ -22,3 +22,16 @@ export interface AuthState {
     setTokens: (access: string, refresh: string) => void
     clearTokens: () => void
 }
+
+export interface UserInterface {
+    id: string
+    name: string
+    phone: string
+    createdAt: string
+}
+
+export interface UserState {
+    user: UserInterface | null
+    setUser: (user: UserInterface) => void
+    clearUser: () => void
+}

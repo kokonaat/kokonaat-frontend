@@ -18,10 +18,13 @@ import { sidebarData as staticSidebarData } from '../../constance/sidebarContanc
 import { useShopList } from '@/hooks/useShop'
 import { Command, GalleryVerticalEnd, AudioWaveform } from 'lucide-react'
 import type { AuthenticatedLayoutProps } from '@/interface/sidebarDataInerface'
+import { useUserStore } from '@/stores/userStore'
 
 export default function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
 
   const { data, isLoading, isError } = useShopList()
+
+  const user = useUserStore((s) => s.user)
 
   // default icons to rotate for shops
   const icons = [Command, GalleryVerticalEnd, AudioWaveform]
@@ -54,7 +57,7 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
           </SidebarContent>
 
           <SidebarFooter>
-            <NavUser user={staticSidebarData.user} />
+            <NavUser user={user} />
           </SidebarFooter>
         </AppSidebar>
 

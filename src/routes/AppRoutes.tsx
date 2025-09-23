@@ -4,6 +4,7 @@ import { Toaster } from "sonner"
 import ProtectedRoute from "./ProtectedRoute"
 import AuthenticatedLayout from "@/components/layout/authenticated-layout"
 import Loader from "@/components/layout/Loader"
+import { useUser } from "@/hooks/useUser"
 
 // Lazy load pages
 const SignIn = lazy(() => import("@/pages/SignIn"))
@@ -22,6 +23,9 @@ const ComingSoon = lazy(() => import("@/components/coming-soon"))
 const Users = lazy(() => import("@/features/users"))
 
 const AppRoutes = () => {
+    // calling user api to avoid to get null where user's data needed
+    useUser()
+    
     return (
         <>
             <Toaster position="top-center" />

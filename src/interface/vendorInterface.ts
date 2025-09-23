@@ -6,19 +6,18 @@ export interface Shop {
   name: string
 }
 
-export interface VendorFormInterface {
-  shop?: Shop
-  name: string
+export interface VendorListInterface {
+  id: string
   no: string
-  email?: string | null
-  phone: string
-  address: string
-  city?: string | null
-  country?: string | null
-  isB2B?: boolean
-  contactPerson?: string | null
-  contactPersonPhone?: string | null
-  shopId: string
+  name: string
+  email?: string
+  phone?: string
+  address?: string
+  city?: string
+  country?: string
+  isB2B: boolean
+  contactPerson?: string
+  contactPersonPhone?: string
 }
 
 export interface Vendor {
@@ -57,6 +56,21 @@ export interface VendorListApiResponseInterface {
   total: number
 }
 
+export interface VendorFormInterface {
+  id?: string
+  no?: string
+  name: string
+  email?: string | null
+  phone?: string
+  address?: string
+  city?: string | null
+  country?: string | null
+  isB2B: boolean
+  contactPerson?: string | null
+  contactPersonPhone?: string | null
+  shopId?: string
+}
+
 export interface VendorMutateDrawerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -83,6 +97,12 @@ export interface VendorTransactionVendor {
   name: string
 }
 
+export interface VendorTransactionDetail {
+  id: string
+  description: string
+  amount: number
+}
+
 export interface VendorTransactionInterface {
   no: string
   id: string
@@ -105,8 +125,9 @@ export interface VendorTransactionInterface {
   shopId: string
   createdAt: string
   updatedAt: string
-  details: any[]
+  details: VendorTransactionDetail[]
 }
+
 
 export interface VendorTransactionApiResponse {
   msg: string

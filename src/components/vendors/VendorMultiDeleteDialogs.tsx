@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteVendor } from '@/hooks/useVendor'
-import { VendorMultiDeleteDialogProps } from '@/interface/vendorInterface'
+import type { VendorMultiDeleteDialogProps } from '@/interface/vendorInterface'
 
 const CONFIRM_WORD = 'DELETE'
 

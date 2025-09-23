@@ -21,7 +21,7 @@ const VendorTransactionsProfile = () => {
   const shopId = useShopStore((s) => s.currentShopId)
   const { id } = useParams<{ id: string }>()
   const [pageIndex, setPageIndex] = useState(0)
-  const pageSize = 10 // Can make dynamic later
+  const pageSize = 10
 
   // Fetch vendor info
   const { data: vendor, isLoading: isVendorLoading, isError: isVendorError } =

@@ -101,7 +101,7 @@ const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataT
 
   // customer transaction profile page
   const handleClick = (id: string) => {
-    navigate(`/transaction/customer/${id}`)
+    navigate(`/customer/${id}`)
   }
 
   return (

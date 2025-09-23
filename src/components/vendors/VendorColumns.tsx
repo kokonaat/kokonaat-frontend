@@ -1,6 +1,6 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
-import { VendorListInterface } from '@/interface/vendorInterface'
+import type { VendorListInterface } from '@/interface/vendorInterface'
 import { DataTableColumnHeader } from '../customers/DataTableColumnHeader'
 import { DataTableRowActions } from './DataTableRowActions'
 

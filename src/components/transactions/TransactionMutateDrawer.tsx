@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import type { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -45,6 +45,23 @@ import { useShopStore } from "@/stores/shopStore"
 
 type TransactionFormValues = z.infer<typeof transactionFormSchema>
 
+// Custom hook for debounced search
+const useDebounce = (value: string, delay: number) => {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [value, delay])
+
+  return debouncedValue
+}
+
 // Helper: create options
 const createBusinessEntityOptions = (): ComboboxOptionInterface[] =>
   Object.values(BusinessEntityType).map((entity) => ({
@@ -53,27 +70,12 @@ const createBusinessEntityOptions = (): ComboboxOptionInterface[] =>
   }))
 
 const createEntityOptions = (
-  selectedBusinessEntity: BusinessEntityType | null,
-  vendorList: Vendor[],
-  customerList: Customer[]
+  entities: (Vendor | Customer)[]
 ): ComboboxOptionInterface[] => {
-  if (!selectedBusinessEntity) return []
-
-  if (selectedBusinessEntity === BusinessEntityType.VENDOR) {
-    return vendorList.map((vendor) => ({
-      value: vendor.id,
-      label: vendor.name,
-    }))
-  }
-
-  if (selectedBusinessEntity === BusinessEntityType.CUSTOMER) {
-    return customerList.map((customer) => ({
-      value: customer.id,
-      label: customer.name,
-    }))
-  }
-
-  return []
+  return entities.map((entity) => ({
+    value: entity.id,
+    label: entity.name,
+  }))
 }
 
 const getEntityLabel = (entityType: BusinessEntityType | null): string => {
@@ -117,15 +119,48 @@ const useTransactionForm = (currentRow?: TransactionRowInterface) => {
   return form
 }
 
-// Custom hook: fetch entities
-const useEntityData = (shopId: string | null) => {
-  const { data: vendorResponse } = useVendorList(shopId || "", 1, 10)
-  const { data: customerResponse } = useCustomerList(shopId || "", 1, 10)
+// Custom hook: fetch entities with search
+const useEntityData = (
+  shopId: string | null,
+  selectedBusinessEntity: BusinessEntityType | null,
+  searchQuery: string
+) => {
+  const debouncedSearchQuery = useDebounce(searchQuery, 300)
+
+  // Only fetch vendors when VENDOR is selected
+  const { data: vendorResponse, isFetching: isVendorFetching } = useVendorList(
+    shopId || "",
+    1,
+    50, // Increased limit for better search results
+    debouncedSearchQuery || undefined,
+    {
+      enabled: !!shopId && selectedBusinessEntity === BusinessEntityType.VENDOR,
+    }
+  )
+
+  // Only fetch customers when CUSTOMER is selected
+  const { data: customerResponse, isFetching: isCustomerFetching } = useCustomerList(
+    shopId || "",
+    1,
+    50, // Increased limit for better search results
+    debouncedSearchQuery || undefined,
+    {
+      enabled: !!shopId && selectedBusinessEntity === BusinessEntityType.CUSTOMER,
+    }
+  )
 
   const flatVendorList = (vendorResponse?.data || []) as Vendor[]
   const flatCustomerList = (customerResponse?.customers || []) as Customer[]
 
-  return { flatVendorList, flatCustomerList }
+  const isLoading =
+    (selectedBusinessEntity === BusinessEntityType.VENDOR && isVendorFetching) ||
+    (selectedBusinessEntity === BusinessEntityType.CUSTOMER && isCustomerFetching)
+
+  return {
+    flatVendorList,
+    flatCustomerList,
+    isLoading
+  }
 }
 
 // Main component
@@ -136,21 +171,37 @@ const TransactionMutateDrawer = ({
 }: TransactionMutateDrawerProps) => {
   const [selectedBusinessEntity, setSelectedBusinessEntity] =
     useState<BusinessEntityType | null>(null)
+  const [entitySearchQuery, setEntitySearchQuery] = useState("")
 
   const shopId = useShopStore((s) => s.currentShopId)
   const form = useTransactionForm(currentRow)
-  const { flatVendorList, flatCustomerList } = useEntityData(shopId)
+  const { flatVendorList, flatCustomerList, isLoading } = useEntityData(
+    shopId,
+    selectedBusinessEntity,
+    entitySearchQuery
+  )
   const { mutate: createTransaction, isPending } = useCreateTransaction(shopId!)
 
   const transactionType = form.watch("transactionType")
   const isUpdate = !!currentRow
 
   const businessEntityOptions = createBusinessEntityOptions()
-  const entityOptions = createEntityOptions(
-    selectedBusinessEntity,
-    flatVendorList,
-    flatCustomerList
-  )
+
+  // Memoized entity options based on selected business entity
+  const entityOptions = useMemo(() => {
+    if (!selectedBusinessEntity) return []
+
+    if (selectedBusinessEntity === BusinessEntityType.VENDOR) {
+      return createEntityOptions(flatVendorList)
+    }
+
+    if (selectedBusinessEntity === BusinessEntityType.CUSTOMER) {
+      return createEntityOptions(flatCustomerList)
+    }
+
+    return []
+  }, [selectedBusinessEntity, flatVendorList, flatCustomerList])
+
   const transactionTypeOptions = getTransactionTypeOptions(selectedBusinessEntity)
   const entityLabel = getEntityLabel(selectedBusinessEntity)
   const entityPlaceholder = getEntityPlaceholder(selectedBusinessEntity)
@@ -160,14 +211,20 @@ const TransactionMutateDrawer = ({
     if (!isOpen) {
       form.reset(DEFAULT_VALUES)
       setSelectedBusinessEntity(null)
+      setEntitySearchQuery("")
     }
   }
 
   const handleBusinessEntitySelect = (value: string) => {
     setSelectedBusinessEntity(value as BusinessEntityType)
+    setEntitySearchQuery("") // Reset search when changing business entity
     form.setValue("entityTypeId", "")
     form.setValue("transactionType", "")
     form.setValue("transactionAmount", undefined)
+  }
+
+  const handleEntitySearch = (query: string) => {
+    setEntitySearchQuery(query)
   }
 
   const handleFormSubmit = (values: TransactionFormValues) => {
@@ -240,6 +297,7 @@ const TransactionMutateDrawer = ({
                     <Combobox
                       options={businessEntityOptions}
                       placeholder="Select transaction..."
+                      className="w-full"
                       onSelect={(value) => {
                         field.onChange(value)
                         handleBusinessEntitySelect(value)
@@ -251,8 +309,8 @@ const TransactionMutateDrawer = ({
               )}
             />
 
-            {/* Entity selection */}
-            {selectedBusinessEntity && entityOptions.length > 0 && (
+            {/* Entity selection with search */}
+            {selectedBusinessEntity && (
               <FormField
                 control={form.control}
                 name="entityTypeId"
@@ -263,7 +321,18 @@ const TransactionMutateDrawer = ({
                       <Combobox
                         options={entityOptions}
                         placeholder={entityPlaceholder}
+                        className="w-full"
+                        emptyMessage={
+                          entityOptions.length === 0 && !isLoading
+                            ? selectedBusinessEntity === BusinessEntityType.VENDOR
+                              ? "No vendors found"
+                              : "No customers found"
+                            : "No results found"
+                        }
+                        value={field.value}
                         onSelect={field.onChange}
+                        onSearch={handleEntitySearch}
+                        loading={isLoading}
                       />
                     </FormControl>
                     <FormMessage />
@@ -278,11 +347,7 @@ const TransactionMutateDrawer = ({
                 control={form.control}
                 name="transactionType"
                 render={({ field }) => {
-                  const isEmpty =
-                    (selectedBusinessEntity === BusinessEntityType.VENDOR &&
-                      flatVendorList.length === 0) ||
-                    (selectedBusinessEntity === BusinessEntityType.CUSTOMER &&
-                      flatCustomerList.length === 0)
+                  const isEmpty = entityOptions.length === 0 && !isLoading
 
                   return (
                     <FormItem>
@@ -290,6 +355,7 @@ const TransactionMutateDrawer = ({
                       <FormControl>
                         <Combobox
                           options={transactionTypeOptions}
+                          className="w-full"
                           placeholder={
                             isEmpty
                               ? selectedBusinessEntity === BusinessEntityType.VENDOR
@@ -327,6 +393,7 @@ const TransactionMutateDrawer = ({
                       <Input
                         type="number"
                         {...field}
+                        className="w-full"
                         placeholder="0.00"
                         value={field.value ?? ""}
                         onChange={(e) =>

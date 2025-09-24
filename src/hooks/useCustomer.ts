@@ -10,11 +10,17 @@ const CUSTOMER_KEYS = {
 }
 
 // customer list
-export const useCustomerList = (shopId: string, page: number, limit: number) =>
+export const useCustomerList = (
+    shopId: string,
+    page: number,
+    limit: number,
+    searchBy?: string,
+    options?: { enabled?: boolean }
+) =>
     useQuery({
-        queryKey: [...CUSTOMER_KEYS.all, shopId, page, limit],
-        queryFn: () => customerList(shopId, page, limit),
-        enabled: !!shopId,
+        queryKey: [...CUSTOMER_KEYS.all, shopId, page, limit, searchBy],
+        queryFn: () => customerList(shopId, page, limit, searchBy),
+        enabled: options?.enabled !== false && !!shopId,
         placeholderData: keepPreviousData,
     })
 

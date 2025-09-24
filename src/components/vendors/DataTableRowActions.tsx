@@ -27,7 +27,9 @@ export function DataTableRowActions<TData>({
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
+          // to prevent row click to change route
           variant='ghost'
+          onClick={(e) => e.stopPropagation()}
           className='data-[state=open]:bg-muted flex h-8 w-8 p-0'
         >
           <DotsHorizontalIcon className='h-4 w-4' />

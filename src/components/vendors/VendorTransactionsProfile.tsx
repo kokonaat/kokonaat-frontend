@@ -66,8 +66,13 @@ const VendorTransactionsProfile = () => {
                     <span>{vendor.phone ?? "N/A"}</span>
                   </p>
                   <p className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-muted-foreground" />
-                    <span>{vendor.address ?? "N/A"}</span>
+                    <MapPin className="h-5 w-5 text-muted-foreground shrink-0" />
+                    <span
+                      className="truncate max-w-[250px]"
+                      title={vendor.address ?? "N/A"}
+                    >
+                      {vendor.address ?? "N/A"}
+                    </span>
                   </p>
                   <p>
                     <strong>City:</strong>{" "}

@@ -1,8 +1,9 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
-import type { VendorListInterface } from '@/interface/vendorInterface'
 import { DataTableColumnHeader } from '../customers/DataTableColumnHeader'
 import { DataTableRowActions } from './DataTableRowActions'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import type { VendorListInterface } from '@/interface/vendorInterface'
 
 export const VendorColumns: ColumnDef<VendorListInterface>[] = [
   {
@@ -58,6 +59,25 @@ export const VendorColumns: ColumnDef<VendorListInterface>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Address' />
     ),
+    cell: ({ row }) => {
+      const address = row.getValue<string>('address')
+      if (!address) return null
+
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="max-w-[200px] truncate cursor-help">
+                {address}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="max-w-xs break-words">{address}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )
+    },
   },
   {
     accessorKey: 'city',

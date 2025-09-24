@@ -7,16 +7,25 @@ import type { VendorFormInterface, VendorTransactionApiResponse } from "@/interf
 export const customerList = async (
     shopId: string,
     page: number,
-    limit: number
+    limit: number,
+    searchBy?: string
 ): Promise<{ customers: CustomerListInterface[]; total: number }> => {
+    const params = new URLSearchParams({
+        shopId,
+        page: String(page),
+        limit: String(limit),
+    });
+
+    if (searchBy) params.append("searchBy", searchBy);
+
     const res = await axiosInstance.get(
-        `${apiEndpoints.customer.customerList}?shopId=${shopId}&page=${page}&limit=${limit}`
-    )
+        `${apiEndpoints.customer.customerList}?${params.toString()}`
+    );
 
     return {
         customers: res.data.data ?? [],
         total: res.data.total ?? 0,
-    }
+    };
 }
 
 // get customer by id

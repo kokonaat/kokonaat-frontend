@@ -6,12 +6,23 @@ import type { VendorFormInterface, VendorListApiResponseInterface, VendorListRes
 export const vendorList = async (
     shopId: string,
     page: number,
-    limit: number
+    limit: number,
+    searchBy?: string
 ): Promise<VendorListResponseInterface> => {
     if (!shopId) throw new Error("Shop ID is required");
+
+    const params = new URLSearchParams({
+        shopId,
+        page: String(page),
+        limit: String(limit),
+    });
+
+    if (searchBy) params.append("searchBy", searchBy);
+
     const res = await axiosInstance.get<VendorListApiResponseInterface>(
-        `${apiEndpoints.vendor.vendorList}?shopId=${shopId}&page=${page}&limit=${limit}`
+        `${apiEndpoints.vendor.vendorList}?${params.toString()}`
     );
+
     return res.data;
 }
 

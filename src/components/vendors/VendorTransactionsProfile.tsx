@@ -67,20 +67,13 @@ const VendorTransactionsProfile = () => {
                   </p>
                   <p className="flex items-center gap-2">
                     <MapPin className="h-5 w-5 text-muted-foreground shrink-0" />
-                    <span
-                      className="truncate max-w-[250px]"
-                      title={vendor.address ?? "N/A"}
-                    >
-                      {vendor.address ?? "N/A"}
+                    <span className="truncate">
+                      {[vendor.address, vendor.city]
+                        .filter(Boolean)
+                        .join(', ') ||
+                        <span className="text-muted-foreground">N/A</span>
+                      }
                     </span>
-                  </p>
-                  <p>
-                    <strong>City:</strong>{" "}
-                    {vendor.city ?? <span className="text-muted-foreground">N/A</span>}
-                  </p>
-                  <p>
-                    <strong>Country:</strong>{" "}
-                    {vendor.country ?? <span className="text-muted-foreground">N/A</span>}
                   </p>
                 </div>
 
@@ -99,13 +92,11 @@ const VendorTransactionsProfile = () => {
                   </p>
                   <p>
                     <strong>Contact Person:</strong>{" "}
-                    {vendor.contactPerson ?? (
-                      <span className="text-muted-foreground">Not Provided</span>
-                    )}
-                  </p>
-                  <p>
-                    <strong>Contact Phone:</strong>{" "}
-                    {vendor.contactPersonPhone ?? (
+                    {vendor.contactPerson || vendor.contactPersonPhone ? (
+                      vendor.contactPerson && vendor.contactPersonPhone
+                        ? `${vendor.contactPerson} (${vendor.contactPersonPhone})`
+                        : vendor.contactPerson || vendor.contactPersonPhone
+                    ) : (
                       <span className="text-muted-foreground">Not Provided</span>
                     )}
                   </p>

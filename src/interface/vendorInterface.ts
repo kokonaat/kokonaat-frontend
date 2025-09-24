@@ -69,6 +69,7 @@ export interface VendorFormInterface {
   contactPerson?: string | null
   contactPersonPhone?: string | null
   shopId?: string
+  shop?: Shop | null
 }
 
 export interface VendorMutateDrawerProps {

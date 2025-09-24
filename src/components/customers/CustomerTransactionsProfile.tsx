@@ -66,8 +66,13 @@ const CustomerTransactionsProfile = () => {
                     <span>{customer.phone ?? "N/A"}</span>
                   </p>
                   <p className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-muted-foreground" />
-                    <span>{customer.address ?? "N/A"}</span>
+                    <MapPin className="h-5 w-5 text-muted-foreground shrink-0" />
+                    <span
+                      className="truncate max-w-[250px]"
+                      title={customer.address ?? "N/A"}
+                    >
+                      {customer.address ?? "N/A"}
+                    </span>
                   </p>
                   <p>
                     <strong>City:</strong>{" "}

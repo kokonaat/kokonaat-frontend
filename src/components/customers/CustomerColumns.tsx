@@ -2,7 +2,8 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from './DataTableColumnHeader'
 import { DataTableRowActions } from './DataTableRowActions'
-import { CustomerListInterface } from '@/interface/customerInterface'
+import type { CustomerListInterface } from '@/interface/customerInterface'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 
 export const CustomerColumns: ColumnDef<CustomerListInterface>[] = [
   {
@@ -58,6 +59,25 @@ export const CustomerColumns: ColumnDef<CustomerListInterface>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Address' />
     ),
+    cell: ({ row }) => {
+      const address = row.getValue<string>('address')
+      if (!address) return null
+
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="max-w-[200px] truncate cursor-help">
+                {address}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="max-w-xs break-words">{address}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )
+    },
   },
   {
     accessorKey: 'city',

@@ -3,6 +3,7 @@ import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useCustomers } from '../customers/customer-provider'
 import { useDeleteVendor } from '@/hooks/useVendor'
 import VendorMutateDrawer from './VendorMutateDrawer'
+import VendorViewDrawer from './VendorViewDrawer'
 
 const VendorDialogs = () => {
   const { open, setOpen, currentRow, setCurrentRow } = useCustomers()
@@ -25,7 +26,15 @@ const VendorDialogs = () => {
       {/* Update & Delete modals */}
       {currentRow && (
         <>
-          {/* Update modal */}
+          {/* view drawer */}
+          <VendorViewDrawer
+            key={`vendor-view-${currentRow.id}`}
+            open={open === 'view'}
+            onOpenChange={(val: boolean) => setOpen(val ? 'view' : null)}
+            currentRow={currentRow}
+          />
+
+          {/* update modal */}
           <VendorMutateDrawer
             key={`vendor-update-${currentRow.id}`}
             open={open === 'update'}
@@ -34,7 +43,7 @@ const VendorDialogs = () => {
             onSave={() => setOpen(null)}
           />
 
-          {/* Delete modal */}
+          {/* delete modal */}
           <ConfirmDialog
             key='vendor-delete'
             destructive

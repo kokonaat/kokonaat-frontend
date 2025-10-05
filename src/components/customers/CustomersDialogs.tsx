@@ -2,6 +2,7 @@ import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useCustomers } from './customer-provider'
 import { useDeleteCustomer } from '@/hooks/useCustomer'
 import CustomersMutateDrawer from "./CustomersMutateDrawer"
+import CustomerViewDrawer from './CustomerViewDrawer'
 
 const CustomersDialogs = () => {
   const { open, setOpen, currentRow, setCurrentRow } = useCustomers()
@@ -13,7 +14,7 @@ const CustomersDialogs = () => {
 
   return (
     <>
-      {/* Create modal */}
+      {/* create modal */}
       <CustomersMutateDrawer
         key='customer-create'
         open={open === 'create'}
@@ -24,7 +25,15 @@ const CustomersDialogs = () => {
       {/* Update & Delete modals */}
       {currentRow && (
         <>
-          {/* Update modal */}
+          {/* view drawer */}
+          <CustomerViewDrawer
+            key={`customer-view-${currentRow.id}`}
+            open={open === 'view'}
+            onOpenChange={(val: boolean) => setOpen(val ? 'view' : null)}
+            currentRow={currentRow}
+          />
+
+          {/* update modal */}
           <CustomersMutateDrawer
             key={`customer-update-${currentRow.id}`}
             open={open === 'update'}
@@ -33,7 +42,7 @@ const CustomersDialogs = () => {
             onSave={() => setOpen(null)}
           />
 
-          {/* Delete modal */}
+          {/* delete modal */}
           <ConfirmDialog
             key='customer-delete'
             destructive

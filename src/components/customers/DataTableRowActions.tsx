@@ -42,6 +42,8 @@ export function DataTableRowActions<TData>({
           className='cursor-pointer'
           onClick={(e) => {
             e.stopPropagation()
+            setCurrentRow(customer)
+            setOpen('view')
           }}
         >
           View

@@ -1,13 +1,14 @@
-import { type ColumnDef } from '@tanstack/react-table'
-import { DataTableRowActions } from './DataTableRowActions'
+import { Link } from "react-router-dom"
+import { type ColumnDef } from "@tanstack/react-table"
+import { DataTableRowActions } from "./DataTableRowActions"
 
 export interface Transaction {
   id: string
   no: string
   partnerType: string
   transactionType: string
-  vendor?: { name: string }
-  customer?: { name: string }
+  vendor?: { id: string; name: string }
+  customer?: { id: string; name: string }
   amount: number
   advancePaid: number
   pending: number
@@ -16,28 +17,54 @@ export interface Transaction {
 
 export const TransactionColumns: ColumnDef<Transaction>[] = [
   {
-    accessorKey: 'no',
-    header: 'No',
+    accessorKey: "no",
+    header: "No",
   },
   {
-    accessorKey: 'partnerType',
-    header: 'Partner Type',
+    accessorKey: "partnerType",
+    header: "Partner Type",
   },
   {
-    accessorKey: 'transactionType',
-    header: 'Transaction Type',
+    accessorKey: "transactionType",
+    header: "Transaction Type",
   },
   {
-    id: 'partnerName',
-    header: 'Vendor / Customer Name',
+    id: "partnerName",
+    header: "Vendor/Customer Name",
     cell: ({ row }) => {
       const data = row.original
-      return <div>{data.vendor?.name || data.customer?.name || '-'}</div>
+
+      // if vendor
+      if (data.vendor) {
+        return (
+          <Link
+            to={`/vendor/${data.vendor.id}`}
+            className="text-blue-600 hover:underline font-medium"
+          >
+            {data.vendor.name}
+          </Link>
+        )
+      }
+
+      // if customer
+      if (data.customer) {
+        return (
+          <Link
+            to={`/customer/${data.customer.id}`}
+            className="text-blue-600 hover:underline font-medium"
+          >
+            {data.customer.name}
+          </Link>
+        )
+      }
+
+      // fallback if neither vendor nor customer exists
+      return <span className="text-gray-500">-</span>
     },
   },
   {
-    id: 'amounts',
-    header: 'Total / Paid / Pending',
+    id: "amounts",
+    header: "Total / Paid / Pending",
     cell: ({ row }) => {
       const data = row.original
       return (
@@ -48,12 +75,12 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
     },
   },
   {
-    accessorKey: 'transactionStatus',
-    header: 'Status',
-    cell: ({ row }) => row.original.transactionStatus || 'N/A',
+    accessorKey: "transactionStatus",
+    header: "Status",
+    cell: ({ row }) => row.original.transactionStatus || "N/A",
   },
   {
-    id: 'actions',
+    id: "actions",
     cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ]

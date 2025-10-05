@@ -1,6 +1,6 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
-import { Trash2 } from 'lucide-react'
+import { Eye, Pencil, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -9,8 +9,8 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { customerSchema } from '../customers/data/customerSchema'
 import { useCustomers } from '../customers/customer-provider'
+import { vendorSchema } from './data/vendorSchema'
 
 type DataTableRowActionsProps<TData> = {
   row: Row<TData>
@@ -19,8 +19,9 @@ type DataTableRowActionsProps<TData> = {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const customer = customerSchema.parse(row.original)
+  const vendor = vendorSchema.parse(row.original)
 
+  // using customer provider to open or close drawer
   const { setOpen, setCurrentRow } = useCustomers()
 
   return (
@@ -39,17 +40,35 @@ export function DataTableRowActions<TData>({
       <DropdownMenuContent align='end' className='w-[160px]'>
         <DropdownMenuItem
           className='cursor-pointer'
-          onClick={() => {
-            setCurrentRow(customer)
+          onClick={(e) => {
+            e.stopPropagation()
+          }}
+        >
+          View
+          <DropdownMenuShortcut>
+            <Eye size={16} />
+          </DropdownMenuShortcut>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
+          className='cursor-pointer'
+          onClick={(e) => {
+            e.stopPropagation()
+            setCurrentRow(vendor)
             setOpen('update')
           }}
         >
           Edit
+          <DropdownMenuShortcut>
+            <Pencil size={16} />
+          </DropdownMenuShortcut>
         </DropdownMenuItem>
+
         <DropdownMenuItem
           className='cursor-pointer'
-          onClick={() => {
-            setCurrentRow(customer)
+          onClick={(e) => {
+            e.stopPropagation()
+            setCurrentRow(vendor)
             setOpen('delete')
           }}
         >

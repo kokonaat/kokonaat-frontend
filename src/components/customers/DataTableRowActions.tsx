@@ -40,6 +40,9 @@ export function DataTableRowActions<TData>({
         {/* view */}
         <DropdownMenuItem
           className='cursor-pointer'
+          onClick={(e) => {
+            e.stopPropagation()
+          }}
         >
           View
           <DropdownMenuShortcut>
@@ -50,7 +53,8 @@ export function DataTableRowActions<TData>({
         {/* edit */}
         <DropdownMenuItem
           className='cursor-pointer'
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation()
             setCurrentRow(customer)
             setOpen('update')
           }}
@@ -64,7 +68,8 @@ export function DataTableRowActions<TData>({
         {/* delete */}
         <DropdownMenuItem
           className='cursor-pointer'
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation()
             setCurrentRow(customer)
             setOpen('delete')
           }}

@@ -91,6 +91,7 @@ export interface DataTablePropsInterface {
   pageSize: number
   total: number
   onPageChange: (page: number) => void
+  onSearchChange?: (value: string) => void
 }
 
 export interface VendorTransactionVendor {

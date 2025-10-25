@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   type SortingState,
   type VisibilityState,
@@ -26,10 +27,10 @@ import type { DataTablePropsInterface } from '@/interface/customerInterface'
 import { DataTableViewOptions } from '@/components/designation/data-table-view-options'
 import { DataTablePagination } from '@/components/designation/data-table-pagination'
 import { DataTableBulkActions } from './DataTableBulkActions'
-import { useNavigate } from 'react-router-dom'
+import { useDebounce } from './data/useDebounce'
 
-const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataTablePropsInterface) => {
-  // Table states
+const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange, onSearchChange }: DataTablePropsInterface) => {
+  // table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -41,7 +42,17 @@ const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataT
   const [globalFilter, setGlobalFilter] = useState('')
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
+  const [searchInput, setSearchInput] = useState('')
+  // 3sec delay
+  const debouncedSearch = useDebounce(searchInput, 300)
+
   const navigate = useNavigate()
+
+  useEffect(() => {
+    // reset to first page when new search starts
+    onPageChange(0)
+    onSearchChange?.(debouncedSearch)
+  }, [debouncedSearch, onPageChange, onSearchChange])
 
   const table = useReactTable({
     data,
@@ -109,9 +120,9 @@ const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange }: DataT
       <div className='flex items-center justify-between'>
         <div className='flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2'>
           <Input
-            placeholder='Filter by name or ID...'
-            value={table.getState().globalFilter ?? ''}
-            onChange={(event) => table.setGlobalFilter(event.target.value)}
+            placeholder='Filter by id, name, phone or address...'
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             className='h-8 w-[150px] lg:w-[250px]'
           />
         </div>

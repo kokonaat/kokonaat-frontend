@@ -67,4 +67,5 @@ export interface DataTablePropsInterface {
   pageSize: number
   total: number
   onPageChange: (pageIndex: number) => void
+  onSearchChange?: (value: string) => void
 }

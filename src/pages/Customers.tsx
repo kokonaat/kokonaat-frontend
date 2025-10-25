@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Main } from '@/components/layout/main'
 import { CustomersProvider } from '@/components/customers/customer-provider'
 import { useCustomerList } from '@/hooks/useCustomer'
@@ -10,9 +10,24 @@ import CustomersDialogs from '@/components/customers/CustomersDialogs'
 const Customers = () => {
   const shopId = useShopStore((s) => s.currentShopId)
   const [pageIndex, setPageIndex] = useState(0)
+  const [searchBy, setSearchBy] = useState('')
   const pageSize = 10
 
-  const { data, isLoading, isError } = useCustomerList(shopId || '', pageIndex + 1, pageSize)
+  // useCallback ensures stable function references
+  const handlePageChange = useCallback((index: number) => {
+    setPageIndex(index)
+  }, [])
+
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchBy(value)
+  }, [])
+
+  const { data, isLoading, isError } = useCustomerList(
+    shopId || '',
+    pageIndex + 1,
+    pageSize,
+    searchBy
+  )
 
   if (isError) return <p>Error loading customers.</p>
 
@@ -40,7 +55,8 @@ const Customers = () => {
               pageIndex={pageIndex}
               pageSize={pageSize}
               total={total}
-              onPageChange={setPageIndex}
+              onPageChange={handlePageChange}
+              onSearchChange={handleSearchChange}
             />
           )}
         </div>

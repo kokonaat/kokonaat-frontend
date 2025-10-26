@@ -1,23 +1,6 @@
 import { apiEndpoints } from "@/config/api"
 import { axiosInstance } from "./axios"
-
-export interface CreateTransactionDto {
-  shopId: string
-  partnerType: "VENDOR" | "CUSTOMER"
-  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE"
-  amount: number
-  vendorId?: string
-  customerId?: string
-}
-
-export interface CreateTransactionDto {
-  shopId: string
-  partnerType: "VENDOR" | "CUSTOMER"
-  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE"
-  amount: number
-  vendorId?: string
-  customerId?: string
-}
+import type { CreateTransactionDto } from "@/interface/transactionInterface"
 
 export interface TransactionRowInterface {
   id: string

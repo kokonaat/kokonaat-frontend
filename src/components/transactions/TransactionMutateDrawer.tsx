@@ -42,10 +42,11 @@ import type { TransactionFormValues } from "@/schema/transactionFormSchema"
 import { useVendorList } from "@/hooks/useVendor"
 import { useCustomerList } from "@/hooks/useCustomer"
 import { useCreateTransaction } from "@/hooks/useTransaction"
+import { useInventoryList } from "@/hooks/useInventory"
 import { useShopStore } from "@/stores/shopStore"
 import { Minus, Plus } from "lucide-react"
 
-// Debounce hook
+// debounce hook
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value)
   useEffect(() => {
@@ -55,7 +56,7 @@ const useDebounce = (value: string, delay: number) => {
   return debouncedValue
 }
 
-// Helpers
+// helpers
 const createBusinessEntityOptions = (): ComboboxOptionInterface[] =>
   Object.values(BusinessEntityType).map((entity) => ({ value: entity, label: entity }))
 
@@ -80,7 +81,7 @@ const getTransactionTypeOptions = (entityType: BusinessEntityType | null): Combo
   return []
 }
 
-// Fetch entities
+// fetch entities
 const useEntityData = (
   shopId: string | null,
   selectedBusinessEntity: BusinessEntityType | null,
@@ -113,18 +114,19 @@ const useEntityData = (
   }
 }
 
-// Main component
+// main component
 const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: TransactionMutateDrawerProps) => {
   const shopId = useShopStore((s) => s.currentShopId)
   const [selectedBusinessEntity, setSelectedBusinessEntity] = useState<BusinessEntityType | null>(null)
   const [entitySearchQuery, setEntitySearchQuery] = useState("")
+  const [inventorySearchQuery, setInventorySearchQuery] = useState("")
 
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: DEFAULT_VALUES,
   })
 
-  // Field array for inventory items
+  // field array for inventory items
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "inventoryItems",
@@ -136,12 +138,27 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
     entitySearchQuery
   )
 
+  const { data: inventoryResponse = { items: [] }, isFetching: isInventoryLoading } = useInventoryList(
+    shopId || "",
+    1,
+    10,
+    inventorySearchQuery,
+    { enabled: !!shopId && (form.watch("transactionType") === "PURCHASE" || form.watch("transactionType") === "SELL_OUT") }
+  )
+
+  const inventoryOptions = useMemo(() => {
+    return inventoryResponse.items.map((item) => ({
+      value: item.id,
+      label: item.name,
+    }))
+  }, [inventoryResponse.items])
+
   const { mutate: createTransaction, isPending } = useCreateTransaction(shopId!)
 
   const transactionType = form.watch("transactionType")
   const showInventoryFields = transactionType === "PURCHASE" || transactionType === "SELL_OUT"
 
-  // Automatically add one inventory row when Purchase/Sell Out selected
+  // automatically add one inventory row when Purchase/Sell Out selected
   useEffect(() => {
     if (showInventoryFields && fields.length === 0) {
       append({ inventoryId: "", quantity: undefined, price: undefined })
@@ -161,6 +178,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
       form.reset(DEFAULT_VALUES)
       setSelectedBusinessEntity(null)
       setEntitySearchQuery("")
+      setInventorySearchQuery("")
     }
   }
 
@@ -169,9 +187,6 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
     form.setValue("entityTypeId", "")
     form.setValue("transactionType", "")
     form.setValue("transactionAmount", undefined)
-    form.setValue("inventoryId", "")
-    form.setValue("quantity", undefined)
-    form.setValue("price", undefined)
     form.setValue("inventoryItems", [])
   }
 
@@ -190,9 +205,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
           vendorId: values.entityTypeId,
           transactionType: transactionTypeCasted,
           amount: showInventoryFields ? undefined : values.transactionAmount,
-          inventoryId: showInventoryFields ? values.inventoryId : undefined,
-          quantity: showInventoryFields ? values.quantity : undefined,
-          price: showInventoryFields ? values.price : undefined,
+          inventoryItems: showInventoryFields ? values.inventoryItems : undefined,
         }
         : {
           shopId,
@@ -200,9 +213,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
           customerId: values.entityTypeId,
           transactionType: transactionTypeCasted,
           amount: showInventoryFields ? undefined : values.transactionAmount,
-          inventoryId: showInventoryFields ? values.inventoryId : undefined,
-          quantity: showInventoryFields ? values.quantity : undefined,
-          price: showInventoryFields ? values.price : undefined,
+          inventoryItems: showInventoryFields ? values.inventoryItems : undefined,
         }
 
     createTransaction(payload, {
@@ -215,7 +226,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
     })
   }
 
-  // Calculate grand total for all inventory items
+  // calculate grand total
   const inventoryItems = form.watch("inventoryItems") || []
   const total = inventoryItems.reduce((acc: number, item: { quantity: number; price: number }) => {
     const quantity = item.quantity ?? 0
@@ -242,7 +253,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
             onSubmit={form.handleSubmit(handleFormSubmit)}
           >
             <div className="flex items-end gap-4">
-              {/* Partner Type */}
+              {/* partner type */}
               <FormField
                 control={form.control}
                 name="partnerType"
@@ -266,7 +277,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                 )}
               />
 
-              {/* Entity */}
+              {/* entity */}
               {selectedBusinessEntity && (
                 <FormField
                   control={form.control}
@@ -292,7 +303,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
               )}
             </div>
 
-            {/* Transaction Type */}
+            {/* transaction type */}
             {selectedBusinessEntity && (
               <FormField
                 control={form.control}
@@ -314,13 +325,13 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
               />
             )}
 
-            {/* Conditional Fields */}
+            {/* inventory fields */}
             {selectedBusinessEntity && transactionType && (
               showInventoryFields ? (
                 <>
                   {fields.map((field, index) => (
                     <div key={field.id} className="flex items-end gap-4">
-                      {/* Inventory */}
+                      {/* inventory */}
                       <FormField
                         control={form.control}
                         name={`inventoryItems.${index}.inventoryId`}
@@ -329,14 +340,18 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                             <FormLabel>Inventory</FormLabel>
                             <FormControl>
                               <Combobox
-                                options={[
-                                  { value: "inv1", label: "Inventory 1" },
-                                  { value: "inv2", label: "Inventory 2" },
-                                  { value: "inv3", label: "Inventory 3" },
-                                ]}
+                                options={inventoryOptions}
                                 placeholder="Select inventory..."
                                 value={field.value}
-                                onSelect={field.onChange}
+                                // user selects existing item → id
+                                onSelect={(val) => field.onChange(val)}
+                                onSearch={(query) => {
+                                  // inventory list api
+                                  setInventorySearchQuery(query)
+                                  // store typed name
+                                  field.onChange(query)
+                                }}
+                                loading={isInventoryLoading}
                               />
                             </FormControl>
                             <FormMessage />
@@ -344,7 +359,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                         )}
                       />
 
-                      {/* Quantity */}
+                      {/* quantity */}
                       <FormField
                         control={form.control}
                         name={`inventoryItems.${index}.quantity`}
@@ -368,7 +383,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                         )}
                       />
 
-                      {/* Price */}
+                      {/* price */}
                       <FormField
                         control={form.control}
                         name={`inventoryItems.${index}.price`}
@@ -392,7 +407,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                         )}
                       />
 
-                      {/* Plus / Minus Buttons */}
+                      {/* plus minus buttons */}
                       <div className="flex gap-1 mb-1">
                         <Button
                           type="button"
@@ -411,7 +426,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                     </div>
                   ))}
 
-                  {/* Total Field */}
+                  {/* total field */}
                   {fields.length > 0 && (
                     <div className="flex items-center gap-4 mt-2">
                       <FormItem className="flex-1">

@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from "react"
-import type { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
@@ -23,13 +22,14 @@ import {
 } from "@/components/ui/sheet"
 import { Combobox } from "../ui/combobox"
 import { Input } from "../ui/input"
+
 import type {
   ComboboxOptionInterface,
   TransactionMutateDrawerProps,
-  TransactionRowInterface,
 } from "@/interface/transactionInterface"
 import type { Customer } from "@/interface/customerInterface"
 import type { Vendor } from "@/interface/vendorInterface"
+
 import {
   CUSTOMER_TRANSACTION_TYPES,
   DEFAULT_VALUES,
@@ -38,45 +38,28 @@ import {
 } from "@/constance/transactionContances"
 import { BusinessEntityType } from "@/utils/enums/trasaction.enum"
 import { transactionFormSchema } from "@/schema/transactionFormSchema"
+import type { TransactionFormValues } from "@/schema/transactionFormSchema"
 import { useVendorList } from "@/hooks/useVendor"
 import { useCustomerList } from "@/hooks/useCustomer"
 import { useCreateTransaction } from "@/hooks/useTransaction"
 import { useShopStore } from "@/stores/shopStore"
 
-type TransactionFormValues = z.infer<typeof transactionFormSchema>
-
-// Custom hook for debounced search
+// Debounce hook
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value)
-
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
-
-    return () => {
-      clearTimeout(handler)
-    }
+    const timer = setTimeout(() => setDebouncedValue(value), delay)
+    return () => clearTimeout(timer)
   }, [value, delay])
-
   return debouncedValue
 }
 
-// Helper: create options
+// Helpers
 const createBusinessEntityOptions = (): ComboboxOptionInterface[] =>
-  Object.values(BusinessEntityType).map((entity) => ({
-    value: entity,
-    label: entity,
-  }))
+  Object.values(BusinessEntityType).map((entity) => ({ value: entity, label: entity }))
 
-const createEntityOptions = (
-  entities: (Vendor | Customer)[]
-): ComboboxOptionInterface[] => {
-  return entities.map((entity) => ({
-    value: entity.id,
-    label: entity.name,
-  }))
-}
+const createEntityOptions = (entities: (Vendor | Customer)[]): ComboboxOptionInterface[] =>
+  entities.map((entity) => ({ value: entity.id, label: entity.name }))
 
 const getEntityLabel = (entityType: BusinessEntityType | null): string => {
   if (entityType === BusinessEntityType.VENDOR) return "Select Vendor"
@@ -90,36 +73,13 @@ const getEntityPlaceholder = (entityType: BusinessEntityType | null): string => 
   return "Select entity..."
 }
 
-const getTransactionTypeOptions = (
-  entityType: BusinessEntityType | null
-): ComboboxOptionInterface[] => {
+const getTransactionTypeOptions = (entityType: BusinessEntityType | null): ComboboxOptionInterface[] => {
   if (entityType === BusinessEntityType.VENDOR) return VENDOR_TRANSACTION_TYPES
   if (entityType === BusinessEntityType.CUSTOMER) return CUSTOMER_TRANSACTION_TYPES
   return []
 }
 
-// Custom hook: form
-const useTransactionForm = (currentRow?: TransactionRowInterface) => {
-  const form = useForm<TransactionFormValues>({
-    resolver: zodResolver(transactionFormSchema),
-    defaultValues: DEFAULT_VALUES,
-  })
-
-  useEffect(() => {
-    if (currentRow) {
-      form.reset({
-        partnerType: currentRow.title || "",
-        entityTypeId: currentRow.id || "",
-        transactionType: currentRow.transactionType || "",
-        transactionAmount: currentRow.transactionAmount,
-      })
-    }
-  }, [currentRow, form])
-
-  return form
-}
-
-// Custom hook: fetch entities with search
+// Fetch entities
 const useEntityData = (
   shopId: string | null,
   selectedBusinessEntity: BusinessEntityType | null,
@@ -127,84 +87,59 @@ const useEntityData = (
 ) => {
   const debouncedSearchQuery = useDebounce(searchQuery, 300)
 
-  // Only fetch vendors when VENDOR is selected
   const { data: vendorResponse, isFetching: isVendorFetching } = useVendorList(
     shopId || "",
     1,
-    50, // Increased limit for better search results
+    10,
     debouncedSearchQuery || undefined,
-    {
-      enabled: !!shopId && selectedBusinessEntity === BusinessEntityType.VENDOR,
-    }
+    { enabled: !!shopId && selectedBusinessEntity === BusinessEntityType.VENDOR }
   )
 
-  // Only fetch customers when CUSTOMER is selected
   const { data: customerResponse, isFetching: isCustomerFetching } = useCustomerList(
     shopId || "",
     1,
-    50, // Increased limit for better search results
+    10,
     debouncedSearchQuery || undefined,
-    {
-      enabled: !!shopId && selectedBusinessEntity === BusinessEntityType.CUSTOMER,
-    }
+    { enabled: !!shopId && selectedBusinessEntity === BusinessEntityType.CUSTOMER }
   )
 
-  const flatVendorList = (vendorResponse?.data || []) as Vendor[]
-  const flatCustomerList = (customerResponse?.customers || []) as Customer[]
-
-  const isLoading =
-    (selectedBusinessEntity === BusinessEntityType.VENDOR && isVendorFetching) ||
-    (selectedBusinessEntity === BusinessEntityType.CUSTOMER && isCustomerFetching)
-
   return {
-    flatVendorList,
-    flatCustomerList,
-    isLoading
+    flatVendorList: vendorResponse?.data || [],
+    flatCustomerList: customerResponse?.customers || [],
+    isLoading:
+      (selectedBusinessEntity === BusinessEntityType.VENDOR && isVendorFetching) ||
+      (selectedBusinessEntity === BusinessEntityType.CUSTOMER && isCustomerFetching),
   }
 }
 
 // Main component
-const TransactionMutateDrawer = ({
-  open,
-  onOpenChange,
-  currentRow,
-}: TransactionMutateDrawerProps) => {
-  const [selectedBusinessEntity, setSelectedBusinessEntity] =
-    useState<BusinessEntityType | null>(null)
+const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: TransactionMutateDrawerProps) => {
+  const shopId = useShopStore((s) => s.currentShopId)
+  const [selectedBusinessEntity, setSelectedBusinessEntity] = useState<BusinessEntityType | null>(null)
   const [entitySearchQuery, setEntitySearchQuery] = useState("")
 
-  const shopId = useShopStore((s) => s.currentShopId)
-  const form = useTransactionForm(currentRow)
+  const form = useForm<TransactionFormValues>({
+    resolver: zodResolver(transactionFormSchema),
+    defaultValues: DEFAULT_VALUES,
+  })
+
   const { flatVendorList, flatCustomerList, isLoading } = useEntityData(
     shopId,
     selectedBusinessEntity,
     entitySearchQuery
   )
+
   const { mutate: createTransaction, isPending } = useCreateTransaction(shopId!)
 
   const transactionType = form.watch("transactionType")
-  const isUpdate = !!currentRow
+  const showInventoryFields = transactionType === "PURCHASE" || transactionType === "SELL_OUT"
 
-  const businessEntityOptions = createBusinessEntityOptions()
-
-  // Memoized entity options based on selected business entity
   const entityOptions = useMemo(() => {
     if (!selectedBusinessEntity) return []
-
-    if (selectedBusinessEntity === BusinessEntityType.VENDOR) {
-      return createEntityOptions(flatVendorList)
-    }
-
-    if (selectedBusinessEntity === BusinessEntityType.CUSTOMER) {
-      return createEntityOptions(flatCustomerList)
-    }
-
-    return []
+    return selectedBusinessEntity === BusinessEntityType.VENDOR
+      ? createEntityOptions(flatVendorList)
+      : createEntityOptions(flatCustomerList)
   }, [selectedBusinessEntity, flatVendorList, flatCustomerList])
-
-  const transactionTypeOptions = getTransactionTypeOptions(selectedBusinessEntity)
-  const entityLabel = getEntityLabel(selectedBusinessEntity)
-  const entityPlaceholder = getEntityPlaceholder(selectedBusinessEntity)
 
   const handleOpenChange = (isOpen: boolean) => {
     onOpenChange(isOpen)
@@ -217,53 +152,51 @@ const TransactionMutateDrawer = ({
 
   const handleBusinessEntitySelect = (value: string) => {
     setSelectedBusinessEntity(value as BusinessEntityType)
-    setEntitySearchQuery("") // Reset search when changing business entity
     form.setValue("entityTypeId", "")
     form.setValue("transactionType", "")
     form.setValue("transactionAmount", undefined)
+    form.setValue("inventoryId", "")
+    form.setValue("quantity", undefined)
+    form.setValue("price", undefined)
   }
 
-  const handleEntitySearch = (query: string) => {
-    setEntitySearchQuery(query)
-  }
+  const handleEntitySearch = (query: string) => setEntitySearchQuery(query)
 
   const handleFormSubmit = (values: TransactionFormValues) => {
-    if (!shopId || !selectedBusinessEntity) return
+    if (!shopId || !selectedBusinessEntity || !values.entityTypeId || !values.transactionType) return
 
-    const entityId = values.entityTypeId
-    const amount = values.transactionAmount
-    const selectedTransactionType = values.transactionType
-
-    if (!entityId || !selectedTransactionType || amount === undefined) {
-      return
-    }
+    const transactionTypeCasted = values.transactionType as "PURCHASE" | "PAYMENT" | "SALE" | "COMMISSION"
 
     const payload =
       selectedBusinessEntity === BusinessEntityType.VENDOR
         ? {
           shopId,
           partnerType: "VENDOR" as const,
-          vendorId: entityId,
-          transactionType: selectedTransactionType,
-          amount,
+          vendorId: values.entityTypeId,
+          transactionType: transactionTypeCasted,
+          amount: showInventoryFields ? undefined : values.transactionAmount,
+          inventoryId: showInventoryFields ? values.inventoryId : undefined,
+          quantity: showInventoryFields ? values.quantity : undefined,
+          price: showInventoryFields ? values.price : undefined,
         }
         : {
           shopId,
           partnerType: "CUSTOMER" as const,
-          customerId: entityId,
-          transactionType: selectedTransactionType,
-          amount,
+          customerId: values.entityTypeId,
+          transactionType: transactionTypeCasted,
+          amount: showInventoryFields ? undefined : values.transactionAmount,
+          inventoryId: showInventoryFields ? values.inventoryId : undefined,
+          quantity: showInventoryFields ? values.quantity : undefined,
+          price: showInventoryFields ? values.price : undefined,
         }
 
     createTransaction(payload, {
       onSuccess: () => {
+        toast.success("Transaction created successfully")
         onOpenChange(false)
         form.reset(DEFAULT_VALUES)
-        toast.success("Transaction created successfully.")
       },
-      onError: (err: Error) => {
-        toast.error(err.message)
-      },
+      onError: (err: Error) => toast.error(err.message),
     })
   }
 
@@ -271,21 +204,16 @@ const TransactionMutateDrawer = ({
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent className="flex flex-col">
         <SheetHeader className="text-start">
-          <SheetTitle>{isUpdate ? "Update" : "Create"} Transaction</SheetTitle>
+          <SheetTitle>{currentRow ? "Update" : "Create"} Transaction</SheetTitle>
           <SheetDescription>
-            {isUpdate
+            {currentRow
               ? "Update the transaction by providing necessary info."
-              : "Add a new transaction by providing necessary info."}
-            Click save when you're done.
+              : "Add a new transaction by providing necessary info."} Click save when you're done.
           </SheetDescription>
         </SheetHeader>
 
         <Form {...form}>
-          <form
-            id={FORM_ID}
-            className="flex-1 space-y-6 overflow-y-auto px-4"
-            onSubmit={form.handleSubmit(handleFormSubmit)}
-          >
+          <form id={FORM_ID} className="flex-1 space-y-6 overflow-y-auto px-4" onSubmit={form.handleSubmit(handleFormSubmit)}>
             {/* Partner Type */}
             <FormField
               control={form.control}
@@ -295,12 +223,13 @@ const TransactionMutateDrawer = ({
                   <FormLabel>Partner Type</FormLabel>
                   <FormControl>
                     <Combobox
-                      options={businessEntityOptions}
-                      placeholder="Select transaction..."
+                      options={createBusinessEntityOptions()}
+                      placeholder="Select partner type..."
                       className="w-full"
-                      onSelect={(value) => {
-                        field.onChange(value)
-                        handleBusinessEntitySelect(value)
+                      value={field.value}
+                      onSelect={(val) => {
+                        field.onChange(val)
+                        handleBusinessEntitySelect(val)
                       }}
                     />
                   </FormControl>
@@ -309,26 +238,19 @@ const TransactionMutateDrawer = ({
               )}
             />
 
-            {/* Entity selection with search */}
+            {/* Entity */}
             {selectedBusinessEntity && (
               <FormField
                 control={form.control}
                 name="entityTypeId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{entityLabel}</FormLabel>
+                    <FormLabel>{getEntityLabel(selectedBusinessEntity)}</FormLabel>
                     <FormControl>
                       <Combobox
                         options={entityOptions}
-                        placeholder={entityPlaceholder}
+                        placeholder={getEntityPlaceholder(selectedBusinessEntity)}
                         className="w-full"
-                        emptyMessage={
-                          entityOptions.length === 0 && !isLoading
-                            ? selectedBusinessEntity === BusinessEntityType.VENDOR
-                              ? "No vendors found"
-                              : "No customers found"
-                            : "No results found"
-                        }
                         value={field.value}
                         onSelect={field.onChange}
                         onSearch={handleEntitySearch}
@@ -346,67 +268,114 @@ const TransactionMutateDrawer = ({
               <FormField
                 control={form.control}
                 name="transactionType"
-                render={({ field }) => {
-                  const isEmpty = entityOptions.length === 0 && !isLoading
-
-                  return (
-                    <FormItem>
-                      <FormLabel>Transaction Type</FormLabel>
-                      <FormControl>
-                        <Combobox
-                          options={transactionTypeOptions}
-                          className="w-full"
-                          placeholder={
-                            isEmpty
-                              ? selectedBusinessEntity === BusinessEntityType.VENDOR
-                                ? "No vendor available"
-                                : "No customer available"
-                              : "Select transaction type..."
-                          }
-                          onSelect={field.onChange}
-                          disabled={isEmpty}
-                        />
-                      </FormControl>
-                      {isEmpty && (
-                        <p className="text-sm text-red-500 ml-1">
-                          {selectedBusinessEntity === BusinessEntityType.VENDOR
-                            ? "Please add a vendor first."
-                            : "Please add a customer first."}
-                        </p>
-                      )}
-                      <FormMessage />
-                    </FormItem>
-                  )
-                }}
-              />
-            )}
-
-            {/* Amount */}
-            {selectedBusinessEntity && transactionType && (
-              <FormField
-                control={form.control}
-                name="transactionAmount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Enter Amount</FormLabel>
+                    <FormLabel>Transaction Type</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
+                      <Combobox
+                        options={getTransactionTypeOptions(selectedBusinessEntity)}
                         className="w-full"
-                        placeholder="0.00"
-                        value={field.value ?? ""}
-                        onChange={(e) =>
-                          field.onChange(
-                            e.target.value ? Number(e.target.value) : undefined
-                          )
-                        }
+                        value={field.value}
+                        onSelect={field.onChange}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+            )}
+
+            {/* Conditional Fields */}
+            {selectedBusinessEntity && transactionType && (
+              showInventoryFields ? (
+                <div className="flex gap-4">
+                  {/* Inventory */}
+                  <FormField
+                    control={form.control}
+                    name="inventoryId"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>Inventory</FormLabel>
+                        <FormControl>
+                          <Combobox
+                            options={[
+                              { value: "inv1", label: "Inventory 1" },
+                              { value: "inv2", label: "Inventory 2" },
+                              { value: "inv3", label: "Inventory 3" },
+                            ]}
+                            placeholder="Select inventory..."
+                            value={field.value}
+                            onSelect={field.onChange}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Quantity */}
+                  <FormField
+                    control={form.control}
+                    name="quantity"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>Quantity</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            placeholder="0"
+                            value={field.value ?? ""}
+                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Price */}
+                  <FormField
+                    control={form.control}
+                    name="price"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>Price</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            placeholder="0.00"
+                            value={field.value ?? ""}
+                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ) : (
+                <FormField
+                  control={form.control}
+                  name="transactionAmount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Amount</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          {...field}
+                          placeholder="0.00"
+                          value={field.value ?? ""}
+                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )
             )}
           </form>
         </Form>

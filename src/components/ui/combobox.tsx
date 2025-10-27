@@ -24,8 +24,9 @@ interface ComboboxProps {
   className?: string
   disabled?: boolean
   value?: string
-  // callback for when search is cleared
-  onSearchClear?: () => void 
+  onSearchClear?: () => void
+  // allow custom values that don't exist in options
+  allowCustomValue?: boolean
 }
 
 export function Combobox({
@@ -39,80 +40,66 @@ export function Combobox({
   disabled = false,
   value: controlledValue,
   onSearchClear,
+  allowCustomValue = false,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState(controlledValue || "")
   const [searchQuery, setSearchQuery] = React.useState("")
   const containerRef = React.useRef<HTMLDivElement>(null)
 
-  // update internal value when controlled value changes
-  React.useEffect(() => {
-    if (controlledValue !== undefined) {
-      setValue(controlledValue)
-    }
-  }, [controlledValue])
-
-  // clear search when clicking outside
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        if (searchQuery) {
-          clearSearch()
-        }
-      }
-    }
-
-    const handleFocusChange = () => {
-      // small delay to allow for focus to move to the new element
-      setTimeout(() => {
-        if (containerRef.current && !containerRef.current.contains(document.activeElement)) {
-          if (searchQuery && !open) {
-            clearSearch()
-          }
-        }
-      }, 100)
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    document.addEventListener('focusin', handleFocusChange)
-    
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('focusin', handleFocusChange)
-    }
-  }, [searchQuery, open])
-
-  const clearSearch = () => {
-    setSearchQuery("")
-    onSearch?.("")
-    onSearchClear?.()
-  }
+  const currentValue = controlledValue || ""
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
     onSearch?.(query)
+
+    // if allowing custom values, update the parent value immediately as user types
+    if (allowCustomValue) {
+      onSelect?.(query)
+    }
   }
 
-  const handleSelect = (currentValue: string) => {
-    const newValue = currentValue === value ? "" : currentValue
-    setValue(newValue)
+  const handleSelect = (selectedValue: string) => {
     setOpen(false)
     // clear search after selection
-    clearSearch()
-    onSelect?.(newValue)
+    setSearchQuery("")
+    onSelect?.(selectedValue)
   }
 
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen)
-    // clear search query when closing the popover without selection
-    if (!isOpen && searchQuery) {
-      clearSearch()
+
+    if (!isOpen) {
+      // When closing, clear the search query immediately
+      setSearchQuery("")
+
+      // If there was a search query and custom values are allowed, ensure it's set as the value
+      if (allowCustomValue && searchQuery && searchQuery !== currentValue) {
+        onSelect?.(searchQuery)
+      }
+
+      // Notify parent that search should be cleared
+      if (onSearchClear) {
+        onSearchClear()
+      }
+    } else {
+      // When opening, if there's a current value that's not in options (custom value),
+      // set it as the search query to show what's selected
+      const valueExistsInOptions = options.some(opt => opt.value === currentValue)
+      if (allowCustomValue && currentValue && !valueExistsInOptions) {
+        setSearchQuery(currentValue)
+      }
     }
   }
 
-  // get display label for selected value
-  const selectedOption = options.find((option) => option.value === value)
-  const displayLabel = selectedOption?.label || placeholder
+  // Get display label for selected value
+  const selectedOption = options.find((option) => option.value === currentValue)
+  const displayLabel = selectedOption?.label || currentValue || placeholder
+
+  // Check if current search query could be a new custom value
+  const isCustomValue = allowCustomValue && searchQuery && !options.some(opt =>
+    opt.value.toLowerCase() === searchQuery.toLowerCase() ||
+    opt.label.toLowerCase() === searchQuery.toLowerCase()
+  )
 
   return (
     <div ref={containerRef}>
@@ -132,7 +119,6 @@ export function Combobox({
 
         <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
           <Command
-            // disable internal filtering
             filter={() => 1}
             shouldFilter={false}
           >
@@ -151,9 +137,28 @@ export function Combobox({
                 </div>
               ) : (
                 <>
-                  {options.length === 0 ? (
+                  {/* Show "Create new" option when custom values are allowed and search doesn't match */}
+                  {isCustomValue && (
+                    <CommandGroup>
+                      <CommandItem
+                        value={searchQuery}
+                        onSelect={() => handleSelect(searchQuery)}
+                        className="cursor-pointer text-blue-600 font-medium"
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            currentValue === searchQuery ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                        <span className="truncate">Create "{searchQuery}"</span>
+                      </CommandItem>
+                    </CommandGroup>
+                  )}
+
+                  {options.length === 0 && !isCustomValue ? (
                     <CommandEmpty>{emptyMessage}</CommandEmpty>
-                  ) : (
+                  ) : options.length > 0 ? (
                     <CommandGroup>
                       {options.map((option) => (
                         <CommandItem
@@ -165,14 +170,14 @@ export function Combobox({
                           <Check
                             className={cn(
                               "mr-2 h-4 w-4",
-                              value === option.value ? "opacity-100" : "opacity-0"
+                              currentValue === option.value ? "opacity-100" : "opacity-0"
                             )}
                           />
                           <span className="truncate">{option.label}</span>
                         </CommandItem>
                       ))}
                     </CommandGroup>
-                  )}
+                  ) : null}
                 </>
               )}
             </CommandList>

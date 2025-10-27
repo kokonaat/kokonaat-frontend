@@ -115,6 +115,12 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
   const [entitySearchQuery, setEntitySearchQuery] = useState("")
   const [inventorySearchQuery, setInventorySearchQuery] = useState("")
 
+  // Track which inventory items are new (by name) vs existing (by ID)
+  const [inventoryInputValues, setInventoryInputValues] = useState<Record<number, string>>({})
+
+  // Track search query for each inventory row separately
+  const [inventorySearchQueries, setInventorySearchQueries] = useState<Record<number, string>>({})
+
   // create a correctly typed resolver
   const resolver = zodResolver(transactionFormSchema) as Resolver<TransactionFormValues>
 
@@ -178,6 +184,10 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
       setSelectedBusinessEntity(null)
       setEntitySearchQuery("")
       setInventorySearchQuery("")
+      setInventoryInputValues({})
+    } else {
+      // When opening, reset search query to ensure fresh data
+      setInventorySearchQuery("")
     }
   }
 
@@ -189,6 +199,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
     form.setValue("transactionAmount", null)
     // reset 'inventories'
     form.setValue("inventories", [])
+    setInventoryInputValues({})
   }
 
   const handleEntitySearch = (query: string) => setEntitySearchQuery(query)
@@ -196,15 +207,33 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
   const handleFormSubmit = (values: TransactionFormValues) => {
     if (!shopId || !selectedBusinessEntity || !values.entityTypeId || !values.transactionType) return
 
-    const transactionTypeCasted = values.transactionType as "PURCHASE" | "PAYMENT" | "SALE" | "COMMISSION" | "SELL_OUT" // 👈 ADDED "SELL_OUT"
+    const transactionTypeCasted = values.transactionType as "PURCHASE" | "PAYMENT" | "SALE" | "COMMISSION" | "SELL_OUT"
 
     const inventoryDetailsPayload = showInventoryFields
-      ? values.inventories?.map((item) => ({
-        inventoryId: item.inventoryId,
-        quantity: item.quantity as number,
-        price: item.price as number,
-        total: (item.quantity as number) * (item.price as number),
-      }))
+      ? values.inventories?.map((item, index) => {
+        const inputValue = inventoryInputValues[index] || item.inventoryId
+
+        // Check if the value is an existing inventory ID (exists in options)
+        const isExistingInventory = inventoryOptions.some(opt => opt.value === inputValue)
+
+        if (isExistingInventory) {
+          // Existing inventory - send inventoryId
+          return {
+            inventoryId: inputValue,
+            quantity: item.quantity as number,
+            price: item.price as number,
+            total: (item.quantity as number) * (item.price as number),
+          }
+        } else {
+          // New inventory - send inventoryName
+          return {
+            inventoryName: inputValue,
+            quantity: item.quantity as number,
+            price: item.price as number,
+            total: (item.quantity as number) * (item.price as number),
+          }
+        }
+      })
       : undefined
 
     const payload =
@@ -230,8 +259,13 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
     createTransaction(payload as CreateTransactionDto, {
       onSuccess: () => {
         toast.success("Transaction created successfully")
-        onOpenChange(false)
+        // Reset all states before closing
         form.reset(DEFAULT_VALUES)
+        setInventoryInputValues({})
+        setInventorySearchQuery("")
+        setEntitySearchQuery("")
+        setSelectedBusinessEntity(null)
+        onOpenChange(false)
       },
       onError: (err: Error) => toast.error(err.message),
     })
@@ -313,29 +347,29 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                   )}
                 />
               )}
-            </div>
 
-            {/* transaction type */}
-            {selectedBusinessEntity && (
-              <FormField
-                control={form.control}
-                name="transactionType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Transaction Type</FormLabel>
-                    <FormControl>
-                      <Combobox
-                        options={getTransactionTypeOptions(selectedBusinessEntity)}
-                        className="w-full"
-                        value={field.value}
-                        onSelect={field.onChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
+              {/* transaction type */}
+              {selectedBusinessEntity && (
+                <FormField
+                  control={form.control}
+                  name="transactionType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Transaction Type</FormLabel>
+                      <FormControl>
+                        <Combobox
+                          options={getTransactionTypeOptions(selectedBusinessEntity)}
+                          className="w-full"
+                          value={field.value}
+                          onSelect={field.onChange}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
 
             {/* inventory fields */}
             {selectedBusinessEntity && transactionType && (
@@ -347,28 +381,41 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                       <FormField
                         control={form.control}
                         name={`inventories.${index}.inventoryId`}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormLabel>Inventory</FormLabel>
-                            <FormControl>
-                              <Combobox
-                                options={inventoryOptions}
-                                placeholder="Select inventory..."
-                                value={field.value}
-                                // user selects existing item → id
-                                onSelect={(val) => field.onChange(val)}
-                                onSearch={(query) => {
-                                  // inventory list api
-                                  setInventorySearchQuery(query)
-                                  // store typed name
-                                  field.onChange(query)
-                                }}
-                                loading={isInventoryLoading}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                        render={({ field }) => {
+                          const currentInputValue = inventoryInputValues[index] || field.value
+                          const isExistingInventory = inventoryOptions.some(opt => opt.value === currentInputValue)
+
+                          return (
+                            <FormItem className="flex-1">
+                              <FormLabel>
+                                Inventory
+                                {currentInputValue && !isExistingInventory && (
+                                  <span className="ml-2 text-xs text-blue-600 font-normal">
+                                    (New: "{currentInputValue}")
+                                  </span>
+                                )}
+                              </FormLabel>
+                              <FormControl>
+                                <Combobox
+                                  options={inventoryOptions}
+                                  placeholder="Select or type new inventory..."
+                                  value={currentInputValue}
+                                  onSelect={(val) => {
+                                    field.onChange(val)
+                                    setInventoryInputValues(prev => ({ ...prev, [index]: val }))
+                                  }}
+                                  onSearch={(query) => {
+                                    setInventorySearchQuery(query)
+                                    field.onChange(query)
+                                    setInventoryInputValues(prev => ({ ...prev, [index]: query }))
+                                  }}
+                                  loading={isInventoryLoading}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )
+                        }}
                       />
 
                       {/* quantity */}

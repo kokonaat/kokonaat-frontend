@@ -1,6 +1,6 @@
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerClose, DrawerFooter } from '@/components/ui/drawer'
 import { Button } from '@/components/ui/button'
-import type { Vendor } from './data/vendorSchema'
+import type { Vendor } from '../../schema/vendorSchema'
 
 type VendorViewDrawerProps = {
   open: boolean

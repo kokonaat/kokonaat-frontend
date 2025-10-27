@@ -28,7 +28,8 @@ export const getTransactions = async (shopId: string, page: number) => {
 }
 
 export const createTransaction = async (data: CreateTransactionDto) => {
-    if (!data.shopId) throw new Error("Shop ID is required")
-    const res = await axiosInstance.post(apiEndpoints.transactions.createTransactions, data)
-    return res.data
+  // this function will receive the payload with 'details' for inventory types
+  if (!data.shopId) throw new Error("Shop ID is required")
+  const res = await axiosInstance.post(apiEndpoints.transactions.createTransactions, data)
+  return res.data
 }

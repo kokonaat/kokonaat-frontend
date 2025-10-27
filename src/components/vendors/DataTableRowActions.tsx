@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useCustomers } from '../customers/customer-provider'
-import { vendorSchema } from './data/vendorSchema'
+import { vendorSchema } from '../../schema/vendorSchema'
 
 type DataTableRowActionsProps<TData> = {
   row: Row<TData>

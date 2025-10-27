@@ -27,7 +27,7 @@ import type { DataTablePropsInterface } from '@/interface/customerInterface'
 import { DataTableViewOptions } from '@/components/designation/data-table-view-options'
 import { DataTablePagination } from '@/components/designation/data-table-pagination'
 import { DataTableBulkActions } from './DataTableBulkActions'
-import { useDebounce } from './data/useDebounce'
+import { useDebounce } from '../../hooks/useDebounce'
 
 const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange, onSearchChange }: DataTablePropsInterface) => {
   // table states

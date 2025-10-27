@@ -1,6 +1,6 @@
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerClose, DrawerFooter } from '@/components/ui/drawer'
 import { Button } from '@/components/ui/button'
-import type { Customer } from './data/customerSchema'
+import type { Customer } from '../../schema/customerSchema'
 
 type CustomerViewDrawerProps = {
     open: boolean

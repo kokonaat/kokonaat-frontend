@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react"
+import type { Resolver } from "react-hook-form"
 import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
@@ -26,6 +27,7 @@ import { Input } from "../ui/input"
 import type {
   ComboboxOptionInterface,
   TransactionMutateDrawerProps,
+  CreateTransactionDto
 } from "@/interface/transactionInterface"
 import type { Customer } from "@/interface/customerInterface"
 import type { Vendor } from "@/interface/vendorInterface"
@@ -38,6 +40,7 @@ import {
 } from "@/constance/transactionContances"
 import { BusinessEntityType } from "@/utils/enums/trasaction.enum"
 import { transactionFormSchema } from "@/schema/transactionFormSchema"
+
 import type { TransactionFormValues } from "@/schema/transactionFormSchema"
 import { useVendorList } from "@/hooks/useVendor"
 import { useCustomerList } from "@/hooks/useCustomer"
@@ -45,16 +48,7 @@ import { useCreateTransaction } from "@/hooks/useTransaction"
 import { useInventoryList } from "@/hooks/useInventory"
 import { useShopStore } from "@/stores/shopStore"
 import { Minus, Plus } from "lucide-react"
-
-// debounce hook
-const useDebounce = (value: string, delay: number) => {
-  const [debouncedValue, setDebouncedValue] = useState(value)
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedValue(value), delay)
-    return () => clearTimeout(timer)
-  }, [value, delay])
-  return debouncedValue
-}
+import { useDebounce } from "../../hooks/useDebounce"
 
 // helpers
 const createBusinessEntityOptions = (): ComboboxOptionInterface[] =>
@@ -121,15 +115,20 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
   const [entitySearchQuery, setEntitySearchQuery] = useState("")
   const [inventorySearchQuery, setInventorySearchQuery] = useState("")
 
+  // create a correctly typed resolver
+  const resolver = zodResolver(transactionFormSchema) as Resolver<TransactionFormValues>
+
+  // then create the form
   const form = useForm<TransactionFormValues>({
-    resolver: zodResolver(transactionFormSchema),
-    defaultValues: DEFAULT_VALUES,
+    resolver,
+    // ensure DEFAULT_VALUES shape matches
+    defaultValues: DEFAULT_VALUES as TransactionFormValues,
   })
 
   // field array for inventory items
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "inventoryItems",
+    name: "inventories",
   })
 
   const { flatVendorList, flatCustomerList, isLoading } = useEntityData(
@@ -161,7 +160,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
   // automatically add one inventory row when Purchase/Sell Out selected
   useEffect(() => {
     if (showInventoryFields && fields.length === 0) {
-      append({ inventoryId: "", quantity: undefined, price: undefined })
+      append({ inventoryId: "", quantity: 0, price: 0 })
     }
   }, [showInventoryFields, append, fields.length])
 
@@ -186,8 +185,10 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
     setSelectedBusinessEntity(value as BusinessEntityType)
     form.setValue("entityTypeId", "")
     form.setValue("transactionType", "")
-    form.setValue("transactionAmount", undefined)
-    form.setValue("inventoryItems", [])
+    // set to null
+    form.setValue("transactionAmount", null)
+    // reset 'inventories'
+    form.setValue("inventories", [])
   }
 
   const handleEntitySearch = (query: string) => setEntitySearchQuery(query)
@@ -195,7 +196,16 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
   const handleFormSubmit = (values: TransactionFormValues) => {
     if (!shopId || !selectedBusinessEntity || !values.entityTypeId || !values.transactionType) return
 
-    const transactionTypeCasted = values.transactionType as "PURCHASE" | "PAYMENT" | "SALE" | "COMMISSION"
+    const transactionTypeCasted = values.transactionType as "PURCHASE" | "PAYMENT" | "SALE" | "COMMISSION" | "SELL_OUT" // 👈 ADDED "SELL_OUT"
+
+    const inventoryDetailsPayload = showInventoryFields
+      ? values.inventories?.map((item) => ({
+        inventoryId: item.inventoryId,
+        quantity: item.quantity as number,
+        price: item.price as number,
+        total: (item.quantity as number) * (item.price as number),
+      }))
+      : undefined
 
     const payload =
       selectedBusinessEntity === BusinessEntityType.VENDOR
@@ -205,7 +215,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
           vendorId: values.entityTypeId,
           transactionType: transactionTypeCasted,
           amount: showInventoryFields ? undefined : values.transactionAmount,
-          inventoryItems: showInventoryFields ? values.inventoryItems : undefined,
+          details: inventoryDetailsPayload,
         }
         : {
           shopId,
@@ -213,10 +223,11 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
           customerId: values.entityTypeId,
           transactionType: transactionTypeCasted,
           amount: showInventoryFields ? undefined : values.transactionAmount,
-          inventoryItems: showInventoryFields ? values.inventoryItems : undefined,
+          details: inventoryDetailsPayload,
         }
 
-    createTransaction(payload, {
+    // cast the payload to the expected DTO shape
+    createTransaction(payload as CreateTransactionDto, {
       onSuccess: () => {
         toast.success("Transaction created successfully")
         onOpenChange(false)
@@ -227,8 +238,9 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
   }
 
   // calculate grand total
-  const inventoryItems = form.watch("inventoryItems") || []
-  const total = inventoryItems.reduce((acc: number, item: { quantity: number; price: number }) => {
+  // watch 'inventories'
+  const inventories = form.watch("inventories") || []
+  const total = inventories.reduce((acc: number, item: { quantity: number | undefined; price: number | undefined }) => {
     const quantity = item.quantity ?? 0
     const price = item.price ?? 0
     return acc + quantity * price
@@ -334,7 +346,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                       {/* inventory */}
                       <FormField
                         control={form.control}
-                        name={`inventoryItems.${index}.inventoryId`}
+                        name={`inventories.${index}.inventoryId`}
                         render={({ field }) => (
                           <FormItem className="flex-1">
                             <FormLabel>Inventory</FormLabel>
@@ -362,7 +374,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                       {/* quantity */}
                       <FormField
                         control={form.control}
-                        name={`inventoryItems.${index}.quantity`}
+                        name={`inventories.${index}.quantity`}
                         render={({ field }) => (
                           <FormItem className="flex-1">
                             <FormLabel>Quantity</FormLabel>
@@ -373,8 +385,9 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                                 placeholder="0"
                                 min={0}
                                 value={field.value ?? ""}
+                                // convert empty string to 0 for Zod/RHF validation
                                 onChange={(e) =>
-                                  field.onChange(e.target.value ? Number(e.target.value) : undefined)
+                                  field.onChange(e.target.value === "" ? 0 : Number(e.target.value))
                                 }
                               />
                             </FormControl>
@@ -386,7 +399,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                       {/* price */}
                       <FormField
                         control={form.control}
-                        name={`inventoryItems.${index}.price`}
+                        name={`inventories.${index}.price`}
                         render={({ field }) => (
                           <FormItem className="flex-1">
                             <FormLabel>Price</FormLabel>
@@ -397,8 +410,9 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                                 placeholder="0.00"
                                 min={0}
                                 value={field.value ?? ""}
+                                // convert empty string to 0 for Zod/RHF validation
                                 onChange={(e) =>
-                                  field.onChange(e.target.value ? Number(e.target.value) : undefined)
+                                  field.onChange(e.target.value === "" ? 0 : Number(e.target.value))
                                 }
                               />
                             </FormControl>
@@ -413,7 +427,8 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                           type="button"
                           variant="outline"
                           size="icon"
-                          onClick={() => append({ inventoryId: "", quantity: undefined, price: undefined })}
+                          // set default to 0
+                          onClick={() => append({ inventoryId: "", quantity: 0, price: 0 })}
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
@@ -457,7 +472,8 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                           placeholder="0.00"
                           min={0}
                           value={field.value ?? ""}
-                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                          // ensure we set to null if empty, as transactionAmount is nullable/optional
+                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                         />
                       </FormControl>
                       <FormMessage />

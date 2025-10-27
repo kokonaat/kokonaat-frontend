@@ -38,5 +38,9 @@ export const apiEndpoints: ApiEndpoints = {
         transactionsList: "/transactions",
         createTransactions: "/transactions",
     },
+    inventory: {
+        inventoryList: "/inventory",
+        createInventory: "/inventory",
+    },
     user: "/user/me",
 }

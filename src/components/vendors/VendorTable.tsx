@@ -20,7 +20,7 @@ import type { DataTablePropsInterface } from '@/interface/vendorInterface'
 import { DataTableViewOptions } from '../designation/data-table-view-options'
 import { DataTablePagination } from '../designation/data-table-pagination'
 import { VendorTableBulkActions } from './VendorTableBulkActions'
-import { useDebounce } from '../customers/data/useDebounce'
+import { useDebounce } from '../../hooks/useDebounce'
 
 const VendorTable = ({ data, pageIndex, pageSize, total, onPageChange, onSearchChange }: DataTablePropsInterface) => {
   // table states

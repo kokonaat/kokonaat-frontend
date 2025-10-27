@@ -18,13 +18,25 @@ export interface ComboboxOptionInterface {
   label: string
 }
 
+// this represents one item in the details array for inventory transactions
+export interface TransactionDetail {
+  inventoryId: string
+  quantity: number
+  price: number
+  total: number // Added 'total' as per swagger payload
+}
+
+// update main DTO
 export interface CreateTransactionDto {
   shopId: string
   partnerType: "VENDOR" | "CUSTOMER"
-  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE"
-  amount: number
   vendorId?: string
   customerId?: string
+  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT"
+  // for non-inventory transactions
+  amount?: number
+  // used for inventory transactions (PURCHASE, SELL_OUT)
+  details?: TransactionDetail[]
 }
 
 export interface TransactionListResponse {

@@ -1,6 +1,6 @@
 export const VENDOR_TRANSACTION_TYPES = [
   { value: "PAYMENT", label: "Pay" },
-   // UI shows "Receive", backend gets SALE
+  // UI shows "Receive", backend gets SALE
   { value: "SALE", label: "Receive" },
   { value: "PURCHASE", label: "Purchase" },
   { value: "COMMISSION", label: "Receive Commission" },
@@ -18,8 +18,12 @@ export const CUSTOMER_TRANSACTION_TYPES = [
 export const FORM_ID = 'transaction-form'
 
 export const DEFAULT_VALUES = {
-  transaction: '',
+  partnerType: '',
   entityTypeId: '',
   transactionType: '',
-  transactionPaymentStatus: undefined,
+  // transactionPaymentStatus: undefined,
+  // optional numeric field
+  transactionAmount: null,
+  // must be an empty array by default
+  inventories: [],
 }

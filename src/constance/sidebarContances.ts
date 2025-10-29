@@ -29,6 +29,7 @@ export const sidebarData: Omit<SidebarData, 'teams'> = {
         { title: 'Shops', url: '/shops', icon: ShoppingBag },
         { title: 'Customer', url: '/customers', icon: UsersRound },
         { title: 'Vendor', url: '/vendors', icon: UsersRound },
+        { title: 'Inventory', url: '/inventory', icon: ShoppingBag },
         { title: 'Transaction Board', url: '/transactions', icon: Package },
       ],
     },

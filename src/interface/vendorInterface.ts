@@ -1,6 +1,5 @@
 import type { Table } from "@tanstack/react-table";
 
-
 export interface Shop {
   id: string
   name: string

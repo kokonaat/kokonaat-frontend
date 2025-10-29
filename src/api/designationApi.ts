@@ -1,4 +1,4 @@
-import { DesignationInterface } from "@/interface/designationInterface"
+import type { DesignationInterface } from "@/interface/designationInterface"
 import { axiosInstance } from "./axios"
 import { apiEndpoints } from "@/config/api"
 

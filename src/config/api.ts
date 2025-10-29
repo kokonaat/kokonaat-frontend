@@ -41,6 +41,9 @@ export const apiEndpoints: ApiEndpoints = {
     inventory: {
         inventoryList: "/inventory",
         createInventory: "/inventory",
+        updateInventory: "/inventory",
+        deleteInventory: "/inventory",
+        getInventoryById: "/inventory/id"
     },
     user: "/user/me",
 }

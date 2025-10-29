@@ -1,6 +1,6 @@
 import { apiEndpoints } from "@/config/api"
 import { axiosInstance } from "./axios"
-import { CreateShopInterface, UpdateShopInterface } from "@/interface/shopInterface"
+import type { CreateShopInterface, UpdateShopInterface } from "@/interface/shopInterface"
 
 // create
 export const createShop = async (data: CreateShopInterface) => {

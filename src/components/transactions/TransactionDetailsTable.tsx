@@ -42,8 +42,8 @@ export const TransactionDetailsTable = ({ data }: TransactionDetailsTableProps) 
             cell: (info) => info.row.original.inventory?.name ?? "N/A",
         },
         { header: "Quantity", accessorKey: "quantity" },
-        { header: "Price", accessorKey: "price", cell: (info) => `$${info.getValue<number>()}` },
-        { header: "Total", accessorKey: "total", cell: (info) => `$${info.getValue<number>()}` },
+        { header: "Price", accessorKey: "price", cell: (info) => `৳${info.getValue<number>()}` },
+        { header: "Total", accessorKey: "total", cell: (info) => `৳${info.getValue<number>()}` },
     ]
 
     const table = useReactTable({

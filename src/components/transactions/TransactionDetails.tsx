@@ -16,6 +16,8 @@ const TransactionDetails = () => {
 
     if (!transaction) return <Main><p>No transaction found.</p></Main>
 
+    const showDetailsTable = transaction.transactionType === "PURCHASE" || transaction.transactionType === "SALE"
+
     return (
         <Main>
             <Card className="rounded-2xl shadow-sm border bg-card">
@@ -42,17 +44,21 @@ const TransactionDetails = () => {
                         </div>
                     </div>
 
-                    <Separator />
+                    {
+                        showDetailsTable ? <Separator /> : ""
+                    }
 
                     {/* Details */}
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">Transaction Details</h3>
-                        {transaction.details?.length ? (
-                            <TransactionDetailsTable data={transaction.details} />
-                        ) : (
-                            <p>No details found.</p>
-                        )}
-                    </div>
+                    {showDetailsTable && (
+                        <div>
+                            <h3 className="text-lg font-semibold mb-2">Transaction Details</h3>
+                            {transaction.details?.length ? (
+                                <TransactionDetailsTable data={transaction.details} />
+                            ) : (
+                                <p>No details found.</p>
+                            )}
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </Main>

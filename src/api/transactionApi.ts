@@ -33,3 +33,13 @@ export const createTransaction = async (data: CreateTransactionDto) => {
   const res = await axiosInstance.post(apiEndpoints.transactions.createTransactions, data)
   return res.data
 }
+
+export const getTransactionById = async (shopId: string, id: string) => {
+  if (!shopId) throw new Error("Shop ID is required")
+  if (!id) throw new Error("Transaction ID is required")
+
+  // replace {id} in the path and also put id in the query string.
+  const path = apiEndpoints.transactions.getTransactionById.replace("{id}", id)
+  const res = await axiosInstance.get(`${path}?id=${id}&shopId=${shopId}`)
+  return res.data
+}

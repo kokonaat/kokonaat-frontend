@@ -1,6 +1,6 @@
 import { apiEndpoints } from "@/config/api"
 import { axiosInstance } from "./axios"
-import type { InventoryItemInterface } from "@/interface/inventoryInterface"
+import type { InventoryFormInterface, InventoryItemInterface, InventoryListApiResponseInterface } from "@/interface/inventoryInterface"
 
 // inventory list
 export const inventoryList = async (
@@ -22,4 +22,66 @@ export const inventoryList = async (
         items: res.data.data ?? [],
         total: res.data.total ?? 0,
     }
+}
+
+// Get inventory by ID
+export const getInventoryById = async (
+  id: string,
+  shopId: string
+): Promise<InventoryFormInterface> => {
+  if (!id) throw new Error("Inventory ID is required")
+  if (!shopId) throw new Error("Shop ID is required")
+
+  const res = await axiosInstance.get<InventoryFormInterface>(
+    `${apiEndpoints.inventory.getInventoryById.replace("id", id)}?shopId=${shopId}`
+  )
+
+  return res.data
+}
+
+// Create inventory
+export const createInventory = async (data: InventoryFormInterface) => {
+  if (!data.shopId) throw new Error("Shop ID is required")
+  const res = await axiosInstance.post<InventoryListApiResponseInterface>(
+    apiEndpoints.inventory.createInventory,
+    data
+  )
+  return res.data.data
+}
+
+// Update inventory
+export const updateInventory = async ({
+  id,
+  data,
+  shopId,
+}: {
+  id: string
+  data: InventoryFormInterface
+  shopId: string
+}) => {
+  if (!shopId) throw new Error("Shop ID is required")
+
+  const res = await axiosInstance.put<InventoryListApiResponseInterface>(
+    `${apiEndpoints.inventory.updateInventory}/${id}?shopId=${shopId}`,
+    data
+  )
+
+  return res.data.data
+}
+
+// Delete inventory
+export const deleteInventory = async ({
+  id,
+  shopId,
+}: {
+  id: string
+  shopId: string
+}) => {
+  if (!shopId) throw new Error("Shop ID is required")
+
+  const res = await axiosInstance.delete<InventoryListApiResponseInterface>(
+    `${apiEndpoints.inventory.deleteInventory}/${id}?shopId=${shopId}`
+  )
+
+  return res.data
 }

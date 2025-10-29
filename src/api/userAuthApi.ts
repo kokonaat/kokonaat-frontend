@@ -1,6 +1,6 @@
 import { apiEndpoints } from "@/config/api"
 import { axiosInstance } from "./axios"
-import { UserSignUpInterface, UserSignInInterface, AuthResponseInterface } from "@/interface/userInterface"
+import type { UserSignUpInterface, UserSignInInterface, AuthResponseInterface } from "@/interface/userInterface"
 
 // signup user
 export const signUpUser = async (data: UserSignUpInterface) => {

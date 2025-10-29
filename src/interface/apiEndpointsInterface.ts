@@ -37,6 +37,9 @@ export interface ApiEndpoints {
     inventory: {
         inventoryList: string
         createInventory: string
+        updateInventory: string
+        deleteInventory: string
+        getInventoryById: string
     }
     user: string
 }

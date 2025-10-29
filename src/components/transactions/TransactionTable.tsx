@@ -17,12 +17,14 @@ import { DataTableBulkActions } from "../designation/data-table-bulk-actions"
 import { DataTableViewOptions } from "./DataTableViewOption"
 import { TransactionColumns as columns } from "./TransactionColumns"
 import { useTransactionList } from "@/hooks/useTransaction"
+import { useNavigate } from "react-router-dom"
 
 interface TransactionTableProps {
   shopId: string
 }
 
 const TransactionTable = ({ shopId }: TransactionTableProps) => {
+  const navigate = useNavigate()
   const [pageIndex, setPageIndex] = useState(0)
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -54,6 +56,11 @@ const TransactionTable = ({ shopId }: TransactionTableProps) => {
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   })
+
+  // transaction profile page
+  const handleClick = (id: string) => {
+    navigate(`/transactions/${id}`)
+  }
 
   if (isLoading) return <div>Loading transactions...</div>
   if (isError) return <div>Failed to load transactions.</div>
@@ -87,7 +94,12 @@ const TransactionTable = ({ shopId }: TransactionTableProps) => {
           <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  onClick={() => handleClick(row.original.id)}
+                  className="cursor-pointer"
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}

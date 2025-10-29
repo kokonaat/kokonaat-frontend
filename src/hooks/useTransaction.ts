@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createTransaction, getTransactions, type CreateTransactionDto } from "@/api/transactionApi"
+import { createTransaction, getTransactionById, getTransactions, type CreateTransactionDto } from "@/api/transactionApi"
 import type { TransactionListResponse } from "@/api/transactionApi"
 
 const TRANSACTIONS_KEYS = {
@@ -7,11 +7,11 @@ const TRANSACTIONS_KEYS = {
 }
 
 export const useTransactionList = (shopId: string, page: number) => {
-  return useQuery<TransactionListResponse>({
-    queryKey: [...TRANSACTIONS_KEYS.all, shopId, page],
-    queryFn: () => getTransactions(shopId, page),
-    placeholderData: keepPreviousData,
-  })
+    return useQuery<TransactionListResponse>({
+        queryKey: [...TRANSACTIONS_KEYS.all, shopId, page],
+        queryFn: () => getTransactions(shopId, page),
+        placeholderData: keepPreviousData,
+    })
 }
 
 export const useCreateTransaction = (shopId: string) => {
@@ -26,5 +26,13 @@ export const useCreateTransaction = (shopId: string) => {
         onError: (error) => {
             console.error("Failed to create transaction:", error)
         },
+    })
+}
+
+export const useTransactionById = (shopId: string, id: string) => {
+    return useQuery({
+        queryKey: ["transactions", shopId, id],
+        queryFn: () => getTransactionById(shopId, id),
+        enabled: !!shopId && !!id,
     })
 }

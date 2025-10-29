@@ -34,11 +34,16 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => {
       const data = row.original
 
-      // if vendor
+      const handleLinkClick = (e: React.MouseEvent) => {
+        // prevent triggering row click
+        e.stopPropagation()
+      }
+
       if (data.vendor) {
         return (
           <Link
             to={`/vendor/${data.vendor.id}`}
+            onClick={handleLinkClick}
             className="text-blue-600 hover:underline font-medium"
           >
             {data.vendor.name}
@@ -46,19 +51,17 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
         )
       }
 
-      // if customer
       if (data.customer) {
         return (
           <Link
             to={`/customer/${data.customer.id}`}
+            onClick={handleLinkClick}
             className="text-blue-600 hover:underline font-medium"
           >
             {data.customer.name}
           </Link>
         )
       }
-
-      // fallback if neither vendor nor customer exists
       return <span className="text-gray-500">-</span>
     },
   },

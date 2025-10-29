@@ -1,17 +1,14 @@
 export const VENDOR_TRANSACTION_TYPES = [
   { value: "PAYMENT", label: "Pay" },
-  // UI shows "Receive", backend gets SALE
-  { value: "SALE", label: "Receive" },
+  { value: "RECEIVABLE", label: "Receive" },
   { value: "PURCHASE", label: "Purchase" },
   { value: "COMMISSION", label: "Receive Commission" },
 ]
 
 export const CUSTOMER_TRANSACTION_TYPES = [
   { value: "PAYMENT", label: "Pay" },
-  // UI shows "Collect", backend gets SALE
-  { value: "SALE", label: "Collect" },
-  // UI shows "Sell Out", backend gets PURCHASE
-  { value: "PURCHASE", label: "Sell Out" },
+  { value: "COLLECT", label: "Collect" },
+  { value: "SALE", label: "Sell Out" },
   { value: "COMMISSION", label: "Receive Commission" },
 ]
 

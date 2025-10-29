@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 // inventory required transaction types
-const inventoryRequiredTypes = ["PURCHASE", "SELL_OUT"]
+const inventoryRequiredTypes = ["PURCHASE", "SALE"]
 
 // helper function to safely transform string/empty string/number input into a final number or 0
 const zNumberOrZero = z

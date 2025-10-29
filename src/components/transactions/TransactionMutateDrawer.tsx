@@ -145,7 +145,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
     1,
     10,
     inventorySearchQuery,
-    { enabled: !!shopId && (form.watch("transactionType") === "PURCHASE" || form.watch("transactionType") === "SELL_OUT") }
+    { enabled: !!shopId && (form.watch("transactionType") === "PURCHASE" || form.watch("transactionType") === "SALE") }
   )
 
   const inventoryOptions = useMemo(() => {
@@ -158,7 +158,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
   const { mutate: createTransaction, isPending } = useCreateTransaction(shopId!)
 
   const transactionType = form.watch("transactionType")
-  const showInventoryFields = transactionType === "PURCHASE" || transactionType === "SELL_OUT"
+  const showInventoryFields = transactionType === "PURCHASE" || transactionType === "SALE"
 
   // automatically add one inventory row when Purchase/Sell Out selected
   useEffect(() => {

@@ -440,7 +440,30 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                                   }}
                                   onSearch={(query) => {
                                     if (transactionType === "PURCHASE") {
-                                      setInventorySearchQuery(query)
+                                      // prevent duplicate custom names (case-insensitive)
+                                      const existingValues = Object.entries(inventoryInputValues)
+                                        .filter(([i]) => Number(i) !== index)
+                                        .map(([, v]) => v.toLowerCase().trim())
+
+                                      const normalizedQuery = query.toLowerCase().trim()
+
+                                      // only allow typing if not duplicate
+                                      if (existingValues.includes(normalizedQuery)) {
+                                        toast.warning("This inventory name is already used.")
+                                        return
+                                      }
+
+                                      // only set inventorySearchQuery when user is searching existing inventory
+                                      // not when they're typing a *completely new* item name
+                                      const isExistingOption = inventoryOptions.some(
+                                        (opt) => opt.label.toLowerCase() === normalizedQuery
+                                      )
+
+                                      if (isExistingOption) {
+                                        setInventorySearchQuery(query)
+                                      }
+
+                                      // update local field state
                                       field.onChange(query)
                                       setInventoryInputValues((prev) => ({
                                         ...prev,
@@ -449,8 +472,19 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                                     }
                                   }}
                                   loading={isInventoryLoading}
-                                  allowCustomValue={transactionType === "PURCHASE"}
+                                  allowCustomValue={
+                                    transactionType === "PURCHASE" &&
+                                    (() => {
+                                      const existingValues = Object.entries(inventoryInputValues)
+                                        .filter(([i]) => Number(i) !== index)
+                                        .map(([, v]) => v.toLowerCase().trim())
+                                      return !existingValues.includes(
+                                        (currentInputValue || "").toLowerCase().trim()
+                                      )
+                                    })()
+                                  }
                                 />
+
                               </FormControl>
                               <FormMessage />
                             </FormItem>

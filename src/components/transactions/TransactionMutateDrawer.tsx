@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo } from "react"
 import type { Resolver } from "react-hook-form"
 import { useForm, useFieldArray } from "react-hook-form"
+import { Minus, Plus } from "lucide-react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
+import axios from "axios"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -36,6 +38,7 @@ import {
   CUSTOMER_TRANSACTION_TYPES,
   DEFAULT_VALUES,
   FORM_ID,
+  PAYMENT_TYPES,
   VENDOR_TRANSACTION_TYPES,
 } from "@/constance/transactionContances"
 import { BusinessEntityType } from "@/utils/enums/trasaction.enum"
@@ -47,7 +50,6 @@ import { useCustomerList } from "@/hooks/useCustomer"
 import { useCreateTransaction } from "@/hooks/useTransaction"
 import { useInventoryList } from "@/hooks/useInventory"
 import { useShopStore } from "@/stores/shopStore"
-import { Minus, Plus } from "lucide-react"
 import { useDebounce } from "../../hooks/useDebounce"
 
 // helpers
@@ -117,7 +119,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
 
   // track which inventory items are new (by name) vs existing (by ID)
   const [inventoryInputValues, setInventoryInputValues] = useState<Record<number, string>>({})
-  
+
   // create a correctly typed resolver
   const resolver = zodResolver(transactionFormSchema) as Resolver<TransactionFormValues>
 
@@ -210,11 +212,11 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
       ? values.inventories?.map((item, index) => {
         const inputValue = inventoryInputValues[index] || item.inventoryId
 
-        // Check if the value is an existing inventory ID (exists in options)
+        // check if the value is an existing inventory ID (exists in options)
         const isExistingInventory = inventoryOptions.some(opt => opt.value === inputValue)
 
         if (isExistingInventory) {
-          // Existing inventory - send inventoryId
+          // existing inventory - send inventoryId
           return {
             inventoryId: inputValue,
             quantity: item.quantity as number,
@@ -222,7 +224,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
             total: (item.quantity as number) * (item.price as number),
           }
         } else {
-          // New inventory - send inventoryName
+          // new inventory - send inventoryName
           return {
             inventoryName: inputValue,
             quantity: item.quantity as number,
@@ -233,6 +235,11 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
       })
       : undefined
 
+    const pendingAmount =
+      (showInventoryFields ? total : values.transactionAmount || 0) - Number(values.advancePaid)
+
+    const isPaid = pendingAmount === 0
+
     const payload =
       selectedBusinessEntity === BusinessEntityType.VENDOR
         ? {
@@ -240,7 +247,11 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
           partnerType: "VENDOR" as const,
           vendorId: values.entityTypeId,
           transactionType: transactionTypeCasted,
+          paymentType: values.paymentType,
+          advancePaid: Number(values.advancePaid),
+          pending: (showInventoryFields ? total : values.transactionAmount || 0) - Number(values.advancePaid),
           amount: showInventoryFields ? undefined : values.transactionAmount,
+          isPaid,
           details: inventoryDetailsPayload,
         }
         : {
@@ -248,7 +259,11 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
           partnerType: "CUSTOMER" as const,
           customerId: values.entityTypeId,
           transactionType: transactionTypeCasted,
+          paymentType: values.paymentType,
+          advancePaid: Number(values.advancePaid),
+          pending: (showInventoryFields ? total : values.transactionAmount || 0) - Number(values.advancePaid),
           amount: showInventoryFields ? undefined : values.transactionAmount,
+          isPaid,
           details: inventoryDetailsPayload,
         }
 
@@ -256,7 +271,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
     createTransaction(payload as CreateTransactionDto, {
       onSuccess: () => {
         toast.success("Transaction created successfully")
-        // Reset all states before closing
+        // reset all states before closing
         form.reset(DEFAULT_VALUES)
         setInventoryInputValues({})
         setInventorySearchQuery("")
@@ -264,7 +279,16 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
         setSelectedBusinessEntity(null)
         onOpenChange(false)
       },
-      onError: (err: Error) => toast.error(err.message),
+      onError: (error: unknown) => {
+        if (axios.isAxiosError(error)) {
+          toast.error(error.response?.data?.message || error.message)
+        } else if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error("Something went wrong")
+        }
+      }
+
     })
   }
 
@@ -374,64 +398,58 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
             {selectedBusinessEntity && transactionType && (
               showInventoryFields ? (
                 <>
-                  {fields.map((field, index) => (
-                    <div key={field.id} className="flex items-end gap-4">
+                  {fields.map((field, index) => {
+                    const currentInputValue = inventoryInputValues[index] || field.inventoryId
 
-                      {/* inventory */}
-                      <FormField
-                        control={form.control}
-                        name={`inventories.${index}.inventoryId`}
-                        render={({ field }) => {
-                          const currentInputValue = inventoryInputValues[index] || field.value
-                          return (
-                            <FormItem className="w-72">
-                              <FormLabel>
-                                Inventory
-                              </FormLabel>
+                    // get all selected inventory id's except current row
+                    const selectedIds: string[] = form
+                      .watch("inventories")
+                      ?.map((inv: TransactionFormValues["inventories"][number], _i) => inv.inventoryId)
+                      ?.filter((val, _i) => val && val !== currentInputValue) || []
+
+                    // filter current row
+                    const filteredInventoryOptions = inventoryOptions.filter(
+                      (opt) => !selectedIds.includes(opt.value)
+                    )
+
+                    return (
+                      <div key={field.id} className="flex items-end gap-4">
+                        {/* Inventory field */}
+                        <FormField
+                          control={form.control}
+                          name={`inventories.${index}.inventoryId`}
+                          render={({ field }) => (
+                            <FormItem className="w-36 sm:w-48 md:w-48">
+                              <FormLabel>Inventory</FormLabel>
                               <FormControl>
                                 <Combobox
-                                  options={inventoryOptions}
+                                  options={filteredInventoryOptions}
                                   className="w-full"
-                                  placeholder="Select or type new inventory..."
+                                  placeholder={
+                                    transactionType === "SALE"
+                                      ? "Select inventory"
+                                      : "Select or type inventory"
+                                  }
                                   value={currentInputValue}
                                   onSelect={(val) => {
                                     field.onChange(val)
-                                    setInventoryInputValues(prev => ({ ...prev, [index]: val }))
+                                    setInventoryInputValues((prev) => ({
+                                      ...prev,
+                                      [index]: val,
+                                    }))
                                   }}
                                   onSearch={(query) => {
-                                    setInventorySearchQuery(query)
-                                    field.onChange(query)
-                                    setInventoryInputValues(prev => ({ ...prev, [index]: query }))
+                                    if (transactionType === "PURCHASE") {
+                                      setInventorySearchQuery(query)
+                                      field.onChange(query)
+                                      setInventoryInputValues((prev) => ({
+                                        ...prev,
+                                        [index]: query,
+                                      }))
+                                    }
                                   }}
                                   loading={isInventoryLoading}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )
-                        }}
-                      />
-
-                      <div className="flex flex-1 items-end gap-4">
-
-                        {/* quantity */}
-                        <FormField
-                          control={form.control}
-                          name={`inventories.${index}.quantity`}
-                          render={({ field }) => (
-                            <FormItem className="flex-1">
-                              <FormLabel>Quantity</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  {...field}
-                                  placeholder="0"
-                                  min={0}
-                                  value={field.value === 0 ? "" : field.value ?? ""}
-                                  onChange={(e) => {
-                                    const val = e.target.value
-                                    field.onChange(val === "" ? "" : Number(val))
-                                  }}
+                                  allowCustomValue={transactionType === "PURCHASE"}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -439,71 +457,105 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                           )}
                         />
 
-                        {/* price */}
-                        <FormField
-                          control={form.control}
-                          name={`inventories.${index}.price`}
-                          render={({ field }) => (
-                            <FormItem className="flex-1">
-                              <FormLabel>Price</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  {...field}
-                                  placeholder="0.00"
-                                  min={0}
-                                  value={field.value === 0 ? "" : field.value ?? ""}
-                                  onChange={(e) => {
-                                    const val = e.target.value
-                                    field.onChange(val === "" ? "" : Number(val))
-                                  }}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
+                        <div className="flex flex-1 items-end gap-4">
+                          {/* Quantity */}
+                          <FormField
+                            control={form.control}
+                            name={`inventories.${index}.quantity`}
+                            render={({ field }) => (
+                              <FormItem className="flex-1">
+                                <FormLabel>Quantity</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    {...field}
+                                    placeholder="0"
+                                    min={0}
+                                    value={field.value === 0 ? "" : field.value ?? ""}
+                                    onChange={(e) => {
+                                      const val = e.target.value
+                                      field.onChange(val === "" ? "" : Number(val))
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
 
-                      {/* plus/minus buttons */}
-                      <div className="flex gap-1">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => append({ inventoryId: "", quantity: 0, price: 0 })}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                        {index > 0 && (
-                          <Button type="button" variant="destructive" size="icon" onClick={() => remove(index)}>
-                            <Minus className="h-4 w-4" />
+                          {/* Price */}
+                          <FormField
+                            control={form.control}
+                            name={`inventories.${index}.price`}
+                            render={({ field }) => (
+                              <FormItem className="flex-1">
+                                <FormLabel>Price</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    {...field}
+                                    placeholder="0.00"
+                                    min={0}
+                                    value={field.value === 0 ? "" : field.value ?? ""}
+                                    onChange={(e) => {
+                                      const val = e.target.value
+                                      field.onChange(val === "" ? "" : Number(val))
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        {/* Plus/minus buttons */}
+                        <div className="flex gap-1">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() =>
+                              append({ inventoryId: "", quantity: 0, price: 0 })
+                            }
+                          >
+                            <Plus className="h-4 w-4" />
                           </Button>
-                        )}
+                          {index > 0 && (
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => remove(index)}
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
 
-                  {/* total field */}
+                  {/* Total field */}
                   {fields.length > 0 && (
                     <div className="flex items-center gap-4 mt-2">
                       <div className="w-60"></div>
-                        <FormItem className="flex-1">
-                          <FormLabel>Total</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              value={total}
-                              readOnly
-                              className="bg-gray-100 cursor-not-allowed"
-                            />
-                          </FormControl>
-                        </FormItem>
+                      <FormItem className="flex-1">
+                        <FormLabel>Sub Total</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            value={total}
+                            readOnly
+                            className="bg-gray-100 cursor-not-allowed"
+                          />
+                        </FormControl>
+                      </FormItem>
                     </div>
                   )}
                 </>
               ) : (
-                // fallback for non-inventory transactions (Amount field)
+                // fallback for non-inventory transactions (amount field)
                 <FormField
                   control={form.control}
                   name="transactionAmount"
@@ -517,7 +569,9 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                           placeholder="0.00"
                           min={0}
                           value={field.value ?? ""}
-                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                          onChange={(e) =>
+                            field.onChange(e.target.value ? Number(e.target.value) : null)
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -525,6 +579,84 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                   )}
                 />
               )
+            )}
+
+            {/* payment type */}
+            {selectedBusinessEntity && transactionType && (
+              <FormField
+                control={form.control}
+                name="paymentType"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Payment Type</FormLabel>
+                    <FormControl>
+                      <Combobox
+                        options={PAYMENT_TYPES}
+                        placeholder="Select payment type..."
+                        className="w-full"
+                        value={field.value}
+                        onSelect={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {/* advance paid */}
+            {selectedBusinessEntity && transactionType && (
+              <FormField
+                control={form.control}
+                name="advancePaid"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Advance Paid</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        {...field}
+                        placeholder="0.00"
+                        min={0}
+                        value={field.value ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value
+                          field.onChange(val === "" ? "" : Number(val))
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {/* pending (read-only) */}
+            {selectedBusinessEntity && transactionType && (
+              <FormField
+                control={form.control}
+                name="pending"
+                render={() => {
+                  // calculate pending
+                  const amount = showInventoryFields ? total : form.watch("transactionAmount") ?? 0
+                  const advancePaid = form.watch("advancePaid") ?? 0
+                  const pending = amount - advancePaid
+
+                  return (
+                    <FormItem className="flex-1">
+                      <FormLabel>Pending</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          value={pending}
+                          readOnly
+                          className="bg-gray-100 cursor-not-allowed"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )
+                }}
+              />
             )}
           </form>
         </Form>

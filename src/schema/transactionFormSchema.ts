@@ -42,7 +42,9 @@ export const transactionFormSchema = z
       })
       .nullable() // must be nullable/optional for non-inventory types
       .optional(),
-
+    paymentType: z.string().min(1, "Please select a payment type"),
+    advancePaid: zNumberOrZero,
+    pending: z.number().nonnegative().default(0),
     // array of inventories for dynamic rows
     inventories: z
       .array(

@@ -31,7 +31,7 @@ const TransactionDetails = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <p><strong>Vendor:</strong> {transaction.vendor?.name ?? "N/A"}</p>
-                            <p><strong>Amount:</strong> ${transaction.amount}</p>
+                            <p><strong>Amount:</strong> ৳{transaction.amount}</p>
                             <p><strong>Is Paid:</strong> {transaction.isPaid ? "Yes" : "No"}</p>
                             <p><strong>Payment Type:</strong> {transaction.paymentType ?? "N/A"}</p>
                         </div>

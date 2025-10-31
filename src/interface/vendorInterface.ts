@@ -1,5 +1,6 @@
 import type { Table } from "@tanstack/react-table";
 
+
 export interface Shop {
   id: string
   name: string
@@ -117,6 +118,7 @@ export interface VendorTransactionInterface {
   transactionStatus: string
   amount: number
   pending: number
+  paid: number
   advancePaid: number
   paymentType: string
   isPaid: boolean

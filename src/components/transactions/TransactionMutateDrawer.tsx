@@ -326,7 +326,7 @@ const TransactionMutateDrawer = ({
           paymentType: values.paymentType,
           advancePaid: Number(values.advancePaid),
           paid: Number(values.paid),
-          pending: (showInventoryFields ? total : values.transactionAmount || 0) - Number(values.advancePaid),
+          pending: pendingValue,
           amount: showInventoryFields ? undefined : values.transactionAmount,
           isPaid,
           details: inventoryDetailsPayload,

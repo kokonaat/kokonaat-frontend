@@ -23,6 +23,7 @@ export const DEFAULT_VALUES = {
   paymentType: '',
   advancePaid: 0,
   pending: 0,
+  paid: 0,
   // transactionPaymentStatus: undefined,
   // optional numeric field
   transactionAmount: null,

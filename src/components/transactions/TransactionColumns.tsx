@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom"
-import { type ColumnDef } from "@tanstack/react-table"
-import { DataTableRowActions } from "./DataTableRowActions"
+import { type ColumnDef } from '@tanstack/react-table'
+import { Link } from 'react-router-dom'
+import { DataTableRowActions } from './DataTableRowActions'
 
 export interface Transaction {
   id: string
@@ -10,27 +10,27 @@ export interface Transaction {
   vendor?: { id: string; name: string }
   customer?: { id: string; name: string }
   amount: number
-  advancePaid: number
+  paid: number
   pending: number
   transactionStatus: string | null
 }
 
 export const TransactionColumns: ColumnDef<Transaction>[] = [
   {
-    accessorKey: "no",
-    header: "No",
+    accessorKey: 'no',
+    header: 'No',
   },
   {
-    accessorKey: "partnerType",
-    header: "Partner Type",
+    accessorKey: 'partnerType',
+    header: 'Partner Type',
   },
   {
-    accessorKey: "transactionType",
-    header: "Transaction Type",
+    accessorKey: 'transactionType',
+    header: 'Transaction Type',
   },
   {
-    id: "partnerName",
-    header: "Vendor/Customer Name",
+    id: 'partnerName',
+    header: 'Vendor/Customer Name',
     cell: ({ row }) => {
       const data = row.original
 
@@ -44,7 +44,7 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
           <Link
             to={`/vendor/${data.vendor.id}`}
             onClick={handleLinkClick}
-            className="text-blue-600 hover:underline font-medium"
+            className='font-medium text-blue-600 hover:underline'
           >
             {data.vendor.name}
           </Link>
@@ -56,34 +56,34 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
           <Link
             to={`/customer/${data.customer.id}`}
             onClick={handleLinkClick}
-            className="text-blue-600 hover:underline font-medium"
+            className='font-medium text-blue-600 hover:underline'
           >
             {data.customer.name}
           </Link>
         )
       }
-      return <span className="text-gray-500">-</span>
+      return <span className='text-gray-500'>-</span>
     },
   },
   {
-    id: "amounts",
-    header: "Total / Paid / Pending",
+    id: 'amounts',
+    header: 'Total / Paid / Pending',
     cell: ({ row }) => {
       const data = row.original
       return (
         <div>
-          {data.amount} / {data.advancePaid} / {data.pending}
+          {data.amount} / {data.paid} / {data.pending}
         </div>
       )
     },
   },
   {
-    accessorKey: "transactionStatus",
-    header: "Status",
-    cell: ({ row }) => row.original.transactionStatus || "N/A",
+    accessorKey: 'transactionStatus',
+    header: 'Status',
+    cell: ({ row }) => row.original.transactionStatus || 'N/A',
   },
   {
-    id: "actions",
+    id: 'actions',
     cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ]

@@ -319,17 +319,18 @@ const TransactionMutateDrawer = ({
             details: inventoryDetailsPayload,
           }
         : {
-            shopId,
-            partnerType: 'CUSTOMER' as const,
-            customerId: values.entityTypeId,
-            transactionType: transactionTypeCasted,
-            paymentType: values.paymentType,
-            advancePaid: Number(values.advancePaid),
-            pending: pendingValue,
-            amount: showInventoryFields ? undefined : values.transactionAmount,
-            isPaid,
-            details: inventoryDetailsPayload,
-          }
+          shopId,
+          partnerType: "CUSTOMER" as const,
+          customerId: values.entityTypeId,
+          transactionType: transactionTypeCasted,
+          paymentType: values.paymentType,
+          advancePaid: Number(values.advancePaid),
+          paid: Number(values.paid),
+          pending: (showInventoryFields ? total : values.transactionAmount || 0) - Number(values.advancePaid),
+          amount: showInventoryFields ? undefined : values.transactionAmount,
+          isPaid,
+          details: inventoryDetailsPayload,
+        }
 
     // cast the payload to the expected DTO shape
     createTransaction(payload as CreateTransactionDto, {
@@ -541,13 +542,8 @@ const TransactionMutateDrawer = ({
                                   value={currentInputValue}
                                   onSelect={(val) => {
                                     // for selection from dropdown, check the label name
-                                    const selectedOption =
-                                      inventoryOptions.find(
-                                        (opt) => opt.value === val
-                                      )
-                                    const nameToCheck = selectedOption
-                                      ? selectedOption.label
-                                      : val
+                                    const selectedOption = inventoryOptions.find(opt => opt.value === val)
+                                    const nameToCheck = selectedOption ? selectedOption.label : val
 
                                     if (isAlreadyUsed(nameToCheck)) {
                                       toast.warning(
@@ -563,6 +559,11 @@ const TransactionMutateDrawer = ({
                                     }))
                                   }}
                                   onSearch={(query) => {
+                                    // only allow typing for PURCHASE transactions
+                                    if (transactionType !== "PURCHASE") {
+                                      return
+                                    }
+
                                     if (isAlreadyUsed(query)) {
                                       toast.warning(
                                         'This inventory name is already used in another row'
@@ -588,8 +589,8 @@ const TransactionMutateDrawer = ({
                           )}
                         />
 
-                        <div className='flex flex-1 items-end gap-4'>
-                          {/* Quantity */}
+                        <div className="flex flex-1 items-end gap-4">
+                          {/* quantity */}
                           <FormField
                             control={form.control}
                             name={`inventories.${index}.quantity`}

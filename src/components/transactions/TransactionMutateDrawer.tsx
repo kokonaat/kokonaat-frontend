@@ -283,6 +283,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
           transactionType: transactionTypeCasted,
           paymentType: values.paymentType,
           advancePaid: Number(values.advancePaid),
+          paid: Number(values.paid),
           pending: (showInventoryFields ? total : values.transactionAmount || 0) - Number(values.advancePaid),
           amount: showInventoryFields ? undefined : values.transactionAmount,
           isPaid,
@@ -461,7 +462,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                     const isAlreadyUsed = (value: string): boolean => {
                       const normalized = value.toLowerCase().trim()
                       if (!normalized) return false
-                      
+
                       // check against all other rows' selected names
                       return allOtherSelectedNames.includes(normalized)
                     }
@@ -484,12 +485,12 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                                     // for selection from dropdown, check the label name
                                     const selectedOption = inventoryOptions.find(opt => opt.value === val)
                                     const nameToCheck = selectedOption ? selectedOption.label : val
-                                    
+
                                     if (isAlreadyUsed(nameToCheck)) {
                                       toast.warning("This inventory is already selected in another row")
                                       return
                                     }
-                                    
+
                                     field.onChange(val)
                                     setInventoryInputValues((prev) => ({
                                       ...prev,
@@ -497,11 +498,16 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                                     }))
                                   }}
                                   onSearch={(query) => {
+                                    // only allow typing for PURCHASE transactions
+                                    if (transactionType !== "PURCHASE") {
+                                      return
+                                    }
+
                                     if (isAlreadyUsed(query)) {
                                       toast.warning("This inventory name is already used in another row")
                                       return
                                     }
-                                    
+
                                     field.onChange(query)
                                     setInventoryInputValues((prev) => ({
                                       ...prev,
@@ -509,10 +515,8 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                                     }))
                                   }}
                                   loading={isInventoryLoading}
-                                  allowCustomValue={
-                                    transactionType === "PURCHASE" &&
-                                    !isAlreadyUsed(currentInputValue)
-                                  }
+                                  allowCustomValue={transactionType === "PURCHASE"}
+                                  disabled={transactionType === "SALE" && filteredInventoryOptions.length === 0}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -521,7 +525,7 @@ const TransactionMutateDrawer = ({ open, onOpenChange, currentRow }: Transaction
                         />
 
                         <div className="flex flex-1 items-end gap-4">
-                          {/* Quantity */}
+                          {/* quantity */}
                           <FormField
                             control={form.control}
                             name={`inventories.${index}.quantity`}

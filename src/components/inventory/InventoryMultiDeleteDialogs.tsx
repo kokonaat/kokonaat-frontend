@@ -17,14 +17,9 @@ export function InventoryMultiDeleteDialog<TData extends { id: string }>({
 }: VendorMultiDeleteDialogProps<TData>) {
   const [value, setValue] = useState('')
 
-  const shopId = localStorage.getItem('shop-storage')
-    ? JSON.parse(localStorage.getItem('shop-storage')!).state?.currentShopId
-    : null
-
   const selectedRows = table.getFilteredSelectedRowModel().rows
 
-  // passing shopId dynamically
-  const deleteMutation = useDeleteInventory(shopId)
+  const deleteMutation = useDeleteInventory()
 
   const handleDelete = async () => {
     if (value.trim() !== CONFIRM_WORD) {

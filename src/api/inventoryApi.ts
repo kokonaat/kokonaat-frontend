@@ -4,24 +4,24 @@ import type { InventoryFormInterface, InventoryItemInterface, InventoryListApiRe
 
 // inventory list
 export const inventoryList = async (
-    shopId: string,
-    page: number,
-    limit: number,
-    searchBy?: string
+  shopId: string,
+  page: number,
+  limit: number,
+  searchBy?: string
 ): Promise<{ items: InventoryItemInterface[]; total: number }> => {
-    const params = new URLSearchParams({
-        shopId,
-        page: String(page),
-        limit: String(limit),
-    })
-    if (searchBy) params.append("searchBy", searchBy)
+  const params = new URLSearchParams({
+    shopId,
+    page: String(page),
+    limit: String(limit),
+  })
+  if (searchBy) params.append("searchBy", searchBy)
 
-    const res = await axiosInstance.get(`${apiEndpoints.inventory.inventoryList}?${params.toString()}`)
+  const res = await axiosInstance.get(`${apiEndpoints.inventory.inventoryList}?${params.toString()}`)
 
-    return {
-        items: res.data.data ?? [],
-        total: res.data.total ?? 0,
-    }
+  return {
+    items: res.data.data ?? [],
+    total: res.data.total ?? 0,
+  }
 }
 
 // Get inventory by ID
@@ -62,25 +62,19 @@ export const updateInventory = async ({
   if (!shopId) throw new Error("Shop ID is required")
 
   const res = await axiosInstance.put<InventoryListApiResponseInterface>(
-    `${apiEndpoints.inventory.updateInventory}/${id}?shopId=${shopId}`,
+    `${apiEndpoints.inventory.updateInventory}/{id}?id=${id}&shopId=${shopId}`,
     data
   )
 
   return res.data.data
 }
 
-// Delete inventory
-export const deleteInventory = async ({
-  id,
-  shopId,
-}: {
-  id: string
-  shopId: string
-}) => {
-  if (!shopId) throw new Error("Shop ID is required")
+// delete inventory
+export const deleteInventory = async ({ id }: { id: string }) => {
+  if (!id) throw new Error("Inventory ID is required")
 
   const res = await axiosInstance.delete<InventoryListApiResponseInterface>(
-    `${apiEndpoints.inventory.deleteInventory}/${id}?shopId=${shopId}`
+    `${apiEndpoints.inventory.deleteInventory}/{id}?id=${id}`
   )
 
   return res.data

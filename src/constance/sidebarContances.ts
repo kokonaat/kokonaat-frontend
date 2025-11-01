@@ -10,7 +10,6 @@ import {
   UserCog,
   Users,
   ShoppingBag,
-  IdCardLanyard,
   UsersRound,
 } from 'lucide-react'
 import type { SidebarData } from '@/interface/sidebarDataInerface'
@@ -40,7 +39,6 @@ export const sidebarData: Omit<SidebarData, 'teams'> = {
           title: 'Users',
           icon: Settings,
           items: [
-            { title: 'Designation', url: '/users/designation', icon: IdCardLanyard },
             { title: 'Employee', url: '/users/employee', icon: Users },
             { title: 'Profile', url: '/settings', icon: UserCog },
             { title: 'Account', url: '/settings/account', icon: Wrench },

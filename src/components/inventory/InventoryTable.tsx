@@ -15,12 +15,12 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { InventoryColumns as columns } from './InventoryColumns'
 import { Input } from '@/components/ui/input'
-import { DataTableViewOptions } from '../designation/data-table-view-options'
 import { InventoryTableBulkActions } from './InventoryTableBulkActions'
-import { DataTablePagination } from '../designation/data-table-pagination'
-import { useDebounce } from '../../hooks/useDebounce'
-import type { InventoryTableProps, InventoryListItem } from '@/interface/inventoryInterface'
+import { DataTableViewOptions } from '@/features/users/components/data-table-view-options'
+import { DataTablePagination } from '@/features/users/components/data-table-pagination'
 import InventoryViewDrawer from './InventoryViewDrawer'
+import type { InventoryTableProps, InventoryListItem } from '@/interface/inventoryInterface'
+import { useDebounce } from '../../hooks/useDebounce'
 
 const InventoryTable = ({
   data,

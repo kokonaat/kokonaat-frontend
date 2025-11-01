@@ -11,8 +11,9 @@ import {
 } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
-import { DataTablePagination } from "../designation/data-table-pagination"
-import { DataTableViewOptions } from "../designation/data-table-view-options"
+
+import { DataTableViewOptions } from "@/features/users/components/data-table-view-options"
+import { DataTablePagination } from "@/features/users/components/data-table-pagination"
 import type { VendorTransactionInterface } from "@/interface/vendorInterface"
 import { VendorTransactionColumns } from "./VendorTransactionColumns"
 

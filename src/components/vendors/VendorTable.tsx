@@ -16,10 +16,11 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { VendorColumns as columns } from './VendorColumns'
 import { Input } from '@/components/ui/input'
-import type { DataTablePropsInterface } from '@/interface/vendorInterface'
-import { DataTableViewOptions } from '../designation/data-table-view-options'
-import { DataTablePagination } from '../designation/data-table-pagination'
+import { DataTablePagination } from '../data-table-pagination'
+import { DataTableViewOptions } from '@/features/users/components/data-table-view-options'
 import { VendorTableBulkActions } from './VendorTableBulkActions'
+
+import type { DataTablePropsInterface } from '@/interface/vendorInterface'
 import { useDebounce } from '../../hooks/useDebounce'
 
 const VendorTable = ({ data, pageIndex, pageSize, total, onPageChange, onSearchChange }: DataTablePropsInterface) => {

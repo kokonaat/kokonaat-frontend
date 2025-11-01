@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import {
   flexRender,
   getCoreRowModel,
@@ -12,12 +13,11 @@ import {
 } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
-import { DataTablePagination } from "../designation/data-table-pagination"
-import { DataTableBulkActions } from "../designation/data-table-bulk-actions"
+import { DataTableBulkActions } from "@/features/users/components/data-table-bulk-actions"
+import { DataTablePagination } from "@/features/users/components/data-table-pagination"
 import { DataTableViewOptions } from "./DataTableViewOption"
 import { TransactionColumns as columns } from "./TransactionColumns"
 import { useTransactionList } from "@/hooks/useTransaction"
-import { useNavigate } from "react-router-dom"
 
 interface TransactionTableProps {
   shopId: string

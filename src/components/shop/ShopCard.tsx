@@ -7,7 +7,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ShopProps } from "@/interface/shopInterface"
+import type { ShopProps } from "@/interface/shopInterface"
 import { useShopStore } from "@/stores/shopStore"
 
 const ShopCard = ({ shop, onEdit }: ShopProps) => {

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteCustomer } from '@/hooks/useCustomer'
-import { TaskMultiDeleteDialogProps } from '@/interface/designationInterface'
+import type { TaskMultiDeleteDialogProps } from '../tasks-multi-delete-dialog'
 
 const CONFIRM_WORD = 'DELETE'
 

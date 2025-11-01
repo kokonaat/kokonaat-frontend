@@ -21,7 +21,7 @@ import {
     SheetHeader,
     SheetTitle,
 } from "@/components/ui/sheet"
-import { ShopDrawerProps } from "@/interface/shopInterface"
+import type { ShopDrawerProps } from "@/interface/shopInterface"
 import { useCreateShop, useUpdateShop } from "@/hooks/useShop"
 
 const formSchema = z.object({

@@ -3,30 +3,8 @@ import axios from 'axios'
 import type { Resolver } from 'react-hook-form'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  CUSTOMER_TRANSACTION_TYPES,
-  DEFAULT_VALUES,
-  FORM_ID,
-  PAYMENT_TYPES,
-  VENDOR_TRANSACTION_TYPES,
-} from '@/constance/transactionContances'
-import type { Customer } from '@/interface/customerInterface'
-import type {
-  ComboboxOptionInterface,
-  TransactionMutateDrawerProps,
-  CreateTransactionDto,
-} from '@/interface/transactionInterface'
-import type { Vendor } from '@/interface/vendorInterface'
-import { transactionFormSchema } from '@/schema/transactionFormSchema'
-import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 import { Minus, Plus } from 'lucide-react'
 import { toast } from 'sonner'
-import { useShopStore } from '@/stores/shopStore'
-import { BusinessEntityType } from '@/utils/enums/trasaction.enum'
-import { useCustomerList } from '@/hooks/useCustomer'
-import { useInventoryList } from '@/hooks/useInventory'
-import { useCreateTransaction } from '@/hooks/useTransaction'
-import { useVendorList } from '@/hooks/useVendor'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -45,9 +23,32 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { useDebounce } from '../../hooks/useDebounce'
 import { Combobox } from '../ui/combobox'
 import { Input } from '../ui/input'
+
+import { useDebounce } from '../../hooks/useDebounce'
+import { useShopStore } from '@/stores/shopStore'
+import { BusinessEntityType } from '@/utils/enums/trasaction.enum'
+import { useCustomerList } from '@/hooks/useCustomer'
+import { useInventoryList } from '@/hooks/useInventory'
+import { useCreateTransaction } from '@/hooks/useTransaction'
+import { useVendorList } from '@/hooks/useVendor'
+import {
+  CUSTOMER_TRANSACTION_TYPES,
+  DEFAULT_VALUES,
+  FORM_ID,
+  PAYMENT_TYPES,
+  VENDOR_TRANSACTION_TYPES,
+} from '@/constance/transactionContances'
+import type { Customer } from '@/interface/customerInterface'
+import type {
+  ComboboxOptionInterface,
+  TransactionMutateDrawerProps,
+  CreateTransactionDto,
+} from '@/interface/transactionInterface'
+import type { Vendor } from '@/interface/vendorInterface'
+import { transactionFormSchema } from '@/schema/transactionFormSchema'
+import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 
 // helpers
 const createBusinessEntityOptions = (): ComboboxOptionInterface[] =>
@@ -271,31 +272,31 @@ const TransactionMutateDrawer = ({
 
     const inventoryDetailsPayload = showInventoryFields
       ? values.inventories?.map((item, index) => {
-          const inputValue = inventoryInputValues[index] || item.inventoryId
+        const inputValue = inventoryInputValues[index] || item.inventoryId
 
-          // check if the value is an existing inventory ID (exists in options)
-          const isExistingInventory = inventoryOptions.some(
-            (opt) => opt.value === inputValue
-          )
+        // check if the value is an existing inventory ID (exists in options)
+        const isExistingInventory = inventoryOptions.some(
+          (opt) => opt.value === inputValue
+        )
 
-          if (isExistingInventory) {
-            // existing inventory - send inventoryId
-            return {
-              inventoryId: inputValue,
-              quantity: item.quantity as number,
-              price: item.price as number,
-              total: (item.quantity as number) * (item.price as number),
-            }
-          } else {
-            // new inventory - send inventoryName
-            return {
-              inventoryName: inputValue,
-              quantity: item.quantity as number,
-              price: item.price as number,
-              total: (item.quantity as number) * (item.price as number),
-            }
+        if (isExistingInventory) {
+          // existing inventory - send inventoryId
+          return {
+            inventoryId: inputValue,
+            quantity: item.quantity as number,
+            price: item.price as number,
+            total: (item.quantity as number) * (item.price as number),
           }
-        })
+        } else {
+          // new inventory - send inventoryName
+          return {
+            inventoryName: inputValue,
+            quantity: item.quantity as number,
+            price: item.price as number,
+            total: (item.quantity as number) * (item.price as number),
+          }
+        }
+      })
       : undefined
 
     // Use the pending value from the form (which is correctly calculated as (amount + advancePaid) - paid)
@@ -306,18 +307,18 @@ const TransactionMutateDrawer = ({
     const payload =
       selectedBusinessEntity === BusinessEntityType.VENDOR
         ? {
-            shopId,
-            partnerType: 'VENDOR' as const,
-            vendorId: values.entityTypeId,
-            transactionType: transactionTypeCasted,
-            paymentType: values.paymentType,
-            advancePaid: Number(values.advancePaid),
-            paid: Number(values.paid),
-            pending: pendingValue,
-            amount: showInventoryFields ? undefined : values.transactionAmount,
-            isPaid,
-            details: inventoryDetailsPayload,
-          }
+          shopId,
+          partnerType: 'VENDOR' as const,
+          vendorId: values.entityTypeId,
+          transactionType: transactionTypeCasted,
+          paymentType: values.paymentType,
+          advancePaid: Number(values.advancePaid),
+          paid: Number(values.paid),
+          pending: pendingValue,
+          amount: showInventoryFields ? undefined : values.transactionAmount,
+          isPaid,
+          details: inventoryDetailsPayload,
+        }
         : {
           shopId,
           partnerType: "CUSTOMER" as const,

@@ -23,9 +23,10 @@ import {
 import { CustomerColumns as columns } from './CustomerColumns'
 import { Input } from '@/components/ui/input'
 import type { ColumnFiltersState } from '@tanstack/react-table'
+import { DataTableViewOptions } from '@/features/users/components/data-table-view-options'
+import { DataTablePagination } from '@/features/users/components/data-table-pagination'
+
 import type { DataTablePropsInterface } from '@/interface/customerInterface'
-import { DataTableViewOptions } from '@/components/designation/data-table-view-options'
-import { DataTablePagination } from '@/components/designation/data-table-pagination'
 import { DataTableBulkActions } from './DataTableBulkActions'
 import { useDebounce } from '../../hooks/useDebounce'
 

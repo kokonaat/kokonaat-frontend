@@ -1,6 +1,6 @@
 import type { ColumnDef } from '@tanstack/react-table'
-import type { VendorTransactionInterface } from '@/interface/vendorInterface'
 import { Badge } from '@/components/ui/badge'
+import type { VendorTransactionInterface } from '@/interface/vendorInterface'
 
 export const CustomerTransactionColumns: ColumnDef<VendorTransactionInterface>[] =
   [

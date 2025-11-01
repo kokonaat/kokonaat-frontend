@@ -11,7 +11,7 @@ const InventoryDialogs = () => {
     ? JSON.parse(localStorage.getItem('shop-storage')!).state?.currentShopId
     : null
 
-  const deleteMutation = useDeleteInventory(shopId || '')
+  const deleteMutation = useDeleteInventory()
 
   return (
     <>

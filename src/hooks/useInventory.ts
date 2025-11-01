@@ -8,13 +8,13 @@ import {
 } from "@/api/inventoryApi"
 import type { InventoryFormInterface, InventoryItemInterface } from "@/interface/inventoryInterface"
 
-// Query keys
+// query keys
 const INVENTORY_KEYS = {
   all: ["inventories"] as const,
   detail: (shopId: string, id: string) => [...INVENTORY_KEYS.all, shopId, id] as const,
 }
 
-// Inventory List
+// inventory list
 export const useInventoryList = (
   shopId: string,
   page: number,
@@ -29,7 +29,7 @@ export const useInventoryList = (
     placeholderData: keepPreviousData,
   })
 
-// Get Inventory by ID
+// get inventory by id
 export const useInventoryById = (shopId: string, id: string) =>
   useQuery<InventoryFormInterface>({
     queryKey: INVENTORY_KEYS.detail(shopId, id),
@@ -37,7 +37,7 @@ export const useInventoryById = (shopId: string, id: string) =>
     enabled: !!shopId && !!id,
   })
 
-// Create Inventory
+// create inventory
 export const useCreateInventory = (shopId: string) => {
   const queryClient = useQueryClient()
   return useMutation({
@@ -49,7 +49,7 @@ export const useCreateInventory = (shopId: string) => {
   })
 }
 
-// Update Inventory
+// update inventory
 export const useUpdateInventory = (shopId: string) => {
   const queryClient = useQueryClient()
   return useMutation({
@@ -61,16 +61,51 @@ export const useUpdateInventory = (shopId: string) => {
   })
 }
 
-// Delete Inventory
-export const useDeleteInventory = (shopId: string) => {
+// delete inventory
+// ✅ Final Version
+export const useDeleteInventory = () => {
   const queryClient = useQueryClient()
+
   return useMutation({
-    mutationFn: ({ id }: { id: string }) => deleteInventory({ id, shopId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['inventory', shopId],
-        exact: false // invalidates all inventory queries for this shop
+    mutationFn: ({ id }: { id: string }) => deleteInventory({ id }),
+
+    // 🟢 Optimistic update — remove from all paginated/filtered lists
+    onMutate: async ({ id }) => {
+      await queryClient.cancelQueries({ queryKey: ["inventories"] })
+
+      // Store previous state for rollback
+      const previousQueries = queryClient.getQueriesData<{ items: any[]; total: number }>({
+        queryKey: ["inventories"],
       })
-    }
+
+      // Optimistically update all cached inventory lists
+      previousQueries.forEach(([key, oldData]) => {
+        if (!oldData) return
+        queryClient.setQueryData(key, {
+          ...oldData,
+          items: oldData.items.filter((item) => item.id !== id),
+          total: oldData.total ? oldData.total - 1 : oldData.total,
+        })
+      })
+
+      return { previousQueries }
+    },
+
+    // 🔴 Rollback on error
+    onError: (_err, _vars, context) => {
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([key, data]) => {
+          queryClient.setQueryData(key, data)
+        })
+      }
+    },
+
+    // ✅ Always sync with backend after deletion
+    onSettled: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["inventories"],
+        exact: false,
+      })
+    },
   })
 }

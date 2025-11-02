@@ -11,7 +11,7 @@ import type { InventoryFormInterface, InventoryItemInterface } from "@/interface
 // query keys
 const INVENTORY_KEYS = {
   all: ["inventories"] as const,
-  detail: (shopId: string, id: string) => [...INVENTORY_KEYS.all, shopId, id] as const,
+  detail: (id: string) => [...INVENTORY_KEYS.all, id] as const,
 }
 
 // inventory list
@@ -29,14 +29,6 @@ export const useInventoryList = (
     placeholderData: keepPreviousData,
   })
 
-// get inventory by id
-export const useInventoryById = (shopId: string, id: string) =>
-  useQuery<InventoryFormInterface>({
-    queryKey: INVENTORY_KEYS.detail(shopId, id),
-    queryFn: () => getInventoryById(id, shopId),
-    enabled: !!shopId && !!id,
-  })
-
 // create inventory
 export const useCreateInventory = (shopId: string) => {
   const queryClient = useQueryClient()
@@ -46,6 +38,17 @@ export const useCreateInventory = (shopId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...INVENTORY_KEYS.all, shopId] })
     },
+  })
+}
+
+// fetch multiple inventories by selected IDs
+export const useInventoryDetail = (inventoryId: string | null) => {
+  return useQuery({
+    queryKey: INVENTORY_KEYS.detail(inventoryId || ''),
+    queryFn: () => getInventoryById(inventoryId!),
+    enabled: !!inventoryId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   })
 }
 
@@ -62,7 +65,6 @@ export const useUpdateInventory = (shopId: string) => {
 }
 
 // delete inventory
-// ✅ Final Version
 export const useDeleteInventory = () => {
   const queryClient = useQueryClient()
 

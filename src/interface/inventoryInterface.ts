@@ -13,7 +13,6 @@ export interface InventoryItem {
   name: string
   price?: number
   stock?: number
-  [key: string]: any
 }
 
 export interface InventoryFormInterface {
@@ -62,4 +61,20 @@ export interface InventoryTableProps {
   total: number
   onPageChange: (index: number) => void
   onSearchChange: (value: string) => void
+}
+
+export interface InventoryDetailInterface {
+  no: string
+  id: string
+  name: string
+  description: string
+  quantity: string
+  lastPrice: string
+}
+
+export interface InventoryItem {
+  id: string;
+  name: string;
+  lastPrice: number;
+  quantity: number; 
 }

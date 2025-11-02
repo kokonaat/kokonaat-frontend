@@ -27,13 +27,13 @@ export const inventoryList = async (
 // Get inventory by ID
 export const getInventoryById = async (
   id: string,
-  shopId: string
+  // shopId: string
 ): Promise<InventoryFormInterface> => {
   if (!id) throw new Error("Inventory ID is required")
-  if (!shopId) throw new Error("Shop ID is required")
+  // if (!shopId) throw new Error("Shop ID is required")
 
   const res = await axiosInstance.get<InventoryFormInterface>(
-    `${apiEndpoints.inventory.getInventoryById.replace("id", id)}?shopId=${shopId}`
+    `${apiEndpoints.inventory.getInventoryById.replace("id", id)}`
   )
 
   return res.data

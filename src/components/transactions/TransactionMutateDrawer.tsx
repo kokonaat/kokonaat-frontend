@@ -49,8 +49,9 @@ import type {
 import type { Vendor } from '@/interface/vendorInterface'
 import { transactionFormSchema } from '@/schema/transactionFormSchema'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
+import type { InventoryItem } from '@/interface/inventoryInterface'
 
-// helpers
+// helpers (omitted for brevity, assume unchanged)
 const createBusinessEntityOptions = (): ComboboxOptionInterface[] =>
   Object.values(BusinessEntityType).map((entity) => ({
     value: entity,
@@ -85,7 +86,7 @@ const getTransactionTypeOptions = (
   return []
 }
 
-// fetch entities
+// fetch entities (omitted for brevity, assume unchanged)
 const useEntityData = (
   shopId: string | null,
   selectedBusinessEntity: BusinessEntityType | null,
@@ -137,6 +138,13 @@ const TransactionMutateDrawer = ({
     Record<number, string>
   >({})
 
+  // 1. renaming key for clarity to match API: 'stockQuantity'
+  // Note: We use this name internally, but it maps to 'quantity' in the API.
+  const [inventoryDisplayData, setInventoryDisplayData] = useState<
+    Record<number, { lastPrice: number | null, stockQuantity: number | null }>
+  >({})
+
+
   // create a correctly typed resolver
   const resolver = zodResolver(
     transactionFormSchema
@@ -162,7 +170,7 @@ const TransactionMutateDrawer = ({
   )
 
   const {
-    data: inventoryResponse = { items: [] },
+    data: inventoryResponse = { items: [] as InventoryItem[] },
     isFetching: isInventoryLoading,
   } = useInventoryList(shopId || '', 1, 10, inventorySearchQuery, {
     enabled:
@@ -171,12 +179,19 @@ const TransactionMutateDrawer = ({
         form.watch('transactionType') === 'SALE'),
   })
 
+  // stabilize inventoryList reference
+  const inventoryList = useMemo(
+    () => inventoryResponse.items || [],
+    [inventoryResponse.items]
+  )
+
   const inventoryOptions = useMemo(() => {
-    return inventoryResponse.items.map((item) => ({
+    // maps the full list
+    return inventoryList.map((item) => ({
       value: item.id,
       label: item.name,
     }))
-  }, [inventoryResponse.items])
+  }, [inventoryList])
 
   const { mutate: createTransaction, isPending } = useCreateTransaction(shopId!)
 
@@ -206,6 +221,8 @@ const TransactionMutateDrawer = ({
       setEntitySearchQuery('')
       setInventorySearchQuery('')
       setInventoryInputValues({})
+      // Reset the display data state
+      setInventoryDisplayData({})
     } else {
       // When opening, reset search query to ensure fresh data
       setInventorySearchQuery('')
@@ -221,12 +238,13 @@ const TransactionMutateDrawer = ({
     // reset 'inventories'
     form.setValue('inventories', [])
     setInventoryInputValues({})
+    // Reset display data on entity change
+    setInventoryDisplayData({})
   }
 
   const handleEntitySearch = (query: string) => setEntitySearchQuery(query)
 
-  // calculate grand total
-  // watch 'inventories'
+  // calculate grand total (omitted for brevity, assume unchanged)
   const inventories = form.watch('inventories') || []
 
   const total = inventories.reduce(
@@ -241,7 +259,7 @@ const TransactionMutateDrawer = ({
     0
   )
 
-  // pending calculation
+  // pending calculation (omitted for brevity, assume unchanged)
   const amount = showInventoryFields
     ? total
     : (form.watch('transactionAmount') ?? 0)
@@ -343,6 +361,8 @@ const TransactionMutateDrawer = ({
         setInventorySearchQuery('')
         setEntitySearchQuery('')
         setSelectedBusinessEntity(null)
+        // Reset display data on success
+        setInventoryDisplayData({})
         onOpenChange(false)
       },
       onError: (error: unknown) => {
@@ -359,7 +379,7 @@ const TransactionMutateDrawer = ({
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetContent className='flex flex-col'>
+      <SheetContent variant='wide' className='flex flex-col'>
         <SheetHeader className='text-start'>
           <SheetTitle>
             {currentRow ? 'Update' : 'Create'} Transaction
@@ -378,7 +398,7 @@ const TransactionMutateDrawer = ({
             className='flex-1 space-y-6 overflow-y-auto px-4'
             onSubmit={form.handleSubmit(handleFormSubmit)}
           >
-            {/* partner, entity, transaction row */}
+            {/* partner, entity, transaction row (omitted for brevity) */}
             <div className='flex items-end gap-4'>
               {/* partner type */}
               <FormField
@@ -484,15 +504,16 @@ const TransactionMutateDrawer = ({
             </div>
 
             {/* inventory fields */}
-            {/* inventory fields */}
             {selectedBusinessEntity &&
               transactionType &&
               (showInventoryFields ? (
                 <>
                   {fields.map((field, index) => {
                     const currentInputValue = inventoryInputValues[index] ?? ''
+                    // Get the display data for the current row
+                    const itemDisplayData = inventoryDisplayData[index]
 
-                    // collect all selected values from OTHER rows (both IDs and custom names)
+                    // collect all selected values from OTHER rows (omitted for brevity)
                     const allOtherSelectedValues = Object.entries(
                       inventoryInputValues
                     )
@@ -550,8 +571,27 @@ const TransactionMutateDrawer = ({
                                       toast.warning(
                                         'This inventory is already selected in another row'
                                       )
+                                      // Reset display data if selection is blocked
+                                      setInventoryDisplayData((prev) => ({
+                                        ...prev,
+                                        [index]: { lastPrice: null, stockQuantity: null },
+                                      }))
                                       return
                                     }
+
+                                    // Look up the selected inventory item from the full list
+                                    const selectedInventory = inventoryList.find(
+                                      (item) => item.id === val
+                                    )
+
+                                    // 2. reading the 'quantity' field from the API response object
+                                    setInventoryDisplayData((prev) => ({
+                                      ...prev,
+                                      [index]: {
+                                        lastPrice: selectedInventory?.lastPrice ?? null,
+                                        stockQuantity: selectedInventory?.quantity ?? null,
+                                      },
+                                    }))
 
                                     field.onChange(val)
                                     setInventoryInputValues((prev) => ({
@@ -569,8 +609,19 @@ const TransactionMutateDrawer = ({
                                       toast.warning(
                                         'This inventory name is already used in another row'
                                       )
+                                      // reset display data if selection is blocked
+                                      setInventoryDisplayData((prev) => ({
+                                        ...prev,
+                                        [index]: { lastPrice: null, stockQuantity: null },
+                                      }))
                                       return
                                     }
+
+                                    // reset display data when typing a custom value
+                                    setInventoryDisplayData((prev) => ({
+                                      ...prev,
+                                      [index]: { lastPrice: null, stockQuantity: null },
+                                    }))
 
                                     field.onChange(query)
                                     setInventoryInputValues((prev) => ({
@@ -618,6 +669,13 @@ const TransactionMutateDrawer = ({
                                   />
                                 </FormControl>
                                 <FormMessage />
+                                {/* display quantity */}
+                                {itemDisplayData?.stockQuantity !== undefined &&
+                                  itemDisplayData.stockQuantity !== null && (
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                      **Stock:** {itemDisplayData.stockQuantity}
+                                    </p>
+                                  )}
                               </FormItem>
                             )}
                           />
@@ -649,12 +707,19 @@ const TransactionMutateDrawer = ({
                                   />
                                 </FormControl>
                                 <FormMessage />
+                                {/* display lastPrice */}
+                                {itemDisplayData?.lastPrice !== undefined &&
+                                  itemDisplayData.lastPrice !== null && (
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                      **Last Price:** ${itemDisplayData.lastPrice.toFixed(2)}
+                                    </p>
+                                  )}
                               </FormItem>
                             )}
                           />
                         </div>
 
-                        {/* plus/minus buttons */}
+                        {/* plus/minus buttons (omitted for brevity) */}
                         <div className='flex gap-1'>
                           <Button
                             type='button'
@@ -671,7 +736,27 @@ const TransactionMutateDrawer = ({
                               type='button'
                               variant='destructive'
                               size='icon'
-                              onClick={() => remove(index)}
+                              onClick={() => {
+                                remove(index)
+                                // remove display data for the removed row
+                                setInventoryDisplayData((prev) => {
+                                  const newState = { ...prev }
+                                  delete newState[index]
+                                  // re-key the remaining items (optional but good practice for field arrays)
+                                  return Object.keys(newState).reduce(
+                                    (acc, key, _i) => {
+                                      const numKey = Number(key)
+                                      if (numKey > index) {
+                                        acc[numKey - 1] = newState[numKey]
+                                      } else {
+                                        acc[numKey] = newState[numKey]
+                                      }
+                                      return acc
+                                    },
+                                    {} as Record<number, { lastPrice: number | null, stockQuantity: number | null }>
+                                  )
+                                })
+                              }}
                             >
                               <Minus className='h-4 w-4' />
                             </Button>
@@ -681,7 +766,7 @@ const TransactionMutateDrawer = ({
                     )
                   })}
 
-                  {/* total field */}
+                  {/* total field (omitted for brevity) */}
                   {fields.length > 0 && (
                     <div className='flex justify-end'>
                       <div className='w-60'></div>
@@ -700,7 +785,7 @@ const TransactionMutateDrawer = ({
                   )}
                 </>
               ) : (
-                // fallback for non-inventory transactions (amount field)
+                // fallback for non-inventory transactions (amount field) (omitted for brevity)
                 <div className='flex justify-end'>
                   <FormField
                     control={form.control}
@@ -729,7 +814,7 @@ const TransactionMutateDrawer = ({
                 </div>
               ))}
 
-            {/* advance paid */}
+            {/* advance paid (omitted for brevity) */}
             <div className='flex justify-end'>
               {selectedBusinessEntity &&
                 (transactionType === 'PURCHASE' ||
@@ -760,7 +845,7 @@ const TransactionMutateDrawer = ({
                 )}
             </div>
 
-            {/* paid */}
+            {/* paid (omitted for brevity) */}
             {selectedBusinessEntity &&
               (transactionType === 'PURCHASE' ||
                 transactionType === 'SALE') && (
@@ -793,7 +878,7 @@ const TransactionMutateDrawer = ({
                 </div>
               )}
 
-            {/* pending */}
+            {/* pending (omitted for brevity) */}
             {selectedBusinessEntity &&
               (transactionType === 'PURCHASE' ||
                 transactionType === 'SALE') && (

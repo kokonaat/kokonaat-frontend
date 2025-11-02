@@ -6,6 +6,7 @@ const TRANSACTIONS_KEYS = {
     all: ["transactions"] as const,
 }
 
+// list
 export const useTransactionList = (shopId: string, page: number) => {
     return useQuery<TransactionListResponse>({
         queryKey: [...TRANSACTIONS_KEYS.all, shopId, page],
@@ -14,6 +15,7 @@ export const useTransactionList = (shopId: string, page: number) => {
     })
 }
 
+// create
 export const useCreateTransaction = (shopId: string) => {
     const queryClient = useQueryClient()
 
@@ -23,12 +25,10 @@ export const useCreateTransaction = (shopId: string) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [...TRANSACTIONS_KEYS.all, shopId] })
         },
-        onError: (error) => {
-            console.error("Failed to create transaction:", error)
-        },
     })
 }
 
+// transaction detail by id
 export const useTransactionById = (shopId: string, id: string) => {
     return useQuery({
         queryKey: ["transactions", shopId, id],

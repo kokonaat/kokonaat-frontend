@@ -138,8 +138,7 @@ const TransactionMutateDrawer = ({
     Record<number, string>
   >({})
 
-  // 1. renaming key for clarity to match API: 'stockQuantity'
-  // Note: We use this name internally, but it maps to 'quantity' in the API.
+  // use this name internally, but it maps to 'quantity' in the API.
   const [inventoryDisplayData, setInventoryDisplayData] = useState<
     Record<number, { lastPrice: number | null, stockQuantity: number | null }>
   >({})
@@ -221,10 +220,10 @@ const TransactionMutateDrawer = ({
       setEntitySearchQuery('')
       setInventorySearchQuery('')
       setInventoryInputValues({})
-      // Reset the display data state
+      // reset the display data state
       setInventoryDisplayData({})
     } else {
-      // When opening, reset search query to ensure fresh data
+      // when opening, reset search query to ensure fresh data
       setInventorySearchQuery('')
     }
   }
@@ -238,7 +237,7 @@ const TransactionMutateDrawer = ({
     // reset 'inventories'
     form.setValue('inventories', [])
     setInventoryInputValues({})
-    // Reset display data on entity change
+    // reset display data on entity change
     setInventoryDisplayData({})
   }
 
@@ -265,10 +264,10 @@ const TransactionMutateDrawer = ({
     : (form.watch('transactionAmount') ?? 0)
   const advancePaid = form.watch('advancePaid') ?? 0
   const paid = form.watch('paid') ?? 0
-  const calculatedPending = amount + advancePaid - paid
+  const calculatedPending = amount - (paid + advancePaid)
 
   useEffect(() => {
-    const pending = amount + advancePaid - paid
+    const pending = amount - (paid + advancePaid)
     form.setValue('pending', pending)
   }, [amount, advancePaid, paid, form])
 
@@ -584,7 +583,7 @@ const TransactionMutateDrawer = ({
                                       (item) => item.id === val
                                     )
 
-                                    // 2. reading the 'quantity' field from the API response object
+                                    // reading the 'quantity' field from the API response object
                                     setInventoryDisplayData((prev) => ({
                                       ...prev,
                                       [index]: {
@@ -648,7 +647,23 @@ const TransactionMutateDrawer = ({
                             name={`inventories.${index}.quantity`}
                             render={({ field }) => (
                               <FormItem className='flex-1'>
-                                <FormLabel>Quantity</FormLabel>
+                                <div className="flex items-center justify-between">
+                                  <FormLabel>Quantity</FormLabel>
+                                  {/* display quantity */}
+                                  {itemDisplayData?.stockQuantity !== undefined &&
+                                    itemDisplayData.stockQuantity !== null && (
+                                      <p
+                                        className={`text-xs mt-1 ${
+                                          // apply warning color if stock is 5 or less
+                                          itemDisplayData.stockQuantity <= 5
+                                            ? 'text-amber-600 font-bold'
+                                            : 'text-muted-foreground'
+                                          }`}
+                                      >
+                                        Stock: {itemDisplayData.stockQuantity}
+                                      </p>
+                                    )}
+                                </div>
                                 <FormControl>
                                   <Input
                                     type='number'
@@ -669,13 +684,6 @@ const TransactionMutateDrawer = ({
                                   />
                                 </FormControl>
                                 <FormMessage />
-                                {/* display quantity */}
-                                {itemDisplayData?.stockQuantity !== undefined &&
-                                  itemDisplayData.stockQuantity !== null && (
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                      **Stock:** {itemDisplayData.stockQuantity}
-                                    </p>
-                                  )}
                               </FormItem>
                             )}
                           />
@@ -686,7 +694,16 @@ const TransactionMutateDrawer = ({
                             name={`inventories.${index}.price`}
                             render={({ field }) => (
                               <FormItem className='flex-1'>
-                                <FormLabel>Price</FormLabel>
+                                <div className="flex items-center justify-between">
+                                  <FormLabel>Price</FormLabel>
+                                  {/* display lastPrice */}
+                                  {itemDisplayData?.lastPrice !== undefined &&
+                                    itemDisplayData.lastPrice !== null && (
+                                      <p className="text-xs text-green-700 font-semibold mt-1">
+                                        Last Price: ৳{itemDisplayData.lastPrice.toFixed(2)}
+                                      </p>
+                                    )}
+                                </div>
                                 <FormControl>
                                   <Input
                                     type='number'
@@ -707,13 +724,6 @@ const TransactionMutateDrawer = ({
                                   />
                                 </FormControl>
                                 <FormMessage />
-                                {/* display lastPrice */}
-                                {itemDisplayData?.lastPrice !== undefined &&
-                                  itemDisplayData.lastPrice !== null && (
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                      **Last Price:** ${itemDisplayData.lastPrice.toFixed(2)}
-                                    </p>
-                                  )}
                               </FormItem>
                             )}
                           />

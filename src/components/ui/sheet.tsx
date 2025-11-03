@@ -49,6 +49,7 @@ function SheetContent({
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
   side?: 'top' | 'right' | 'bottom' | 'left'
+  variant?: 'default' | 'wide'
 }) {
   return (
     <SheetPortal>

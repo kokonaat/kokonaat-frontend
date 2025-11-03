@@ -30,6 +30,7 @@ import { TransactionTypeFields } from './TransactionTypeFields'
 import { InventoryFields } from './InventoryFields'
 import { AmountField } from './AmountField'
 import { PaymentFields } from './PaymentFields'
+import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 
 const TransactionMutateDrawer = ({
   open,
@@ -134,7 +135,7 @@ const TransactionMutateDrawer = ({
     setInventoryDisplayData({})
   }
 
-  const handleFormSubmit = (values: any) => {
+  const handleFormSubmit = (values: TransactionFormValues) => {
     if (
       !shopId ||
       !selectedBusinessEntity ||
@@ -151,7 +152,9 @@ const TransactionMutateDrawer = ({
       | 'SELL_OUT'
 
     const inventoryDetailsPayload = showInventoryFields
-      ? values.inventories?.map((item: any, index: number) => {
+      ? values.inventories?.map((
+        item: TransactionFormValues['inventories'][number], index: number
+      ) => {
         const inputValue = inventoryInputValues[index] || item.inventoryId
 
         const isExistingInventory = inventoryOptions.some(

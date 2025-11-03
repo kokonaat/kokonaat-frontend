@@ -39,7 +39,11 @@ const InventoryDialogs = () => {
             key={`inventory-update-${currentRow.id}`}
             open={open === 'update'}
             onOpenChange={(val: boolean) => setOpen(val ? 'update' : null)}
-            currentRow={currentRow}
+            currentRow={{
+              ...currentRow,
+              // ensure having shop id
+              shopId: currentRow.shopId ?? shopId ?? '',
+            }}
             onSave={() => setOpen(null)}
           />
 

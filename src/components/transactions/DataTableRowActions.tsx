@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useTransactions } from './transaction-provider'
-import type { Transaction } from './TransactionColumns'
+import type { Transaction } from '@/interface/transactionInterface'
 
 type DataTableRowActionsProps<TData extends Transaction> = {
   row: Row<TData>

@@ -42,7 +42,7 @@ export const InventoryRow = ({
     itemDisplayData,
     filteredInventoryOptions,
     inventoryOptions,
-    inventoryList,
+    // inventoryList,
     isInventoryLoading,
     transactionType,
     isAlreadyUsed,
@@ -57,7 +57,7 @@ export const InventoryRow = ({
             <FormField
                 control={form.control}
                 name={`inventories.${index}.inventoryId`}
-                render={({ field }) => (
+                render={({ field: _field }) => (
                     <FormItem className='w-36 sm:w-48 md:w-48'>
                         <FormLabel>Inventory</FormLabel>
                         <FormControl>

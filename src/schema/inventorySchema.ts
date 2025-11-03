@@ -6,6 +6,7 @@ export const inventorySchema = z.object({
   description: z.string().nullable(),
   quantity: z.number().int().nonnegative(),
   lastPrice: z.number().nonnegative(),
+  shopId: z.string().optional(),
   createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
 })

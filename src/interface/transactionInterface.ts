@@ -18,51 +18,12 @@ export interface ComboboxOptionInterface {
   label: string
 }
 
+// this represents one item in the details array for inventory transactions
 export interface TransactionDetail {
-  no: string
-  id: string
-  transactionId: string
-  inventory: {
-    id: string
-    name: string
-  }
+  inventoryId: string
   quantity: number
   price: number
-  total: number
-  shopId: string
-  createdAt: string
-  updatedAt: string
-}
-
-export interface Transaction {
-  no: string
-  id: string
-  partnerType: "VENDOR" | "CUSTOMER"
-  vendor?: {
-    id: string
-    name: string
-  }
-  customer?: {
-    id: string
-    name: string
-  }
-  vendorId?: string
-  customerId?: string
-  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT" | "COLLECT"
-  transactionStatus: string | null
-  amount: number
-  pending: number
-  advancePaid: number
-  paid: number
-  paymentType: "CASH" | "CREDIT_CARD" | "BANK_TRANSFER" | "MOBILE_PAYMENT"
-  isPaid: boolean
-  remarks: string | null
-  payable: number
-  receivable: number
-  shopId: string
-  createdAt: string
-  updatedAt: string
-  details: TransactionDetail[]
+  total: number // Added 'total' as per swagger payload
 }
 
 // update main DTO
@@ -71,22 +32,14 @@ export interface CreateTransactionDto {
   partnerType: "VENDOR" | "CUSTOMER"
   vendorId?: string
   customerId?: string
-  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT" | "COLLECT"
+  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT"
+  // for non-inventory transactions
   amount?: number
-  paymentType?: "CASH" | "CREDIT_CARD" | "BANK_TRANSFER" | "MOBILE_PAYMENT"
-  details?: {
-    inventoryId: string
-    quantity: number
-    price: number
-    total: number
-  }[]
+  // used for inventory transactions (PURCHASE, SELL_OUT)
+  details?: TransactionDetail[]
 }
 
 export interface TransactionListResponse {
-  msg: string
-  statusCode: number
-  data: Transaction[]
-  page: number
-  limit: number
+  data: TransactionRowInterface[]
   total: number
 }

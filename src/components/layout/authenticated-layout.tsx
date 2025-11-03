@@ -40,7 +40,7 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex h-screen w-screen overflow-hidden">
-        {/* Sidebar */}
+        {/* ===== Sidebar ===== */}
         <AppSidebar>
           <SidebarHeader>
             {isLoading && <p className="text-sm text-gray-500">Loading shops...</p>}
@@ -57,16 +57,11 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
           </SidebarContent>
 
           <SidebarFooter>
-            {user ? (
-              <NavUser user={user} />
-            ) : (
-              <NavUser user={{ id: '', name: 'Guest', phone: '' }} />
-            )}
+            <NavUser user={user} />
           </SidebarFooter>
-
         </AppSidebar>
 
-        {/* Main Content */}
+        {/* ===== Main Content ===== */}
         <div className="flex flex-1 flex-col min-w-0 h-full overflow-hidden">
           {/* top header (now shared globally) */}
           <Header>

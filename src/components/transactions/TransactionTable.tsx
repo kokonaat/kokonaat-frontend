@@ -13,12 +13,11 @@ import {
 } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
-import { DataTableViewOptions } from "./DataTableViewOption"
+import { DataTableBulkActions } from "@/features/users/components/data-table-bulk-actions"
 import { DataTablePagination } from "@/features/users/components/data-table-pagination"
+import { DataTableViewOptions } from "./DataTableViewOption"
 import { TransactionColumns as columns } from "./TransactionColumns"
 import { useTransactionList } from "@/hooks/useTransaction"
-import type { Transaction } from "@/interface/transactionInterface"
-import { DataTableBulkActions } from "../customers/DataTableBulkActions"
 
 interface TransactionTableProps {
   shopId: string
@@ -38,7 +37,7 @@ const TransactionTable = ({ shopId }: TransactionTableProps) => {
   const total = data?.total || 0
   const pageSize = 10
 
-  const table = useReactTable<Transaction>({
+  const table = useReactTable({
     data: transactions,
     columns,
     state: { sorting, columnVisibility, columnFilters, globalFilter, pagination: { pageIndex, pageSize } },

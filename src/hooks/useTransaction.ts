@@ -1,6 +1,6 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createTransaction, getTransactionById, getTransactions } from "@/api/transactionApi"
-import type { CreateTransactionDto, TransactionListResponse } from "@/interface/transactionInterface"
+import { createTransaction, getTransactionById, getTransactions, type CreateTransactionDto } from "@/api/transactionApi"
+import type { TransactionListResponse } from "@/api/transactionApi"
 
 const TRANSACTIONS_KEYS = {
     all: ["transactions"] as const,

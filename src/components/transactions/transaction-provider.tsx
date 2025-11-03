@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
-import type { Transaction } from '@/interface/transactionInterface'
+import type { Transaction } from './TransactionColumns'
 
 type TransactionDialogType = 'create' | 'update' | 'delete' | 'import'
 

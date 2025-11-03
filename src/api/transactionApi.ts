@@ -1,16 +1,21 @@
 import { apiEndpoints } from "@/config/api"
 import { axiosInstance } from "./axios"
-import type { CreateTransactionDto, TransactionListResponse } from "@/interface/transactionInterface"
+import type { CreateTransactionDto } from "@/interface/transactionInterface"
 
-// export interface TransactionRowInterface {
-//   id: string
-//   partnerType: "VENDOR" | "CUSTOMER"
-//   vendorId?: string
-//   customerId?: string
-//   transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE"
-//   amount: number
-//   createdAt: string
-// }
+export interface TransactionRowInterface {
+  id: string
+  partnerType: "VENDOR" | "CUSTOMER"
+  vendorId?: string
+  customerId?: string
+  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE"
+  amount: number
+  createdAt: string
+}
+
+export interface TransactionListResponse {
+  data: TransactionRowInterface[]
+  total: number
+}
 
 export const getTransactions = async (shopId: string, page: number) => {
   const res = await axiosInstance.get<TransactionListResponse>(

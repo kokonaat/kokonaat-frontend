@@ -32,14 +32,14 @@ export interface SidebarData {
 
 export interface AuthenticatedLayoutProps {
     children?: React.ReactNode
-}
+  }
 
 export interface Team {
     id: string
     name: string
     logo: React.ElementType
-}
-
+  }
+  
 export interface TeamSwitcherProps {
     teams: Team[]
-}
+  }

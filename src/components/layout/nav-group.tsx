@@ -1,6 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -18,22 +17,13 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { Badge } from '@/components/ui/badge'
+import { type NavGroup as NavGroupProps } from './types'
 
-export interface NavItem {
-  title: string
-  url?: string
-  icon?: LucideIcon
-  badge?: string
-  items?: NavItem[]
-}
-export interface NavGroup { title: string; items: NavItem[] }
-
-export function NavGroup({ title, items }: NavGroup) {
+export function NavGroup({ title, items }: NavGroupProps) {
   const { setOpenMobile } = useSidebar()
   const location = useLocation()
 
-  const checkIsActive = (url?: string) =>
-    url ? location.pathname === url : false
+  const checkIsActive = (url: string) => location.pathname === url
 
   return (
     <SidebarGroup>
@@ -45,7 +35,7 @@ export function NavGroup({ title, items }: NavGroup) {
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild isActive={checkIsActive(item.url)}>
-                  <Link to={item.url ?? '#'} onClick={() => setOpenMobile(false)}>
+                  <Link to={item.url} onClick={() => setOpenMobile(false)}>
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                     {item.badge && (
@@ -80,7 +70,7 @@ export function NavGroup({ title, items }: NavGroup) {
                     {item.items.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild isActive={checkIsActive(subItem.url)}>
-                          <Link to={subItem.url ?? '#'} onClick={() => setOpenMobile(false)}>
+                          <Link to={subItem.url} onClick={() => setOpenMobile(false)}>
                             {subItem.icon && <subItem.icon />}
                             <span>{subItem.title}</span>
                           </Link>

@@ -1,18 +1,12 @@
 import { useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import type { Table } from '@tanstack/react-table'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteCustomer } from '@/hooks/useCustomer'
-
-export interface CustomerMultiDeleteDialogProps<TData extends { id: string }> {
-    open: boolean
-    onOpenChange: (open: boolean) => void
-    table: Table<TData>
-}
+import type { TaskMultiDeleteDialogProps } from '../tasks-multi-delete-dialog'
 
 const CONFIRM_WORD = 'DELETE'
 
@@ -20,7 +14,7 @@ export function CustomersMultiDeleteDialog<TData extends { id: string }>({
   open,
   onOpenChange,
   table,
-}: CustomerMultiDeleteDialogProps<TData>) {
+}: TaskMultiDeleteDialogProps<TData>) {
   const [value, setValue] = useState('')
 
   const shopId = localStorage.getItem('shop-storage')

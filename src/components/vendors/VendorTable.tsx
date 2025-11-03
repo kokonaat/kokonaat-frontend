@@ -17,10 +17,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { VendorColumns as columns } from './VendorColumns'
 import { Input } from '@/components/ui/input'
 import { DataTablePagination } from '../data-table-pagination'
-import { DataTableViewOptions } from '@/features/users/components/data-table-view-options'
 import { VendorTableBulkActions } from './VendorTableBulkActions'
-
-import type { DataTablePropsInterface } from '@/interface/vendorInterface'
+import { DataTableViewOptions } from '@/features/users/components/data-table-view-options'
+import type { DataTablePropsInterface, Vendor } from '@/interface/vendorInterface'
 import { useDebounce } from '../../hooks/useDebounce'
 
 const VendorTable = ({ data, pageIndex, pageSize, total, onPageChange, onSearchChange }: DataTablePropsInterface) => {
@@ -48,7 +47,7 @@ const VendorTable = ({ data, pageIndex, pageSize, total, onPageChange, onSearchC
     onSearchChange?.(debouncedSearch)
   }, [debouncedSearch, onPageChange, onSearchChange])
 
-  const table = useReactTable({
+  const table = useReactTable<Vendor>({
     data,
     columns,
     state: { sorting, columnVisibility, rowSelection, columnFilters, globalFilter, pagination: { pageIndex, pageSize } },

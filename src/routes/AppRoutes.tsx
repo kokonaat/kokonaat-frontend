@@ -21,7 +21,6 @@ const TransactionsPage = lazy(() => import("@/pages/TransactionsPage"))
 const TransactionDetails = lazy(() => import("@/components/transactions/TransactionDetails"))
 const Settings = lazy(() => import("@/features/settings"))
 const ComingSoon = lazy(() => import("@/components/coming-soon"))
-const Users = lazy(() => import("@/features/users"))
 
 const AppRoutes = () => {
     // calling user api to avoid to get null where user's data needed
@@ -47,7 +46,6 @@ const AppRoutes = () => {
                             <Route path="/inventory" element={<Inventory />} />
                             <Route path="/transactions" element={<TransactionsPage />} />
                             <Route path="/transactions/:id" element={<TransactionDetails />} />
-                            <Route path="/users/employee" element={<Users />} />
                             <Route path="/settings" element={<Settings />} />
                             <Route path="/help-center" element={<ComingSoon />} />
                             <Route path="*" element={<Navigate to="/" replace />} />

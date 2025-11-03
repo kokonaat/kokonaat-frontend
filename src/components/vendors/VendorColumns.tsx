@@ -3,9 +3,9 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '../customers/DataTableColumnHeader'
 import { DataTableRowActions } from './DataTableRowActions'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
-import type { VendorListInterface } from '@/interface/vendorInterface'
+import type { Vendor } from '@/interface/vendorInterface'
 
-export const VendorColumns: ColumnDef<VendorListInterface>[] = [
+export const VendorColumns: ColumnDef<Vendor>[] = [
   {
     id: 'select',
     header: ({ table }) => (

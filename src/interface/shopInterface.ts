@@ -16,7 +16,7 @@ export interface ShopListInterface {
 export interface UpdateShopInterface {
     id: string
     name?: string
-    address: string
+    address?: string
 }
 
 export interface ShopDrawerProps {

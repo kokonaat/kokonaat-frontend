@@ -42,7 +42,7 @@ const InventoryTable = ({
   const debouncedSearch = useDebounce(searchInput, 300)
 
   // Drawer states
-  const [currentRow, setCurrentRow] = useState<InventoryListItem | null>(null)
+  const [currentRow] = useState<InventoryListItem | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   // Trigger search

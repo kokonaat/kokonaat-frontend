@@ -1,19 +1,7 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Link } from 'react-router-dom'
 import { DataTableRowActions } from './DataTableRowActions'
-
-export interface Transaction {
-  id: string
-  no: string
-  partnerType: string
-  transactionType: string
-  vendor?: { id: string; name: string }
-  customer?: { id: string; name: string }
-  amount: number
-  paid: number
-  pending: number
-  transactionStatus: string | null
-}
+import type { Transaction } from '@/interface/transactionInterface'
 
 export const TransactionColumns: ColumnDef<Transaction>[] = [
   {

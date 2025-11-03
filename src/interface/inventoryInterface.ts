@@ -30,7 +30,7 @@ export interface InventoryListItem {
   description?: string
   quantity: number
   lastPrice: number
-  shopId: string
+  shopId?: string
   createdAt?: string
   updatedAt?: string
 }

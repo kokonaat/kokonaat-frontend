@@ -1,10 +1,7 @@
-'use client'
-
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-// import { sleep } from '@/utils/sleep'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -17,6 +14,8 @@ type UserMultiDeleteDialogProps<TData> = {
 }
 
 const CONFIRM_WORD = 'DELETE'
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 export function UsersMultiDeleteDialog<TData>({
   open,

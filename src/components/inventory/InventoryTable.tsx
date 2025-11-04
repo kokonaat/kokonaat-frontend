@@ -12,7 +12,6 @@ import {
   getFacetedUniqueValues,
   useReactTable,
 } from '@tanstack/react-table'
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { InventoryColumns as columns } from './InventoryColumns'
 import { Input } from '@/components/ui/input'
@@ -111,19 +110,18 @@ const InventoryTable = ({
     <div className="space-y-4 max-sm:has-[div[role='toolbar']]:mb-16">
       {/* Top Toolbar */}
       <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center">
-          <DataTableViewOptions table={table} />
-        </div>
-
         <div className="flex items-center gap-x-2">
+          <DateRangeSearch onDateChange={onDateChange} />
           <Input
             placeholder="Search inventory..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="h-8 w-[150px] lg:w-[250px]"
           />
+        </div>
 
-          <DateRangeSearch onDateChange={onDateChange} />
+        <div className="flex items-center">
+          <DataTableViewOptions table={table} />
         </div>
       </div>
 

@@ -43,7 +43,7 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align='end' className='w-[160px]'>
+      <DropdownMenuContent align='end' className='w-40'>
         <DropdownMenuItem
           onClick={(e) => {
             e.stopPropagation()

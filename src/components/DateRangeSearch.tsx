@@ -42,7 +42,7 @@ export default function DateRangeSearch({ onDateChange }: DateRangeSearchProps) 
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
-                        className="justify-start text-left font-normal min-w-[230px] h-8"
+                        className="justify-start text-left font-normal min-w-[100px] h-8"
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         <span className="truncate">{formattedLabel}</span>

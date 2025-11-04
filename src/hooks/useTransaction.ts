@@ -7,11 +7,17 @@ const TRANSACTIONS_KEYS = {
 }
 
 // list
-export const useTransactionList = (shopId: string, page: number) => {
+export const useTransactionList = (
+    shopId: string,
+    page: number,
+    startDate?: string,
+    endDate?: string
+) => {
     return useQuery<TransactionListResponse>({
-        queryKey: [...TRANSACTIONS_KEYS.all, shopId, page],
-        queryFn: () => getTransactions(shopId, page),
+        queryKey: ["transactions", shopId, page, startDate, endDate],
+        queryFn: () => getTransactions(shopId, page, startDate, endDate),
         placeholderData: keepPreviousData,
+        enabled: !!shopId,
     })
 }
 

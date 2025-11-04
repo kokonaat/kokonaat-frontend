@@ -1,13 +1,51 @@
+import { useCallback, useState } from "react"
 import { Main } from "@/components/layout/main"
 import { TransactionProvider } from "@/components/transactions/transaction-provider"
 import TransactionDialogs from "@/components/transactions/TransactionDialogs"
 import TransactionPrimaryButtons from "@/components/transactions/TransactionPrimaryButtons"
 import TransactionTable from "@/components/transactions/TransactionTable"
 import { useShopStore } from "@/stores/shopStore"
+import { useTransactionList } from "@/hooks/useTransaction"
 
 const TransactionsPage = () => {
   const shopId = useShopStore((s) => s.currentShopId)
+  const [pageIndex, setPageIndex] = useState(0)
+  const [_searchBy, setSearchBy] = useState('')
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined)
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined)
+  const pageSize = 10
+
+  // useCallback ensures stable function references
+  const handlePageChange = useCallback((index: number) => {
+    setPageIndex(index)
+  }, [])
+
+  const handleSearchChange = useCallback((
+    value?: string,
+    from?: Date,
+    to?: Date
+  ) => {
+    setSearchBy(value || '')
+    setStartDate(from)
+    setEndDate(to)
+  }, [])
+
+  // Format dates to ISO string for API
+  const startDateString = startDate ? startDate.toISOString() : undefined
+  const endDateString = endDate ? endDate.toISOString() : undefined
+
+  const { data, isLoading, isError } = useTransactionList(
+    shopId || '',
+    pageIndex + 1,
+    startDateString,
+    endDateString
+  )
+
   if (!shopId) return <div>No shop selected</div>
+  if (isError) return <div>Error loading transactions.</div>
+
+  const transactions = data?.data || []
+  const total = data?.total || 0
 
   return (
     <TransactionProvider>
@@ -21,7 +59,19 @@ const TransactionsPage = () => {
         </div>
 
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
-          <TransactionTable shopId={shopId} />
+          {isLoading ? (
+            <p>Loading transactions data...</p>
+          ) : (
+            <TransactionTable
+              shopId={shopId}
+              data={transactions}
+              pageIndex={pageIndex}
+              pageSize={pageSize}
+              total={total}
+              onPageChange={handlePageChange}
+              onSearchChange={handleSearchChange}
+            />
+          )}
         </div>
       </Main>
       <TransactionDialogs />

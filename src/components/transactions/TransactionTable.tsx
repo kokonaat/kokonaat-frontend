@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {
   flexRender,
@@ -16,32 +16,65 @@ import { Input } from "@/components/ui/input"
 import { DataTableViewOptions } from "./DataTableViewOption"
 import { DataTablePagination } from "@/features/users/components/data-table-pagination"
 import { TransactionColumns as columns } from "./TransactionColumns"
-import { useTransactionList } from "@/hooks/useTransaction"
 import type { Transaction } from "@/interface/transactionInterface"
 import { DataTableBulkActions } from "../customers/DataTableBulkActions"
+import DateRangeSearch from "../DateRangeSearch"
+import { useDebounce } from "@/hooks/useDebounce"
 
 interface TransactionTableProps {
   shopId: string
+  data: Transaction[]
+  pageIndex: number
+  pageSize: number
+  total: number
+  onPageChange: (pageIndex: number) => void
+  onSearchChange?: (searchBy?: string, startDate?: Date, endDate?: Date) => void
 }
 
-const TransactionTable = ({ shopId }: TransactionTableProps) => {
+const TransactionTable = ({
+  shopId: _shopId,
+  data,
+  pageIndex,
+  pageSize,
+  total,
+  onPageChange,
+  onSearchChange
+}: TransactionTableProps) => {
   const navigate = useNavigate()
-  const [pageIndex, setPageIndex] = useState(0)
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [globalFilter, setGlobalFilter] = useState("")
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
-  // Fetch transactions from API (server-side pagination)
-  const { data, isLoading, isError } = useTransactionList(shopId, pageIndex + 1)
-  const transactions = data?.data || []
-  const total = data?.total || 0
-  const pageSize = 10
+  // Search states
+  const [searchInput, setSearchInput] = useState("")
+  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({})
+
+  // Debounce search input (300ms delay)
+  const debouncedSearch = useDebounce(searchInput, 300)
+
+  // Handle search input and date range changes
+  useEffect(() => {
+    onPageChange(0) // Reset to first page
+    onSearchChange?.(debouncedSearch, dateRange.from, dateRange.to)
+  }, [debouncedSearch, onPageChange, onSearchChange, dateRange.from, dateRange.to])
+
+  // Handle date range changes
+  const handleDateChange = (from?: Date, to?: Date) => {
+    setDateRange({ from, to })
+    onPageChange(0) // Reset to first page when date range changes
+  }
 
   const table = useReactTable<Transaction>({
-    data: transactions,
+    data,
     columns,
-    state: { sorting, columnVisibility, columnFilters, globalFilter, pagination: { pageIndex, pageSize } },
+    state: {
+      sorting,
+      columnVisibility,
+      columnFilters,
+      globalFilter,
+      pagination: { pageIndex, pageSize }
+    },
     manualPagination: true,
     pageCount: Math.ceil(total / pageSize),
     onSortingChange: setSorting,
@@ -49,8 +82,12 @@ const TransactionTable = ({ shopId }: TransactionTableProps) => {
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
     onPaginationChange: (updater) => {
-      const newIndex = typeof updater === "function" ? updater({ pageIndex, pageSize }).pageIndex : updater.pageIndex
-      setPageIndex(newIndex)
+      if (typeof updater === "function") {
+        const newState = updater({ pageIndex, pageSize })
+        onPageChange(newState.pageIndex)
+      } else {
+        onPageChange(updater.pageIndex)
+      }
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -63,19 +100,23 @@ const TransactionTable = ({ shopId }: TransactionTableProps) => {
     navigate(`/transactions/${id}`)
   }
 
-  if (isLoading) return <div>Loading transactions...</div>
-  if (isError) return <div>Failed to load transactions.</div>
-
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <Input
-          placeholder="Filter by title or ID..."
-          value={globalFilter ?? ""}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="h-8 w-[250px]"
-        />
-        <DataTableViewOptions table={table} />
+      <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center">
+          <DataTableViewOptions table={table} />
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <Input
+            placeholder="Filter transactions..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="h-8 w-[150px] lg:w-[250px]"
+          />
+
+          <DateRangeSearch onDateChange={handleDateChange} />
+        </div>
       </div>
 
       <div className="rounded-md border">

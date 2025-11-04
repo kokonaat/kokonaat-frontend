@@ -11,9 +11,10 @@ const Inventory = () => {
     const shopId = useShopStore(s => s.currentShopId)
     const [pageIndex, setPageIndex] = useState(0)
     const [searchBy, setSearchBy] = useState('')
+    const [startDate, setStartDate] = useState<Date | undefined>()
+    const [endDate, setEndDate] = useState<Date | undefined>()
     const pageSize = 10
 
-    // useCallback ensures stable function references
     const handlePageChange = useCallback((index: number) => {
         setPageIndex(index)
     }, [])
@@ -22,13 +23,21 @@ const Inventory = () => {
         setSearchBy(value)
     }, [])
 
+    const handleDateChange = useCallback((from?: Date, to?: Date) => {
+        setStartDate(from)
+        setEndDate(to)
+        setPageIndex(0)
+    }, [])
+
     const { data, isLoading, isError } = useInventoryList(
         shopId || '',
         pageIndex + 1,
         pageSize,
-        searchBy
+        searchBy,
+        startDate,
+        endDate
     )
-    
+
     if (isError) return <p>Error loading inventories.</p>
 
     const inventories = data?.items || []
@@ -55,6 +64,7 @@ const Inventory = () => {
                             total={total}
                             onPageChange={handlePageChange}
                             onSearchChange={handleSearchChange}
+                            onDateChange={handleDateChange}
                         />
                     )}
                 </div>

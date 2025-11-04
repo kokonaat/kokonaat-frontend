@@ -14,11 +14,13 @@ export const useVendorList = (
     page: number,
     limit: number,
     searchBy?: string,
+    startDate?: Date,
+    endDate?: Date,
     options?: { enabled?: boolean }
 ) =>
     useQuery({
-        queryKey: ["vendors", shopId, page, limit, searchBy],
-        queryFn: () => vendorList(shopId, page, limit, searchBy),
+        queryKey: ["vendors", shopId, page, limit, searchBy, startDate, endDate],
+        queryFn: () => vendorList(shopId, page, limit, searchBy, startDate, endDate),
         enabled: options?.enabled !== false && !!shopId,
         placeholderData: keepPreviousData,
     })

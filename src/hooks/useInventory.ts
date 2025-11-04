@@ -20,11 +20,13 @@ export const useInventoryList = (
   page: number,
   limit: number,
   searchBy?: string,
+  startDate?: Date,
+  endDate?: Date,
   options?: { enabled?: boolean }
 ) =>
   useQuery<{ items: InventoryItemInterface[]; total: number }>({
-    queryKey: [...INVENTORY_KEYS.all, shopId, page, limit, searchBy],
-    queryFn: () => inventoryList(shopId, page, limit, searchBy),
+    queryKey: [...INVENTORY_KEYS.all, shopId, page, limit, searchBy, startDate, endDate],
+    queryFn: () => inventoryList(shopId, page, limit, searchBy, startDate, endDate),
     enabled: options?.enabled !== false && !!shopId,
     placeholderData: keepPreviousData,
   })
@@ -71,16 +73,16 @@ export const useDeleteInventory = () => {
   return useMutation({
     mutationFn: ({ id }: { id: string }) => deleteInventory({ id }),
 
-    // 🟢 Optimistic update — remove from all paginated/filtered lists
+    // remove from all paginated/filtered lists
     onMutate: async ({ id }) => {
       await queryClient.cancelQueries({ queryKey: ["inventories"] })
 
-      // Store previous state for rollback
-      const previousQueries = queryClient.getQueriesData<{ items: any[]; total: number }>({
+      // store previous state for rollback
+      const previousQueries = queryClient.getQueriesData<{ items: InventoryItemInterface[]; total: number }>({
         queryKey: ["inventories"],
       })
 
-      // Optimistically update all cached inventory lists
+      // optimistically update all cached inventory lists
       previousQueries.forEach(([key, oldData]) => {
         if (!oldData) return
         queryClient.setQueryData(key, {
@@ -93,7 +95,7 @@ export const useDeleteInventory = () => {
       return { previousQueries }
     },
 
-    // 🔴 Rollback on error
+    // rollback on error
     onError: (_err, _vars, context) => {
       if (context?.previousQueries) {
         context.previousQueries.forEach(([key, data]) => {
@@ -102,7 +104,7 @@ export const useDeleteInventory = () => {
       }
     },
 
-    // ✅ Always sync with backend after deletion
+    // always sync with backend after deletion
     onSettled: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["inventories"],

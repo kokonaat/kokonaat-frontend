@@ -12,6 +12,7 @@ import {
   getFacetedUniqueValues,
   useReactTable,
 } from '@tanstack/react-table'
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { InventoryColumns as columns } from './InventoryColumns'
 import { Input } from '@/components/ui/input'
@@ -20,7 +21,8 @@ import { DataTableViewOptions } from '@/features/users/components/data-table-vie
 import { DataTablePagination } from '@/features/users/components/data-table-pagination'
 import InventoryViewDrawer from './InventoryViewDrawer'
 import type { InventoryTableProps, InventoryListItem } from '@/interface/inventoryInterface'
-import { useDebounce } from '../../hooks/useDebounce'
+import { useDebounce } from '@/hooks/useDebounce'
+import DateRangeSearch from '../DateRangeSearch'
 
 const InventoryTable = ({
   data,
@@ -29,7 +31,10 @@ const InventoryTable = ({
   total,
   onPageChange,
   onSearchChange,
-}: InventoryTableProps) => {
+  onDateChange,
+}: InventoryTableProps & {
+  onDateChange?: (from?: Date, to?: Date) => void
+}) => {
   // Table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -41,20 +46,28 @@ const InventoryTable = ({
   const [searchInput, setSearchInput] = useState('')
   const debouncedSearch = useDebounce(searchInput, 300)
 
-  // Drawer states
+  // Drawer state
   const [currentRow] = useState<InventoryListItem | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  // Trigger search
+  // Trigger debounced search
   useEffect(() => {
     onPageChange(0)
     onSearchChange?.(debouncedSearch)
   }, [debouncedSearch, onPageChange, onSearchChange])
 
+  // Table setup
   const table = useReactTable({
     data,
     columns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, globalFilter, pagination: { pageIndex, pageSize } },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      globalFilter,
+      pagination: { pageIndex, pageSize },
+    },
     manualPagination: true,
     pageCount: Math.ceil(total / pageSize),
     enableRowSelection: true,
@@ -87,6 +100,7 @@ const InventoryTable = ({
 
   const pageCount = table.getPageCount()
 
+  // Prevent going beyond last page
   useEffect(() => {
     if (table.getState().pagination.pageIndex >= pageCount) {
       table.setPageIndex(pageCount - 1)
@@ -94,27 +108,36 @@ const InventoryTable = ({
   }, [table, pageCount])
 
   return (
-    <div className='space-y-4 max-sm:has-[div[role="toolbar"]]:mb-16'>
-      <div className='flex items-center justify-between'>
-        <div className='flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2'>
+    <div className="space-y-4 max-sm:has-[div[role='toolbar']]:mb-16">
+      {/* Top Toolbar */}
+      <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center">
+          <DataTableViewOptions table={table} />
+        </div>
+
+        <div className="flex items-center gap-x-2">
           <Input
-            placeholder='Filter by name, desc or last price...'
+            placeholder="Search inventory..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className='h-8 w-[150px] lg:w-[250px]'
+            className="h-8 w-[150px] lg:w-[250px]"
           />
+
+          <DateRangeSearch onDateChange={onDateChange} />
         </div>
-        <DataTableViewOptions table={table} />
       </div>
 
-      <div className='rounded-md border'>
+      {/* Table */}
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
                   <TableHead key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -127,7 +150,7 @@ const InventoryTable = ({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className='cursor-pointer'
+                  className="cursor-pointer"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
@@ -138,8 +161,8 @@ const InventoryTable = ({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className='h-24 text-center'>
-                  No results.
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  No results found.
                 </TableCell>
               </TableRow>
             )}
@@ -147,7 +170,10 @@ const InventoryTable = ({
         </Table>
       </div>
 
+      {/* Pagination */}
       <DataTablePagination table={table} />
+
+      {/* Bulk Actions */}
       <InventoryTableBulkActions table={table} />
 
       {/* Drawer */}

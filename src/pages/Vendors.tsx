@@ -11,6 +11,8 @@ const Vendors = () => {
   const shopId = useShopStore(s => s.currentShopId)
   const [pageIndex, setPageIndex] = useState(0)
   const [searchBy, setSearchBy] = useState('')
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined)
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined)
   const pageSize = 10
 
   // useCallback ensures stable function references
@@ -18,15 +20,23 @@ const Vendors = () => {
     setPageIndex(index)
   }, [])
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchBy(value)
+  const handleSearchChange = useCallback((
+    value?: string,
+    from?: Date,
+    to?: Date
+  ) => {
+    setSearchBy(value || '')
+    setStartDate(from)
+    setEndDate(to)
   }, [])
 
   const { data, isLoading, isError } = useVendorList(
     shopId || '',
     pageIndex + 1,
     pageSize,
-    searchBy
+    searchBy,
+    startDate,
+    endDate
   )
 
   if (isError) return <p>Error loading vendors.</p>

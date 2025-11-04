@@ -15,24 +15,31 @@ export const useEntityData = (
         1,
         10,
         debouncedSearchQuery || undefined,
+        undefined,
+        undefined,
         {
             enabled: !!shopId && selectedBusinessEntity === BusinessEntityType.VENDOR,
         }
     )
 
     const { data: customerResponse, isFetching: isCustomerFetching } =
-        useCustomerList(shopId || '', 1, 10, debouncedSearchQuery || undefined, {
-            enabled:
-                !!shopId && selectedBusinessEntity === BusinessEntityType.CUSTOMER,
-        })
+        useCustomerList(
+            shopId || '',
+            1,
+            10,
+            debouncedSearchQuery || undefined,
+            undefined,
+            undefined,
+            {
+                enabled: !!shopId && selectedBusinessEntity === BusinessEntityType.CUSTOMER,
+            }
+        )
 
     return {
         flatVendorList: vendorResponse?.data || [],
         flatCustomerList: customerResponse?.customers || [],
         isLoading:
-            (selectedBusinessEntity === BusinessEntityType.VENDOR &&
-                isVendorFetching) ||
-            (selectedBusinessEntity === BusinessEntityType.CUSTOMER &&
-                isCustomerFetching),
+            (selectedBusinessEntity === BusinessEntityType.VENDOR && isVendorFetching) ||
+            (selectedBusinessEntity === BusinessEntityType.CUSTOMER && isCustomerFetching),
     }
 }

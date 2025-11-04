@@ -29,8 +29,16 @@ import { DataTablePagination } from '@/features/users/components/data-table-pagi
 import type { DataTablePropsInterface } from '@/interface/customerInterface'
 import { DataTableBulkActions } from './DataTableBulkActions'
 import { useDebounce } from '../../hooks/useDebounce'
+import DateRangeSearch from '../DateRangeSearch'
 
-const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange, onSearchChange }: DataTablePropsInterface) => {
+const CustomerTable = ({
+  data,
+  pageIndex,
+  pageSize,
+  total,
+  onPageChange,
+  onSearchChange
+}: DataTablePropsInterface) => {
   // table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -43,17 +51,26 @@ const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange, onSearc
   const [globalFilter, setGlobalFilter] = useState('')
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
+  // Search states
   const [searchInput, setSearchInput] = useState('')
-  // 3sec delay
+  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({})
+
+  // Debounce search input only (300ms delay)
   const debouncedSearch = useDebounce(searchInput, 300)
 
   const navigate = useNavigate()
 
+  // Handle search input changes
   useEffect(() => {
-    // reset to first page when new search starts
-    onPageChange(0)
-    onSearchChange?.(debouncedSearch)
-  }, [debouncedSearch, onPageChange, onSearchChange])
+    onPageChange(0) // Reset to first page
+    onSearchChange?.(debouncedSearch, dateRange.from, dateRange.to)
+  }, [debouncedSearch, onPageChange, onSearchChange, dateRange.from, dateRange.to])
+
+  // Handle date range changes
+  const handleDateChange = (from?: Date, to?: Date) => {
+    setDateRange({ from, to })
+    onPageChange(0) // Reset to first page when date range changes
+  }
 
   const table = useReactTable({
     data,
@@ -106,7 +123,7 @@ const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange, onSearc
   const pageCount = table.getPageCount()
 
   useEffect(() => {
-    if (table.getState().pagination.pageIndex >= pageCount) {
+    if (table.getState().pagination.pageIndex >= pageCount && pageCount > 0) {
       table.setPageIndex(pageCount - 1)
     }
   }, [table, pageCount])
@@ -119,15 +136,23 @@ const CustomerTable = ({ data, pageIndex, pageSize, total, onPageChange, onSearc
   return (
     <div className='space-y-4 max-sm:has-[div[role="toolbar"]]:mb-16'>
       <div className='flex items-center justify-between'>
-        <div className='flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2'>
-          <Input
-            placeholder='Filter by id, name, phone or address...'
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            className='h-8 w-[150px] lg:w-[250px]'
-          />
+        <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center">
+            <DataTableViewOptions table={table} />
+          </div>
+
+          <div className="flex items-center gap-x-2">
+            <Input
+              placeholder="Filter by id, name, phone or address..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="h-8 w-[150px] lg:w-[250px]"
+            />
+
+            <DateRangeSearch onDateChange={handleDateChange} />
+          </div>
         </div>
-        <DataTableViewOptions table={table} />
+
       </div>
       <div className='rounded-md border'>
         <Table>

@@ -10,12 +10,13 @@ import {
   type SortingState,
 } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Input } from "@/components/ui/input"
+// import { Input } from "@/components/ui/input"
 
 import type { VendorTransactionInterface } from "@/interface/vendorInterface"
 import { VendorTransactionColumns } from "./VendorTransactionColumns"
 import { DataTableViewOptions } from "../customers/DataTableViewActions"
 import { DataTablePagination } from "../data-table-pagination"
+import DateRangeSearch from "../DateRangeSearch"
 
 interface VendorTransactionTableProps {
   data: VendorTransactionInterface[]
@@ -88,7 +89,7 @@ const VendorTransactionsTable = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <Input
           placeholder="Filter by No, Type, Status..."
           value={table.getState().globalFilter ?? ""}
@@ -96,6 +97,23 @@ const VendorTransactionsTable = ({
           className="h-8 w-[200px] lg:w-[300px]"
         />
         <DataTableViewOptions table={table} />
+      </div> */}
+      <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center">
+          <DataTableViewOptions table={table} />
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <DateRangeSearch
+          //  onDateChange={handleDateChange} 
+          />
+        </div>
+        {/* <Input
+                placeholder="Filter by No, Type, Status..."
+                value={table.getState().globalFilter ?? ""}
+                onChange={(e) => table.setGlobalFilter(e.target.value)}
+                className="h-8 w-[200px] lg:w-[300px]"
+              /> */}
       </div>
 
       <div className="rounded-md border">

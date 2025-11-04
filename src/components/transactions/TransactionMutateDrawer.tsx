@@ -31,6 +31,7 @@ import { InventoryFields } from './InventoryFields'
 import { AmountField } from './AmountField'
 import { PaymentFields } from './PaymentFields'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
+import { useDebounce } from '@/hooks/useDebounce'
 
 const TransactionMutateDrawer = ({
   open,
@@ -69,12 +70,23 @@ const TransactionMutateDrawer = ({
   const showInventoryFields =
     transactionType === 'PURCHASE' || transactionType === 'SALE'
 
+  // Debounce inventory search query
+  const debouncedInventorySearch = useDebounce(inventorySearchQuery, 300)
+
   const {
     data: inventoryResponse = { items: [] },
     isFetching: isInventoryLoading,
-  } = useInventoryList(shopId || '', 1, 10, inventorySearchQuery, {
-    enabled: !!shopId && showInventoryFields,
-  })
+  } = useInventoryList(
+    shopId || '',
+    1,
+    10,
+    debouncedInventorySearch || undefined,
+    undefined,
+    undefined,
+    {
+      enabled: !!shopId && showInventoryFields,
+    }
+  )
 
   const inventoryList = useMemo(
     () => inventoryResponse.items || [],
@@ -281,6 +293,7 @@ const TransactionMutateDrawer = ({
                   setInventoryDisplayData={setInventoryDisplayData}
                   isInventoryLoading={isInventoryLoading}
                   transactionType={transactionType}
+                  onInventorySearch={setInventorySearchQuery}
                 />
               ) : (
                 <AmountField form={form} />

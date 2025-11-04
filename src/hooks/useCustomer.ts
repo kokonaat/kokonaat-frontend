@@ -15,11 +15,13 @@ export const useCustomerList = (
     page: number,
     limit: number,
     searchBy?: string,
+    startDate?: Date,
+    endDate?: Date,
     options?: { enabled?: boolean }
 ) =>
     useQuery({
-        queryKey: [...CUSTOMER_KEYS.all, shopId, page, limit, searchBy],
-        queryFn: () => customerList(shopId, page, limit, searchBy),
+        queryKey: [...CUSTOMER_KEYS.all, shopId, page, limit, searchBy, startDate, endDate],
+        queryFn: () => customerList(shopId, page, limit, searchBy, startDate, endDate),
         enabled: options?.enabled !== false && !!shopId,
         placeholderData: keepPreviousData,
     })
@@ -32,7 +34,6 @@ export const useCustomerById = (shopId: string, id: string) => {
         enabled: !!shopId && !!id,
     })
 }
-
 
 // create
 export const useCreateCustomer = (shopId: string) => {
@@ -64,11 +65,27 @@ export const useDeleteCustomer = (shopId: string) => {
 }
 
 // get vendor transactions by customerId
-export const useCustomerTransactions = (vendorId: string, pageIndex: number, pageSize: number) => {
+// export const useCustomerTransactions = (vendorId: string, pageIndex: number, pageSize: number) => {
+//     return useQuery<VendorTransactionApiResponse>({
+//         queryKey: ["vendorTransactions", vendorId, pageIndex, pageSize],
+//         queryFn: () => getCustomerTransactions(vendorId, pageIndex + 1, pageSize), // pageIndex +1 for 1-based API
+//         enabled: !!vendorId,
+//         placeholderData: keepPreviousData,
+//     })
+// }
+
+export const useCustomerTransactions = (
+    customerId: string,
+    pageIndex: number,
+    pageSize: number,
+    startDate?: string,
+    endDate?: string
+) => {
     return useQuery<VendorTransactionApiResponse>({
-        queryKey: ["vendorTransactions", vendorId, pageIndex, pageSize],
-        queryFn: () => getCustomerTransactions(vendorId, pageIndex + 1, pageSize), // pageIndex +1 for 1-based API
-        enabled: !!vendorId,
+        queryKey: ["vendorTransactions", customerId, pageIndex, pageSize, startDate, endDate],
+        queryFn: () =>
+            getCustomerTransactions(customerId, pageIndex + 1, pageSize, startDate, endDate), // pageIndex+1 for 1-based API
+        enabled: !!customerId,
         placeholderData: keepPreviousData,
     })
 }

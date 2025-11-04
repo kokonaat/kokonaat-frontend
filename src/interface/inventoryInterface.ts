@@ -61,6 +61,7 @@ export interface InventoryTableProps {
   total: number
   onPageChange: (index: number) => void
   onSearchChange: (value: string) => void
+  onDateChange?: (from?: Date, to?: Date) => void
 }
 
 export interface InventoryDetailInterface {
@@ -76,5 +77,5 @@ export interface InventoryItem {
   id: string;
   name: string;
   lastPrice: number;
-  quantity: number; 
+  quantity: number;
 }

@@ -19,6 +19,8 @@ import CustomerTransactionsTable from "./CustomerTransactionsTable"
 
 const CustomerTransactionsProfile = () => {
   const shopId = useShopStore((s) => s.currentShopId)
+  const [startDate, setStartDate] = useState<string>()
+  const [endDate, setEndDate] = useState<string>()
   const { id } = useParams<{ id: string }>()
   const [pageIndex, setPageIndex] = useState(0)
   const pageSize = 10
@@ -32,7 +34,13 @@ const CustomerTransactionsProfile = () => {
     data: transactionsResponse,
     isLoading: isTransactionsLoading,
     isError: isTransactionsError,
-  } = useCustomerTransactions(id ?? "", pageIndex, pageSize)
+  } = useCustomerTransactions(
+    id ?? "",
+    pageIndex,
+    pageSize,
+    startDate,
+    endDate
+  )
 
   const transactions = transactionsResponse?.data ?? []
   const total = transactionsResponse?.total ?? 0
@@ -119,6 +127,10 @@ const CustomerTransactionsProfile = () => {
                     pageSize={pageSize}
                     total={total}
                     onPageChange={setPageIndex}
+                    onDateChange={(from, to) => {
+                      setStartDate(from)
+                      setEndDate(to)
+                    }}
                   />
                 )}
                 {!isTransactionsLoading && transactions.length === 0 && (

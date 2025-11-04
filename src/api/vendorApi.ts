@@ -7,7 +7,9 @@ export const vendorList = async (
     shopId: string,
     page: number,
     limit: number,
-    searchBy?: string
+    searchBy?: string,
+    startDate?: Date,
+    endDate?: Date,
 ): Promise<VendorListResponseInterface> => {
     if (!shopId) throw new Error("Shop ID is required");
 
@@ -17,7 +19,9 @@ export const vendorList = async (
         limit: String(limit),
     });
 
-    if (searchBy) params.append("searchBy", searchBy);
+    if (searchBy) params.append('searchBy', searchBy)
+    if (startDate) params.append('startDate', startDate.toISOString())
+    if (endDate) params.append('endDate', endDate.toISOString())
 
     const res = await axiosInstance.get<VendorListApiResponseInterface>(
         `${apiEndpoints.vendor.vendorList}?${params.toString()}`

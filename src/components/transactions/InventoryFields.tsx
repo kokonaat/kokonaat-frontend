@@ -16,7 +16,8 @@ import { InventoryRow } from './InventoryRow'
 interface InventoryFieldsProps {
     form: UseFormReturn<TransactionFormValues>
     fields: FieldArrayWithId<TransactionFormValues, 'inventories', 'id'>[]
-    append: (value: any) => void
+    append: (value: TransactionFormValues['inventories'][number]) => void
+    // append: (value: any) => void
     remove: (index: number) => void
     inventoryOptions: ComboboxOptionInterface[]
     inventoryList: InventoryItem[]
@@ -33,6 +34,7 @@ interface InventoryFieldsProps {
     >
     isInventoryLoading: boolean
     transactionType: string
+    onInventorySearch: (query: string) => void
 }
 
 export const InventoryFields = ({
@@ -48,6 +50,7 @@ export const InventoryFields = ({
     setInventoryDisplayData,
     isInventoryLoading,
     transactionType,
+    onInventorySearch,
 }: InventoryFieldsProps) => {
     const total = calculateTotal(form.watch('inventories'))
 
@@ -70,6 +73,9 @@ export const InventoryFields = ({
     }
 
     const handleInventorySearch = (query: string, index: number) => {
+        // Trigger parent search state
+        onInventorySearch(query)
+
         setInventoryDisplayData((prev) => ({
             ...prev,
             [index]: { lastPrice: null, stockQuantity: null },

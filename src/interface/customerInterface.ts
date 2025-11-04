@@ -59,7 +59,7 @@ export interface CustomerMutateDrawerProps {
     contactPerson: string | null
     contactPersonPhone: string | null
   }) => void
-}  
+}
 
 export interface DataTablePropsInterface {
   data: CustomerListInterface[]
@@ -67,5 +67,7 @@ export interface DataTablePropsInterface {
   pageSize: number
   total: number
   onPageChange: (pageIndex: number) => void
-  onSearchChange?: (value: string) => void
+  onSearchChange?: (searchBy?: string, startDate?: Date, endDate?: Date) => void
+  rowSelection?: Record<string, boolean>
+  dateRange?: { from?: Date; to?: Date }
 }

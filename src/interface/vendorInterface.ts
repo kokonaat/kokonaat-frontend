@@ -1,6 +1,5 @@
 import type { Table } from "@tanstack/react-table";
 
-
 export interface Shop {
   id: string
   name: string
@@ -91,7 +90,9 @@ export interface DataTablePropsInterface {
   pageSize: number
   total: number
   onPageChange: (page: number) => void
-  onSearchChange?: (value: string) => void
+  onSearchChange?: (value?: string, startDate?: Date, endDate?: Date) => void
+  rowSelection?: Record<string, boolean>
+  dateRange?: { from?: Date; to?: Date }
 }
 
 export interface VendorTransactionVendor {
@@ -130,7 +131,6 @@ export interface VendorTransactionInterface {
   updatedAt: string
   details: VendorTransactionDetail[]
 }
-
 
 export interface VendorTransactionApiResponse {
   msg: string

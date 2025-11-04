@@ -12,11 +12,31 @@ import type { CreateTransactionDto, TransactionListResponse } from "@/interface/
 //   createdAt: string
 // }
 
-export const getTransactions = async (shopId: string, page: number) => {
+// export const getTransactions = async (shopId: string, page: number) => {
+//   const res = await axiosInstance.get<TransactionListResponse>(
+//     apiEndpoints.transactions.transactionsList,
+//     {
+//       params: { shopId, page },
+//     }
+//   )
+//   return res.data
+// }
+
+export const getTransactions = async (
+  shopId: string,
+  page: number,
+  startDate?: string,
+  endDate?: string
+) => {
   const res = await axiosInstance.get<TransactionListResponse>(
     apiEndpoints.transactions.transactionsList,
     {
-      params: { shopId, page },
+      params: {
+        shopId,
+        page,
+        startDate,
+        endDate,
+      },
     }
   )
   return res.data

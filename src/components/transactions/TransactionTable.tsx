@@ -103,19 +103,18 @@ const TransactionTable = ({
   return (
     <div className="space-y-4">
       <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center">
-          <DataTableViewOptions table={table} />
-        </div>
-
         <div className="flex items-center gap-x-2">
+          <DateRangeSearch onDateChange={handleDateChange} />
           <Input
             placeholder="Filter transactions..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="h-8 w-[150px] lg:w-[250px]"
           />
+        </div>
 
-          <DateRangeSearch onDateChange={handleDateChange} />
+        <div className="flex items-center">
+          <DataTableViewOptions table={table} />
         </div>
       </div>
 

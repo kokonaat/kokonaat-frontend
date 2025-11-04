@@ -27,9 +27,13 @@ export const TransactionTypeFields = ({
     selectedBusinessEntity,
     transactionType,
 }: TransactionTypeFieldsProps) => {
+
+    // watch entityTypeId to know when Vendor/Customer is selected
+    const entityTypeId = form.watch('entityTypeId')
+
     return (
         <div className='flex items-end gap-4'>
-            {selectedBusinessEntity && (
+            {selectedBusinessEntity && entityTypeId && (
                 <FormField
                     control={form.control}
                     name='transactionType'
@@ -54,7 +58,7 @@ export const TransactionTypeFields = ({
                 />
             )}
 
-            {selectedBusinessEntity && transactionType && (
+            {selectedBusinessEntity && entityTypeId && transactionType && (
                 <FormField
                     control={form.control}
                     name='paymentType'

@@ -16,7 +16,7 @@ export const CustomerColumns: ColumnDef<CustomerListInterface>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label='Select all'
-        className='translate-y-[2px]'
+        className='translate-y-0.5'
       />
     ),
     cell: ({ row }) => (
@@ -24,7 +24,7 @@ export const CustomerColumns: ColumnDef<CustomerListInterface>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label='Select row'
-        className='translate-y-[2px]'
+        className='translate-y-0.5'
       />
     ),
     enableSorting: false,
@@ -72,7 +72,7 @@ export const CustomerColumns: ColumnDef<CustomerListInterface>[] = [
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p className="max-w-xs break-words">{address}</p>
+              <p className="max-w-xs wrap-break-word">{address}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

@@ -115,7 +115,7 @@ const VendorTable = ({
 
   // vendor transaction profile page
   const handleClick = (id: string) => {
-    navigate(`/vendor/${id}`)
+    navigate(`/transactions/ledger/${id}`)
   }
 
   return (

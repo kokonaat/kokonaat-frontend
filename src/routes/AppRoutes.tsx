@@ -13,6 +13,7 @@ const CreateShop = lazy(() => import("@/pages/CreateShop"))
 const Dashboard = lazy(() => import("@/pages/Dashboard"))
 const Shops = lazy(() => import("@/pages/Shops"))
 const Customers = lazy(() => import("@/pages/Customers"))
+const TransactionLedger = lazy(() => import("@/components/customers/TransactionLedger"))
 const CustomerTransactionsProfile = lazy(() => import("@/components/customers/CustomerTransactionsProfile"))
 const Vendors = lazy(() => import("@/pages/Vendors"))
 const Inventory = lazy(() => import("@/pages/Inventory"))
@@ -40,6 +41,7 @@ const AppRoutes = () => {
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/shops" element={<Shops />} />
                             <Route path="/customers" element={<Customers />} />
+                            <Route path="transactions/ledger/:id" element={<TransactionLedger />} />
                             <Route path="/customer/:id" element={<CustomerTransactionsProfile />} />
                             <Route path="/vendors" element={<Vendors />} />
                             <Route path="/vendor/:id" element={<VendorTransactionsProfile />} />

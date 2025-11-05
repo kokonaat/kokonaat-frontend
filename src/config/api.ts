@@ -37,7 +37,8 @@ export const apiEndpoints: ApiEndpoints = {
     transactions: {
         transactionsList: "/transactions",
         createTransactions: "/transactions",
-        getTransactionById: "/transactions/{id}"
+        getTransactionById: "/transactions/{id}",
+        transactionLedger: "/transaction/ledger/{customerOrVendorId}"
     },
     inventory: {
         inventoryList: "/inventory",

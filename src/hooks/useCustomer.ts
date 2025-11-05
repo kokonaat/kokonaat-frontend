@@ -65,15 +65,6 @@ export const useDeleteCustomer = (shopId: string) => {
 }
 
 // get vendor transactions by customerId
-// export const useCustomerTransactions = (vendorId: string, pageIndex: number, pageSize: number) => {
-//     return useQuery<VendorTransactionApiResponse>({
-//         queryKey: ["vendorTransactions", vendorId, pageIndex, pageSize],
-//         queryFn: () => getCustomerTransactions(vendorId, pageIndex + 1, pageSize), // pageIndex +1 for 1-based API
-//         enabled: !!vendorId,
-//         placeholderData: keepPreviousData,
-//     })
-// }
-
 export const useCustomerTransactions = (
     customerId: string,
     pageIndex: number,

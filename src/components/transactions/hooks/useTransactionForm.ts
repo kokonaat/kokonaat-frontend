@@ -6,6 +6,7 @@ import type { BusinessEntityType } from '@/utils/enums/trasaction.enum'
 import { transactionFormSchema } from '@/schema/transactionFormSchema'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 import { DEFAULT_VALUES } from '@/constance/transactionContances'
+import type { ComboboxOptionInterface } from '@/interface/transactionInterface'
 
 export const useTransactionForm = () => {
     const [selectedBusinessEntity, setSelectedBusinessEntity] =
@@ -17,6 +18,11 @@ export const useTransactionForm = () => {
     >({})
     const [inventoryDisplayData, setInventoryDisplayData] = useState<
         Record<number, { lastPrice: number | null; stockQuantity: number | null }>
+    >({})
+    // Cache of selected inventory options (ID -> option) to ensure they display correctly
+    // even when not in search results
+    const [selectedInventoryOptionsCache, setSelectedInventoryOptionsCache] = useState<
+        Record<string, ComboboxOptionInterface>
     >({})
 
     const resolver = zodResolver(
@@ -35,6 +41,7 @@ export const useTransactionForm = () => {
         setInventorySearchQuery('')
         setInventoryInputValues({})
         setInventoryDisplayData({})
+        setSelectedInventoryOptionsCache({})
     }
 
     return {
@@ -49,6 +56,8 @@ export const useTransactionForm = () => {
         setInventoryInputValues,
         inventoryDisplayData,
         setInventoryDisplayData,
+        selectedInventoryOptionsCache,
+        setSelectedInventoryOptionsCache,
         resetFormStates,
     }
 }

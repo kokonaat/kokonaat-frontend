@@ -52,6 +52,8 @@ const TransactionMutateDrawer = ({
     setInventoryInputValues,
     inventoryDisplayData,
     setInventoryDisplayData,
+    selectedInventoryOptionsCache,
+    setSelectedInventoryOptionsCache,
     resetFormStates,
   } = useTransactionForm()
 
@@ -169,9 +171,17 @@ const TransactionMutateDrawer = ({
       ) => {
         const inputValue = inventoryInputValues[index] || item.inventoryId
 
-        const isExistingInventory = inventoryOptions.some(
+        // Check if it's an existing inventory by:
+        // 1. Checking current inventoryOptions (search results)
+        // 2. Checking selectedInventoryOptionsCache (previously selected inventories)
+        // 3. Checking if it looks like a UUID (format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+        const isInOptions = inventoryOptions.some(
           (opt) => opt.value === inputValue
         )
+        const isInCache = selectedInventoryOptionsCache[inputValue] !== undefined
+        const looksLikeUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(inputValue)
+        
+        const isExistingInventory = isInOptions || isInCache || looksLikeUUID
 
         if (isExistingInventory) {
           return {
@@ -291,6 +301,8 @@ const TransactionMutateDrawer = ({
                   setInventoryInputValues={setInventoryInputValues}
                   inventoryDisplayData={inventoryDisplayData}
                   setInventoryDisplayData={setInventoryDisplayData}
+                  selectedInventoryOptionsCache={selectedInventoryOptionsCache}
+                  setSelectedInventoryOptionsCache={setSelectedInventoryOptionsCache}
                   isInventoryLoading={isInventoryLoading}
                   transactionType={transactionType}
                   onInventorySearch={setInventorySearchQuery}

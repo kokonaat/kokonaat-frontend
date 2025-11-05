@@ -67,21 +67,30 @@ export const InventoryRow = ({
                                 placeholder='Select inventory...'
                                 value={currentInputValue}
                                 onSelect={(val) => {
+                                    // Check if this is a real selection from options
                                     const selectedOption = inventoryOptions.find(
                                         (opt) => opt.value === val
                                     )
-                                    const nameToCheck = selectedOption
-                                        ? selectedOption.label
-                                        : val
+                                    
+                                    // Only process if it's a real option selection (from dropdown)
+                                    // When allowCustomValue is true, onSelect is also called during typing,
+                                    // but those are handled by onSearch. We only process explicit selections here.
+                                    if (selectedOption) {
+                                        const nameToCheck = selectedOption.label
 
-                                    if (isAlreadyUsed(nameToCheck)) {
-                                        toast.warning(
-                                            'This inventory is already selected in another row'
-                                        )
-                                        return
+                                        if (isAlreadyUsed(nameToCheck)) {
+                                            toast.warning(
+                                                'This inventory is already selected in another row'
+                                            )
+                                            return
+                                        }
+
+                                        onInventorySelect(val, index)
                                     }
-
-                                    onInventorySelect(val, index)
+                                    // If selectedOption is undefined, it's either:
+                                    // 1. A custom typed value (handled by onSearch)
+                                    // 2. A custom value clicked from "Create" option (also handled by onSearch via typing)
+                                    // So we ignore it here to avoid conflicts
                                 }}
                                 onSearch={(query) => {
                                     if (transactionType !== 'PURCHASE') {

@@ -90,3 +90,53 @@ export interface TransactionListResponse {
   limit: number
   total: number
 }
+
+export interface TransactionLedgerInterface {
+  no: string
+  id: string
+  partnerType: string
+  vendor: {
+    id: string
+    name: string
+  }
+  vendorId: string
+  transactionType: string
+  transactionStatus: string
+  amount: number
+  pending: number
+  paid: number
+  advancePaid: number
+  paymentType: string
+  isPaid: boolean
+  remarks: string
+  payable: number
+  receivable: number
+  shopId: string
+  createdAt: string
+  updatedAt: string
+  details: TransactionDetail[]
+}
+
+export interface TransactionDetail {
+  id: string
+  transactionId: string
+  inventory: {
+    id: string
+    name: string
+  }
+  quantity: number
+  price: number
+  total: number
+  shopId: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface TransactionLedgerTableProps {
+    data: TransactionLedgerInterface[]
+    pageIndex: number
+    pageSize: number
+    total: number
+    onPageChange: (pageIndex: number) => void
+    onDateChange?: (startDate?: string, endDate?: string) => void
+}

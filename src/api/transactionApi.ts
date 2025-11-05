@@ -2,26 +2,6 @@ import { apiEndpoints } from "@/config/api"
 import { axiosInstance } from "./axios"
 import type { CreateTransactionDto, TransactionListResponse } from "@/interface/transactionInterface"
 
-// export interface TransactionRowInterface {
-//   id: string
-//   partnerType: "VENDOR" | "CUSTOMER"
-//   vendorId?: string
-//   customerId?: string
-//   transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE"
-//   amount: number
-//   createdAt: string
-// }
-
-// export const getTransactions = async (shopId: string, page: number) => {
-//   const res = await axiosInstance.get<TransactionListResponse>(
-//     apiEndpoints.transactions.transactionsList,
-//     {
-//       params: { shopId, page },
-//     }
-//   )
-//   return res.data
-// }
-
 export const getTransactions = async (
   shopId: string,
   page: number,
@@ -56,5 +36,38 @@ export const getTransactionById = async (shopId: string, id: string) => {
   // replace {id} in the path and also put id in the query string.
   const path = apiEndpoints.transactions.getTransactionById.replace("{id}", id)
   const res = await axiosInstance.get(`${path}?id=${id}&shopId=${shopId}`)
+  return res.data
+}
+
+// transaction ledger by customer/vendor id
+export const transactionLedger = async (
+  shopId: string,
+  page: number,
+  customerOrVendorId: string,
+  limit: number = 10,
+  searchBy?: string,
+  startDate?: string,
+  endDate?: string
+) => {
+  if (!shopId) throw new Error("Shop ID is required")
+  if (!customerOrVendorId) throw new Error("Customer/Vendor ID is required")
+
+  const params: Record<string, any> = {
+    shopId,
+    page,
+    limit,
+  }
+
+  if (searchBy) params.searchBy = searchBy
+  if (startDate) params.startDate = startDate
+  if (endDate) params.endDate = endDate
+
+  // Correct path replacement
+  const path = apiEndpoints.transactions.transactionLedger.replace(
+    "{customerOrVendorId}",
+    customerOrVendorId
+  )
+
+  const res = await axiosInstance.get(path, { params })
   return res.data
 }

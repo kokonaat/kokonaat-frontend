@@ -34,6 +34,7 @@ export interface ApiEndpoints {
         transactionsList: string
         createTransactions: string
         getTransactionById: string
+        transactionLedger: string
     }
     inventory: {
         inventoryList: string

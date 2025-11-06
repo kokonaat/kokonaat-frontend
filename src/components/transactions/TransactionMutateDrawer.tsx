@@ -78,6 +78,7 @@ const TransactionMutateDrawer = ({
   const {
     data: inventoryResponse = { items: [] },
     isFetching: isInventoryLoading,
+    refetch: refetchInventories,
   } = useInventoryList(
     shopId || '',
     1,
@@ -180,7 +181,7 @@ const TransactionMutateDrawer = ({
         )
         const isInCache = selectedInventoryOptionsCache[inputValue] !== undefined
         const looksLikeUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(inputValue)
-        
+
         const isExistingInventory = isInOptions || isInCache || looksLikeUUID
 
         if (isExistingInventory) {
@@ -234,8 +235,15 @@ const TransactionMutateDrawer = ({
         }
 
     createTransaction(payload as CreateTransactionDto, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast.success('Transaction created successfully')
+
+        // ✅ Force refetch of inventories after transaction creates new items
+        try {
+          await refetchInventories()
+        // eslint-disable-next-line no-empty
+        } catch (_) { }
+
         resetFormStates()
         onOpenChange(false)
       },

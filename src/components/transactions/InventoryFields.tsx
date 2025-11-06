@@ -109,6 +109,8 @@ export const InventoryFields = ({
         ...prev,
         [index]: val,
       }))
+      // reset search
+      onInventorySearch('')
     }
     // If val is not found in inventoryList, it's a custom typed value
     // and will be handled by handleInventorySearch, so we ignore it here
@@ -128,6 +130,11 @@ export const InventoryFields = ({
       ...prev,
       [index]: query,
     }))
+    // If user typed a completely new inventory name,
+    // clear search after a short delay so list refetches full data
+    if (!inventoryList.find((i) => i.name.toLowerCase() === query.toLowerCase())) {
+      setTimeout(() => onInventorySearch(''), 400)
+    }
   }
 
   const handleAppend = () => {

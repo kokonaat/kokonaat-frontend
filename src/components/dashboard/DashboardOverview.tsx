@@ -1,6 +1,6 @@
 import { ResponsiveContainer, BarChart, XAxis, YAxis, Bar } from 'recharts'
 import { useShopStore } from '@/stores/shopStore'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { useDashboardData } from '@/hooks/useDashboard'
 
 const DashboardOverview = () => {
@@ -22,10 +22,16 @@ const DashboardOverview = () => {
 
   // map api data to chart format
   const chartData =
-    data?.last12MonthsRevenue?.map((item: any) => ({
-      name: item.month,
-      total: item.totalAmount || 0,
-    })) || []
+    data?.last12MonthsRevenue
+      ?.map((item: any) => {
+        // format month to short name, e.g., "Nov"
+        const monthName = format(parseISO(item.month + '-01'), 'MMM')
+        return {
+          name: monthName,
+          total: item.revenue || 0,
+        }
+      })
+      .reverse() || [] // reverse to show oldest -> newest
 
   // if no data, show empty months
   const months = [

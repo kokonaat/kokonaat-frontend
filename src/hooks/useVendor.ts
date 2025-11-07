@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query"
 import { createVendor, deleteVendor, getVendorById, getVendorTransactions, updateVendor, vendorList } from "@/api/vendorApi"
 import type { VendorFormInterface, VendorTransactionApiResponse } from "@/interface/vendorInterface"
+import type { UseQueryOptions, UseQueryResult } from "@tanstack/react-query"
 
 const VENDOR_KEYS = {
     all: ["vendors"] as const,
@@ -26,11 +27,24 @@ export const useVendorList = (
     })
 
 // get vendor by id
-export const useVendorById = (shopId: string, id: string) => {
+// export const useVendorById = (shopId: string, id: string) => {
+//     return useQuery<VendorFormInterface>({
+//         queryKey: ["vendors", shopId, id],
+//         queryFn: () => getVendorById(id, shopId),
+//         enabled: !!shopId && !!id,
+//     })
+// }
+
+export const useVendorById = (
+    shopId: string,
+    id: string,
+    options?: Partial<UseQueryOptions<VendorFormInterface, Error>>
+): UseQueryResult<VendorFormInterface, Error> => {
     return useQuery<VendorFormInterface>({
         queryKey: ["vendors", shopId, id],
         queryFn: () => getVendorById(id, shopId),
-        enabled: !!shopId && !!id,
+        enabled: !!shopId && !!id && (options?.enabled ?? true),
+        ...options,
     })
 }
 

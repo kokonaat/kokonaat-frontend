@@ -7,6 +7,9 @@ export const apiEndpoints: ApiEndpoints = {
         signUp: "/auth/signup",
         signIn: "/auth/signin",
     },
+    dashbaord: {
+        dashboardReport: "/report/dashboard"
+    },
     shop: {
         createShop: "/shop",
         shopList: "/shop",
@@ -47,5 +50,11 @@ export const apiEndpoints: ApiEndpoints = {
         deleteInventory: "/inventory",
         getInventoryById: "/inventory/id"
     },
-    user: "/user/me",
+    user: {
+        currentUser: "/user/me",
+        userList: "/user/get-users-by-shop-id",
+        allRoles: "/user/role/get-roles",
+        createUser: "/user/add-user-to-shop",
+        changePassword: "/user/change-password",
+    }
 }

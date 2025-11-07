@@ -2,6 +2,7 @@ import { createCustomer, customerList, deleteCustomer, getCustomerById, getCusto
 import type { CustomerFormInterface } from "@/interface/customerInterface"
 import type { VendorFormInterface, VendorTransactionApiResponse } from "@/interface/vendorInterface"
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import type { UseQueryOptions, UseQueryResult } from "@tanstack/react-query"
 
 const CUSTOMER_KEYS = {
     all: ['customers'] as const,
@@ -27,11 +28,24 @@ export const useCustomerList = (
     })
 
 // get customer by id
-export const useCustomerById = (shopId: string, id: string) => {
+// export const useCustomerById = (shopId: string, id: string) => {
+//     return useQuery<VendorFormInterface>({
+//         queryKey: ["customers", shopId, id],
+//         queryFn: () => getCustomerById(id, shopId),
+//         enabled: !!shopId && !!id,
+//     })
+// }
+
+export const useCustomerById = (
+    shopId: string,
+    id: string,
+    options?: Partial<UseQueryOptions<VendorFormInterface, Error>>
+): UseQueryResult<VendorFormInterface, Error> => {
     return useQuery<VendorFormInterface>({
         queryKey: ["customers", shopId, id],
         queryFn: () => getCustomerById(id, shopId),
-        enabled: !!shopId && !!id,
+        enabled: !!shopId && !!id && (options?.enabled ?? true),
+        ...options,
     })
 }
 

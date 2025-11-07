@@ -8,6 +8,9 @@ export interface ApiEndpoints {
         shopList: string
         updateShop: string
     }
+    dashbaord: {
+        dashboardReport: string
+    }
     designation: {
         designationList: string
         createDesignation: string
@@ -43,5 +46,11 @@ export interface ApiEndpoints {
         deleteInventory: string
         getInventoryById: string
     }
-    user: string
+    user: {
+        currentUser: string
+        userList: string
+        allRoles: string
+        createUser: string
+        changePassword: string
+    }
 }

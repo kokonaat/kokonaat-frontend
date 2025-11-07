@@ -13,3 +13,12 @@ export const signInUser = async (data: UserSignInInterface): Promise<AuthRespons
     const response = await axiosInstance.post(apiEndpoints.auth.signIn, data)
     return response.data
 }
+
+// change password
+export const changePassword = async (data: {
+    oldPassword: string
+    newPassword: string
+}) => {
+    const res = await axiosInstance.put(apiEndpoints.user.changePassword, data)
+    return res.data
+}

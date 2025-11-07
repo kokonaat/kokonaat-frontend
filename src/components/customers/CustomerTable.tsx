@@ -130,7 +130,7 @@ const CustomerTable = ({
 
   // customer transaction profile page
   const handleClick = (id: string) => {
-    navigate(`/transactions/ledger/${id}`)
+    navigate(`/transactions/ledger/customer/${id}`)
   }
 
   return (

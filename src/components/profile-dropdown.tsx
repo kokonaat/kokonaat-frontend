@@ -78,7 +78,9 @@ export function ProfileDropdown() {
             </Link>
           </DropdownMenuItem>
 
-          <DropdownMenuItem>New Team</DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link to="/change-password">Change Password</Link>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
 
         <DropdownMenuSeparator />

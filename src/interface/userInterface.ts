@@ -1,17 +1,18 @@
+// Auth-related interfaces
 export interface UserSignUpInterface {
-    name: string,
-    phone: string,
-    password: string,
-    confirmPassword: string,
+    name: string
+    phone: string
+    password: string
+    confirmPassword: string
 }
 
 export interface UserSignInInterface {
-    phone: string,
+    phone: string
     password: string
 }
 
 export interface AuthResponseInterface {
-    access_token: string,
+    access_token: string
     refresh_token: string
 }
 
@@ -23,6 +24,7 @@ export interface AuthState {
     clearTokens: () => void
 }
 
+// User state and info
 export interface UserInterface {
     id: string
     name: string
@@ -34,4 +36,72 @@ export interface UserState {
     user: UserInterface | null
     setUser: (user: UserInterface) => void
     clearUser: () => void
+}
+
+// Roles and shops
+export interface Role {
+    id: string
+    name: string
+}
+
+export interface Shop {
+    id: string
+    name?: string
+}
+
+export interface ShopWiseUserRole {
+    id: string
+    shop?: Shop
+    role: Role
+}
+
+// Full User interface from API
+export interface User {
+    id: string
+    firstName: string
+    lastName: string
+    username: string
+    email: string
+    phoneNumber: string
+    status: 'active' | 'inactive' | 'invited' | 'suspended'
+    role: 'superadmin' | 'admin' | 'cashier' | 'manager'
+    createdAt: Date
+    updatedAt: Date
+    shopWiseUserRoles: ShopWiseUserRole[]
+}
+
+// Optional: simplified list view for tables
+export interface UserListItem {
+    id: string
+    name: string
+    phone: string
+    createdAt: string | Date
+    shopWiseUserRoles: ShopWiseUserRole[]
+}
+
+// Create user request/response
+export interface CreateUserRequest {
+    name: string
+    phone: string
+    password: string
+    shopId: string
+    roleId: string
+}
+
+export interface CreateUserResponse {
+    id: string
+    name: string
+    phone: string
+    shopWiseUserRoles: {
+        shop: { id: string }
+        role: { id: string }
+    }[]
+    createdAt: string
+}
+
+export interface FetchUserListParams {
+    shopId: string
+    page?: number
+    limit?: number
+    searchBy?: string
 }

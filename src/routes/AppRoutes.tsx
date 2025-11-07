@@ -20,8 +20,10 @@ const Inventory = lazy(() => import("@/pages/Inventory"))
 const VendorTransactionsProfile = lazy(() => import("@/components/vendors/VendorTransactionsProfile"))
 const TransactionsPage = lazy(() => import("@/pages/TransactionsPage"))
 const TransactionDetails = lazy(() => import("@/components/transactions/TransactionDetails"))
+const Users = lazy(() => import("@/pages/Users"))
 const Settings = lazy(() => import("@/features/settings"))
 const ComingSoon = lazy(() => import("@/components/coming-soon"))
+const ChangePassword = lazy(() => import("@/pages/ChangePassword"))
 
 const AppRoutes = () => {
     // calling user api to avoid to get null where user's data needed
@@ -41,13 +43,15 @@ const AppRoutes = () => {
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/shops" element={<Shops />} />
                             <Route path="/customers" element={<Customers />} />
-                            <Route path="transactions/ledger/:id" element={<TransactionLedger />} />
+                            <Route path="transactions/ledger/:type/:id" element={<TransactionLedger />} />
                             <Route path="/customer/:id" element={<CustomerTransactionsProfile />} />
                             <Route path="/vendors" element={<Vendors />} />
                             <Route path="/vendor/:id" element={<VendorTransactionsProfile />} />
                             <Route path="/inventory" element={<Inventory />} />
                             <Route path="/transactions" element={<TransactionsPage />} />
                             <Route path="/transactions/:id" element={<TransactionDetails />} />
+                            <Route path="/users" element={<Users />} />
+                            <Route path="/change-password" element={<ChangePassword />} />
                             <Route path="/settings" element={<Settings />} />
                             <Route path="/help-center" element={<ComingSoon />} />
                             <Route path="*" element={<Navigate to="/" replace />} />

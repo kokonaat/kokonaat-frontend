@@ -7,7 +7,7 @@ import type {
     UserSignInInterface,
     AuthResponseInterface
 } from "@/interface/userInterface"
-import { signUpUser, signInUser } from "@/api/userAuthApi"
+import { signUpUser, signInUser, changePassword } from "@/api/userAuthApi"
 import { useAuthStore } from "@/stores/authStore"
 import type { AxiosError } from "axios"
 import type { ShopListInterface } from "@/interface/shopInterface"
@@ -37,7 +37,7 @@ export const useAuth = () => {
                 navigate("/create-shop")
             }
         },
-        onError: (err: AxiosError<{message: string}>) => {
+        onError: (err: AxiosError<{ message: string }>) => {
             toast.error(err?.response?.data?.message || "Failed to sign up")
         },
     })
@@ -67,13 +67,20 @@ export const useAuth = () => {
             } else if (shopsRes.total === 1) {
                 // set the single shop ID in shop store and persist in LS
                 useShopStore.getState().setCurrentShopId(shopsRes.shops[0].id)
-                navigate("/") 
+                navigate("/")
             }
         },
-        onError: (err: AxiosError<{message: string}>) => {
+        onError: (err: AxiosError<{ message: string }>) => {
             toast.error(err?.response?.data?.message || "Failed to log in")
         },
     })
 
     return { signUpMutation, signInMutation }
+}
+
+// change password
+export const useChangePassword = () => {
+    return useMutation({
+        mutationFn: changePassword,
+    })
 }

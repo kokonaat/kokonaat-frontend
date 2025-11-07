@@ -78,7 +78,7 @@ const ChangePassword = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-background">
+    <div className="w-screen h-screen flex items-center justify-center bg-background">
       <Card className="w-full max-w-md shadow-lg border rounded-2xl">
         <CardHeader>
           <CardTitle className="text-lg tracking-tight">

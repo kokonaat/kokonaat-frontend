@@ -39,6 +39,7 @@ const AppRoutes = () => {
 
                     <Route element={<ProtectedRoute />}>
                         <Route path="/create-shop" element={<CreateShop />} />
+                        <Route path="/change-password" element={<ChangePassword />} />
                         <Route element={<AuthenticatedLayout />}>
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/shops" element={<Shops />} />
@@ -51,7 +52,6 @@ const AppRoutes = () => {
                             <Route path="/transactions" element={<TransactionsPage />} />
                             <Route path="/transactions/:id" element={<TransactionDetails />} />
                             <Route path="/users" element={<Users />} />
-                            <Route path="/change-password" element={<ChangePassword />} />
                             <Route path="/settings" element={<Settings />} />
                             <Route path="/help-center" element={<ComingSoon />} />
                             <Route path="*" element={<Navigate to="/" replace />} />

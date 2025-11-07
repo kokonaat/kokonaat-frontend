@@ -10,7 +10,7 @@ import {
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Main } from '@/components/layout/main'
 import DashboardOverview from '@/components/dashboard/DashboardOverview'
-import RecentSales from '@/components/dashboard/RecenetSales'
+import RecenetTransactionsTable from '@/components/dashboard/RecenetTransactionsTable'
 import { useShopStore } from '@/stores/shopStore'
 import DateRangeSearch from '@/components/DateRangeSearch'
 import { format } from 'date-fns'
@@ -124,11 +124,11 @@ const Dashboard = () => {
             </Card>
             <Card className='col-span-1 lg:col-span-3'>
               <CardHeader>
-                <CardTitle>Recent Sales</CardTitle>
-                <CardDescription>You made 265 sales this month.</CardDescription>
+                <CardTitle>Recent Transactions</CardTitle>
+                <CardDescription>You made {data?.transactionsCount ?? 0} transactions this month.</CardDescription>
               </CardHeader>
               <CardContent>
-                <RecentSales />
+                <RecenetTransactionsTable data={data} />
               </CardContent>
             </Card>
           </div>

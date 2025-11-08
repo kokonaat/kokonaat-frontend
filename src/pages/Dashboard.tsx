@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -15,7 +15,6 @@ import { useShopStore } from '@/stores/shopStore'
 import DateRangeSearch from '@/components/DateRangeSearch'
 import { format } from 'date-fns'
 import { useDashboardData } from '@/hooks/useDashboard'
-import type { DashboardParams } from '@/api/dashboardApi'
 
 const Dashboard = () => {
   const shopId = useShopStore((s) => s.currentShopId)
@@ -23,19 +22,20 @@ const Dashboard = () => {
   const [startDate, setStartDate] = useState<Date>()
   const [endDate, setEndDate] = useState<Date>()
 
-  const handleDateChange = useCallback((from?: Date, to?: Date) => {
-    setStartDate(from)
-    setEndDate(to)
-  }, [])
-
-  // params conditionally
-  const params: DashboardParams = {
+  // Memoize params to prevent unnecessary re-renders
+  const params = useMemo(() => ({
     shopId: shopId || '',
     startDate: startDate ? format(startDate, 'yyyy-MM-dd') : '2025-01-01',
     endDate: endDate ? format(endDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
-  }
+  }), [shopId, startDate, endDate])
 
-  const { data, isLoading, isError } = useDashboardData(params)
+  const { data, isLoading, isError, refetch } = useDashboardData(params)
+
+  const handleDateChange = useCallback((from?: Date, to?: Date) => {
+    setStartDate(from)
+    setEndDate(to)
+    refetch() // immediately fetch new data
+  }, [refetch])
 
   if (isError) return <p>Error loading dashboard data.</p>
 
@@ -54,6 +54,7 @@ const Dashboard = () => {
         </div>
 
         <TabsContent value='overview' className='space-y-4'>
+          {/* Summary Cards */}
           <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
             {/* Total Inventory */}
             <Card>
@@ -68,7 +69,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Customers + Vendors */}
+            {/* Customers & Vendors */}
             <Card>
               <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                 <CardTitle className='text-sm font-medium'>Customers & Vendors</CardTitle>
@@ -96,7 +97,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Sales + Purchases */}
+            {/* Sales & Purchases */}
             <Card>
               <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                 <CardTitle className='text-sm font-medium'>Sales & Purchases</CardTitle>
@@ -112,7 +113,7 @@ const Dashboard = () => {
             </Card>
           </div>
 
-          {/* Overview & Recent Sales */}
+          {/* Overview & Recent Transactions */}
           <div className='grid grid-cols-1 gap-4 lg:grid-cols-7'>
             <Card className='col-span-1 lg:col-span-4'>
               <CardHeader>
@@ -122,10 +123,13 @@ const Dashboard = () => {
                 <DashboardOverview />
               </CardContent>
             </Card>
+
             <Card className='col-span-1 lg:col-span-3'>
               <CardHeader>
                 <CardTitle>Recent Transactions</CardTitle>
-                <CardDescription>You made {data?.transactionsCount ?? 0} transactions this month.</CardDescription>
+                <CardDescription>
+                  You made {data?.transactionsCount ?? 0} transactions this month.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <RecenetTransactionsTable data={data} />

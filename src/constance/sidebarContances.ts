@@ -37,7 +37,7 @@ export const sidebarData: Omit<SidebarData, 'teams'> = {
             },
             {
               title: 'User Profile',
-              url: '#',
+              url: '/user/me',
               icon: ContactRound
             },
           ],

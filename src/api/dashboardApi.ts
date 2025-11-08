@@ -2,9 +2,9 @@ import { apiEndpoints } from "@/config/api"
 import { axiosInstance } from "./axios"
 
 export interface DashboardParams {
-    startDate: string
+    shopId: string
+    startDate?: string
     endDate?: string
-    shopId?: string
 }
 
 // dashboard api

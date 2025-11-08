@@ -30,7 +30,7 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
       if (data.vendor) {
         return (
           <Link
-            to={`/vendor/${data.vendor.id}`}
+            to={`/transactions/ledger/vendor/${data.vendor.id}`}
             onClick={handleLinkClick}
             className='font-medium text-blue-600 hover:underline'
           >
@@ -42,7 +42,7 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
       if (data.customer) {
         return (
           <Link
-            to={`/customer/${data.customer.id}`}
+            to={`/transactions/ledger/customer/${data.customer.id}`}
             onClick={handleLinkClick}
             className='font-medium text-blue-600 hover:underline'
           >

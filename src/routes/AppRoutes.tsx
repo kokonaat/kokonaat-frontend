@@ -21,6 +21,7 @@ const VendorTransactionsProfile = lazy(() => import("@/components/vendors/Vendor
 const TransactionsPage = lazy(() => import("@/pages/TransactionsPage"))
 const TransactionDetails = lazy(() => import("@/components/transactions/TransactionDetails"))
 const Users = lazy(() => import("@/pages/Users"))
+const UserProfile = lazy(() => import("@/components/users/UserProfile"))
 const Settings = lazy(() => import("@/features/settings"))
 const ComingSoon = lazy(() => import("@/components/coming-soon"))
 const ChangePassword = lazy(() => import("@/pages/ChangePassword"))
@@ -52,6 +53,7 @@ const AppRoutes = () => {
                             <Route path="/transactions" element={<TransactionsPage />} />
                             <Route path="/transactions/:id" element={<TransactionDetails />} />
                             <Route path="/users" element={<Users />} />
+                            <Route path="/user/me" element={<UserProfile />} />
                             <Route path="/settings" element={<Settings />} />
                             <Route path="/help-center" element={<ComingSoon />} />
                             <Route path="*" element={<Navigate to="/" replace />} />

@@ -30,6 +30,7 @@ export interface UserInterface {
     name: string
     phone: string
     createdAt: string
+    shopWiseUserRoles: ShopWiseUserRole[]
 }
 
 export interface UserState {

@@ -16,7 +16,7 @@ export const useUser = () => {
         // existing Zustand value as initial
         initialData: user ?? undefined,
         // keeps data fresh
-        refetchOnWindowFocus: true,
+        refetchOnWindowFocus: false,
     })
 
     // sync query result to Zustand

@@ -71,6 +71,14 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => row.original.transactionStatus || 'N/A',
   },
   {
+    accessorKey: 'createdAt',
+    header: 'Date',
+    cell: ({ row }) => {
+      const date = new Date(row.original.createdAt)
+      return date.toLocaleDateString()
+    },
+  },
+  {
     id: 'actions',
     cell: ({ row }) => <DataTableRowActions row={row} />,
   },

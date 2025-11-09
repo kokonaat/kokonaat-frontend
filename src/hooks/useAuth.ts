@@ -21,7 +21,7 @@ export const useAuth = () => {
     // user hook
     const { refetch: refetchUser } = useUser()
 
-    // sign in
+    // sign up
     const signUpMutation: UseMutationResult<
         AuthResponseInterface,
         unknown,

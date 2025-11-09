@@ -13,10 +13,13 @@ import type { AxiosError } from "axios"
 import type { ShopListInterface } from "@/interface/shopInterface"
 import { shopList } from "@/api/shopApi"
 import { useShopStore } from "@/stores/shopStore"
+import { useUser } from "./useUser"
 
 export const useAuth = () => {
     const { setTokens } = useAuthStore()
     const navigate = useNavigate()
+    // user hook
+    const { refetch: refetchUser } = useUser()
 
     // sign in
     const signUpMutation: UseMutationResult<
@@ -30,9 +33,10 @@ export const useAuth = () => {
             // auto sign in
             return signInUser({ phone: data.phone, password: data.password })
         },
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             if (data.access_token && data.refresh_token) {
                 setTokens(data.access_token, data.refresh_token)
+                refetchUser()
                 toast.success("Account created and logged in!")
                 navigate("/create-shop")
             }
@@ -59,12 +63,15 @@ export const useAuth = () => {
             const shopsRes = await shopList()
             return { authRes, shopsRes }
         },
-        onSuccess: ({ shopsRes }) => {
+        onSuccess: async ({ shopsRes }) => {
             toast.success("Logged in successfully!")
+
+            refetchUser()
             // if multiple shops then redirect to shops page
             if (shopsRes.total > 1) {
                 navigate("/shops")
-            } else if (shopsRes.total === 1) {
+            }
+            else if (shopsRes.total === 1) {
                 // set the single shop ID in shop store and persist in LS
                 useShopStore.getState().setCurrentShopId(shopsRes.shops[0].id)
                 navigate("/")

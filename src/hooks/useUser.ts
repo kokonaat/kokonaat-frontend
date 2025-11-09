@@ -3,9 +3,11 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { createUser, fetchCurrentUser, fetchUserList, fetchUserRoles } from "@/api/userApi"
 import { useUserStore } from "@/stores/userStore"
 import type { CreateUserRequest, CreateUserResponse, FetchUserListParams, UserInterface, UserListItem } from "@/interface/userInterface"
+import { useAuthStore } from "@/stores/authStore"
 
 // current user info
 export const useUser = () => {
+    const { access_token } = useAuthStore()
     const setUser = useUserStore((s) => s.setUser)
     const user = useUserStore((s) => s.user)
 
@@ -17,6 +19,8 @@ export const useUser = () => {
         initialData: user ?? undefined,
         // keeps data fresh
         refetchOnWindowFocus: false,
+        // only run if access token exists
+        enabled: !!access_token,
     })
 
     // sync query result to Zustand
@@ -48,7 +52,7 @@ export const useUserList = (params: FetchUserListParams) => {
         queryFn: async () => {
             const data = await fetchUserList({ shopId, page, limit, searchBy })
 
-            return data.map((u: any) => ({
+            return data.map((u) => ({
                 id: u.id,
                 name: u.name,
                 phone: u.phone,

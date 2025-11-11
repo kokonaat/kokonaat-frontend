@@ -1,5 +1,4 @@
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerClose, DrawerFooter } from '@/components/ui/drawer'
-import { Button } from '@/components/ui/button'
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from '@/components/ui/drawer'
 import type { Vendor } from '../../schema/vendorSchema'
 
 type VendorViewDrawerProps = {
@@ -42,12 +41,6 @@ const VendorViewDrawer = ({ open, onOpenChange, currentRow }: VendorViewDrawerPr
             <span className="font-medium text-foreground">Contact Phone:</span> {currentRow.contactPersonPhone || '—'}
           </div>
         </div>
-
-        <DrawerFooter>
-          <DrawerClose asChild>
-            <Button variant="outline" className="w-full">Close</Button>
-          </DrawerClose>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   )

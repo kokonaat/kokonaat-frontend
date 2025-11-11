@@ -55,6 +55,12 @@ const ChangePassword = () => {
       return
     }
 
+    // prevent using the old password as the new one
+    if (data.oldPassword === data.newPassword) {
+      toast.error("New password cannot be the same as the old password.")
+      return
+    }
+
     handleChangePassword(data, {
       onSuccess: async () => {
         try {
@@ -67,12 +73,20 @@ const ChangePassword = () => {
           toast.success("Password changed successfully!")
           form.reset()
           navigate("/dashboard")
-        } catch (err: any) {
-          toast.error(err?.response?.data?.message || "Failed to sign in")
+        } catch (err: unknown) {
+          const errorMessage =
+            err instanceof Error
+              ? err.message
+              : "Failed to sign in. Please try again."
+          toast.error(errorMessage)
         }
       },
-      onError: (error: any) => {
-        toast.error(error?.response?.data?.message || "Failed to update password")
+      onError: (error: unknown) => {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to update password. Please try again."
+        toast.error(errorMessage)
       },
     })
   }

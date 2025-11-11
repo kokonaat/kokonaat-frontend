@@ -1,5 +1,4 @@
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerClose, DrawerFooter } from '@/components/ui/drawer'
-import { Button } from '@/components/ui/button'
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from '@/components/ui/drawer'
 import type { InventoryItemInterface } from '@/interface/inventoryInterface'
 
 type InventoryViewDrawerProps = {
@@ -35,12 +34,6 @@ const InventoryViewDrawer = ({ open, onOpenChange, currentRow }: InventoryViewDr
             <span className="font-medium text-foreground">Last Price:</span> {currentRow.lastPrice ?? '—'}
           </div>
         </div>
-
-        <DrawerFooter>
-          <DrawerClose asChild>
-            <Button variant="outline" className="w-full">Close</Button>
-          </DrawerClose>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   )

@@ -15,6 +15,7 @@ export const CustomerColumns: ColumnDef<CustomerListInterface>[] = [
           (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        onClick={(e) => e.stopPropagation()}
         aria-label='Select all'
         className='translate-y-0.5'
       />
@@ -23,6 +24,7 @@ export const CustomerColumns: ColumnDef<CustomerListInterface>[] = [
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
+        onClick={(e) => e.stopPropagation()}
         aria-label='Select row'
         className='translate-y-0.5'
       />

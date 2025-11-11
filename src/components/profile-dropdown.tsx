@@ -58,7 +58,7 @@ export function ProfileDropdown() {
 
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link to="#" className="flex justify-between w-full cursor-pointer">
+            <Link to="/user/me" className="flex justify-between w-full cursor-pointer">
               Profile
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </Link>

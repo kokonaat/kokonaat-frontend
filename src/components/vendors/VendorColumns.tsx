@@ -15,16 +15,18 @@ export const VendorColumns: ColumnDef<Vendor>[] = [
           (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        onClick={(e) => e.stopPropagation()}
         aria-label='Select all'
-        className='translate-y-[2px]'
+        className='translate-y-0.5'
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
+        onClick={(e) => e.stopPropagation()}
         aria-label='Select row'
-        className='translate-y-[2px]'
+        className='translate-y-0.5'
       />
     ),
     enableSorting: false,
@@ -72,7 +74,7 @@ export const VendorColumns: ColumnDef<Vendor>[] = [
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p className="max-w-xs break-words">{address}</p>
+              <p className="max-w-xs wrap-break-word">{address}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

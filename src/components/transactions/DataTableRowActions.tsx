@@ -28,6 +28,7 @@ export function DataTableRowActions<TData extends Transaction>({
       <DropdownMenuTrigger asChild>
         <Button
           variant='ghost'
+          onClick={(e) => e.stopPropagation()}
           className='data-[state=open]:bg-muted flex h-8 w-8 p-0'
         >
           <DotsHorizontalIcon className='h-4 w-4' />

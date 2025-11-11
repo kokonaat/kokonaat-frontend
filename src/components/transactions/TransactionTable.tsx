@@ -137,6 +137,7 @@ const TransactionTable = ({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
+                  title="Click to view transaction ledger"
                   data-state={row.getIsSelected() && 'selected'}
                   onClick={() => handleClick(row.original.id)}
                   className="cursor-pointer"

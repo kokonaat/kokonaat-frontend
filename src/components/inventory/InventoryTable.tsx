@@ -110,7 +110,7 @@ const InventoryTable = ({
     <div className="space-y-4 max-sm:has-[div[role='toolbar']]:mb-16">
       {/* Top Toolbar */}
       <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-x-2">
+        <div className="flex flex-col gap-2 md:flex-row md:items-center gap-x-2">
           <DateRangeSearch onDateChange={onDateChange} />
           <Input
             placeholder="Search inventory..."

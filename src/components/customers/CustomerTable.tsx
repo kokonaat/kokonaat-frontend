@@ -137,7 +137,7 @@ const CustomerTable = ({
     <div className='space-y-4 max-sm:has-[div[role="toolbar"]]:mb-16'>
       <div className='flex items-center justify-between'>
         <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-x-2">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center gap-x-2">
             <DateRangeSearch onDateChange={handleDateChange} />
             <Input
               placeholder="Filter by id, name, phone or address..."

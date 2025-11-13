@@ -18,7 +18,7 @@ export const sidebarData: Omit<SidebarData, 'teams'> = {
   },
   navGroups: [
     {
-      title: 'General',
+      title: '',
       items: [
         { title: 'Dashboard', url: '/', icon: LayoutDashboard },
         { title: 'Shops', url: '/shops', icon: ShoppingBag },

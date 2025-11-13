@@ -71,14 +71,14 @@ export const TransactionLedgerColumn: ColumnDef<TransactionLedgerInterface>[] =
       enableColumnFilter: false,
     },
     {
-      accessorKey: 'purchaseDetails',
-      header: 'Purchase Details',
+      accessorKey: 'details',
+      header: 'Transaction Details',
       cell: ({ row }) => {
-        if (row.original.transactionType !== 'PURCHASE') return null
+        const type = row.original.transactionType
+        const detailsLabel = type === 'PURCHASE' ? 'Purchase Details' : 'Sales Details'
 
         const totalQty =
-          row.original.details?.reduce((acc, item) => acc + item.quantity, 0) ??
-          0
+          row.original.details?.reduce((acc, item) => acc + item.quantity, 0) ?? 0
         const totalPrice =
           row.original.details?.reduce((acc, item) => acc + item.total, 0) ?? 0
 
@@ -86,7 +86,7 @@ export const TransactionLedgerColumn: ColumnDef<TransactionLedgerInterface>[] =
           <Accordion type='single' collapsible>
             <AccordionItem value={`item-${row.original.id}`}>
               <AccordionTrigger className='rounded-md bg-blue-100 px-4 py-2 font-medium transition hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800'>
-                Details
+                {detailsLabel}
               </AccordionTrigger>
               <AccordionContent className='space-y-2 p-4'>
                 {row.original.details?.map((item) => (
@@ -108,7 +108,8 @@ export const TransactionLedgerColumn: ColumnDef<TransactionLedgerInterface>[] =
                     </span>
                   </div>
                 ))}
-                {/* summery */}
+
+                {/* summary */}
                 <div className='mt-2 flex justify-end gap-4 rounded-lg bg-gray-50 p-2 font-semibold dark:bg-gray-900'>
                   <span>Total Qty: {totalQty}</span>
                   <span>Total Price: ৳{totalPrice.toLocaleString()}</span>
@@ -118,5 +119,5 @@ export const TransactionLedgerColumn: ColumnDef<TransactionLedgerInterface>[] =
           </Accordion>
         )
       },
-    },
+    }
   ]

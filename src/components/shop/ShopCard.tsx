@@ -43,15 +43,15 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
                 </DropdownMenu>
             </div>
 
-            <div className="min-h-[80px]">
+            <div className="min-h-20">
                 <h2 className="mb-1 font-semibold truncate" title={shop.name}>
                     {shop.name}
                 </h2>
                 <p
                     className="text-gray-500 overflow-hidden text-ellipsis line-clamp-2"
-                    title={shop.address}
+                    title={shop.address ?? ''}
                 >
-                    {shop.address}
+                    {shop.address ?? 'No address provided'}
                 </p>
             </div>
         </Card>

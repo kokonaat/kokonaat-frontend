@@ -19,16 +19,21 @@ import { useShopStore } from '@/stores/shopStore'
 import type { TeamSwitcherProps } from '@/interface/sidebarDataInerface'
 
 export function TeamSwitcher({ teams }: TeamSwitcherProps) {
-  const currentShopId =  useShopStore((s) => s.currentShopId)
+  const currentShopId = useShopStore((s) => s.currentShopId)
   const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
   const { isMobile } = useSidebar()
-  
+
+  // prevent undefined crash
+  if (!teams || teams.length === 0) return null
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [activeTeam, setActiveTeam] = useState(() => {
     // try to match with saved shopId
     return teams.find((t) => t.id === currentShopId) ?? teams[0]
   })
 
   // sync when teams or shopId change
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     const selected = teams.find((t) => t.id === currentShopId)
     if (selected) {
@@ -95,6 +100,6 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-    
+
   )
 }

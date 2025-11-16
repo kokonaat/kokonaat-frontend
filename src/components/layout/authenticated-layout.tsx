@@ -19,6 +19,7 @@ import { useShopList } from '@/hooks/useShop'
 import { Command, GalleryVerticalEnd, AudioWaveform } from 'lucide-react'
 import type { AuthenticatedLayoutProps } from '@/interface/sidebarDataInerface'
 import { useUserStore } from '@/stores/userStore'
+import { ShopRoleBadge } from './ShopRoleBadge'
 
 export default function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
 
@@ -31,9 +32,9 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
 
   // build dynamic teams (shops from API)
   const dynamicTeams =
-    data?.shops?.map((shop, index) => ({
-      id: shop.id ?? "",
-      name: shop.name,
+    data?.map((item, index) => ({
+      id: item.shop.id,
+      name: item.shop.name,
       logo: icons[index % icons.length],
     })) ?? []
 
@@ -72,6 +73,7 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
           <Header>
             <Search />
             <div className="ms-auto flex items-center space-x-4">
+              <ShopRoleBadge />
               <ThemeSwitch />
               <ConfigDrawer />
               <ProfileDropdown />

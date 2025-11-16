@@ -5,7 +5,7 @@ import { Plus } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { useShopList } from "@/hooks/useShop"
-import type { ShopInterface } from "@/interface/shopInterface"
+import type { ShopInterface, ShopItem } from "@/interface/shopInterface"
 import ShopCard from "@/components/shop/ShopCard"
 import ShopDrawer from "@/components/shop/ShopDrawer"
 import { useShopStore } from "@/stores/shopStore"
@@ -13,12 +13,12 @@ import { useShopStore } from "@/stores/shopStore"
 const Shops = () => {
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [currentShop, setCurrentShop] = useState<ShopInterface | undefined>(undefined)
-    const { data, isLoading } = useShopList()
+    const { data, isLoading } = useShopList() as { data?: ShopItem[]; isLoading: boolean }
     const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
 
     useEffect(() => {
-        if (data?.shops?.length === 1 && data.shops[0].id) {
-            setCurrentShopId(data.shops[0].id)
+        if (data?.length === 1 && data[0].shop.id) {
+            setCurrentShopId(data[0].shop.id)
         }
     }, [data, setCurrentShopId])
 
@@ -55,12 +55,12 @@ const Shops = () => {
                     {isLoading ? (
                         <p>Loading shops...</p>
                     ) : (
-                        data?.shops?.map((shop: ShopInterface) => (
+                        data?.map((item) => (
                             <ShopCard
-                                key={shop.id}
-                                shop={shop}
-                                onEdit={(s) => {
-                                    setCurrentShop(s)
+                                key={item.shop.id}
+                                shop={item.shop}
+                                onEdit={() => {
+                                    setCurrentShop(item.shop)
                                     setDrawerOpen(true)
                                 }}
                             />

@@ -14,6 +14,7 @@ const Shops = () => {
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [currentShop, setCurrentShop] = useState<ShopInterface | undefined>(undefined)
     const { data, isLoading } = useShopList() as { data?: ShopItem[]; isLoading: boolean }
+    
     const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
 
     useEffect(() => {

@@ -41,6 +41,10 @@ export interface ShopDrawerProps {
 
 export interface ShopProps {
     shop: ShopInterface
+    role?: {
+        id: string
+        name: string
+    }
     onEdit: (shop: ShopInterface) => void
 }
 

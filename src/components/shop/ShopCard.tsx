@@ -1,5 +1,5 @@
-import { MoreVertical, ShoppingBag, Pencil } from "lucide-react"
 import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -7,24 +7,34 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { MoreVertical, ShoppingBag, Pencil } from "lucide-react"
 import type { ShopProps } from "@/interface/shopInterface"
 import { useShopStore } from "@/stores/shopStore"
+import { useUser } from "@/hooks/useUser"
 
 const ShopCard = ({ shop, onEdit }: ShopProps) => {
     const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
+    const { data: user } = useUser()
+
+    // find role for this shop from user data
+    const userRole = user?.shopWiseUserRoles.find(
+        (s) => s.shop?.id === shop.id
+    )?.role
 
     return (
         <Card
             onClick={() => {
                 if (shop.id) setCurrentShopId(shop.id)
             }}
-            className="list-none rounded-lg border p-4 hover:shadow-md cursor-pointer"
+            className="list-none relative rounded-lg border p-4 hover:shadow-md cursor-pointer"
         >
-            <div className="mb-8 flex items-center justify-between">
+            {/* top row: icon & menu */}
+            <div className="mb-4 ml-2 flex items-start justify-between">
                 <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-lg p-2">
                     <ShoppingBag className="h-6 w-6" />
                 </div>
 
+                {/* edit dropdown */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" size="icon" className="rounded-full">
@@ -32,26 +42,35 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                            onClick={() => onEdit(shop)}
-                            className="cursor-pointer"
-                        >
+                        <DropdownMenuItem onClick={() => onEdit(shop)} className="cursor-pointer">
                             <Pencil className="mr-2 h-4 w-4" />
-                            Edit
+                            edit
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
 
-            <div className="min-h-20">
-                <h2 className="mb-1 font-semibold truncate" title={shop.name}>
+            {/* shop info */}
+            <div className="min-h-20 flex flex-col gap-1">
+                {/* role badge */}
+                {userRole && (
+                    <Badge
+                        variant="secondary"
+                        className="text-xs px-2 py-1 mt-1 w-max text-left"
+                    >
+                        {userRole.name.replace("_", " ")}
+                    </Badge>
+                )}
+
+                <h2 className="font-semibold truncate ml-2" title={shop.name}>
                     {shop.name}
                 </h2>
+
                 <p
-                    className="text-gray-500 overflow-hidden text-ellipsis line-clamp-2"
-                    title={shop.address ?? ''}
+                    className="text-gray-500 overflow-hidden text-ellipsis line-clamp-2 ml-2"
+                    title={shop.address || ""}
                 >
-                    {shop.address ?? 'No address provided'}
+                    {shop.address || "no address provided"}
                 </p>
             </div>
         </Card>

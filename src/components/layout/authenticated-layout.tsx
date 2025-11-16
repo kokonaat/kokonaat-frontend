@@ -19,7 +19,6 @@ import { useShopList } from '@/hooks/useShop'
 import { Command, GalleryVerticalEnd, AudioWaveform } from 'lucide-react'
 import type { AuthenticatedLayoutProps } from '@/interface/sidebarDataInerface'
 import { useUserStore } from '@/stores/userStore'
-import { ShopRoleBadge } from './ShopRoleBadge'
 
 export default function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
 
@@ -73,7 +72,6 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
           <Header>
             <Search />
             <div className="ms-auto flex items-center space-x-4">
-              <ShopRoleBadge />
               <ThemeSwitch />
               <ConfigDrawer />
               <ProfileDropdown />

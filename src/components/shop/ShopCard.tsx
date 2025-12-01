@@ -18,13 +18,13 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
 
     // find role for this shop from user data
     const userRole = user?.shopWiseUserRoles.find(
-        (s) => s.shop?.id === shop.id
+        (s) => s.shopId === shop.shopId
     )?.role
 
     return (
         <Card
             onClick={() => {
-                if (shop.id) setCurrentShopId(shop.id)
+                if (shop.shopId) setCurrentShopId(shop.shopId)
             }}
             className="list-none relative rounded-lg border p-4 hover:shadow-md cursor-pointer"
         >
@@ -62,8 +62,8 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
                     </Badge>
                 )}
 
-                <h2 className="font-semibold truncate ml-2" title={shop.name}>
-                    {shop.name}
+                <h2 className="font-semibold truncate ml-2" title={shop.shopName}>
+                    {shop.shopName}
                 </h2>
 
                 <p

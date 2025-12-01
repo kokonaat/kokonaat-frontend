@@ -32,8 +32,8 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
   // build dynamic teams (shops from API)
   const dynamicTeams =
     data?.map((item, index) => ({
-      id: item.shop.id,
-      name: item.shop.name,
+      id: item.shopId,
+      name: item.shopName,
       logo: icons[index % icons.length],
     })) ?? []
 

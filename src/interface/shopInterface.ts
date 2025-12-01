@@ -3,23 +3,18 @@ export interface CreateShopInterface {
 }
 
 export interface ShopInterface {
-    id?: string
-    name: string
+    shopId?: string
+    shopName: string
     address: string | null
 }
 
-export interface ShopItem {
-    id: string
-    isCurrent: boolean
-    shop: {
-        id: string
-        name: string
-        address: string | null
-    }
-    role: {
-        id: string
-        name: string
-    }
+export interface UserRoleWiseShopInterface {
+    name: string
+    address: string
+    shopId: string
+    shopName: string
+    roleId: string
+    roleName: string
 }
 
 export interface ShopListInterface {

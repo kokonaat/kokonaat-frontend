@@ -46,15 +46,15 @@ const ShopDrawer = ({ open, onOpenChange, currentShop }: ShopDrawerProps) => {
     // reset form whenever currentShop changes
     useEffect(() => {
         form.reset({
-            name: currentShop?.name || "",
-            address: currentShop?.address || "",
+            name: currentShop?.shopName || "",
+            address: currentShop?.shopAddress || "",
         })
     }, [currentShop, form])
 
     const onSubmit = (data: ShopForm) => {
-        if (isEdit && currentShop?.id) {
+        if (isEdit && currentShop?.shopId) {
             // update address on edit
-            updateMutate({ id: currentShop.id, address: data.address }, {
+            updateMutate({ id: currentShop.shopId, address: data.address }, {
                 onSuccess: () => {
                     setLoading(false)
                     form.reset()

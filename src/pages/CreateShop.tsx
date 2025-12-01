@@ -22,7 +22,7 @@ type FormValues = z.infer<typeof createShopFormSchema>
 const CreateShop = ({ className, ...props }: React.HTMLAttributes<HTMLFormElement>) => {
     const form = useForm<FormValues>({
         resolver: zodResolver(createShopFormSchema),
-        defaultValues: { name: "" },
+        defaultValues: { name: "", address: "" },
     })
 
     const { mutate, isPending } = useCreateShop()
@@ -63,6 +63,21 @@ const CreateShop = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
                                         </FormItem>
                                     )}
                                 />
+
+                                <FormField
+                                    control={form.control}
+                                    name="address"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Shop Address</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Shyamoli,Dhaka" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
                                 <Button type="submit" className="mt-2" disabled={isPending}>
                                     {isPending ? "Creating..." : "Create Shop"}
                                 </Button>

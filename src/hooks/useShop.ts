@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import type { AxiosError } from "axios"
-import type { CreateShopInterface, ShopItem, UpdateShopInterface } from "@/interface/shopInterface"
+import type { CreateShopInterface, UserRoleWiseShopInterface, UpdateShopInterface } from "@/interface/shopInterface"
 import { createShop, shopList, updateShop } from "@/api/shopApi"
 import { useShopStore } from "@/stores/shopStore"
 
@@ -12,7 +12,7 @@ const SHOP_KEYS = {
 }
 
 export const useShopList = () => {
-    return useQuery<ShopItem[]>({
+    return useQuery<UserRoleWiseShopInterface[]>({
         queryKey: SHOP_KEYS.all,
         queryFn: shopList,
     })

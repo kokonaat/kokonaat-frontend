@@ -44,7 +44,7 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => onEdit(shop)} className="cursor-pointer">
                             <Pencil className="mr-2 h-4 w-4" />
-                            edit
+                            Edit
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -68,9 +68,9 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
 
                 <p
                     className="text-gray-500 overflow-hidden text-ellipsis line-clamp-2 ml-2"
-                    title={shop.address || ""}
+                    title={shop.shopAddress || ""}
                 >
-                    {shop.address || "no address provided"}
+                    {shop.shopAddress || "no address provided"}
                 </p>
             </div>
         </Card>

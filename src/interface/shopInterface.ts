@@ -1,16 +1,17 @@
 export interface CreateShopInterface {
     name: string
+    address?: string
 }
 
 export interface ShopInterface {
     shopId?: string
     shopName: string
-    address: string | null
+    shopAddress: string | null
 }
 
 export interface UserRoleWiseShopInterface {
     name: string
-    address: string
+    shopAddress: string
     shopId: string
     shopName: string
     roleId: string

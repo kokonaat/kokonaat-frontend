@@ -59,22 +59,50 @@ export const useAuth = () => {
                 setTokens(authRes.access_token, authRes.refresh_token)
             }
 
-            // fetch shops list
+            // shops list
             const shopsRes = await shopList()
             return { authRes, shopsRes }
         },
         onSuccess: async ({ shopsRes }) => {
-            toast.success("Logged in successfully!")
+            try {
+                toast.success("Logged in successfully!")
+                await refetchUser()
 
-            refetchUser()
-            // if multiple shops then redirect to shops page
-            if (shopsRes.total > 1) {
+                // validation shop res
+                if (!Array.isArray(shopsRes)) {
+                    toast.error("Unexpected server response.")
+                    return
+                }
+
+                const shopCount = shopsRes.length
+
+                
+                if (shopCount === 0) {
+                    toast.info("No shops found")
+                    return
+                }
+
+                // one shop
+                if (shopCount === 1) {
+                    const shop = shopsRes[0]
+
+                    if (!shop?.shopId) {
+                        toast.error("Invalid shop data received.")
+                        navigate("/shops")
+                        return
+                    }
+
+                    useShopStore.getState().setCurrentShopId(shop.shopId)
+                    navigate("/")
+                    return
+                }
+
+                // multiple shops
                 navigate("/shops")
-            }
-            else if (shopsRes.total === 1) {
-                // set the single shop ID in shop store and persist in LS
-                useShopStore.getState().setCurrentShopId(shopsRes.shops[0].id)
-                navigate("/")
+
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            } catch (error) {
+                toast.error("Something went wrong.")
             }
         },
         onError: (err: AxiosError<{ message: string }>) => {

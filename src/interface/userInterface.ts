@@ -52,6 +52,7 @@ export interface Shop {
 
 export interface ShopWiseUserRole {
     id: string
+    shopId: string
     shop?: Shop
     role: Role
 }

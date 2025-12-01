@@ -5,7 +5,7 @@ import { Plus } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { useShopList } from "@/hooks/useShop"
-import type { ShopInterface, ShopItem } from "@/interface/shopInterface"
+import type { ShopInterface, UserRoleWiseShopInterface } from "@/interface/shopInterface"
 import ShopCard from "@/components/shop/ShopCard"
 import ShopDrawer from "@/components/shop/ShopDrawer"
 import { useShopStore } from "@/stores/shopStore"
@@ -13,13 +13,13 @@ import { useShopStore } from "@/stores/shopStore"
 const Shops = () => {
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [currentShop, setCurrentShop] = useState<ShopInterface | undefined>(undefined)
-    const { data, isLoading } = useShopList() as { data?: ShopItem[]; isLoading: boolean }
+    const { data, isLoading } = useShopList() as { data?: UserRoleWiseShopInterface[]; isLoading: boolean }
     
     const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
 
     useEffect(() => {
-        if (data?.length === 1 && data[0].shop.id) {
-            setCurrentShopId(data[0].shop.id)
+        if (data?.length === 1 && data[0].shopId) {
+            setCurrentShopId(data[0].shopId)
         }
     }, [data, setCurrentShopId])
 
@@ -58,10 +58,10 @@ const Shops = () => {
                     ) : (
                         data?.map((item) => (
                             <ShopCard
-                                key={item.shop.id}
-                                shop={item.shop}
+                                key={item.shopId}
+                                shop={item}
                                 onEdit={() => {
-                                    setCurrentShop(item.shop)
+                                    setCurrentShop(item)
                                     setDrawerOpen(true)
                                 }}
                             />

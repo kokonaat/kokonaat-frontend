@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import type { AxiosError } from "axios"
 import type { CreateShopInterface, UserRoleWiseShopInterface, UpdateShopInterface } from "@/interface/shopInterface"
@@ -20,7 +19,6 @@ export const useShopList = () => {
 
 // create shop
 export const useCreateShop = () => {
-    const navigate = useNavigate()
     const queryClient = useQueryClient()
     // set shoopId in ls
     const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
@@ -30,20 +28,15 @@ export const useCreateShop = () => {
             const createShopRes = await createShop(data)
             // fetch shops list
             const shopsRes = await shopList()
+            console.log(shopsRes)
             return { createShopRes, shopsRes }
         },
-        onSuccess: ({ shopsRes, createShopRes }) => {
+        onSuccess: ({ createShopRes }) => {
             // store the created shop ID in Zustand (and persist via localStorage if using persist)
             if (createShopRes?.id) {
                 setCurrentShopId(createShopRes.id)
             }
-            // if multiple shops then redirect to shops page
-            if (shopsRes.total > 1) {
-                navigate("/shops")
-            }
-            else {
-                navigate("/")
-            }
+
             toast.success("Shop created successfully")
             queryClient.invalidateQueries({ queryKey: SHOP_KEYS.all })
         },

@@ -2,6 +2,7 @@ export interface ApiEndpoints {
     auth: {
         signUp: string
         signIn: string
+        refreshToken: string
     }
     shop: {
         createShop: string

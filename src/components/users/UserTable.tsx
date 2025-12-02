@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
     type SortingState,
     type VisibilityState,
@@ -48,8 +47,6 @@ export function UsersTable({
     // Search state
     const [searchInput, setSearchInput] = useState('')
     const debouncedSearch = useDebounce(searchInput, 300)
-
-    const navigate = useNavigate()
 
     // Trigger search callback on input change
     useEffect(() => {
@@ -100,10 +97,6 @@ export function UsersTable({
         }
     }, [table, pageCount])
 
-    const handleClick = (id: string) => {
-        navigate(`/users/${id}`)
-    }
-
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -145,7 +138,6 @@ export function UsersTable({
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && 'selected'}
-                                    onClick={() => handleClick(row.original.id)}
                                     className="cursor-pointer"
                                 >
                                     {row.getVisibleCells().map((cell) => (

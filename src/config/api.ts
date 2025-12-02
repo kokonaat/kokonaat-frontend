@@ -6,14 +6,15 @@ export const apiEndpoints: ApiEndpoints = {
     auth: {
         signUp: "/auth/signup",
         signIn: "/auth/signin",
+        refreshToken: "/auth/refresh",
     },
     dashbaord: {
-        dashboardReport: "/report/dashboard"
+        dashboardReport: "/report/dashboard",
     },
     shop: {
         createShop: "/shop",
         shopList: "/shop",
-        updateShop: "/shop/"
+        updateShop: "/shop/",
     },
     designation: {
         designationList: "/designation",
@@ -27,7 +28,7 @@ export const apiEndpoints: ApiEndpoints = {
         updateCustomer: "/customer",
         deleteCustomer: "/customer",
         getCustomerById: "/customer/id",
-        customerTransactions: "/transaction/customer/id"
+        customerTransactions: "/transaction/customer/id",
     },
     vendor: {
         vendorList: "/vendor",
@@ -35,20 +36,20 @@ export const apiEndpoints: ApiEndpoints = {
         updateVendor: "/vendor",
         deleteVendor: "/vendor",
         getVendorById: "/vendor/id",
-        vendorTransactions: "/transaction/vendor/id"
+        vendorTransactions: "/transaction/vendor/id",
     },
     transactions: {
         transactionsList: "/transactions",
         createTransactions: "/transactions",
         getTransactionById: "/transactions/{id}",
-        transactionLedger: "/transaction/ledger/{customerOrVendorId}"
+        transactionLedger: "/transaction/ledger/{customerOrVendorId}",
     },
     inventory: {
         inventoryList: "/inventory",
         createInventory: "/inventory",
         updateInventory: "/inventory",
         deleteInventory: "/inventory",
-        getInventoryById: "/inventory/id"
+        getInventoryById: "/inventory/id",
     },
     user: {
         currentUser: "/user/me",

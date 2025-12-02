@@ -1,4 +1,4 @@
-import { BASE_URL } from "@/config/api"
+import { apiEndpoints, BASE_URL } from "@/config/api"
 import axios from "axios"
 
 // axios instance
@@ -37,12 +37,9 @@ axiosInstance.interceptors.response.use(
             }
 
             try {
-                const res = await axios.post(
-                    `${import.meta.env.VITE_API_BASE_URL}/auth/refresh`,
-                    { refreshToken }
-                )
-
+                const res = await axios.post(apiEndpoints.auth.refreshToken, { refreshToken })
                 const { access_token, refresh_token } = res.data
+
                 localStorage.setItem("access_token", access_token)
                 localStorage.setItem("refresh_token", refresh_token)
 

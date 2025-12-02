@@ -2,6 +2,7 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { Link } from 'react-router-dom'
 import { DataTableRowActions } from './DataTableRowActions'
 import type { Transaction } from '@/interface/transactionInterface'
+import { ChevronRight } from 'lucide-react'
 
 export const TransactionColumns: ColumnDef<Transaction>[] = [
   {
@@ -77,6 +78,17 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
       const date = new Date(row.original.createdAt)
       return date.toLocaleDateString()
     },
+  },
+  {
+    id: 'open',
+    header: '',
+    cell: () => (
+      <div className="flex justify-center">
+        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     id: 'actions',

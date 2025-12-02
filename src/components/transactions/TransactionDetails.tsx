@@ -34,7 +34,7 @@ const TransactionDetails = () => {
                             <p><strong>Amount:</strong> ৳{transaction.amount}</p>
                             <p><strong>Pending:</strong> ৳{transaction.pending}</p>
                             <p><strong>Is Paid:</strong> {transaction.isPaid ? "Yes" : "No"}</p>
-                            <p><strong>Payment Type:</strong> {transaction.paymentType ?? "N/A"}</p>
+                            <p><strong>Payment Type:</strong> {(transaction.paymentType ?? "N/A").replace("_", " ")}</p>
                         </div>
 
                         <div className="space-y-2">

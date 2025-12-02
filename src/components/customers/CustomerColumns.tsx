@@ -4,6 +4,7 @@ import { DataTableColumnHeader } from './DataTableColumnHeader'
 import { DataTableRowActions } from './DataTableRowActions'
 import type { CustomerListInterface } from '@/interface/customerInterface'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import { ChevronRight } from 'lucide-react'
 
 export const CustomerColumns: ColumnDef<CustomerListInterface>[] = [
   {
@@ -110,6 +111,17 @@ export const CustomerColumns: ColumnDef<CustomerListInterface>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Contact Person Phone' />
     ),
+  },
+  {
+    id: 'open',
+    header: '',
+    cell: () => (
+      <div className="flex justify-center">
+        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     id: 'actions',

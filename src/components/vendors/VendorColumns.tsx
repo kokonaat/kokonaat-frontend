@@ -4,6 +4,7 @@ import { DataTableColumnHeader } from '../customers/DataTableColumnHeader'
 import { DataTableRowActions } from './DataTableRowActions'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import type { Vendor } from '@/interface/vendorInterface'
+import { ChevronRight } from 'lucide-react'
 
 export const VendorColumns: ColumnDef<Vendor>[] = [
   {
@@ -110,6 +111,17 @@ export const VendorColumns: ColumnDef<Vendor>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Contact Person Phone' />
     ),
+  },
+  {
+    id: 'open',
+    header: '',
+    cell: () => (
+      <div className="flex justify-center">
+        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     id: 'actions',

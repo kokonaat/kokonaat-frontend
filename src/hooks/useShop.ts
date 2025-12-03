@@ -4,6 +4,7 @@ import type { AxiosError } from "axios"
 import type { CreateShopInterface, UserRoleWiseShopInterface, UpdateShopInterface } from "@/interface/shopInterface"
 import { createShop, shopList, updateShop } from "@/api/shopApi"
 import { useShopStore } from "@/stores/shopStore"
+import { useNavigate } from "react-router-dom"
 
 // query key
 const SHOP_KEYS = {
@@ -20,6 +21,7 @@ export const useShopList = () => {
 // create shop
 export const useCreateShop = () => {
     const queryClient = useQueryClient()
+    const navigate = useNavigate()
     // set shoopId in ls
     const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
 
@@ -31,7 +33,7 @@ export const useCreateShop = () => {
             console.log(shopsRes)
             return { createShopRes, shopsRes }
         },
-        onSuccess: ({ createShopRes }) => {
+        onSuccess: ({ shopsRes, createShopRes }) => {
             // store the created shop ID in Zustand (and persist via localStorage if using persist)
             if (createShopRes?.id) {
                 setCurrentShopId(createShopRes.id)
@@ -39,6 +41,23 @@ export const useCreateShop = () => {
 
             toast.success("Shop created successfully")
             queryClient.invalidateQueries({ queryKey: SHOP_KEYS.all })
+
+            const totalShops = shopsRes?.length ?? 0
+
+            // stay shops route
+            if (location.pathname === "/shops") {
+                // Already on /shops → stay
+                return
+            }
+
+            // single shop
+            if (totalShops === 1) {
+                navigate("/")
+                return
+            }
+
+            // multiple shops
+            navigate("/shops")
         },
         onError: (err: AxiosError<{ message: string }>) => {
             toast.error(err?.response?.data?.message || "Failed to create shop")

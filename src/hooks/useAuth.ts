@@ -76,12 +76,8 @@ export const useAuth = () => {
 
                 const shopCount = shopsRes.length
 
-                
-                if (shopCount === 0) {
-                    toast.info("No shops found")
-                    return
-                }
-
+                if (shopCount === 0) return toast.info("No shops found")
+                    
                 // one shop
                 if (shopCount === 1) {
                     const shop = shopsRes[0]

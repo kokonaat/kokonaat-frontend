@@ -84,3 +84,34 @@ export const deleteInventory = async ({ id }: { id: string }) => {
 
   return res.data
 }
+
+// tarck inventory by id
+export const trackInventoryById = async ({
+  inventoryId,
+  shopId,
+  page = 1,
+  limit = 10,
+}: {
+  inventoryId: string
+  shopId: string
+  page?: number
+  limit?: number
+}) => {
+  if (!inventoryId) throw new Error("Inventory ID is required")
+  if (!shopId) throw new Error("Shop ID is required")
+
+  const params = new URLSearchParams({
+    shopId,
+    page: String(page),
+    limit: String(limit),
+  })
+
+  const url = apiEndpoints.inventory.inventoryTrackingById.replace('{inventoryId}', inventoryId)
+
+  const res = await axiosInstance.get(`${url}?${params.toString()}`)
+
+  return {
+    items: res.data?.data ?? [],
+    total: res.data?.total ?? 0,
+  }
+}

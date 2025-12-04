@@ -46,6 +46,7 @@ export interface ApiEndpoints {
     updateInventory: string
     deleteInventory: string
     getInventoryById: string
+    inventoryTrackingById: string
   }
   user: {
     currentUser: string

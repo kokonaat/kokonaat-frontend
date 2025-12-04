@@ -1,5 +1,6 @@
 export interface InventoryItemInterface {
   id: string
+  shopId?: string
   name: string
   description?: string
   quantity: number
@@ -78,4 +79,16 @@ export interface InventoryItem {
   name: string;
   lastPrice: number;
   quantity: number;
+}
+
+export interface InventoryTrackingItemInterface {
+  id: string
+  inventory: {
+    id: string
+    name: string
+  }
+  stock: number
+  price: number
+  createdAt: string
+  updatedAt: string
 }

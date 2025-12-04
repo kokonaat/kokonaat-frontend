@@ -46,7 +46,7 @@ const InventoryTable = ({
   const debouncedSearch = useDebounce(searchInput, 300)
 
   // Drawer state
-  const [currentRow] = useState<InventoryListItem | null>(null)
+  const [currentRow, setCurrentRow] = useState<InventoryListItem | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   // Trigger debounced search
@@ -147,6 +147,10 @@ const InventoryTable = ({
               table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
+                  onClick={() => {
+                    setCurrentRow(row.original)
+                    setDrawerOpen(true)
+                  }}
                   data-state={row.getIsSelected() && 'selected'}
                   className="cursor-pointer"
                 >

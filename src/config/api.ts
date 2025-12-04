@@ -50,6 +50,7 @@ export const apiEndpoints: ApiEndpoints = {
     updateInventory: '/inventory',
     deleteInventory: '/inventory',
     getInventoryById: '/inventory/id',
+    inventoryTrackingById: '/inventory-tracking/{inventoryId}',
   },
   user: {
     currentUser: '/user/me',

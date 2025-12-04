@@ -4,6 +4,7 @@ import {
   deleteInventory,
   getInventoryById,
   inventoryList,
+  trackInventoryById,
   updateInventory,
 } from "@/api/inventoryApi"
 import type { InventoryFormInterface, InventoryItemInterface } from "@/interface/inventoryInterface"
@@ -111,5 +112,27 @@ export const useDeleteInventory = () => {
         exact: false,
       })
     },
+  })
+}
+
+export const useTrackInventoryById = (
+  inventoryId: string | null,
+  shopId: string | null,
+  page: number = 1,
+  limit: number = 10
+) => {
+  return useQuery({
+    queryKey: ["inventory-tracking", inventoryId, shopId, page, limit],
+    queryFn: () =>
+      trackInventoryById({
+        inventoryId: inventoryId!,
+        shopId: shopId!,
+        page,
+        limit,
+      }),
+    enabled: !!inventoryId && !!shopId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    placeholderData: keepPreviousData,
   })
 }

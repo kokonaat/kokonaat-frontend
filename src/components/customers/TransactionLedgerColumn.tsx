@@ -43,7 +43,10 @@ export const TransactionLedgerColumn: ColumnDef<TransactionLedgerInterface>[] =
     {
       accessorKey: 'amount',
       header: 'Amount',
-      cell: ({ row }) => `৳${row.original.amount.toLocaleString()}`,
+      cell: ({ row }) => {
+        const amount = Number(row.original.amount ?? 0)
+        return `৳${amount.toLocaleString()}`
+      },
     },
     {
       accessorKey: 'paid',

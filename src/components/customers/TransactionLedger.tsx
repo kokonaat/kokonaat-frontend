@@ -1,9 +1,11 @@
 import { useState } from "react"
 import { useParams } from "react-router-dom"
+import { Mail, MapPin, Phone, User, Building2 } from "lucide-react"
+import { Badge } from "../ui/badge"
+import { generatePDF } from "@/utils/enums/pdf"
+import type { Entity } from "@/utils/enums/pdf"
 import { Main } from "@/components/layout/main"
 import { CustomersProvider } from "@/components/customers/customer-provider"
-import VendorDialogs from "@/components/vendors/VendorDialogs"
-import { useShopStore } from "@/stores/shopStore"
 import {
   Card,
   CardHeader,
@@ -11,13 +13,13 @@ import {
   CardContent,
   CardDescription,
 } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+import VendorDialogs from "@/components/vendors/VendorDialogs"
+import { useShopStore } from "@/stores/shopStore"
 import TransactionLedgerTable from "./TransactionLedgerTable"
 import { useTransactionLedger } from "@/hooks/useTransaction"
-import { Skeleton } from "@/components/ui/skeleton"
 import { useCustomerById } from "@/hooks/useCustomer"
 import { useVendorById } from "@/hooks/useVendor"
-import { Mail, MapPin, Phone, User, Building2 } from "lucide-react"
-import { Badge } from "../ui/badge"
 
 const TransactionLedger = () => {
   const shopId = useShopStore((s) => s.currentShopId)
@@ -193,6 +195,18 @@ const TransactionLedger = () => {
                         <span className="text-sm">Pending</span>
                         <span className="font-semibold">{totalPending}</span>
                       </div>
+
+                      <button
+                        onClick={() => generatePDF(entity as Entity, transactions, {
+                          totalAmount,
+                          totalPaid,
+                          totalAdvancePaid,
+                          totalPending
+                        })}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                      >
+                        Download PDF Report
+                      </button>
                     </div>
                   )}
                 </div>

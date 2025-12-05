@@ -1,6 +1,6 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Link } from 'react-router-dom'
-import { DataTableRowActions } from './DataTableRowActions'
+// import { DataTableRowActions } from './DataTableRowActions'
 import type { Transaction } from '@/interface/transactionInterface'
 import { ChevronRight } from 'lucide-react'
 
@@ -8,10 +8,6 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
   {
     accessorKey: 'no',
     header: 'No',
-  },
-  {
-    accessorKey: 'partnerType',
-    header: 'Partner Type',
   },
   {
     accessorKey: 'transactionType',
@@ -61,16 +57,16 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
       const data = row.original
       return (
         <div>
-          {data.amount} / {data.paid} / {data.pending}
+          {data.totalAmount} / {data.paid + data.advancePaid} / {(data.totalAmount) - (data.advancePaid + data.paid)}
         </div>
       )
     },
   },
-  {
-    accessorKey: 'transactionStatus',
-    header: 'Status',
-    cell: ({ row }) => row.original.transactionStatus || 'N/A',
-  },
+  // {
+  //   accessorKey: 'transactionStatus',
+  //   header: 'Status',
+  //   cell: ({ row }) => row.original.transactionStatus || 'N/A',
+  // },
   {
     accessorKey: 'createdAt',
     header: 'Date',
@@ -90,8 +86,8 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    id: 'actions',
-    cell: ({ row }) => <DataTableRowActions row={row} />,
-  },
+  // {
+  //   id: 'actions',
+  //   cell: ({ row }) => <DataTableRowActions row={row} />,
+  // },
 ]

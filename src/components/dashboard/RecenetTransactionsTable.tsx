@@ -51,7 +51,7 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
                     {tx.avatar && (
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={tx.avatar} alt={tx.partnerName || tx.partnerType} />
-                        <AvatarFallback>{tx.partnerName?.slice(0, 2).toUpperCase() || tx.partnerType.slice(0,2)}</AvatarFallback>
+                        <AvatarFallback>{tx.partnerName?.slice(0, 2).toUpperCase() || tx.partnerType.slice(0, 2)}</AvatarFallback>
                       </Avatar>
                     )}
                     <div className="flex flex-col">
@@ -64,11 +64,10 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
                 {/* transaction type */}
                 <TableCell className="py-3 px-4">
                   <span
-                    className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                      tx.transactionType === "SALE"
+                    className={`text-xs font-semibold px-2 py-1 rounded-full ${tx.transactionType === "SALE"
                         ? "bg-green-100 text-green-700"
                         : "bg-blue-100 text-blue-700"
-                    }`}
+                      }`}
                   >
                     {tx.transactionType}
                   </span>
@@ -76,7 +75,7 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
 
                 {/* amount */}
                 <TableCell className="py-3 px-4 text-right font-medium text-green-700">
-                  ৳{tx.amount.toLocaleString()}
+                  ৳{Number(tx?.amount ?? 0).toLocaleString()}
                 </TableCell>
 
                 {/* pending */}

@@ -33,7 +33,7 @@ interface Summary {
     totalAdvancePaid: number;
     totalPaid?: number;
     totalPending?: number;
-    discount?: number;
+    // discount?: number;
 }
 
 export interface Entity {
@@ -135,9 +135,9 @@ export const generatePDF = (
     doc.setFontSize(11)
     const lines = [
         `Subtotal: ${summary.totalAmount}`,
+        `Paid: ${summary.totalPaid}`,
         `Advance Paid: ${summary.totalAdvancePaid}`,
-        `Discount: ${summary.discount || 0}`,
-        `Total Payable: ${summary.totalAmount - (summary.discount || 0) - summary.totalAdvancePaid}`,
+        `Total Payable: ${summary.totalAmount - (summary.totalPaid ?? 0 + summary.totalAdvancePaid)}`,
     ]
 
     lines.forEach((line, index) => {

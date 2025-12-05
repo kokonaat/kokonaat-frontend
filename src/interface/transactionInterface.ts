@@ -50,7 +50,7 @@ export interface Transaction {
   customerId?: string
   transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT" | "COLLECT"
   transactionStatus: string | null
-  amount: number
+  totalAmount: number
   pending: number
   advancePaid: number
   paid: number
@@ -68,11 +68,11 @@ export interface Transaction {
 // update main DTO
 export interface CreateTransactionDto {
   shopId: string
-  partnerType: "VENDOR" | "CUSTOMER"
+  // partnerType: "VENDOR" | "CUSTOMER"
   vendorId?: string
   customerId?: string
   transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT" | "COLLECT"
-  amount?: number
+  totalAmount?: number
   paymentType?: "CASH" | "CREDIT_CARD" | "BANK_TRANSFER" | "MOBILE_PAYMENT"
   details?: {
     inventoryId: string
@@ -102,7 +102,7 @@ export interface TransactionLedgerInterface {
   vendorId: string
   transactionType: string
   transactionStatus: string
-  amount: number
+  totalAmount: number
   pending: number
   paid: number
   advancePaid: number

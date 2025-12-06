@@ -1,4 +1,3 @@
-// components/transaction/PaymentFields.tsx
 import type { UseFormReturn } from 'react-hook-form'
 import {
     FormControl,

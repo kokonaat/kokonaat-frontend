@@ -48,7 +48,7 @@ export interface Transaction {
   }
   vendorId?: string
   customerId?: string
-  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT" | "COLLECT"
+  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT" | "RECEIVABLE"
   transactionStatus: string | null
   totalAmount: number
   pending: number
@@ -71,7 +71,7 @@ export interface CreateTransactionDto {
   // partnerType: "VENDOR" | "CUSTOMER"
   vendorId?: string
   customerId?: string
-  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT" | "COLLECT"
+  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT" | "RECEIVABLE"
   totalAmount?: number
   paymentType?: "CASH" | "CREDIT_CARD" | "BANK_TRANSFER" | "MOBILE_PAYMENT"
   details?: {

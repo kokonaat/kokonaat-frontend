@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 interface Transaction {
@@ -6,7 +5,7 @@ interface Transaction {
   no: string
   partnerType: "CUSTOMER" | "VENDOR"
   transactionType: "SALE" | "PURCHASE"
-  amount: number
+  totalAmount: number
   pending: number
   createdAt: string
   partnerName?: string
@@ -28,8 +27,8 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
         <TableHeader className="bg-muted/40">
           <TableRow>
             <TableHead className="py-2 px-4 text-left">Transaction No</TableHead>
-            <TableHead className="py-2 px-4 text-left">Partner</TableHead>
-            <TableHead className="py-2 px-4 text-left">Type</TableHead>
+            {/* <TableHead className="py-2 px-4 text-left">Partner</TableHead> */}
+            <TableHead className="py-2 px-4 text-left">Transaction Type</TableHead>
             <TableHead className="py-2 px-4 text-right">Amount</TableHead>
             <TableHead className="py-2 px-4 text-right">Pending</TableHead>
           </TableRow>
@@ -46,7 +45,7 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
                 <TableCell className="py-3 px-4 font-medium">{tx.no}</TableCell>
 
                 {/* partner */}
-                <TableCell className="py-3 px-4">
+                {/* <TableCell className="py-3 px-4">
                   <div className="flex items-center gap-3">
                     {tx.avatar && (
                       <Avatar className="h-8 w-8">
@@ -59,7 +58,7 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
                       <span className="text-xs text-muted-foreground">{tx.partnerType}</span>
                     </div>
                   </div>
-                </TableCell>
+                </TableCell> */}
 
                 {/* transaction type */}
                 <TableCell className="py-3 px-4">
@@ -75,7 +74,7 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
 
                 {/* amount */}
                 <TableCell className="py-3 px-4 text-right font-medium text-green-700">
-                  ৳{Number(tx?.amount ?? 0).toLocaleString()}
+                  ৳{Number(tx?.totalAmount ?? 0).toLocaleString()}
                 </TableCell>
 
                 {/* pending */}

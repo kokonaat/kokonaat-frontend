@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/form'
 import { Combobox } from '@/components/ui/combobox'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
-import { TRANSACTION_TYPES } from '@/constance/transactionContances'
+import { TRANSACTION_TYPES } from '@/constance/transactionConstances'
 
 interface TransactionTypeFieldProps {
     form: UseFormReturn<TransactionFormValues>

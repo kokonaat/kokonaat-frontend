@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const COMPANY_NAME = import.meta.env.VITE_COMPANY_NAME || "Company Name";
+const COMPANY_NAME = import.meta.env.VITE_COMPANY_NAME || "Company Name"
 
 interface Inventory {
     id: string;
@@ -35,7 +35,6 @@ interface Summary {
     totalAdvancePaid: number;
     totalPaid?: number;
     totalPending?: number;
-    // discount?: number;
 }
 
 export interface Entity {
@@ -49,14 +48,8 @@ export interface Entity {
 
 // value extractor
 const getItemName = (item: TransactionDetail): string => {
-    console.log(item)
-    return (
-        item.inventory?.name ||
-        item.itemName ||
-        item.name ||
-        "N/A"
-    );
-};
+    return item.inventory?.name || item.itemName || item.name || "N/A"
+}
 
 const getQuantity = (item: TransactionDetail): number => {
     if (item.quantity != null) return item.quantity
@@ -74,7 +67,6 @@ const getTotal = (item: TransactionDetail): number => {
     if (item.total != null) return item.total
     if (item.amount != null) return item.amount
 
-    // last fallback
     const qty = getQuantity(item)
     const price = getPrice(item)
     return qty * price
@@ -99,13 +91,20 @@ export const generatePDF = (
     doc.text(shopAddress, (pageWidth - shopAddressWidth) / 2, 22)
 
     doc.setFontSize(16)
-    doc.text("Transaction Report", 14, 35)
+    const reportTitle = "Transaction Report"
+    const reportTitleWidth = doc.getTextWidth(reportTitle)
+    doc.text(reportTitle, (pageWidth - reportTitleWidth) / 2, 35)
 
+    // date
     doc.setFontSize(12)
-    doc.text(`Customer / Vendor: ${entity.name}`, 14, 52)
     doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 45)
 
-    // table data
+    // customer / vendor
+    const entityLabel = `Customer / Vendor: ${entity.name}`
+    const entityWidth = doc.getTextWidth(entityLabel)
+    doc.text(entityLabel, pageWidth - entityWidth - 14, 45)
+
+    // table
     const rows: any[] = []
     transactions.forEach((trx) => {
         trx.details.forEach((item) => {
@@ -118,28 +117,22 @@ export const generatePDF = (
         })
     })
 
-    // table
     autoTable(doc, {
-        startY: 70,
+        startY: 60,
         head: [["Item Name", "Quantity", "Price", "Total"]],
         body: rows,
     })
 
     // summary
     const finalY = (doc as any).lastAutoTable.finalY + 10
-    const rightMargin = pageWidth - 36 // 14pt from right edge
-
-    // doc.setFontSize(13)
-    // const summaryTitle = "Summary"
-    // const summaryTitleWidth = doc.getTextWidth(summaryTitle)
-    // doc.text(summaryTitle, rightMargin - summaryTitleWidth, finalY)
+    const rightMargin = pageWidth - 36
 
     doc.setFontSize(11)
     const lines = [
         `Subtotal: ${summary.totalAmount}`,
-        `Paid: ${summary.totalPaid}`,
+        `Paid: ${summary.totalPaid ?? 0}`,
         `Advance Paid: ${summary.totalAdvancePaid}`,
-        `Total Payable: ${summary.totalAmount - (summary.totalPaid ?? 0 + summary.totalAdvancePaid)}`,
+        `Total Payable: ${summary.totalAmount - ((summary.totalPaid ?? 0) + summary.totalAdvancePaid)}`,
     ]
 
     lines.forEach((line, index) => {
@@ -148,17 +141,33 @@ export const generatePDF = (
     })
 
     // footer
-    const footerText = `Powered by ${COMPANY_NAME || "Your Company"}`;
-    doc.setFontSize(10);
+    // split into two parts
+    const footerPrefix = "Powered by "
+    const footerCompany = COMPANY_NAME || "Your Company"
 
-    const pageHeight = doc.internal.pageSize.getHeight();
-    const footerWidth = doc.getTextWidth(footerText);
+    doc.setFontSize(10)
 
-    doc.text(
-        footerText,
-        (pageWidth - footerWidth) / 2,
-        pageHeight - 10
-    );
+    // get width with positioning
+    const prefixWidth = doc.getTextWidth(footerPrefix)
+    const companyWidth = doc.getTextWidth(footerCompany)
+    const totalWidth = prefixWidth + companyWidth
 
+    // calculate starting X to center the full footer
+    const startX = (pageWidth - totalWidth) / 2
+    const pageHeight = doc.internal.pageSize.getHeight()
+    const footerY = pageHeight - 10
+
+    // draw normal prefix
+    doc.setFont("helvetica", "normal")
+    doc.text(footerPrefix, startX, footerY)
+
+    // draw bold company name right after prefix
+    doc.setFont("helvetica", "bold")
+    doc.text(footerCompany, startX + prefixWidth, footerY)
+
+    // reset font style if needed
+    doc.setFont("helvetica", "normal")
+
+    // save PDF
     doc.save(`Transaction_Report_${entity.name}.pdf`)
 }

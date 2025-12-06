@@ -4,9 +4,14 @@ export const TRANSACTION_TYPES = [
   { value: "PURCHASE", label: "Purchase" },
   { value: "SALE", label: "Sale" },
   { value: "PAYMENT", label: "Payment" },
-  { value: "COLLECT", label: "Collect" },
+  { value: "RECEIVABLE", label: "Receivable" },
   { value: "COMMISSION", label: "Commission" },
 ]
+
+export enum BusinessEntityType {
+  VENDOR = "VENDOR",
+  CUSTOMER = "CUSTOMER",
+}
 
 export const FORM_ID = 'transaction-form'
 

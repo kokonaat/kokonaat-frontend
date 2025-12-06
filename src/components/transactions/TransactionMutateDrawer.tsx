@@ -14,10 +14,9 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { useShopStore } from '@/stores/shopStore'
-import { BusinessEntityType } from '@/utils/enums/trasaction.enum'
 import { useInventoryList } from '@/hooks/useInventory'
 import { useCreateTransaction } from '@/hooks/useTransaction'
-import { FORM_ID } from '@/constance/transactionContances'
+import { BusinessEntityType, FORM_ID } from '@/constance/transactionConstances'
 import type {
   TransactionMutateDrawerProps,
   CreateTransactionDto,
@@ -202,7 +201,7 @@ const TransactionMutateDrawer = ({
       | 'PURCHASE'
       | 'PAYMENT'
       | 'SALE'
-      | 'COLLECT'
+      | 'RECEIVABLE'
       | 'COMMISSION'
 
     const inventoryDetailsPayload = showInventoryFields

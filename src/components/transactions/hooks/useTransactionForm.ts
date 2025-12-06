@@ -2,10 +2,10 @@ import { useState } from 'react'
 import type { Resolver } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { BusinessEntityType } from '@/utils/enums/trasaction.enum'
 import { transactionFormSchema } from '@/schema/transactionFormSchema'
+import { DEFAULT_VALUES } from '@/constance/transactionConstances'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
-import { DEFAULT_VALUES } from '@/constance/transactionContances'
+import type { BusinessEntityType } from '@/constance/transactionConstances'
 import type { ComboboxOptionInterface } from '@/interface/transactionInterface'
 
 export const useTransactionForm = () => {

@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
-import type { BusinessEntityType } from '@/utils/enums/trasaction.enum'
+import type { BusinessEntityType } from '@/constance/transactionConstances'
 
 interface PaymentFieldsProps {
     form: UseFormReturn<TransactionFormValues>

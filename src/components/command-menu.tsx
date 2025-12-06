@@ -12,7 +12,7 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command'
-import { sidebarData } from '../constance/sidebarContances'
+import { sidebarData } from '../constance/sidebarConstances'
 import { ScrollArea } from './ui/scroll-area'
 
 export function CommandMenu() {

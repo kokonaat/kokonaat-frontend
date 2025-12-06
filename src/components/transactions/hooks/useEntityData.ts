@@ -1,7 +1,7 @@
 import { useDebounce } from '@/hooks/useDebounce'
 import { useVendorList } from '@/hooks/useVendor'
 import { useCustomerList } from '@/hooks/useCustomer'
-import { BusinessEntityType } from '@/utils/enums/trasaction.enum'
+import { BusinessEntityType } from '@/constance/transactionConstances'
 
 export const useEntityData = (
     shopId: string | null,

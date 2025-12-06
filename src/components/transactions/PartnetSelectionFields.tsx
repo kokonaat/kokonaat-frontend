@@ -7,7 +7,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Combobox } from '@/components/ui/combobox'
-import type { BusinessEntityType } from '@/utils/enums/trasaction.enum'
+import type { BusinessEntityType } from '@/constance/transactionConstances'
 import type { ComboboxOptionInterface } from '@/interface/transactionInterface'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 import { createBusinessEntityOptions, getEntityLabel, getEntityPlaceholder } from './utils/transactionHelpers'

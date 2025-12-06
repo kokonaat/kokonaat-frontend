@@ -1,6 +1,8 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
+const COMPANY_NAME = import.meta.env.VITE_COMPANY_NAME || "Company Name";
+
 interface Inventory {
     id: string;
     name: string;
@@ -144,6 +146,19 @@ export const generatePDF = (
         const lineWidth = doc.getTextWidth(line)
         doc.text(line, rightMargin - lineWidth, finalY + 10 + index * 7)
     })
+
+    // footer
+    const footerText = `Powered by ${COMPANY_NAME || "Your Company"}`;
+    doc.setFontSize(10);
+
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const footerWidth = doc.getTextWidth(footerText);
+
+    doc.text(
+        footerText,
+        (pageWidth - footerWidth) / 2,
+        pageHeight - 10
+    );
 
     doc.save(`Transaction_Report_${entity.name}.pdf`)
 }

@@ -314,21 +314,27 @@ const TransactionMutateDrawer = ({
             className='flex-1 space-y-6 overflow-y-auto px-4'
             onSubmit={form.handleSubmit(handleFormSubmit)}
           >
-            <TransactionTypeField
-              form={form}
-              onTransactionTypeChange={handleTransactionTypeChange}
-            />
+            <div className="flex items-end gap-4">
+              <div className="flex-1">
+                <TransactionTypeField
+                  form={form}
+                  onTransactionTypeChange={handleTransactionTypeChange}
+                />
+              </div>
 
-            <PartnerSelectionFields
-              form={form}
-              transactionType={transactionType}
-              selectedBusinessEntity={selectedBusinessEntity}
-              entityOptions={entityOptions}
-              isLoading={isLoading}
-              onBusinessEntitySelect={handleBusinessEntitySelect}
-              onEntitySearch={setEntitySearchQuery}
-              showPartnerTypeSelector={showPartnerTypeSelector}
-            />
+              <div className="flex-1">
+                <PartnerSelectionFields
+                  form={form}
+                  transactionType={transactionType}
+                  selectedBusinessEntity={selectedBusinessEntity}
+                  entityOptions={entityOptions}
+                  isLoading={isLoading}
+                  onBusinessEntitySelect={handleBusinessEntitySelect}
+                  onEntitySearch={setEntitySearchQuery}
+                  showPartnerTypeSelector={showPartnerTypeSelector}
+                />
+              </div>
+            </div>
 
             {entityTypeId && <PaymentTypeField form={form} />}
 

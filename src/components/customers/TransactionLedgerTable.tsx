@@ -10,11 +10,13 @@ import {
     type SortingState,
 } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { CreditCard } from "lucide-react"
 import { Input } from "../ui/input"
 import { DataTableViewOptions } from "@/features/users/components/data-table-view-options"
 import { DataTablePagination } from "@/features/users/components/data-table-pagination"
 import { TransactionLedgerColumn } from "./TransactionLedgerColumn"
 import type { TransactionLedgerTableProps } from "@/interface/transactionInterface"
+import { NoDataFound } from "../NoDataFound"
 import DateRangeSearch from "../DateRangeSearch"
 
 const TransactionLedgerTable = ({
@@ -100,22 +102,22 @@ const TransactionLedgerTable = ({
             </div>
 
             <div className="rounded-md border">
-                <Table>
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} colSpan={header.colSpan}>
-                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
+                {data.length > 0 ? (
+                    <Table>
+                        <TableHeader>
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <TableRow key={headerGroup.id}>
+                                    {headerGroup.headers.map((header) => (
+                                        <TableHead key={header.id} colSpan={header.colSpan}>
+                                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                        </TableHead>
+                                    ))}
+                                </TableRow>
+                            ))}
+                        </TableHeader>
 
-                    <TableBody>
-                        {table.getRowModel().rows.length ? (
-                            table.getRowModel().rows.map((row) => (
+                        <TableBody>
+                            {table.getRowModel().rows.map((row) => (
                                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
@@ -123,19 +125,21 @@ const TransactionLedgerTable = ({
                                         </TableCell>
                                     ))}
                                 </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={TransactionLedgerColumn.length} className="h-24 text-center">
-                                    No transactions found.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                            ))}
+                        </TableBody>
+                    </Table>
+                ) : (
+                    <div className="h-64 flex items-center justify-center">
+                        <NoDataFound
+                            icon={<CreditCard className="w-12 h-12 text-muted-foreground" />}
+                            message="No Transactions Yet"
+                            details="You haven’t recorded any transactions. Create a transaction to get started."
+                        />
+                    </div>
+                )}
             </div>
 
-            <DataTablePagination table={table} />
+            {data.length > 0 && <DataTablePagination table={table} />}
         </div>
     )
 }

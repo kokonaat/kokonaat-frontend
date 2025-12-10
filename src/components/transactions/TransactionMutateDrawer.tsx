@@ -3,7 +3,7 @@ import axios from 'axios'
 import { useFieldArray } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { Form } from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import {
   Sheet,
   SheetClose,
@@ -39,6 +39,7 @@ import { AmountField } from './AmountField'
 import { PaymentFields } from './PaymentFields'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 import { useDebounce } from '@/hooks/useDebounce'
+import { Input } from '../ui/input'
 
 const TransactionMutateDrawer = ({
   open,
@@ -89,7 +90,7 @@ const TransactionMutateDrawer = ({
   const {
     data: inventoryResponse = { items: [] },
     isFetching: isInventoryLoading,
-    refetch: refetchInventories,
+    // refetch: refetchInventories,
   } = useInventoryList(
     shopId || '',
     1,
@@ -246,6 +247,7 @@ const TransactionMutateDrawer = ({
           // partnerType: 'VENDOR' as const,
           vendorId: values.entityTypeId,
           transactionType: transactionTypeCasted,
+          remarks: values.remarks,
           paymentType: values.paymentType,
           advancePaid: Number(values.advancePaid),
           paid: Number(values.paid),
@@ -259,6 +261,7 @@ const TransactionMutateDrawer = ({
           // partnerType: 'CUSTOMER' as const,
           customerId: values.entityTypeId,
           transactionType: transactionTypeCasted,
+          remarks: values.remarks,
           paymentType: values.paymentType,
           advancePaid: Number(values.advancePaid),
           paid: Number(values.paid),
@@ -273,7 +276,7 @@ const TransactionMutateDrawer = ({
         toast.success('Transaction created successfully')
 
         try {
-          await refetchInventories()
+          // await refetchInventories()
         } catch (_) { /* empty */ }
 
         resetFormStates()
@@ -337,6 +340,26 @@ const TransactionMutateDrawer = ({
             </div>
 
             {entityTypeId && <PaymentTypeField form={form} />}
+
+            {entityTypeId && (
+              <FormField
+                control={form.control}
+                name="remarks"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Remarks</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="text"
+                        placeholder="Remarks"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             {entityTypeId && paymentType && (
               showInventoryFields ? (

@@ -130,7 +130,7 @@ const TransactionLedgerTable = ({
                     </Table>
                 ) : (
                     <div className="h-64 flex items-center justify-center">
-                        <Card className="m-4">
+                        <Card className="w-full p-4">
                             <CardContent>
                                 <NoDataFound
                                     message="No Transactions Yet"

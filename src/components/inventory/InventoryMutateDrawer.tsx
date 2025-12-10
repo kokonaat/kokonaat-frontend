@@ -180,9 +180,13 @@ const InventoryMutateDrawer = ({
                     <Input
                       {...field}
                       type="number"
-                      placeholder="100"
+                      placeholder="0"
+                      min={0}
+                      value={field.value ?? ''}
                       onChange={(e) =>
-                        field.onChange(Number(e.target.value) || 0)
+                        field.onChange(
+                          e.target.value ? Number(e.target.value) : null
+                        )
                       }
                     />
                   </FormControl>
@@ -201,9 +205,13 @@ const InventoryMutateDrawer = ({
                     <Input
                       {...field}
                       type="number"
-                      placeholder="100"
+                      placeholder="0"
+                      min={0}
+                      value={field.value ?? ''}
                       onChange={(e) =>
-                        field.onChange(Number(e.target.value) || 0)
+                        field.onChange(
+                          e.target.value ? Number(e.target.value) : null
+                        )
                       }
                     />
                   </FormControl>

@@ -17,6 +17,7 @@ import { TransactionLedgerColumn } from "./TransactionLedgerColumn"
 import type { TransactionLedgerTableProps } from "@/interface/transactionInterface"
 import { NoDataFound } from "../NoDataFound"
 import DateRangeSearch from "../DateRangeSearch"
+import { Card, CardContent } from "../ui/card"
 
 const TransactionLedgerTable = ({
     data,
@@ -129,10 +130,14 @@ const TransactionLedgerTable = ({
                     </Table>
                 ) : (
                     <div className="h-64 flex items-center justify-center">
-                        <NoDataFound
-                            message="No Transactions Yet"
-                            details="You haven’t recorded any transactions. Create a transaction to get started."
-                        />
+                        <Card className="m-4">
+                            <CardContent>
+                                <NoDataFound
+                                    message="No Transactions Yet"
+                                    details="You haven’t recorded any transactions. Create a transaction to get started."
+                                />
+                            </CardContent>
+                        </Card>
                     </div>
                 )}
             </div>

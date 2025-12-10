@@ -8,7 +8,9 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { BulkActionsToolbar } from '@/components/bulk-actions-toolbar'
-import { CustomersMultiDeleteDialog } from './CustomerMultiDeleteDialogs'
+import { ConfirmDialog } from '../confirm-dialog'
+import { useShopStore } from '@/stores/shopStore'
+import { useDeleteCustomer } from '@/hooks/useCustomer'
 
 export interface DataTableBulkActionsProps<TData extends { id: string }> {
     table: Table<TData>
@@ -18,6 +20,26 @@ export function DataTableBulkActions<TData extends { id: string }>({
     table,
 }: DataTableBulkActionsProps<TData>) {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+    const shopId = useShopStore((s) => s.currentShopId)
+    const deleteMutation = useDeleteCustomer(shopId || '')
+
+    const selectedRows = table.getSelectedRowModel().rows
+
+    const handleDelete = () => {
+        if (!selectedRows.length) return
+
+        const ids = selectedRows.map((r) => r.original.id)
+
+        ids.forEach((id) => {
+            deleteMutation.mutate({ id }, {
+                onSuccess: () => {
+                    table.resetRowSelection()
+                },
+            })
+        })
+
+        setShowDeleteConfirm(false)
+    }
 
     return (
         <>
@@ -42,10 +64,20 @@ export function DataTableBulkActions<TData extends { id: string }>({
                 </Tooltip>
             </BulkActionsToolbar>
 
-            <CustomersMultiDeleteDialog
+            <ConfirmDialog
                 open={showDeleteConfirm}
                 onOpenChange={setShowDeleteConfirm}
-                table={table}
+                destructive
+                title={`Delete ${selectedRows.length} selected customer(s)?`}
+                desc={
+                    <>
+                        You are about to delete{' '}
+                        <strong>{selectedRows.length} customer(s)</strong>. <br />
+                        This action cannot be undone.
+                    </>
+                }
+                confirmText='Delete'
+                handleConfirm={handleDelete}
             />
         </>
     )

@@ -31,6 +31,7 @@ import { DataTableBulkActions } from './DataTableBulkActions'
 import { useDebounce } from '../../hooks/useDebounce'
 import DateRangeSearch from '../DateRangeSearch'
 import { NoDataFound } from '../NoDataFound'
+import { Card, CardContent } from '../ui/card'
 
 const CustomerTable = ({
   data,
@@ -189,10 +190,14 @@ const CustomerTable = ({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className='h-24 text-center'>
-                  <NoDataFound
-                    message='No Customer found!'
-                    details="Create a customer first."
-                  />
+                  <Card className='m-4'>
+                    <CardContent>
+                      <NoDataFound
+                        message='No Customer found!'
+                        details="Create a customer first."
+                      />
+                    </CardContent>
+                  </Card>
                 </TableCell>
               </TableRow>
             )}

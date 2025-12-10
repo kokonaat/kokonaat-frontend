@@ -10,7 +10,6 @@ import {
     type SortingState,
 } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { CreditCard } from "lucide-react"
 import { Input } from "../ui/input"
 import { DataTableViewOptions } from "@/features/users/components/data-table-view-options"
 import { DataTablePagination } from "@/features/users/components/data-table-pagination"
@@ -131,7 +130,6 @@ const TransactionLedgerTable = ({
                 ) : (
                     <div className="h-64 flex items-center justify-center">
                         <NoDataFound
-                            icon={<CreditCard className="w-12 h-12 text-muted-foreground" />}
                             message="No Transactions Yet"
                             details="You haven’t recorded any transactions. Create a transaction to get started."
                         />

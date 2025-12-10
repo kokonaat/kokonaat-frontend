@@ -22,6 +22,7 @@ import { DataTableViewOptions } from '@/features/users/components/data-table-vie
 import type { DataTablePropsInterface, Vendor } from '@/interface/vendorInterface'
 import { useDebounce } from '../../hooks/useDebounce'
 import DateRangeSearch from '../DateRangeSearch'
+import { NoDataFound } from '../NoDataFound'
 
 const VendorTable = ({
   data,
@@ -170,7 +171,10 @@ const VendorTable = ({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className='h-24 text-center'>
-                  No results.
+                  <NoDataFound 
+                    message='No Vendor found!'
+                    details="Create a vendor first."
+                  />
                 </TableCell>
               </TableRow>
             )}

@@ -20,6 +20,7 @@ import type { Transaction } from "@/interface/transactionInterface"
 import { DataTableBulkActions } from "../customers/DataTableBulkActions"
 import DateRangeSearch from "../DateRangeSearch"
 import { useDebounce } from "@/hooks/useDebounce"
+import { NoDataFound } from "../NoDataFound"
 
 interface TransactionTableProps {
   shopId: string
@@ -150,7 +151,10 @@ const TransactionTable = ({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No transactions found.
+                  <NoDataFound
+                    message="No Transaction found!"
+                    details="Create a Transaction first."
+                  />
                 </TableCell>
               </TableRow>
             )}

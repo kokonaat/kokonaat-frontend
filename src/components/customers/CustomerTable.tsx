@@ -30,6 +30,7 @@ import type { DataTablePropsInterface } from '@/interface/customerInterface'
 import { DataTableBulkActions } from './DataTableBulkActions'
 import { useDebounce } from '../../hooks/useDebounce'
 import DateRangeSearch from '../DateRangeSearch'
+import { NoDataFound } from '../NoDataFound'
 
 const CustomerTable = ({
   data,
@@ -188,7 +189,10 @@ const CustomerTable = ({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className='h-24 text-center'>
-                  No results.
+                  <NoDataFound
+                    message='No Customer found!'
+                    details="Create a customer first."
+                  />
                 </TableCell>
               </TableRow>
             )}

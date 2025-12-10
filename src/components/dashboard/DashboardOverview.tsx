@@ -1,5 +1,4 @@
 import { ResponsiveContainer, BarChart, XAxis, YAxis, Bar } from "recharts"
-import { BarChart as BarChartIcon } from "lucide-react"
 import { format, parseISO } from "date-fns"
 import { useShopStore } from "@/stores/shopStore"
 import { useDashboardData } from "@/hooks/useDashboard"
@@ -24,6 +23,7 @@ const DashboardOverview = () => {
 
   const chartData =
     data?.last12MonthsRevenue
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ?.map((item: any) => {
         const monthName = format(parseISO(item.month + "-01"), "MMM")
         return {
@@ -33,12 +33,11 @@ const DashboardOverview = () => {
       })
       .reverse() || []
 
-  const hasData = chartData.some((item) => item.total > 0)
+  const hasData = chartData.some((item: { total: number }) => item.total > 0)
 
   if (!hasData) {
     return (
       <NoDataFound
-        icon={<BarChartIcon />}
         message="No Sale's Graph Data"
         details="Create a transaction to view your sales graph."
       />

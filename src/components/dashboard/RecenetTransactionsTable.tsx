@@ -1,6 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { NoDataFound } from "../NoDataFound"
-import { BarChartIcon } from "lucide-react"
 
 interface Transaction {
   id: string
@@ -27,7 +26,6 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
     return (
       <div className="rounded-xl border bg-card shadow-sm overflow-auto">
         <NoDataFound
-          icon={<BarChartIcon />}
           message="No Recent Transactions"
           details="Create a transaction to get started."
         />
@@ -41,7 +39,6 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
         <TableHeader className="bg-muted/40">
           <TableRow>
             <TableHead className="py-2 px-4 text-left">Transaction No</TableHead>
-            {/* <TableHead className="py-2 px-4 text-left">Partner</TableHead> */}
             <TableHead className="py-2 px-4 text-left">Transaction Type</TableHead>
             <TableHead className="py-2 px-4 text-right">Amount</TableHead>
             <TableHead className="py-2 px-4 text-right">Pending</TableHead>
@@ -57,22 +54,6 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
               >
                 {/* transaction no */}
                 <TableCell className="py-3 px-4 font-medium">{tx.no}</TableCell>
-
-                {/* partner */}
-                {/* <TableCell className="py-3 px-4">
-                  <div className="flex items-center gap-3">
-                    {tx.avatar && (
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={tx.avatar} alt={tx.partnerName || tx.partnerType} />
-                        <AvatarFallback>{tx.partnerName?.slice(0, 2).toUpperCase() || tx.partnerType.slice(0, 2)}</AvatarFallback>
-                      </Avatar>
-                    )}
-                    <div className="flex flex-col">
-                      <span className="font-medium text-sm">{tx.partnerName || tx.partnerType}</span>
-                      <span className="text-xs text-muted-foreground">{tx.partnerType}</span>
-                    </div>
-                  </div>
-                </TableCell> */}
 
                 {/* transaction type */}
                 <TableCell className="py-3 px-4">

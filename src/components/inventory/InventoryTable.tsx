@@ -22,6 +22,7 @@ import InventoryViewDrawer from './InventoryViewDrawer'
 import type { InventoryTableProps, InventoryListItem } from '@/interface/inventoryInterface'
 import { useDebounce } from '@/hooks/useDebounce'
 import DateRangeSearch from '../DateRangeSearch'
+import { NoDataFound } from '../NoDataFound'
 
 const InventoryTable = ({
   data,
@@ -164,7 +165,10 @@ const InventoryTable = ({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results found.
+                  <NoDataFound
+                    message='No Inventory found!'
+                    details="Create a Inventory first."
+                  />
                 </TableCell>
               </TableRow>
             )}

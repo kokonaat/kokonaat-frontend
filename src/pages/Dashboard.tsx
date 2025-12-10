@@ -5,7 +5,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from '@/components/ui/card'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Main } from '@/components/layout/main'
@@ -127,9 +126,6 @@ const Dashboard = () => {
             <Card className='col-span-1 lg:col-span-3'>
               <CardHeader>
                 <CardTitle>Recent Transactions</CardTitle>
-                <CardDescription>
-                  You made {data?.transactionsCount ?? 0} transactions this month.
-                </CardDescription>
               </CardHeader>
               <CardContent>
                 <RecenetTransactionsTable data={data} />

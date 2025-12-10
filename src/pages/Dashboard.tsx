@@ -118,7 +118,7 @@ const Dashboard = () => {
               <CardHeader>
                 <CardTitle>Overview</CardTitle>
               </CardHeader>
-              <CardContent className='ps-2'>
+              <CardContent className=''>
                 <DashboardOverview />
               </CardContent>
             </Card>

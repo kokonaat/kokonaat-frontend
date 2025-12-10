@@ -23,6 +23,7 @@ import type { InventoryTableProps, InventoryListItem } from '@/interface/invento
 import { useDebounce } from '@/hooks/useDebounce'
 import DateRangeSearch from '../DateRangeSearch'
 import { NoDataFound } from '../NoDataFound'
+import { Card, CardContent } from '../ui/card'
 
 const InventoryTable = ({
   data,
@@ -165,10 +166,14 @@ const InventoryTable = ({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  <NoDataFound
-                    message='No Inventory found!'
-                    details="Create a Inventory first."
-                  />
+                  <Card className='m-4'>
+                    <CardContent>
+                      <NoDataFound
+                        message='No Inventory found!'
+                        details="Create a Inventory first."
+                      />
+                    </CardContent>
+                  </Card>
                 </TableCell>
               </TableRow>
             )}

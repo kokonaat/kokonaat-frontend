@@ -23,6 +23,7 @@ import type { DataTablePropsInterface, Vendor } from '@/interface/vendorInterfac
 import { useDebounce } from '../../hooks/useDebounce'
 import DateRangeSearch from '../DateRangeSearch'
 import { NoDataFound } from '../NoDataFound'
+import { Card, CardContent } from '../ui/card'
 
 const VendorTable = ({
   data,
@@ -171,10 +172,14 @@ const VendorTable = ({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className='h-24 text-center'>
-                  <NoDataFound
-                    message='No Vendor found!'
-                    details="Create a vendor first."
-                  />
+                  <Card className='m-4'>
+                    <CardContent>
+                      <NoDataFound
+                        message='No Vendor found!'
+                        details="Create a vendor first."
+                      />
+                    </CardContent>
+                  </Card>
                 </TableCell>
               </TableRow>
             )}

@@ -21,6 +21,7 @@ import { DataTableBulkActions } from "../customers/DataTableBulkActions"
 import DateRangeSearch from "../DateRangeSearch"
 import { useDebounce } from "@/hooks/useDebounce"
 import { NoDataFound } from "../NoDataFound"
+import { Card, CardContent } from "../ui/card"
 
 interface TransactionTableProps {
   shopId: string
@@ -151,10 +152,14 @@ const TransactionTable = ({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  <NoDataFound
-                    message="No Transaction found!"
-                    details="Create a Transaction first."
-                  />
+                  <Card className="m-4">
+                    <CardContent>
+                      <NoDataFound
+                        message="No Transaction found!"
+                        details="Create a Transaction first."
+                      />
+                    </CardContent>
+                  </Card>
                 </TableCell>
               </TableRow>
             )}

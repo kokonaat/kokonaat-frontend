@@ -171,7 +171,7 @@ const VendorTable = ({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className='h-24 text-center'>
-                  <NoDataFound 
+                  <NoDataFound
                     message='No Vendor found!'
                     details="Create a vendor first."
                   />
@@ -181,7 +181,7 @@ const VendorTable = ({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+      {data.length > 0 && <DataTablePagination table={table} />}
       <VendorTableBulkActions table={table} />
     </div>
   )

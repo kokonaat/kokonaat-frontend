@@ -2,6 +2,7 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } f
 import { useTrackInventoryById } from '@/hooks/useInventory'
 import { useShopStore } from '@/stores/shopStore'
 import type { InventoryItemInterface, InventoryTrackingItemInterface } from '@/interface/inventoryInterface'
+import { NoDataFound } from '../NoDataFound'
 
 type InventoryViewDrawerProps = {
   open: boolean
@@ -42,8 +43,7 @@ const InventoryViewDrawer = ({ open, onOpenChange, currentRow }: InventoryViewDr
 
         {isLoading && <p className="text-sm text-muted-foreground">Loading tracking data...</p>}
         {isError && <p className="text-sm text-red-500">Error loading tracking data</p>}
-        {!isLoading && data && data.items.length === 0 && <p className="text-sm text-muted-foreground">No tracking records found.</p>}
-
+        {!isLoading && data && data.items.length === 0 && <NoDataFound message='No tracking records found!' />}
         {!isLoading && data && data.items.length > 0 && (
           <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
             <table className="min-w-full divide-y divide-gray-200">

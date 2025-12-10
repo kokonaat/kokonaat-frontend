@@ -1,4 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { NoDataFound } from "../NoDataFound"
+import { BarChartIcon } from "lucide-react"
 
 interface Transaction {
   id: string
@@ -20,6 +22,18 @@ interface RecentTransactionsTableProps {
 
 const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
   const transactions = data?.recentTransactions || []
+
+  if (transactions.length === 0) {
+    return (
+      <div className="rounded-xl border bg-card shadow-sm overflow-auto">
+        <NoDataFound
+          icon={<BarChartIcon />}
+          message="No Recent Transactions"
+          details="Create a transaction to get started."
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="rounded-xl border bg-card shadow-sm overflow-auto">
@@ -64,8 +78,8 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
                 <TableCell className="py-3 px-4">
                   <span
                     className={`text-xs font-semibold px-2 py-1 rounded-full ${tx.transactionType === "SALE"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-blue-100 text-blue-700"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-blue-100 text-blue-700"
                       }`}
                   >
                     {tx.transactionType}

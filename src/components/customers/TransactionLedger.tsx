@@ -164,10 +164,9 @@ const TransactionLedger = () => {
           </Card>
 
           {/* ledger section */}
-          {transactions.length > 0 ? (
+          {transactions.length > 0 && (
             <Card className="rounded-2xl shadow-sm border bg-card">
               <CardContent className="space-y-6">
-
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
                   <h3 className="text-lg font-semibold">
                     {isCustomer ? "Customer Ledger" : "Vendor Ledger"}
@@ -229,13 +228,40 @@ const TransactionLedger = () => {
                     }}
                   />
                 )}
-
               </CardContent>
             </Card>
-          ) : (
-            <p className="text-center text-muted-foreground mt-4">
-              No transactions found
-            </p>
+          )}
+
+          {/* if no transactions */}
+          {transactions.length === 0 && !isLoading && (
+            <Card className="rounded-2xl shadow-sm border bg-card">
+              <CardContent className="space-y-6">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                  <h3 className="text-lg font-semibold">
+                    {isCustomer ? "Customer Ledger" : "Vendor Ledger"}
+                  </h3>
+                </div>
+
+                {/* table */}
+                {isLoading ? (
+                  <p>Loading transactions...</p>
+                ) : isError ? (
+                  <p className="text-red-500">Failed to load transactions</p>
+                ) : (
+                  <TransactionLedgerTable
+                    data={transactions}
+                    pageIndex={pageIndex}
+                    pageSize={pageSize}
+                    total={total}
+                    onPageChange={setPageIndex}
+                    onDateChange={(from, to) => {
+                      setStartDate(from)
+                      setEndDate(to)
+                    }}
+                  />
+                )}
+              </CardContent>
+            </Card>
           )}
 
         </div>

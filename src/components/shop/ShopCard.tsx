@@ -18,8 +18,10 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
 
     // find role for this shop from user data
     const userRole = user?.shopWiseUserRoles.find(
-        (s) => s.shopId === shop.shopId
+        (s) => s.shop?.id === shop.shopId
     )?.role
+
+    console.log(userRole)
 
     return (
         <Card

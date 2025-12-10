@@ -162,7 +162,7 @@ const TransactionTable = ({
         </Table>
       </div>
 
-      <DataTablePagination table={table} />
+      {data.length > 0 && <DataTablePagination table={table} />}
       <DataTableBulkActions table={table} />
     </div>
   )

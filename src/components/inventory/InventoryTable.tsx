@@ -177,7 +177,7 @@ const InventoryTable = ({
       </div>
 
       {/* Pagination */}
-      <DataTablePagination table={table} />
+      {data.length > 0 && <DataTablePagination table={table} />}
 
       {/* Bulk Actions */}
       <InventoryTableBulkActions table={table} />

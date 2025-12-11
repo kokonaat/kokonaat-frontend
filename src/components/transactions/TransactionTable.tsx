@@ -13,15 +13,15 @@ import {
 } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "../ui/card"
 import { DataTableViewOptions } from "./DataTableViewOption"
-import { DataTablePagination } from "@/features/users/components/data-table-pagination"
+import { DataTablePagination } from "./DataTablePagination"
 import { TransactionColumns as columns } from "./TransactionColumns"
 import type { Transaction } from "@/interface/transactionInterface"
 import { DataTableBulkActions } from "../customers/DataTableBulkActions"
 import DateRangeSearch from "../DateRangeSearch"
 import { useDebounce } from "@/hooks/useDebounce"
 import { NoDataFound } from "../NoDataFound"
-import { Card, CardContent } from "../ui/card"
 
 interface TransactionTableProps {
   shopId: string

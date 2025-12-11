@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 // import { DataTableRowActions } from './DataTableRowActions'
 import type { Transaction } from '@/interface/transactionInterface'
 import { ChevronRight } from 'lucide-react'
+import { Tooltip, TooltipContent } from '../ui/tooltip'
+import { TooltipTrigger } from '@radix-ui/react-tooltip'
 
 export const TransactionColumns: ColumnDef<Transaction>[] = [
   {
@@ -12,6 +14,23 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
   {
     accessorKey: 'transactionType',
     header: 'Transaction Type',
+  },
+  {
+    accessorKey: 'remarks',
+    header: 'Remarks',
+    cell: ({ row }) => {
+      const text = row.getValue('remarks') as string || null
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="max-w-[200px] truncate">{text ?? 'N/A'}</div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <div className="max-w-sm wrap-break-word">{text ?? 'N/A'}</div>
+          </TooltipContent>
+        </Tooltip>
+      )
+    }
   },
   {
     id: 'partnerName',

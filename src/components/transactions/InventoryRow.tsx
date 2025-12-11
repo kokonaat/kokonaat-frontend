@@ -50,8 +50,9 @@ export const InventoryRow = ({
     onInventorySearch,
     onAppend,
     onRemove,
-    showRemoveButton,
+    // showRemoveButton,
 }: InventoryRowProps) => {
+    console.log(itemDisplayData)
     return (
         <div key={field.id} className='flex items-end gap-4'>
             <FormField
@@ -193,7 +194,7 @@ export const InventoryRow = ({
                 <Button type='button' variant='outline' size='icon' onClick={onAppend}>
                     <Plus className='h-4 w-4' />
                 </Button>
-                {showRemoveButton && (
+                {/* {showRemoveButton && ( */}
                     <Button
                         type='button'
                         variant='destructive'
@@ -202,7 +203,7 @@ export const InventoryRow = ({
                     >
                         <Minus className='h-4 w-4' />
                     </Button>
-                )}
+                {/* )} */}
             </div>
         </div>
     )

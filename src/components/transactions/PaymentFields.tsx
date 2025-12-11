@@ -15,6 +15,7 @@ interface PaymentFieldsProps {
     selectedBusinessEntity: BusinessEntityType | null
     transactionType: string
     calculatedPending: number
+    total: number
 }
 
 export const PaymentFields = ({
@@ -22,6 +23,7 @@ export const PaymentFields = ({
     selectedBusinessEntity,
     transactionType,
     calculatedPending,
+    total,
 }: PaymentFieldsProps) => {
     const showPaymentFields =
         transactionType === 'PURCHASE' || transactionType === 'SALE'
@@ -32,12 +34,26 @@ export const PaymentFields = ({
 
     return (
         <>
-            <div className='flex justify-end'>
+            <div className="flex justify-end gap-4">
+                {/* total */}
+                <FormItem className='flex-1 max-w-52'>
+                    <FormLabel>Total</FormLabel>
+                    <FormControl>
+                        <Input
+                            type='number'
+                            value={total}
+                            readOnly
+                            className='cursor-not-allowed bg-gray-100'
+                        />
+                    </FormControl>
+                </FormItem>
+
+                {/* advance paid */}
                 <FormField
                     control={form.control}
                     name='advancePaid'
                     render={({ field }) => (
-                        <FormItem className='max-w-52'>
+                        <FormItem className='flex-1 max-w-52'>
                             <FormLabel>Advance Paid</FormLabel>
                             <FormControl>
                                 <Input
@@ -56,14 +72,13 @@ export const PaymentFields = ({
                         </FormItem>
                     )}
                 />
-            </div>
 
-            <div className='flex justify-end'>
+                {/* paid */}
                 <FormField
                     control={form.control}
                     name='paid'
                     render={({ field }) => (
-                        <FormItem className='max-w-52'>
+                        <FormItem className='flex-1 max-w-52'>
                             <FormLabel>Paid</FormLabel>
                             <FormControl>
                                 <Input
@@ -82,14 +97,13 @@ export const PaymentFields = ({
                         </FormItem>
                     )}
                 />
-            </div>
 
-            <div className='flex justify-end'>
+                {/* pending */}
                 <FormField
                     control={form.control}
                     name='pending'
                     render={({ field }) => (
-                        <FormItem className='max-w-52'>
+                        <FormItem className='flex-1 max-w-52'>
                             <FormLabel>Pending</FormLabel>
                             <FormControl>
                                 <Input

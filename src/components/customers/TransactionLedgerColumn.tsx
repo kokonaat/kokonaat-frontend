@@ -7,6 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '../ui/accordion'
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 
 export const TransactionLedgerColumn: ColumnDef<TransactionLedgerInterface>[] =
   [
@@ -38,7 +39,19 @@ export const TransactionLedgerColumn: ColumnDef<TransactionLedgerInterface>[] =
     {
       accessorKey: 'remarks',
       header: 'Remarks',
-      cell: ({ row }) => row.original.remarks || '—',
+      cell: ({ row }) => {
+        const text = row.getValue('remarks') as string || null
+        return (
+          <Tooltip>
+            <TooltipTrigger>
+              <div className='max-w-[200px] truncate'>{text ?? 'N/A'}</div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <div className='max-w-sm wrap-break-word'>{text ?? 'N/A'}</div>
+            </TooltipContent>
+          </Tooltip>
+        )
+      },
     },
     {
       accessorKey: 'amount',

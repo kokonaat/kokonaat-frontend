@@ -4,17 +4,12 @@ import type { UseFormReturn, FieldArrayWithId } from 'react-hook-form'
 import type { InventoryItem } from '@/interface/inventoryInterface'
 import type { ComboboxOptionInterface } from '@/interface/transactionInterface'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
-// import { useMemo } from 'react'
-import { FormControl, FormItem, FormLabel } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
 import { InventoryRow } from './InventoryRow'
-import { calculateTotal } from './utils/transactionHelpers'
 
 interface InventoryFieldsProps {
   form: UseFormReturn<TransactionFormValues>
   fields: FieldArrayWithId<TransactionFormValues, 'inventories', 'id'>[]
   append: (value: TransactionFormValues['inventories'][number]) => void
-  // append: (value: any) => void
   remove: (index: number) => void
   inventoryOptions: ComboboxOptionInterface[]
   inventoryList: InventoryItem[]
@@ -55,7 +50,6 @@ export const InventoryFields = ({
   transactionType,
   onInventorySearch,
 }: InventoryFieldsProps) => {
-  const total = calculateTotal(form.watch('inventories'))
 
   // Update cache when inventoryOptions change and we have selected inventories
   useEffect(() => {
@@ -274,23 +268,6 @@ export const InventoryFields = ({
           />
         )
       })}
-
-      {fields.length > 0 && (
-        <div className='flex justify-end'>
-          <div className='w-60'></div>
-          <FormItem className='max-w-52'>
-            <FormLabel>Total</FormLabel>
-            <FormControl>
-              <Input
-                type='number'
-                value={total}
-                readOnly
-                className='cursor-not-allowed bg-gray-100'
-              />
-            </FormControl>
-          </FormItem>
-        </div>
-      )}
     </>
   )
 }

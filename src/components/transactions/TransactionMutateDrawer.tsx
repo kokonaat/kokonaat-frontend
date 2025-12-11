@@ -387,6 +387,7 @@ const TransactionMutateDrawer = ({
 
             {showPaymentFields && entityTypeId && paymentType && (
               <PaymentFields
+                total={total}
                 form={form}
                 selectedBusinessEntity={selectedBusinessEntity}
                 transactionType={transactionType}

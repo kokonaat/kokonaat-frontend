@@ -14,6 +14,7 @@ export interface InventoryItem {
   name: string
   price?: number
   stock?: number
+  description?: string
 }
 
 export interface InventoryFormInterface {

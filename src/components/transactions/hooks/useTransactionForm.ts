@@ -17,7 +17,7 @@ export const useTransactionForm = () => {
         Record<number, string>
     >({})
     const [inventoryDisplayData, setInventoryDisplayData] = useState<
-        Record<number, { lastPrice: number | null; stockQuantity: number | null }>
+        Record<number, { lastPrice: number | null; stockQuantity: number | null; description: string | null }>
     >({})
     // Cache of selected inventory options (ID -> option) to ensure they display correctly
     // even when not in search results

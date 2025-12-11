@@ -20,7 +20,7 @@ interface InventoryRowProps {
     field: FieldArrayWithId<TransactionFormValues, 'inventories', 'id'>
     index: number
     currentInputValue: string
-    itemDisplayData: { lastPrice: number | null; stockQuantity: number | null } | undefined
+    itemDisplayData: { lastPrice: number | null; stockQuantity: number | null; description: string | null } | undefined
     filteredInventoryOptions: ComboboxOptionInterface[]
     inventoryOptions: ComboboxOptionInterface[]
     inventoryList: InventoryItem[]
@@ -72,7 +72,7 @@ export const InventoryRow = ({
                                     const selectedOption = inventoryOptions.find(
                                         (opt) => opt.value === val
                                     )
-                                    
+
                                     // Only process if it's a real option selection (from dropdown)
                                     // When allowCustomValue is true, onSelect is also called during typing,
                                     // but those are handled by onSearch. We only process explicit selections here.
@@ -152,6 +152,12 @@ export const InventoryRow = ({
                                     }}
                                 />
                             </FormControl>
+                            {/* description */}
+                            {itemDisplayData?.description && (
+                                <p className='text-xs text-muted-foreground mt-1 italic'>
+                                    {itemDisplayData.description}
+                                </p>
+                            )}
                             <FormMessage />
                         </FormItem>
                     )}
@@ -195,14 +201,14 @@ export const InventoryRow = ({
                     <Plus className='h-4 w-4' />
                 </Button>
                 {/* {showRemoveButton && ( */}
-                    <Button
-                        type='button'
-                        variant='destructive'
-                        size='icon'
-                        onClick={() => onRemove(index)}
-                    >
-                        <Minus className='h-4 w-4' />
-                    </Button>
+                <Button
+                    type='button'
+                    variant='destructive'
+                    size='icon'
+                    onClick={() => onRemove(index)}
+                >
+                    <Minus className='h-4 w-4' />
+                </Button>
                 {/* )} */}
             </div>
         </div>

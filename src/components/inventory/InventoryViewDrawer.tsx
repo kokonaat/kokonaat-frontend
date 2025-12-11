@@ -11,6 +11,7 @@ import { useShopStore } from '@/stores/shopStore'
 import type { InventoryItemInterface } from '@/interface/inventoryInterface'
 import InventoryDetailsTrackingTable from './InventoryDetailsTrackingTable'
 import { NoDataFound } from '../NoDataFound'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 
 type InventoryViewDrawerProps = {
   open: boolean
@@ -66,7 +67,20 @@ const InventoryViewDrawer = ({
           </div>
           <div>
             <span className="font-medium text-foreground">Description:</span>{' '}
-            {currentRow.description || '—'}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="max-w-[200px] truncate cursor-help">
+                    {currentRow.description || '—'}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="max-w-xs wrap-break-word">
+                    {currentRow.description || '—'}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <div>
             <span className="font-medium text-foreground">Last Price:</span> ৳

@@ -14,6 +14,8 @@ import { Input } from '@/components/ui/input'
 import type { ComboboxOptionInterface } from '@/interface/transactionInterface'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 import type { InventoryItem } from '@/interface/inventoryInterface'
+import { Tooltip, TooltipContent, TooltipProvider } from '../ui/tooltip'
+import { TooltipTrigger } from '@radix-ui/react-tooltip'
 
 interface InventoryRowProps {
     form: UseFormReturn<TransactionFormValues>
@@ -154,9 +156,24 @@ export const InventoryRow = ({
                             </FormControl>
                             {/* description */}
                             {itemDisplayData?.description && (
-                                <p className='text-xs text-muted-foreground mt-1 italic'>
-                                    {itemDisplayData.description}
-                                </p>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className="cursor-help">
+                                                <p className="text-xs mt-1 italic truncate max-w-[200px]">
+                                                    Desc: {itemDisplayData.description}
+                                                </p>
+                                            </div>
+                                        </TooltipTrigger>
+
+                                        <TooltipContent className="max-w-xs wrap-break-word">
+                                            <p className="text-xs italic leading-relaxed">
+                                                Desc: {itemDisplayData.description}
+                                            </p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+
                             )}
                             <FormMessage />
                         </FormItem>

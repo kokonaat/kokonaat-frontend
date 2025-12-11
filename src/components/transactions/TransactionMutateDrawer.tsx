@@ -339,27 +339,33 @@ const TransactionMutateDrawer = ({
               </div>
             </div>
 
-            {entityTypeId && <PaymentTypeField form={form} />}
+            <div className='flex items-end gap-4'>
+              <div className="flex-1">
+                {entityTypeId && <PaymentTypeField form={form} />}
+              </div>
 
-            {entityTypeId && (
-              <FormField
-                control={form.control}
-                name="remarks"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Remarks</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="text"
-                        placeholder="Remarks"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+              <div className="flex-1">
+                {entityTypeId && (
+                  <FormField
+                    control={form.control}
+                    name="remarks"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Remarks</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="text"
+                            placeholder="Remarks"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 )}
-              />
-            )}
+              </div>
+            </div>
 
             {entityTypeId && paymentType && (
               showInventoryFields ? (

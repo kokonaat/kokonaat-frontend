@@ -14,13 +14,15 @@ import { Input } from '@/components/ui/input'
 import type { ComboboxOptionInterface } from '@/interface/transactionInterface'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 import type { InventoryItem } from '@/interface/inventoryInterface'
+import { Tooltip, TooltipContent, TooltipProvider } from '../ui/tooltip'
+import { TooltipTrigger } from '@radix-ui/react-tooltip'
 
 interface InventoryRowProps {
     form: UseFormReturn<TransactionFormValues>
     field: FieldArrayWithId<TransactionFormValues, 'inventories', 'id'>
     index: number
     currentInputValue: string
-    itemDisplayData: { lastPrice: number | null; stockQuantity: number | null } | undefined
+    itemDisplayData: { lastPrice: number | null; stockQuantity: number | null; description: string | null } | undefined
     filteredInventoryOptions: ComboboxOptionInterface[]
     inventoryOptions: ComboboxOptionInterface[]
     inventoryList: InventoryItem[]
@@ -72,7 +74,7 @@ export const InventoryRow = ({
                                     const selectedOption = inventoryOptions.find(
                                         (opt) => opt.value === val
                                     )
-                                    
+
                                     // Only process if it's a real option selection (from dropdown)
                                     // When allowCustomValue is true, onSelect is also called during typing,
                                     // but those are handled by onSearch. We only process explicit selections here.
@@ -152,6 +154,27 @@ export const InventoryRow = ({
                                     }}
                                 />
                             </FormControl>
+                            {/* description */}
+                            {itemDisplayData?.description && (
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className="cursor-help">
+                                                <p className="text-xs mt-1 italic truncate max-w-[200px]">
+                                                    Desc: {itemDisplayData.description}
+                                                </p>
+                                            </div>
+                                        </TooltipTrigger>
+
+                                        <TooltipContent className="max-w-xs wrap-break-word">
+                                            <p className="text-xs italic leading-relaxed">
+                                                Desc: {itemDisplayData.description}
+                                            </p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+
+                            )}
                             <FormMessage />
                         </FormItem>
                     )}
@@ -195,14 +218,14 @@ export const InventoryRow = ({
                     <Plus className='h-4 w-4' />
                 </Button>
                 {/* {showRemoveButton && ( */}
-                    <Button
-                        type='button'
-                        variant='destructive'
-                        size='icon'
-                        onClick={() => onRemove(index)}
-                    >
-                        <Minus className='h-4 w-4' />
-                    </Button>
+                <Button
+                    type='button'
+                    variant='destructive'
+                    size='icon'
+                    onClick={() => onRemove(index)}
+                >
+                    <Minus className='h-4 w-4' />
+                </Button>
                 {/* )} */}
             </div>
         </div>

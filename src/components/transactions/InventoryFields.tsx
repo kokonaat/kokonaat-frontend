@@ -17,11 +17,11 @@ interface InventoryFieldsProps {
   setInventoryInputValues: Dispatch<SetStateAction<Record<number, string>>>
   inventoryDisplayData: Record<
     number,
-    { lastPrice: number | null; stockQuantity: number | null }
+    { lastPrice: number | null; stockQuantity: number | null; description: string | null }
   >
   setInventoryDisplayData: Dispatch<
     SetStateAction<
-      Record<number, { lastPrice: number | null; stockQuantity: number | null }>
+      Record<number, { lastPrice: number | null; stockQuantity: number | null; description: string | null }>
     >
   >
   selectedInventoryOptionsCache: Record<string, ComboboxOptionInterface>
@@ -95,6 +95,7 @@ export const InventoryFields = ({
         [index]: {
           lastPrice: selectedInventory.lastPrice ?? null,
           stockQuantity: selectedInventory.quantity ?? null,
+          description: selectedInventory.description ?? null,
         },
       }))
 
@@ -116,7 +117,7 @@ export const InventoryFields = ({
 
     setInventoryDisplayData((prev) => ({
       ...prev,
-      [index]: { lastPrice: null, stockQuantity: null },
+      [index]: { lastPrice: null, stockQuantity: null, description: null },
     }))
 
     form.setValue(`inventories.${index}.inventoryId`, query)
@@ -154,7 +155,7 @@ export const InventoryFields = ({
         },
         {} as Record<
           number,
-          { lastPrice: number | null; stockQuantity: number | null }
+          { lastPrice: number | null; stockQuantity: number | null; description: string | null }
         >
       )
     })

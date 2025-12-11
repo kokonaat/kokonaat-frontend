@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const COMPANY_NAME = import.meta.env.VITE_COMPANY_NAME || "Company Name"
+const COMPANY_NAME = import.meta.env.VITE_COMPANY_NAME || "Company Name";
 
 interface Inventory {
     id: string;
@@ -40,134 +40,155 @@ interface Summary {
 export interface Entity {
     name: string;
     no: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    city?: string;
+    country?: string;
     shop: {
         name: string;
         address?: string;
     };
 }
 
-// value extractor
-const getItemName = (item: TransactionDetail): string => {
-    return item.inventory?.name || item.itemName || item.name || "N/A"
-}
+// Value extractors
+const getItemName = (item: TransactionDetail): string =>
+    item.inventory?.name || item.itemName || item.name || "N/A";
 
-const getQuantity = (item: TransactionDetail): number => {
-    if (item.quantity != null) return item.quantity
-    if (item.qty != null) return item.qty
-    return 0
-}
+const getQuantity = (item: TransactionDetail): number =>
+    item.quantity ?? item.qty ?? 0;
 
-const getPrice = (item: TransactionDetail): number => {
-    if (item.price != null) return item.price
-    if (item.unitPrice != null) return item.unitPrice
-    return 0
-}
+const getPrice = (item: TransactionDetail): number =>
+    item.price ?? item.unitPrice ?? 0;
 
 const getTotal = (item: TransactionDetail): number => {
-    if (item.total != null) return item.total
-    if (item.amount != null) return item.amount
+    if (item.total != null) return item.total;
+    if (item.amount != null) return item.amount;
+    return getQuantity(item) * getPrice(item);
+};
 
-    const qty = getQuantity(item)
-    const price = getPrice(item)
-    return qty * price
-}
+// Remove currency sign, Taka will be added in summary
+const formatNumber = (num: number) => num.toFixed(2);
 
 export const generatePDF = (
     entity: Entity,
     transactions: Transaction[],
     summary: Summary
 ) => {
-    const doc = new jsPDF()
-    const pageWidth = doc.internal.pageSize.getWidth()
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
 
-    // header
-    doc.setFontSize(18)
-    const shopNameWidth = doc.getTextWidth(entity.shop.name)
-    doc.text(entity.shop.name, (pageWidth - shopNameWidth) / 2, 15)
+    // Header
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    const shopNameWidth = doc.getTextWidth(entity.shop.name);
+    doc.text(entity.shop.name, (pageWidth - shopNameWidth) / 2, 15);
 
-    doc.setFontSize(12)
-    const shopAddress = entity.shop.address || ""
-    const shopAddressWidth = doc.getTextWidth(shopAddress)
-    doc.text(shopAddress, (pageWidth - shopAddressWidth) / 2, 22)
+    if (entity.shop.address) {
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        const shopAddressWidth = doc.getTextWidth(entity.shop.address);
+        doc.text(entity.shop.address, (pageWidth - shopAddressWidth) / 2, 22);
+    }
 
-    doc.setFontSize(16)
-    const reportTitle = "Transaction Report"
-    const reportTitleWidth = doc.getTextWidth(reportTitle)
-    doc.text(reportTitle, (pageWidth - reportTitleWidth) / 2, 35)
+    // Report Title
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    const reportTitle = "Transaction Report";
+    doc.text(reportTitle, pageWidth / 2, 28, { align: "center" });
 
-    // date
-    doc.setFontSize(12)
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 45)
+    // Entity Info - Date left, Customer/Vendor right
+    const firstTrx = transactions[0];
+    let entityLabel = "Customer / Vendor: N/A";
+    if (firstTrx.customer) entityLabel = `Customer: ${firstTrx.customer.name}`;
+    else if (firstTrx.vendor) entityLabel = `Vendor: ${firstTrx.vendor.name}`;
 
-    // customer / vendor
-    const entityLabel = `Customer / Vendor: ${entity.name}`
-    const entityWidth = doc.getTextWidth(entityLabel)
-    doc.text(entityLabel, pageWidth - entityWidth - 14, 45)
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
 
-    // table
-    const rows: any[] = []
-    transactions.forEach((trx) => {
-        trx.details.forEach((item) => {
-            rows.push([
-                getItemName(item),
-                getQuantity(item),
-                getPrice(item),
-                getTotal(item),
-            ])
-        })
-    })
+    const leftX = 14; // left margin
+    const rightX = pageWidth - 14; // right margin
+    const y = 45; // vertical position
+
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, leftX, y);
+    doc.text(entityLabel, rightX, y, { align: "right" });
+
+    // Contact info (phone/email) below right-aligned
+    let contactInfo = "";
+    // if (entity.email) contactInfo += `Email: ${entity.email}`;
+    if (entity.phone) contactInfo += contactInfo ? ` | Phone: ${entity.phone}` : `Phone: ${entity.phone}`;
+    if (contactInfo) doc.text(contactInfo, rightX, y + 7, { align: "right" });
+
+    // Table
+    const rows = transactions.flatMap(trx =>
+        trx.details.map(item => [
+            getItemName(item),
+            getQuantity(item),
+            formatNumber(getPrice(item)),
+            formatNumber(getTotal(item))
+        ])
+    );
 
     autoTable(doc, {
-        startY: 60,
+        startY: 65,
         head: [["Item Name", "Quantity", "Price", "Total"]],
         body: rows,
-    })
+        theme: "grid",
+        headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: "bold", halign: "center" },
+        bodyStyles: { fontSize: 11 },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        columnStyles: {
+            0: { halign: "left" },
+            1: { halign: "center" },
+            2: { halign: "center" },
+            3: { halign: "center" },
+        }
+    });
 
-    // summary
-    const finalY = (doc as any).lastAutoTable.finalY + 10
-    const rightMargin = pageWidth - 36
+    // Summary Box
+    const finalY = (doc as any).lastAutoTable.finalY + 10;
+    const boxWidth = 76;
+    const boxHeight = 32;
+    const boxX = pageWidth - boxWidth - 14;
+    const boxY = finalY;
 
-    doc.setFontSize(11)
-    const lines = [
-        `Subtotal: ${summary.totalAmount}`,
-        `Paid: ${summary.totalPaid ?? 0}`,
-        `Advance Paid: ${summary.totalAdvancePaid}`,
-        `Total Payable: ${summary.totalAmount - ((summary.totalPaid ?? 0) + summary.totalAdvancePaid)}`,
-    ]
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.rect(boxX, boxY, boxWidth, boxHeight);
 
-    lines.forEach((line, index) => {
-        const lineWidth = doc.getTextWidth(line)
-        doc.text(line, rightMargin - lineWidth, finalY + 10 + index * 7)
-    })
+    const summaryLines = [
+        `Subtotal: ${formatNumber(summary.totalAmount)} Taka`,
+        `Paid: ${formatNumber(summary.totalPaid ?? 0)} Taka`,
+        `Advance Paid: ${formatNumber(summary.totalAdvancePaid)} Taka`,
+        `Total Payable: ${formatNumber(summary.totalAmount - ((summary.totalPaid ?? 0) + summary.totalAdvancePaid))} Taka`
+    ];
 
-    // footer
-    // split into two parts
-    const footerPrefix = "Powered by "
-    const footerCompany = COMPANY_NAME || "Your Company"
+    summaryLines.forEach((line, i) => {
+        doc.setFont("helvetica", i === summaryLines.length - 1 ? "bold" : "normal"); // bold last line
+        doc.text(line, pageWidth - 16, boxY + 7 + i * 7, { align: "right" });
+    });
 
-    doc.setFontSize(10)
+    // Footer
+    const footerPrefix = "Powered by ";
+    const footerCompany = COMPANY_NAME || "Your Company";
 
-    // get width with positioning
-    const prefixWidth = doc.getTextWidth(footerPrefix)
-    const companyWidth = doc.getTextWidth(footerCompany)
-    const totalWidth = prefixWidth + companyWidth
+    doc.setFontSize(10);
+    const prefixWidth = doc.getTextWidth(footerPrefix);
+    const companyWidth = doc.getTextWidth(footerCompany);
+    const totalWidth = prefixWidth + companyWidth;
+    const startX = (pageWidth - totalWidth) / 2;
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const footerY = pageHeight - 10;
 
-    // calculate starting X to center the full footer
-    const startX = (pageWidth - totalWidth) / 2
-    const pageHeight = doc.internal.pageSize.getHeight()
-    const footerY = pageHeight - 10
+    doc.setFont("helvetica", "normal");
+    doc.text(footerPrefix, startX, footerY);
+    doc.setFont("helvetica", "bold");
+    doc.text(footerCompany, startX + prefixWidth, footerY);
 
-    // draw normal prefix
-    doc.setFont("helvetica", "normal")
-    doc.text(footerPrefix, startX, footerY)
+    // Page number
+    doc.setFont("helvetica", "normal");
+    doc.text("Page 1 of 1", pageWidth - 14, footerY, { align: "right" });
 
-    // draw bold company name right after prefix
-    doc.setFont("helvetica", "bold")
-    doc.text(footerCompany, startX + prefixWidth, footerY)
-
-    // reset font style if needed
-    doc.setFont("helvetica", "normal")
-
-    // save PDF
-    doc.save(`Transaction_Report_${entity.name}.pdf`)
+    // Save PDF
+    doc.save(`Transaction_Report_${entity.name}.pdf`);
 }

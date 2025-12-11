@@ -4,6 +4,7 @@ import InventoryMutateDrawer from './InventoryMutateDrawer'
 import InventoryViewDrawer from './InventoryViewDrawer'
 import { useDeleteInventory } from '@/hooks/useInventory'
 import { useInventory } from './inventory-provider'
+import { useDrawerStore } from '@/stores/drawerStore'
 
 const InventoryDialogs = () => {
   const { open, setOpen, currentRow, setCurrentRow } = useInventory()
@@ -12,6 +13,9 @@ const InventoryDialogs = () => {
     : null
 
   const deleteMutation = useDeleteInventory()
+
+  // global drawer state to blur bg
+  const setDrawerOpen = useDrawerStore((s) => s.setDrawerOpen)
 
   return (
     <>
@@ -30,7 +34,10 @@ const InventoryDialogs = () => {
           <InventoryViewDrawer
             key={`inventory-view-${currentRow.id}`}
             open={open === 'view'}
-            onOpenChange={(val: boolean) => setOpen(val ? 'view' : null)}
+            onOpenChange={(val: boolean) => {
+              setOpen(val ? 'view' : null) // local state
+              setDrawerOpen(val)           // global blur state
+            }}
             currentRow={currentRow}
           />
 

@@ -4,6 +4,7 @@ import { useCustomers } from '../customers/customer-provider'
 import { useDeleteVendor } from '@/hooks/useVendor'
 import VendorMutateDrawer from './VendorMutateDrawer'
 import VendorViewDrawer from './VendorViewDrawer'
+import { useDrawerStore } from '@/stores/drawerStore'
 
 const VendorDialogs = () => {
   const { open, setOpen, currentRow, setCurrentRow } = useCustomers()
@@ -12,6 +13,9 @@ const VendorDialogs = () => {
     : null
 
   const deleteMutation = useDeleteVendor(shopId || '')
+
+  // global drawer state to blur bg
+  const setDrawerOpen = useDrawerStore((s) => s.setDrawerOpen)
 
   return (
     <>
@@ -30,7 +34,11 @@ const VendorDialogs = () => {
           <VendorViewDrawer
             key={`vendor-view-${currentRow.id}`}
             open={open === 'view'}
-            onOpenChange={(val: boolean) => setOpen(val ? 'view' : null)}
+            onOpenChange={(val: boolean) => {
+              setOpen(val ? 'view' : null)
+              // blur global state
+              setDrawerOpen(val)
+            }}
             currentRow={currentRow}
           />
 

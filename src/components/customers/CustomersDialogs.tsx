@@ -3,6 +3,7 @@ import { useCustomers } from './customer-provider'
 import { useDeleteCustomer } from '@/hooks/useCustomer'
 import CustomersMutateDrawer from "./CustomersMutateDrawer"
 import CustomerViewDrawer from './CustomerViewDrawer'
+import { useDrawerStore } from '@/stores/drawerStore'
 
 const CustomersDialogs = () => {
   const { open, setOpen, currentRow, setCurrentRow } = useCustomers()
@@ -11,6 +12,9 @@ const CustomersDialogs = () => {
     : null
 
   const deleteMutation = useDeleteCustomer(shopId || '')
+
+  // global drawer state to blur bg
+  const setDrawerOpen = useDrawerStore((s) => s.setDrawerOpen)
 
   return (
     <>
@@ -29,7 +33,11 @@ const CustomersDialogs = () => {
           <CustomerViewDrawer
             key={`customer-view-${currentRow.id}`}
             open={open === 'view'}
-            onOpenChange={(val: boolean) => setOpen(val ? 'view' : null)}
+            onOpenChange={(val: boolean) => {
+              setOpen(val ? 'view' : null)
+              // global blur state
+              setDrawerOpen(val)
+            }}
             currentRow={currentRow}
           />
 

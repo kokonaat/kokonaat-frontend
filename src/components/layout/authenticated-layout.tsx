@@ -19,12 +19,14 @@ import { useShopList } from '@/hooks/useShop'
 import { Command, GalleryVerticalEnd, AudioWaveform } from 'lucide-react'
 import type { AuthenticatedLayoutProps } from '@/interface/sidebarDataInerface'
 import { useUserStore } from '@/stores/userStore'
+import { useDrawerStore } from '@/stores/drawerStore'
 
 export default function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
-
   const { data, isLoading, isError } = useShopList()
-
   const user = useUserStore((s) => s.user)
+
+  // global drawer state apply blur while any drawer open to view
+  const isAnyDrawerOpen = useDrawerStore((s) => s.isAnyDrawerOpen)
 
   // default icons to rotate for shops
   const icons = [Command, GalleryVerticalEnd, AudioWaveform]
@@ -39,15 +41,18 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex h-screen w-screen overflow-hidden">
-        {/* Sidebar */}
+      {/* wrapper for blur */}
+      <div
+        className={`relative flex h-screen w-screen overflow-hidden transition-all duration-300 
+          ${isAnyDrawerOpen ? 'blur-sm pointer-events-none' : ''
+          }`}
+      >
+        {/* sidebar */}
         <AppSidebar>
           <SidebarHeader>
             {isLoading && <p className="text-sm text-gray-500">Loading shops...</p>}
             {isError && <p className="text-sm text-red-500">Failed to load shops</p>}
-            {!isLoading && !isError && (
-              <TeamSwitcher teams={dynamicTeams} />
-            )}
+            {!isLoading && !isError && <TeamSwitcher teams={dynamicTeams} />}
           </SidebarHeader>
 
           <SidebarContent className="overflow-y-auto">
@@ -63,14 +68,17 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
               <NavUser user={{ id: '', name: 'Guest', phone: '' }} />
             )}
           </SidebarFooter>
-
         </AppSidebar>
 
-        {/* Main Content */}
-        <div className="flex flex-1 flex-col min-w-0 h-full overflow-hidden">
-          {/* top header (now shared globally) */}
+        {/* main content */}
+        <div className="flex flex-1 flex-col min-w-0 h-full overflow-hidden relative z-0">
+          {/* top header */}
           <Header>
-            <Search />
+            {/* search inside the blur wrapper */}
+            <div className="relative z-0 w-full">
+              <Search />
+            </div>
+
             <div className="ms-auto flex items-center space-x-4">
               <ThemeSwitch />
               <ConfigDrawer />
@@ -78,6 +86,7 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
             </div>
           </Header>
 
+          {/* main content area */}
           <main className="flex-1 min-w-0 h-full overflow-auto">
             {children ?? <Outlet />}
           </main>

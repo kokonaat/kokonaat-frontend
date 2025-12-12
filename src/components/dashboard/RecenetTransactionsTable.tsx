@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { NoDataFound } from "../NoDataFound"
 
 interface Transaction {
@@ -34,63 +34,43 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
   }
 
   return (
-    <div className="rounded-xl border bg-card shadow-sm overflow-auto">
-      <Table className="min-w-[600px]">
-        <TableHeader className="bg-muted/40">
-          <TableRow>
-            <TableHead className="py-2 px-4 text-left">Transaction No</TableHead>
-            <TableHead className="py-2 px-4 text-left">Transaction Type</TableHead>
-            <TableHead className="py-2 px-4 text-right">Amount</TableHead>
-            <TableHead className="py-2 px-4 text-right">Pending</TableHead>
-          </TableRow>
-        </TableHeader>
+    <Table className="w-full">
+      <TableBody>
+        {transactions.length > 0 ? (
+          transactions.map((tx) => (
+            <TableRow
+              key={tx.id}
+              className="hover:bg-muted/30 transition-colors cursor-pointer"
+            >
+              {/* transaction no */}
+              <TableCell className="py-3 px-4 font-medium flex flex-col gap-1">
+                <span>{tx.transactionType}</span>
+                <span>{tx.no}</span>
+              </TableCell>
 
-        <TableBody>
-          {transactions.length > 0 ? (
-            transactions.map((tx) => (
-              <TableRow
-                key={tx.id}
-                className="hover:bg-muted/30 transition-colors cursor-pointer"
-              >
-                {/* transaction no */}
-                <TableCell className="py-3 px-4 font-medium">{tx.no}</TableCell>
+              {/* amount */}
+              <TableCell className="py-3 px-4 text-right font-medium text-green-700">
+                ৳{Number(tx?.totalAmount ?? 0).toLocaleString()}
+              </TableCell>
 
-                {/* transaction type */}
-                <TableCell className="py-3 px-4">
-                  <span
-                    className={`text-xs font-semibold px-2 py-1 rounded-full ${tx.transactionType === "SALE"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-blue-100 text-blue-700"
-                      }`}
-                  >
-                    {tx.transactionType}
-                  </span>
-                </TableCell>
-
-                {/* amount */}
-                <TableCell className="py-3 px-4 text-right font-medium text-green-700">
-                  ৳{Number(tx?.totalAmount ?? 0).toLocaleString()}
-                </TableCell>
-
-                {/* pending */}
-                <TableCell className="py-3 px-4 text-right font-medium text-red-600">
-                  ৳{tx.pending.toLocaleString()}
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell
-                colSpan={5}
-                className="h-24 text-center text-muted-foreground"
-              >
-                No recent transactions.
+              {/* pending */}
+              <TableCell className="py-3 px-4 text-right font-medium text-red-600">
+                ৳{tx.pending.toLocaleString()}
               </TableCell>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell
+              colSpan={5}
+              className="h-24 text-center text-muted-foreground"
+            >
+              No recent transactions.
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   )
 }
 

@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator"
 import { useTransactionById } from "@/hooks/useTransaction"
 import { useShopStore } from "@/stores/shopStore"
 import { TransactionDetailsTable } from "./TransactionDetailsTable"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 
 const TransactionDetails = () => {
     const { id } = useParams<{ id: string }>()
@@ -31,17 +32,30 @@ const TransactionDetails = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <p><strong>Name:</strong> {transaction.vendor?.name ?? transaction.customer?.name}</p>
-                            <p><strong>Amount:</strong> ৳{transaction.amount}</p>
+                            <p><strong>Amount:</strong> ৳{transaction.totalAmount}</p>
                             <p><strong>Pending:</strong> ৳{transaction.pending}</p>
-                            <p><strong>Is Paid:</strong> {transaction.isPaid ? "Yes" : "No"}</p>
+                            {/* <p><strong>Is Paid:</strong> {transaction.isPaid ? "Yes" : "No"}</p> */}
                             <p><strong>Payment Type:</strong> {(transaction.paymentType ?? "N/A").replace("_", " ")}</p>
                         </div>
 
                         <div className="space-y-2">
                             <p><strong>Status:</strong> {transaction.transactionStatus ?? "Pending"}</p>
-                            <p><strong>Partner Type:</strong> {transaction.partnerType}</p>
+                            {/* <p><strong>Partner Type:</strong> {transaction.partnerType}</p> */}
                             <p><strong>Created At:</strong> {new Date(transaction.createdAt).toLocaleString()}</p>
                             <p><strong>Updated At:</strong> {new Date(transaction.updatedAt).toLocaleString()}</p>
+                            <div className="flex items-center gap-2">
+                                <strong>Remarks:</strong>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <span className="truncate max-w-[200px] block">
+                                            {transaction.remarks || "N/A"}
+                                        </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs wrap-break-word">
+                                        {transaction.remarks || "N/A"}
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                         </div>
                     </div>
 

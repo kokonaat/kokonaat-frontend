@@ -8,6 +8,11 @@ export const trackingColumns: ColumnDef<InventoryTrackingItemInterface>[] = [
         cell: ({ row }) => row.original.inventory.name,
     },
     {
+        accessorKey: 'isPurchased',
+        header: 'Type',
+        cell: ({ getValue }) => getValue<boolean>() ? 'PURCHASE' : 'SALE'
+    },
+    {
         accessorKey: 'stock',
         header: 'Stock',
     },

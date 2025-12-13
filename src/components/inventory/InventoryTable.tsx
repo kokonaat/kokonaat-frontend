@@ -151,7 +151,7 @@ const InventoryTable = ({
                   key={row.id}
                   onClick={() => {
                     setCurrentRow(row.original)
-                    // setDrawerOpen(true)
+                    setDrawerOpen(true)
                   }}
                   data-state={row.getIsSelected() && 'selected'}
                   className="cursor-pointer"

@@ -1,8 +1,9 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -12,7 +13,7 @@ import DashboardOverview from '@/components/dashboard/DashboardOverview'
 import RecenetTransactionsTable from '@/components/dashboard/RecenetTransactionsTable'
 import { useShopStore } from '@/stores/shopStore'
 import DateRangeSearch from '@/components/DateRangeSearch'
-import { format } from 'date-fns'
+import { format, subDays } from 'date-fns'
 import { useDashboardData } from '@/hooks/useDashboard'
 
 const Dashboard = () => {
@@ -21,20 +22,23 @@ const Dashboard = () => {
   const [startDate, setStartDate] = useState<Date>()
   const [endDate, setEndDate] = useState<Date>()
 
+  const defaultEndDate = useMemo(() => new Date(), [])
+  const defaultStartDate = useMemo(() => subDays(defaultEndDate, 30), [defaultEndDate])
+
   // Memoize params to prevent unnecessary re-renders
   const params = useMemo(() => ({
     shopId: shopId || '',
-    startDate: startDate ? format(startDate, 'yyyy-MM-dd') : '2025-01-01',
-    endDate: endDate ? format(endDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
-  }), [shopId, startDate, endDate])
+    startDate: startDate ? format(startDate, 'yyyy-MM-dd') : format(defaultStartDate, 'yyyy-MM-dd'),
+    endDate: endDate ? format(endDate, 'yyyy-MM-dd') : format(defaultEndDate, 'yyyy-MM-dd'),
+  }), [shopId, startDate, endDate, defaultEndDate, defaultStartDate])
 
-  const { data, isLoading, isError, refetch } = useDashboardData(params)
+  const { data, isLoading, isError } = useDashboardData(params)
 
-  const handleDateChange = useCallback((from?: Date, to?: Date) => {
+  // react query will auto-refetch when params change
+  const handleDateChange = (from?: Date, to?: Date) => {
     setStartDate(from)
     setEndDate(to)
-    refetch() // immediately fetch new data
-  }, [refetch])
+  }
 
   if (isError) return <p>Error loading dashboard data.</p>
 
@@ -64,7 +68,6 @@ const Dashboard = () => {
                 <div className='text-2xl font-bold'>
                   {isLoading ? 'Loading...' : data?.totalInventory ?? 0}
                 </div>
-                <p className='text-muted-foreground text-xs'>+ update info</p>
               </CardContent>
             </Card>
 
@@ -79,7 +82,6 @@ const Dashboard = () => {
                     ? 'Loading...'
                     : `${data?.totalCustomers ?? 0} / ${data?.totalVendors ?? 0}`}
                 </div>
-                <p className='text-muted-foreground text-xs'>Customers / Vendors</p>
               </CardContent>
             </Card>
 
@@ -92,7 +94,6 @@ const Dashboard = () => {
                 <div className='text-2xl font-bold'>
                   {isLoading ? 'Loading...' : data?.transactionsCount ?? 0}
                 </div>
-                <p className='text-muted-foreground text-xs'>Total transactions</p>
               </CardContent>
             </Card>
 
@@ -107,7 +108,6 @@ const Dashboard = () => {
                     ? 'Loading...'
                     : `${data?.salesCount ?? 0} / ${data?.purchasesCount ?? 0}`}
                 </div>
-                <p className='text-muted-foreground text-xs'>Sales / Purchases</p>
               </CardContent>
             </Card>
           </div>
@@ -118,14 +118,19 @@ const Dashboard = () => {
               <CardHeader>
                 <CardTitle>Overview</CardTitle>
               </CardHeader>
-              <CardContent className=''>
-                <DashboardOverview />
+              <CardContent>
+                <DashboardOverview data={data} isLoading={isLoading} />
               </CardContent>
             </Card>
 
             <Card className='col-span-1 lg:col-span-3'>
               <CardHeader>
                 <CardTitle>Recent Transactions</CardTitle>
+                <CardDescription>
+                  {data?.transactionsCount} Transactions from{" "}
+                  {format(startDate || defaultStartDate, "yyyy-MM-dd")} to{" "}
+                  {format(endDate || defaultEndDate, "yyyy-MM-dd")}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <RecenetTransactionsTable data={data} />

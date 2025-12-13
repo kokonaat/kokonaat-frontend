@@ -12,11 +12,11 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
-import { DataTablePagination } from '@/features/users/components/data-table-pagination'
 import { NoDataFound } from '../NoDataFound'
 import { Card, CardContent } from '../ui/card'
 import type { InventoryTrackingItemInterface } from '@/interface/inventoryInterface'
 import { trackingColumns } from './InventoryTrackingColumns'
+import { TransactionLedgerDataTablePagination } from '../customers/TransactionLedgerDataTablePagination'
 
 type InventoryDetailsTrackingTableProps = {
     data: InventoryTrackingItemInterface[]
@@ -104,7 +104,7 @@ const InventoryDetailsTrackingTable = ({
             </div>
 
             {/* pagination */}
-            {data.length > 0 && <DataTablePagination table={table} />}
+            {data.length > 0 && <TransactionLedgerDataTablePagination table={table} />}
         </div>
     )
 }

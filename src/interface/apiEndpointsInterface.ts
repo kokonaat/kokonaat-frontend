@@ -40,6 +40,13 @@ export interface ApiEndpoints {
     getTransactionById: string
     transactionLedger: string
   }
+  uom: {
+    uomList: string
+    createUom: string
+    updateUom: string
+    deleteUom: string
+    getUomById: string
+  }
   inventory: {
     inventoryList: string
     createInventory: string

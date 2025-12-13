@@ -126,11 +126,13 @@ const Dashboard = () => {
             <Card className='col-span-1 lg:col-span-3'>
               <CardHeader>
                 <CardTitle>Recent Transactions</CardTitle>
-                <CardDescription>
-                  {data?.transactionsCount} Transactions from{" "}
-                  {format(startDate || defaultStartDate, "yyyy-MM-dd")} to{" "}
-                  {format(endDate || defaultEndDate, "yyyy-MM-dd")}
-                </CardDescription>
+                {data?.transactionsCount > 0 && (
+                  <CardDescription>
+                    {data.transactionsCount} Transactions from{" "}
+                    {format(startDate || defaultStartDate, "dd-MM-yyyy")} to{" "}
+                    {format(endDate || defaultEndDate, "dd-MM-yyyy")}
+                  </CardDescription>
+                )}
               </CardHeader>
               <CardContent>
                 <RecenetTransactionsTable data={data} />

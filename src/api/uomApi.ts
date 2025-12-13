@@ -3,29 +3,6 @@ import { axiosInstance } from "./axios";
 import { apiEndpoints } from "@/config/api";
 
 // list
-// export const uomList = async (
-//     shopId: string,
-//     page: number,
-//     limit: number,
-//     searchBy?: string
-// ): Promise<{ items: UomInterface[]; total: number }> => {
-//     const params = new URLSearchParams({
-//         shopId,
-//         page: String(page),
-//         limit: String(limit),
-//     })
-
-//     if (searchBy) params.append('searchBy', searchBy)
-
-//     const res = await axiosInstance.get(
-//         `${apiEndpoints.uom.uomList}?${params.toString()}`
-//     )
-
-//     return {
-//         items: res.data.data ?? [],
-//         total: res.data.total ?? 0,
-//     }
-// }
 export const uomList = async (
     shopId: string,
     page: number,
@@ -38,13 +15,8 @@ export const uomList = async (
         limit: String(limit),
     })
 
-    // Change 'searchBy' to the correct parameter name your API expects
-    // Try one of these common alternatives:
     if (searchBy && searchBy.trim()) {
         params.append('search', searchBy) // Most common
-        // OR try: params.append('query', searchBy)
-        // OR try: params.append('q', searchBy)
-        // OR try: params.append('name', searchBy)
     }
 
     const res = await axiosInstance.get(

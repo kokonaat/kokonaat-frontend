@@ -2,6 +2,7 @@ import {
   ContactRound,
   LayoutDashboard,
   Package,
+  Scale,
   ShoppingBag,
   UserRoundCheck,
   UserRoundPlus,
@@ -24,6 +25,7 @@ export const sidebarData: Omit<SidebarData, 'teams'> = {
         { title: 'Shops', url: '/shops', icon: ShoppingBag },
         { title: 'Customer', url: '/customers', icon: UserStar },
         { title: 'Vendor', url: '/vendors', icon: UsersRound },
+        { title: 'Uom', url: '/uom', icon: Scale, },
         { title: 'Inventory', url: '/inventory', icon: ShoppingBag },
         { title: 'Transaction Board', url: '/transactions', icon: Package },
         {

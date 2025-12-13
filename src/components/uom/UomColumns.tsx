@@ -1,11 +1,11 @@
-import type { InventoryItemInterface } from "@/interface/inventoryInterface"
 import { type ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "../customers/DataTableColumnHeader"
-import { DataTableRowActions } from "./DataTableRowActions"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
+import type { UomInterface } from "@/interface/uomInterface"
+import { DataTableRowActions } from "./DataTableRowActions"
 
-export const InventoryColumns: ColumnDef<InventoryItemInterface>[] = [
+export const UomColumns: ColumnDef<UomInterface>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -58,19 +58,6 @@ export const InventoryColumns: ColumnDef<InventoryItemInterface>[] = [
                 </TooltipProvider>
             )
         }
-    },
-    {
-        accessorKey: 'quantity',
-        header: ({ column }) => <DataTableColumnHeader column={column} title='Quantity' />,
-    },
-    {
-        accessorFn: (row) => row.unitOfMeasurement?.name ?? 'N/A',
-        id: 'unitOfMeasurement',
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Uom" />,
-    },
-    {
-        accessorKey: 'lastPrice',
-        header: ({ column }) => <DataTableColumnHeader column={column} title='Last Price' />,
     },
     {
         id: 'actions',

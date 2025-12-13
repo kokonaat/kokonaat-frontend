@@ -1,9 +1,15 @@
+
+export interface UnitOfMeasurement {
+  id: string
+  name: string
+}
 export interface InventoryItemInterface {
   id: string
   shopId?: string
   name: string
   description?: string
   quantity: number
+  unitOfMeasurement?: UnitOfMeasurement
   lastPrice: number
   createdAt?: string
   updatedAt?: string

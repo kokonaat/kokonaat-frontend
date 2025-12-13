@@ -13,7 +13,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { DataTableViewOptions } from "@/features/users/components/data-table-view-options"
-import { DataTablePagination } from "@/features/users/components/data-table-pagination"
+import { TransactionLedgerDataTablePagination } from "../customers/TransactionLedgerDataTablePagination"
 
 interface TransactionDetail {
     id: string
@@ -136,7 +136,7 @@ export const TransactionDetailsTable = ({ data }: TransactionDetailsTableProps) 
                 </Table>
             </div>
 
-            <DataTablePagination table={table} />
+            <TransactionLedgerDataTablePagination table={table} />
         </div>
     )
 }

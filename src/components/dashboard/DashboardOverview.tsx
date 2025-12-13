@@ -65,12 +65,12 @@ const DashboardOverview = ({ data, isLoading }: DashboardOverviewProps) => {
 
   if (!hasData) {
     return (
-      <Card className="overflow-auto">
+      <div className="rounded-xl border bg-card shadow-sm overflow-auto">
         <NoDataFound
-          message="No Sale's Graph Data"
-          details="Create a transaction to view your sales graph."
+          message="No Recent Transactions"
+          details="Create a transaction to get started."
         />
-      </Card>
+      </div>
     )
   }
 
@@ -84,7 +84,7 @@ const DashboardOverview = ({ data, isLoading }: DashboardOverviewProps) => {
 
   return (
 
-    <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+    <ChartContainer config={chartConfig} className="min-h-[340px] w-full">
       <RechartsBarChart accessibilityLayer data={chartData}>
         <CartesianGrid vertical={false} />
         <XAxis

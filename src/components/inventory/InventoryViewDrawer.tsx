@@ -47,7 +47,7 @@ const InventoryViewDrawer = ({
       <DrawerContent className="max-w-2xl mx-auto p-6 space-y-6">
         <DrawerHeader>
           <DrawerTitle className="text-lg font-semibold">
-            Inventory Details
+            Details
           </DrawerTitle>
           <DrawerDescription className="text-sm text-muted-foreground">
             View information for{' '}
@@ -62,21 +62,21 @@ const InventoryViewDrawer = ({
             {currentRow.name}
           </div>
           <div>
-            <span className="font-medium text-foreground">Quantity:</span>{' '}
+            <span className="font-medium text-foreground">Stock In Hand:</span>{' '}
             {currentRow.quantity}
           </div>
-          <div>
+          <div className='flex gap-1'>
             <span className="font-medium text-foreground">Description:</span>{' '}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="max-w-[200px] truncate cursor-help">
-                    {currentRow.description || '—'}
+                    {currentRow.description || 'N/A'}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs wrap-break-word">
-                    {currentRow.description || '—'}
+                    {currentRow.description || 'N/A'}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -90,7 +90,7 @@ const InventoryViewDrawer = ({
 
         <hr className="my-4 border-gray-200" />
 
-        <h3 className="text-md font-semibold mb-2">Inventory Tracking</h3>
+        <h3 className="text-md font-semibold mb-2">Tracking</h3>
 
         {isLoading && (
           <p className="text-sm text-muted-foreground">

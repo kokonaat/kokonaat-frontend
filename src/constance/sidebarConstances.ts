@@ -1,4 +1,5 @@
 import {
+  ChartNoAxesCombined,
   ContactRound,
   LayoutDashboard,
   Package,
@@ -28,6 +29,7 @@ export const sidebarData: Omit<SidebarData, 'teams'> = {
         { title: 'Uom', url: '/uom', icon: Scale, },
         { title: 'Inventory', url: '/inventory', icon: ShoppingBag },
         { title: 'Transaction Board', url: '/transactions', icon: Package },
+        { title: 'Expense', url: '/expense', icon: ChartNoAxesCombined },
         {
           title: 'User Management',
           icon: UserRoundCheck,

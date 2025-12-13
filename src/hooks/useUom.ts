@@ -10,22 +10,6 @@ const UOM_KEYS = {
 }
 
 // list
-// export const useUomList = (
-//     shopId: string,
-//     page: number,
-//     limit: number,
-//     searchBy?: string,
-//     options?: { enabled?: boolean }
-// ) =>
-//     useQuery<{
-//         items: UomInterface[]
-//         total: number
-//     }>({
-//         queryKey: [...UOM_KEYS.list(shopId), page, limit, searchBy],
-//         queryFn: () => uomList(shopId, page, limit, searchBy),
-//         enabled: options?.enabled !== false && !!shopId,
-//         placeholderData: keepPreviousData,
-//     })
 export const useUomList = (
     shopId: string,
     page: number,

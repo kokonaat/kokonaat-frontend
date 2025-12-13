@@ -1,4 +1,3 @@
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { NoDataFound } from "../NoDataFound"
 
 interface Transaction {
@@ -14,15 +13,20 @@ interface Transaction {
 }
 
 interface RecentTransactionsTableProps {
-  data: {
+  data:
+  | {
     recentTransactions: Transaction[]
   }
+  | undefined
 }
 
 const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
+  // handles undefined or data
   const transactions = data?.recentTransactions || []
 
-  if (transactions.length === 0) {
+  const lastFiveTransactions = transactions.slice(0, 5)
+
+  if (lastFiveTransactions.length === 0) {
     return (
       <div className="rounded-xl border bg-card shadow-sm overflow-auto">
         <NoDataFound
@@ -34,43 +38,22 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
   }
 
   return (
-    <Table className="w-full">
-      <TableBody>
-        {transactions.length > 0 ? (
-          transactions.map((tx) => (
-            <TableRow
-              key={tx.id}
-              className="hover:bg-muted/30 transition-colors cursor-pointer"
-            >
-              {/* transaction no */}
-              <TableCell className="py-3 px-4 font-medium flex flex-col gap-1">
-                <span>{tx.transactionType}</span>
-                <span>{tx.no}</span>
-              </TableCell>
-
-              {/* amount */}
-              <TableCell className="py-3 px-4 text-right font-medium text-green-700">
-                ৳{Number(tx?.totalAmount ?? 0).toLocaleString()}
-              </TableCell>
-
-              {/* pending */}
-              <TableCell className="py-3 px-4 text-right font-medium text-red-600">
-                ৳{tx.pending.toLocaleString()}
-              </TableCell>
-            </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell
-              colSpan={5}
-              className="h-24 text-center text-muted-foreground"
-            >
-              No recent transactions.
-            </TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <div className="space-y-8">
+      {lastFiveTransactions.map((tx) => (
+        <div key={tx.id} className="flex items-center gap-4">
+          <div className="flex flex-1 flex-wrap items-center justify-between">
+            <div className="space-y-1">
+              <p className="text-sm leading-none font-medium">{tx.transactionType}</p>
+              <p className="text-muted-foreground text-sm">{tx.no}</p>
+            </div>
+            <div className="font-medium">
+              ৳{Number(tx?.totalAmount ?? 0).toLocaleString()}
+            </div>
+            <div className="font-medium">৳{tx.pending.toLocaleString()}</div>
+          </div>
+        </div>
+      ))}
+    </div>
   )
 }
 

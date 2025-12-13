@@ -91,6 +91,10 @@ export const TransactionLedgerColumn: ColumnDef<TransactionLedgerInterface>[] =
       header: 'Transaction Details',
       cell: ({ row }) => {
         const type = row.original.transactionType
+
+        // if PURCHASE or SALE i will make appear accordion
+        if (type !== 'PURCHASE' && type !== 'SALE') return null
+
         const detailsLabel = type === 'PURCHASE' ? 'Purchase Details' : 'Sales Details'
 
         const totalQty =

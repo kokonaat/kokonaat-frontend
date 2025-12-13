@@ -12,12 +12,12 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "../ui/input"
 import { DataTableViewOptions } from "@/features/users/components/data-table-view-options"
-import { DataTablePagination } from "@/features/users/components/data-table-pagination"
 import { TransactionLedgerColumn } from "./TransactionLedgerColumn"
 import type { TransactionLedgerTableProps } from "@/interface/transactionInterface"
 import { NoDataFound } from "../NoDataFound"
 import DateRangeSearch from "../DateRangeSearch"
 import { Card, CardContent } from "../ui/card"
+import { TransactionLedgerDataTablePagination } from "./TransactionLedgerDataTablePagination"
 
 const TransactionLedgerTable = ({
     data,
@@ -142,7 +142,7 @@ const TransactionLedgerTable = ({
                 )}
             </div>
 
-            {data.length > 0 && <DataTablePagination table={table} />}
+            {data.length > 0 && <TransactionLedgerDataTablePagination table={table} />}
         </div>
     )
 }

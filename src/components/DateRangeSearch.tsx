@@ -7,13 +7,19 @@ import type { DateRange } from 'react-day-picker'
 import { CalendarIcon, X } from 'lucide-react'
 
 interface DateRangeSearchProps {
+    value?: DateRange
     onDateChange?: (from?: Date, to?: Date) => void
 }
 
-export default function DateRangeSearch({ onDateChange }: DateRangeSearchProps) {
-    const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined)
-    const [tempRange, setTempRange] = React.useState<DateRange | undefined>(undefined)
+export default function DateRangeSearch({ value, onDateChange }: DateRangeSearchProps) {
+    const [dateRange, setDateRange] = React.useState<DateRange | undefined>(value)
+    const [tempRange, setTempRange] = React.useState<DateRange | undefined>(value)
     const [open, setOpen] = React.useState(false)
+
+    React.useEffect(() => {
+        setDateRange(value)
+        setTempRange(value)
+    }, [value])
 
     const handleOk = () => {
         if (tempRange?.from && tempRange?.to) {

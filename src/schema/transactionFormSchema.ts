@@ -53,8 +53,8 @@ export const transactionFormSchema = z
         z.object({
           inventoryId: z.string().min(1, "Select inventory"),
           // Use zNumberOrZero helper for quantity and price
-          quantity: zNumberOrZero.refine((val) => val >= 0, { message: "Quantity must be 0 or greater" }),
-          price: zNumberOrZero.refine((val) => val >= 0, { message: "Price must be 0 or greater" }),
+          quantity: zNumberOrZero.refine((val) => val > 0, { message: "Quantity must be greater than 0" }),
+          price: zNumberOrZero.refine((val) => val > 0, { message: "Price must be greater than 0" }),
         })
       )
       // must use default([]) to ensure RHF sees this as a required array, not optional
@@ -67,8 +67,14 @@ export const transactionFormSchema = z
         data.transactionType &&
         inventoryRequiredTypes.includes(data.transactionType)
       ) {
-        // require at least ONE item with valid ID, positive quantity, and positive price
-        return data.inventories.some(
+        // all inventory items must have valid data if any exist
+        // first check if there are any inventory items at all
+        if (data.inventories.length === 0) {
+          return false
+        }
+
+        // check that all items are complete
+        return data.inventories.every(
           (item) => item.inventoryId.length > 0 && item.quantity > 0 && item.price > 0
         )
       }

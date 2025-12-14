@@ -48,7 +48,7 @@ const ExpenseMutateDrawer = ({
     const createMutation = useCreateExpense(shopId || "")
     const updateMutation = useUpdateExpense(shopId || "")
 
-    // ✅ Fix 1: Using ExpenseFormType inferred from schema
+    // Using ExpenseFormType inferred from schema
     const form = useForm<ExpenseFormType>({
         resolver: zodResolver(expenseFormSchema),
         defaultValues: {
@@ -84,12 +84,12 @@ const ExpenseMutateDrawer = ({
             title: data.title.trim(),
             description: data.description?.trim() || "",
             remarks: data.remarks?.trim() || "",
-            amount: data.amount, // ✅ Cleanup: amount is already a number from form input
+            amount: data.amount, // amount is already a number from form input
             shopId,
         }
 
         if (isUpdate && currentRow?.id) {
-            // ✅ Fix 2: Destructure to exclude 'id' from the request body for the PUT request.
+            // destructure to exclude 'id' from the request body for the PUT request.
             const { id, ...updateData } = payload
 
             updateMutation.mutate(
@@ -209,9 +209,10 @@ const ExpenseMutateDrawer = ({
                                                 min={0}
                                                 placeholder="0"
                                                 value={field.value ?? ""}
-                                                onChange={(e) =>
-                                                    field.onChange(e.target.value ? Number(e.target.value) : 0)
-                                                }
+                                                onChange={(e) => {
+                                                    const val = e.target.value
+                                                    field.onChange(val === '' ? '' : 0)
+                                                }}
                                             />
                                         </FormControl>
                                         <FormMessage />

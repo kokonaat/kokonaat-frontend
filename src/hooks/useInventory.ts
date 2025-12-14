@@ -115,6 +115,7 @@ export const useDeleteInventory = () => {
   })
 }
 
+// inventory tracking
 export const useTrackInventoryById = (
   inventoryId: string | null,
   shopId: string | null,

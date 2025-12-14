@@ -59,6 +59,13 @@ export const apiEndpoints: ApiEndpoints = {
     getInventoryById: '/inventory/id',
     inventoryTrackingById: '/inventory-tracking/{inventoryId}',
   },
+  expense: {
+    expenseList: '/expense',
+    createExpense: '/expense',
+    updateExpense: '/expense/{id}',
+    deleteExpense: '/expense/{id}',
+    getExpenseById: '/expense/{id}',
+  },
   user: {
     currentUser: '/user/me',
     userList: '/user/get-users-by-shop-id',

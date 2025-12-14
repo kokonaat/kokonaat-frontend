@@ -15,106 +15,111 @@ import { useShopStore } from '@/stores/shopStore'
 import DateRangeSearch from '@/components/DateRangeSearch'
 import { format, subDays } from 'date-fns'
 import { useDashboardData } from '@/hooks/useDashboard'
+import type { DateRange } from 'react-day-picker'
 
 const Dashboard = () => {
   const shopId = useShopStore((s) => s.currentShopId)
 
-  const [startDate, setStartDate] = useState<Date>()
-  const [endDate, setEndDate] = useState<Date>()
-
+  /** default range last 30 days */
   const defaultEndDate = useMemo(() => new Date(), [])
-  const defaultStartDate = useMemo(() => subDays(defaultEndDate, 30), [defaultEndDate])
+  const defaultStartDate = useMemo(
+    () => subDays(defaultEndDate, 30),
+    [defaultEndDate]
+  )
 
-  // Memoize params to prevent unnecessary re-renders
-  const params = useMemo(() => ({
-    shopId: shopId || '',
-    startDate: startDate ? format(startDate, 'yyyy-MM-dd') : format(defaultStartDate, 'yyyy-MM-dd'),
-    endDate: endDate ? format(endDate, 'yyyy-MM-dd') : format(defaultEndDate, 'yyyy-MM-dd'),
-  }), [shopId, startDate, endDate, defaultEndDate, defaultStartDate])
+  /** controlled selected dates */
+  const [dateRange, setDateRange] = useState<DateRange>({
+    from: defaultStartDate,
+    to: defaultEndDate,
+  })
+
+  /** react query params */
+  const params = useMemo(
+    () => ({
+      shopId: shopId || '',
+      startDate: format(dateRange.from!, 'yyyy-MM-dd'),
+      endDate: format(dateRange.to!, 'yyyy-MM-dd'),
+    }),
+    [shopId, dateRange]
+  )
 
   const { data, isLoading, isError } = useDashboardData(params)
 
-  // react query will auto-refetch when params change
   const handleDateChange = (from?: Date, to?: Date) => {
-    setStartDate(from)
-    setEndDate(to)
+    if (!from || !to) {
+      setDateRange({
+        from: defaultStartDate,
+        to: defaultEndDate,
+      })
+      return
+    }
+
+    setDateRange({ from, to })
   }
 
   if (isError) return <p>Error loading dashboard data.</p>
 
   return (
     <Main>
-      <div className='mb-2 flex items-center justify-between space-y-2'>
-        <h1 className='text-2xl font-bold tracking-tight'>Dashboard</h1>
-        <div className='flex items-center space-x-2'>
-          <Button>Download</Button>
-        </div>
+      <div className="mb-2 flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+        <Button>Download</Button>
       </div>
 
-      <Tabs orientation='vertical' defaultValue='overview' className='space-y-4'>
-        <div className='w-full overflow-x-auto pb-2'>
-          <DateRangeSearch onDateChange={handleDateChange} />
-        </div>
+      <Tabs defaultValue="overview" className="space-y-4">
+        <DateRangeSearch value={dateRange} onDateChange={handleDateChange} />
 
-        <TabsContent value='overview' className='space-y-4'>
-          {/* Summary Cards */}
-          <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-            {/* Total Inventory */}
+        <TabsContent value="overview" className="space-y-4">
+          {/* summary cards */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card>
-              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                <CardTitle className='text-sm font-medium'>Total Inventory</CardTitle>
+              <CardHeader>
+                <CardTitle className="text-sm">Total Inventory</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold'>
-                  {isLoading ? 'Loading...' : data?.totalInventory ?? 0}
-                </div>
+              <CardContent className="text-2xl font-bold">
+                {isLoading ? 'Loading...' : data?.totalInventory ?? 0}
               </CardContent>
             </Card>
 
-            {/* Customers & Vendors */}
             <Card>
-              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                <CardTitle className='text-sm font-medium'>Customers & Vendors</CardTitle>
+              <CardHeader>
+                <CardTitle className="text-sm">Customers / Vendors</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold'>
-                  {isLoading
-                    ? 'Loading...'
-                    : `${data?.totalCustomers ?? 0} / ${data?.totalVendors ?? 0}`}
-                </div>
+              <CardContent className="text-2xl font-bold">
+                {isLoading
+                  ? 'Loading...'
+                  : `${data?.totalCustomers ?? 0} / ${
+                      data?.totalVendors ?? 0
+                    }`}
               </CardContent>
             </Card>
 
-            {/* Transactions */}
             <Card>
-              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                <CardTitle className='text-sm font-medium'>Transactions</CardTitle>
+              <CardHeader>
+                <CardTitle className="text-sm">Transactions</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold'>
-                  {isLoading ? 'Loading...' : data?.transactionsCount ?? 0}
-                </div>
+              <CardContent className="text-2xl font-bold">
+                {isLoading ? 'Loading...' : data?.transactionsCount ?? 0}
               </CardContent>
             </Card>
 
-            {/* Sales & Purchases */}
             <Card>
-              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                <CardTitle className='text-sm font-medium'>Sales & Purchases</CardTitle>
+              <CardHeader>
+                <CardTitle className="text-sm">Sales / Purchases</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold'>
-                  {isLoading
-                    ? 'Loading...'
-                    : `${data?.salesCount ?? 0} / ${data?.purchasesCount ?? 0}`}
-                </div>
+              <CardContent className="text-2xl font-bold">
+                {isLoading
+                  ? 'Loading...'
+                  : `${data?.salesCount ?? 0} / ${
+                      data?.purchasesCount ?? 0
+                    }`}
               </CardContent>
             </Card>
           </div>
 
-          {/* Overview & Recent Transactions */}
-          <div className='grid grid-cols-1 gap-4 lg:grid-cols-7'>
-            <Card className='col-span-1 lg:col-span-4'>
+          {/* overview table */}
+          <div className="grid gap-4 lg:grid-cols-7">
+            <Card className="lg:col-span-4">
               <CardHeader>
                 <CardTitle>Overview</CardTitle>
               </CardHeader>
@@ -123,14 +128,14 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className='col-span-1 lg:col-span-3'>
+            <Card className="lg:col-span-3">
               <CardHeader>
                 <CardTitle>Recent Transactions</CardTitle>
                 {data?.transactionsCount > 0 && (
                   <CardDescription>
-                    {data.transactionsCount} Transactions from{" "}
-                    {format(startDate || defaultStartDate, "dd-MM-yyyy")} to{" "}
-                    {format(endDate || defaultEndDate, "dd-MM-yyyy")}
+                    {data.transactionsCount} transactions from{' '}
+                    {format(dateRange.from!, 'dd-MM-yyyy')} to{' '}
+                    {format(dateRange.to!, 'dd-MM-yyyy')}
                   </CardDescription>
                 )}
               </CardHeader>

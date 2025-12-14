@@ -61,7 +61,7 @@ function SheetContent({
           side === 'right' &&
           cn(
             'data-[state=closed]:slide-out-to-end data-[state=open]:slide-in-from-end inset-y-0 end-0 h-full w-3/4 border-s',
-            variant === 'wide' ? 'sm:max-w-2xl' : 'sm:max-w-md'
+            variant === 'wide' ? 'sm:max-w-3xl' : 'sm:max-w-md'
           ),
           side === 'left' &&
           'data-[state=closed]:slide-out-to-start data-[state=open]:slide-in-from-start inset-y-0 start-0 h-full w-3/4 border-e sm:max-w-sm',

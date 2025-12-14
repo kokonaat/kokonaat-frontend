@@ -55,6 +55,13 @@ export interface ApiEndpoints {
     getInventoryById: string
     inventoryTrackingById: string
   }
+  expense: {
+    expenseList: string
+    createExpense: string
+    updateExpense: string
+    deleteExpense: string
+    getExpenseById: string
+  }
   user: {
     currentUser: string
     userList: string

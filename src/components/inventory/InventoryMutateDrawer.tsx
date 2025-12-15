@@ -267,11 +267,14 @@ const InventoryMutateDrawer = ({
                       <Input
                         {...field}
                         type="number"
-                        placeholder="0"
+                        placeholder="0.00"
                         min={0}
+                        step="0.01"
                         value={field.value ?? ''}
-                        onChange={(e) =>
-                          field.onChange(e.target.value ? Number(e.target.value) : null)
+                        onChange={(e) => {
+                          const value = e.target.value
+                          field.onChange(value === '' ? null : parseFloat(value))
+                        }
                         }
                       />
                     </FormControl>

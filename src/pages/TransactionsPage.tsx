@@ -10,7 +10,7 @@ import { useTransactionList } from "@/hooks/useTransaction"
 const TransactionsPage = () => {
   const shopId = useShopStore((s) => s.currentShopId)
   const [pageIndex, setPageIndex] = useState(0)
-  const [_searchBy, setSearchBy] = useState('')
+  const [searchBy, setSearchBy] = useState('')
   const [startDate, setStartDate] = useState<Date | undefined>(undefined)
   const [endDate, setEndDate] = useState<Date | undefined>(undefined)
   const pageSize = 10
@@ -37,6 +37,8 @@ const TransactionsPage = () => {
   const { data, isLoading, isError } = useTransactionList(
     shopId || '',
     pageIndex + 1,
+    pageSize,
+    searchBy,
     startDateString,
     endDateString
   )

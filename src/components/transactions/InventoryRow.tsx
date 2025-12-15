@@ -266,10 +266,11 @@ export const InventoryRow = ({
                                     {...field}
                                     placeholder='0.00'
                                     min={0}
+                                    step="0.01"
                                     value={field.value === 0 ? '' : field.value ?? ''}
                                     onChange={(e) => {
                                         const val = e.target.value
-                                        field.onChange(val === '' ? '' : Number(val))
+                                        field.onChange(val === '' ? null : parseFloat(val))
                                     }}
                                 />
                             </FormControl>

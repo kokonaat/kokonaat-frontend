@@ -15,14 +15,24 @@ export const useUomList = (
     page: number,
     limit: number,
     searchBy?: string,
+    startDate?: Date,
+    endDate?: Date,
     options?: { enabled?: boolean }
 ) =>
     useQuery<{
         items: UomInterface[]
         total: number
     }>({
-        queryKey: [...UOM_KEYS.list(shopId), page, limit, searchBy],
-        queryFn: () => uomList(shopId, page, limit, searchBy),
+        queryKey: [
+            ...UOM_KEYS.list(shopId),
+            page,
+            limit,
+            searchBy,
+            startDate,
+            endDate,
+        ],
+        queryFn: () =>
+            uomList(shopId, page, limit, searchBy, startDate, endDate),
         enabled: options?.enabled !== false && !!shopId,
         placeholderData: keepPreviousData,
     })

@@ -7,7 +7,9 @@ export const uomList = async (
     shopId: string,
     page: number,
     limit: number,
-    searchBy?: string
+    searchBy?: string,
+    startDate?: Date,
+    endDate?: Date
 ): Promise<{ items: UomInterface[]; total: number }> => {
     const params = new URLSearchParams({
         shopId,
@@ -15,9 +17,9 @@ export const uomList = async (
         limit: String(limit),
     })
 
-    if (searchBy && searchBy.trim()) {
-        params.append('search', searchBy) // Most common
-    }
+    if (searchBy) params.append("search", searchBy)
+    if (startDate) params.append("startDate", startDate.toISOString())
+    if (endDate) params.append("endDate", endDate.toISOString())
 
     const res = await axiosInstance.get(
         `${apiEndpoints.uom.uomList}?${params.toString()}`

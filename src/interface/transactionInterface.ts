@@ -19,7 +19,7 @@ export interface ComboboxOptionInterface {
 }
 
 export interface TransactionDetail {
-  no: string
+  no?: string
   id: string
   transactionId: string
   inventory: {
@@ -29,6 +29,10 @@ export interface TransactionDetail {
   quantity: number
   price: number
   total: number
+  unitOfMeasurement?: {
+    id: string
+    name: string
+  }
   shopId: string
   createdAt: string
   updatedAt: string
@@ -133,10 +137,10 @@ export interface TransactionDetail {
 }
 
 export interface TransactionLedgerTableProps {
-    data: TransactionLedgerInterface[]
-    pageIndex: number
-    pageSize: number
-    total: number
-    onPageChange: (pageIndex: number) => void
-    onDateChange?: (startDate?: string, endDate?: string) => void
+  data: TransactionLedgerInterface[]
+  pageIndex: number
+  pageSize: number
+  total: number
+  onPageChange: (pageIndex: number) => void
+  onDateChange?: (startDate?: string, endDate?: string) => void
 }

@@ -4,7 +4,6 @@ import type { ExpenseType } from "@/constance/expenseConstance"
 export interface ExpenseItemInterface {
     id: string
     title: string
-    description?: string
     type: ExpenseType
     amount: number
     remarks?: string

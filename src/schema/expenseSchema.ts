@@ -3,7 +3,6 @@ import { z } from "zod"
 export const expenseSchema = z.object({
     id: z.string(),
     title: z.string(),
-    description: z.string().nullable(),
     type: z.enum([
         "DAILY_EXPENSE",
         "MONTHLY_SALARY",
@@ -13,7 +12,7 @@ export const expenseSchema = z.object({
         "OTHER",
     ]),
     amount: z.number().nonnegative(),
-    remarks: z.string().nullable(),
+    remarks: z.string().optional(),
     shopId: z.string().optional(),
     createdAt: z.string().datetime().optional(),
     updatedAt: z.string().datetime().optional(),

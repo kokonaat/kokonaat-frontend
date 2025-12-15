@@ -53,7 +53,6 @@ const ExpenseMutateDrawer = ({
         resolver: zodResolver(expenseFormSchema),
         defaultValues: {
             title: "",
-            description: "",
             type: "DAILY_EXPENSE",
             amount: 0,
             remarks: "",
@@ -66,7 +65,6 @@ const ExpenseMutateDrawer = ({
             form.reset(
                 currentRow ?? {
                     title: "",
-                    description: "",
                     type: "DAILY_EXPENSE",
                     amount: 0,
                     remarks: "",
@@ -82,7 +80,6 @@ const ExpenseMutateDrawer = ({
         const payload: ExpenseFormInterface = {
             ...data,
             title: data.title.trim(),
-            description: data.description?.trim() || "",
             remarks: data.remarks?.trim() || "",
             amount: data.amount, // amount is already a number from form input
             shopId,
@@ -156,20 +153,6 @@ const ExpenseMutateDrawer = ({
                             )}
                         />
 
-                        <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Description</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} placeholder="Expense description" />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
@@ -204,14 +187,20 @@ const ExpenseMutateDrawer = ({
                                         <FormLabel>Amount</FormLabel>
                                         <FormControl>
                                             <Input
-                                                {...field}
                                                 type="number"
-                                                min={0}
-                                                placeholder="0"
+                                                inputMode="decimal"
+                                                step="any"
+                                                min="0"
+                                                placeholder="0.00"
                                                 value={field.value ?? ""}
                                                 onChange={(e) => {
-                                                    const val = e.target.value
-                                                    field.onChange(val === '' ? '' : 0)
+                                                    const v = e.target.value
+                                                    field.onChange(v === "" ? undefined : Number(v))
+                                                }}
+                                                onBlur={() => {
+                                                    if (field.value !== undefined) {
+                                                        field.onChange(Number(field.value.toFixed(2)))
+                                                    }
                                                 }}
                                             />
                                         </FormControl>
@@ -228,7 +217,7 @@ const ExpenseMutateDrawer = ({
                                 <FormItem>
                                     <FormLabel>Remarks</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="Remarks (optional)" />
+                                        <Input {...field} placeholder="Remarks" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

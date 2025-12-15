@@ -25,6 +25,10 @@ export const useTransactionForm = () => {
         Record<string, ComboboxOptionInterface>
     >({})
 
+    // flag uom
+    const [uomSearchQueries, setUomSearchQueries] = useState<Record<number, string>>({})
+
+
     const resolver = zodResolver(
         transactionFormSchema
     ) as Resolver<TransactionFormValues>
@@ -42,6 +46,8 @@ export const useTransactionForm = () => {
         setInventoryInputValues({})
         setInventoryDisplayData({})
         setSelectedInventoryOptionsCache({})
+        // flag uom
+        setUomSearchQueries({})
     }
 
     return {
@@ -59,5 +65,8 @@ export const useTransactionForm = () => {
         selectedInventoryOptionsCache,
         setSelectedInventoryOptionsCache,
         resetFormStates,
+        // flag uom
+        uomSearchQueries,
+        setUomSearchQueries,
     }
 }

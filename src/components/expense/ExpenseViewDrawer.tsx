@@ -57,24 +57,6 @@ const ExpenseViewDrawer = ({
                     </div>
 
                     <div className="col-span-2 flex gap-1">
-                        <span className="font-medium text-foreground">Description:</span>
-                        <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <div className="max-w-[350px] truncate cursor-help">
-                                        {currentRow.description || 'N/A'}
-                                    </div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p className="max-w-sm wrap-break-word">
-                                        {currentRow.description || 'N/A'}
-                                    </p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    </div>
-
-                    <div className="col-span-2 flex gap-1">
                         <span className="font-medium text-foreground">Remarks:</span>
                         <TooltipProvider>
                             <Tooltip>

@@ -26,7 +26,6 @@ export function DataTableRowActions<TData>({
     // Use full ExpenseItemInterface
     const expense: ExpenseItemInterface = {
         ...parsed,
-        description: parsed.description ?? '',
         remarks: parsed.remarks ?? '',
         shopId: parsed.shopId ?? '',
         createdAt: parsed.createdAt ?? new Date().toISOString(),

@@ -16,6 +16,7 @@ import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 import type { InventoryItem } from '@/interface/inventoryInterface'
 import { Tooltip, TooltipContent, TooltipProvider } from '../ui/tooltip'
 import { TooltipTrigger } from '@radix-ui/react-tooltip'
+import type { UomInterface } from '@/interface/uomInterface'
 
 interface InventoryRowProps {
     form: UseFormReturn<TransactionFormValues>
@@ -34,6 +35,14 @@ interface InventoryRowProps {
     onAppend: () => void
     onRemove: (index: number) => void
     showRemoveButton: boolean
+    // flag uom
+    uomOptions: ComboboxOptionInterface[]
+    uomList: UomInterface[]
+    isUomLoading: boolean
+    uomSearchQuery: string // Row-specific query
+    onUomSearch: (query: string) => void // Row-specific handler
+    isExistingInventory: boolean
+    lockedUomValue?: string
 }
 
 export const InventoryRow = ({
@@ -53,6 +62,13 @@ export const InventoryRow = ({
     onAppend,
     onRemove,
     // showRemoveButton,
+    uomOptions,
+    // uomList,
+    isUomLoading,
+    // uomSearchQuery,
+    onUomSearch,
+    isExistingInventory,
+    lockedUomValue,
 }: InventoryRowProps) => {
     console.log(itemDisplayData)
     return (
@@ -178,6 +194,56 @@ export const InventoryRow = ({
                             <FormMessage />
                         </FormItem>
                     )}
+                />
+
+                {/* Add this right after Quantity FormField */}
+                <FormField
+                    control={form.control}
+                    name={`inventories.${index}.unitOfMeasurementId`}
+                    render={({ field }) => {
+                        // Use locked value if available, otherwise use field value
+                        const displayValue = lockedUomValue || field.value || ''
+
+                        return (
+                            <FormItem className='flex-1'>
+                                <FormLabel>UOM</FormLabel>
+                                <FormControl>
+                                    <Combobox
+                                        options={uomOptions}
+                                        className='w-full'
+                                        placeholder='Select UOM...'
+                                        value={displayValue}
+                                        onSelect={(val) => {
+                                            if (!isExistingInventory) { // Only allow changes for new inventories
+                                                // Check if it's an existing UOM option
+                                                const selectedUom = uomOptions.find((opt) => opt.value === val)
+
+                                                if (selectedUom) {
+                                                    // It's an existing UOM, use its ID
+                                                    field.onChange(val)
+                                                } else {
+                                                    // It's a custom typed UOM name, store it as is
+                                                    field.onChange(val)
+                                                }
+                                                onUomSearch('')
+                                            }
+                                        }}
+                                        onSearch={(query) => {
+                                            if (!isExistingInventory) { // Only allow search/typing for new inventories
+                                                // Allow typing custom UOM names
+                                                field.onChange(query)
+                                                onUomSearch(query)
+                                            }
+                                        }}
+                                        loading={isUomLoading}
+                                        disabled={isExistingInventory} // Disable for existing inventories
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+
+                        )
+                    }}
                 />
 
                 <FormField

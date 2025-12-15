@@ -54,6 +54,7 @@ export const transactionFormSchema = z
           inventoryId: z.string().min(1, "Select inventory"),
           // Use zNumberOrZero helper for quantity and price
           quantity: zNumberOrZero.refine((val) => val > 0, { message: "Quantity must be greater than 0" }),
+          unitOfMeasurementId: z.string().min(1, "Select unit of measurement"),
           price: zNumberOrZero.refine((val) => val > 0, { message: "Price must be greater than 0" }),
         })
       )

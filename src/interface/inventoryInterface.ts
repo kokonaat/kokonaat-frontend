@@ -21,6 +21,10 @@ export interface InventoryItem {
   price?: number
   stock?: number
   description?: string
+  unitOfMeasurement?: {
+    id: string
+    name: string
+  }
 }
 
 export interface InventoryFormInterface {

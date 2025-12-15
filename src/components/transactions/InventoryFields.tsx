@@ -1,10 +1,11 @@
 import type { Dispatch, SetStateAction } from 'react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { UseFormReturn, FieldArrayWithId } from 'react-hook-form'
 import type { InventoryItem } from '@/interface/inventoryInterface'
 import type { ComboboxOptionInterface } from '@/interface/transactionInterface'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 import { InventoryRow } from './InventoryRow'
+import type { UomInterface } from '@/interface/uomInterface'
 
 interface InventoryFieldsProps {
   form: UseFormReturn<TransactionFormValues>
@@ -31,6 +32,12 @@ interface InventoryFieldsProps {
   isInventoryLoading: boolean
   transactionType: string
   onInventorySearch: (query: string) => void
+  // flag uom
+  uomOptions: ComboboxOptionInterface[]
+  uomList: UomInterface[]
+  isUomLoading: boolean
+  uomSearchQueries: Record<number, string>
+  setUomSearchQueries: Dispatch<SetStateAction<Record<number, string>>>
 }
 
 export const InventoryFields = ({
@@ -49,7 +56,16 @@ export const InventoryFields = ({
   isInventoryLoading,
   transactionType,
   onInventorySearch,
+  uomOptions,
+  uomList,
+  isUomLoading,
+  // flag uom
+  uomSearchQueries,
+  setUomSearchQueries,
 }: InventoryFieldsProps) => {
+
+  // flag uom to track locked UOM values
+  const [lockedUomValues, setLockedUomValues] = useState<Record<number, string>>({})
 
   // Update cache when inventoryOptions change and we have selected inventories
   useEffect(() => {
@@ -80,7 +96,7 @@ export const InventoryFields = ({
 
     // Only process if this is a real inventory selection (exists in options)
     // Custom typed values are handled by handleInventorySearch
-    if (selectedInventory) {
+    if (selectedInventory) { // CHANGED: Check if selectedInventory exists first
       // Store the inventory option in cache so it's always available for display
       const option = inventoryOptions.find((opt) => opt.value === val)
       if (option) {
@@ -104,6 +120,30 @@ export const InventoryFields = ({
         ...prev,
         [index]: val,
       }))
+
+      // Store and set UOM value
+      if (selectedInventory.unitOfMeasurement?.id) { // Access correct property
+        const uomId = selectedInventory.unitOfMeasurement.id // Remove optional chaining here since we checked above
+        form.setValue(`inventories.${index}.unitOfMeasurementId`, uomId, {
+          shouldValidate: true,
+          shouldDirty: true,
+          shouldTouch: true,
+        })
+        // Store in locked values
+        setLockedUomValues((prev) => ({
+          ...prev,
+          [index]: uomId,
+        }))
+      } else {
+        form.setValue(`inventories.${index}.unitOfMeasurementId`, '')
+        // Remove from locked values
+        setLockedUomValues((prev) => {
+          const newLocked = { ...prev }
+          delete newLocked[index]
+          return newLocked
+        })
+      }
+
       // reset search
       onInventorySearch('')
     }
@@ -125,6 +165,17 @@ export const InventoryFields = ({
       ...prev,
       [index]: query,
     }))
+
+    // Clear locked UOM when inventory changes to custom value
+    setLockedUomValues((prev) => {
+      const newLocked = { ...prev }
+      delete newLocked[index]
+      return newLocked
+    })
+
+    // ALSO clear the UOM field so user can select/type a new one
+    form.setValue(`inventories.${index}.unitOfMeasurementId`, '')
+
     // If user typed a completely new inventory name,
     // clear search after a short delay so list refetches full data
     if (!inventoryList.find((i) => i.name.toLowerCase() === query.toLowerCase())) {
@@ -133,7 +184,7 @@ export const InventoryFields = ({
   }
 
   const handleAppend = () => {
-    append({ inventoryId: '', quantity: 0, price: 0 })
+    append({ inventoryId: '', quantity: 0, price: 0, unitOfMeasurementId: '' })
   }
 
   const handleRemove = (index: number) => {
@@ -266,6 +317,19 @@ export const InventoryFields = ({
             onAppend={handleAppend}
             onRemove={handleRemove}
             showRemoveButton={index > 0}
+            // flag uom
+            uomOptions={uomOptions}
+            uomList={uomList}
+            isUomLoading={isUomLoading}
+            uomSearchQuery={uomSearchQueries[index] || ''} // Pass row-specific query
+            onUomSearch={(query) => {
+              setUomSearchQueries((prev) => ({
+                ...prev,
+                [index]: query,
+              }))
+            }}
+            isExistingInventory={!!inventoryList.find((item) => item.id === (inventoryInputValues[index] || ''))}
+            lockedUomValue={lockedUomValues[index]}
           />
         )
       })}

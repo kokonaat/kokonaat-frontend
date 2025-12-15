@@ -61,9 +61,20 @@ const UomMutateDrawer = ({
         )
     }, [currentRow, form])
 
+    // isDirty is to check any field change or not
+    const {
+        formState: { isDirty },
+    } = form
+
     // Submit handler
     const onSubmit: SubmitHandler<UomFormSchema> = (data) => {
         if (!shopId) return toast.error("Shop ID not found!")
+
+        // prevent api call if no input field changed
+        if (isUpdate && !isDirty) {
+            toast.info("No changes detected. Please modify something before saving.")
+            return
+        }
 
         const payload = { ...data, shopId }
 
@@ -162,7 +173,7 @@ const UomMutateDrawer = ({
                     <SheetClose asChild>
                         <Button variant="outline">Close</Button>
                     </SheetClose>
-                    <Button form="uom-form" type="submit">
+                    <Button form="uom-form" type="submit" disabled={isUpdate && !isDirty}>
                         Save changes
                     </Button>
                 </SheetFooter>

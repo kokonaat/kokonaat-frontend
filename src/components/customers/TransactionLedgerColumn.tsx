@@ -112,18 +112,21 @@ export const TransactionLedgerColumn: ColumnDef<TransactionLedgerInterface>[] =
                 {row.original.details?.map((item) => (
                   <div
                     key={item.id}
-                    className='flex items-center justify-between rounded-lg bg-white p-2 shadow-sm transition hover:shadow-md dark:bg-gray-800'
+                    className="flex items-center justify-between rounded-lg bg-white p-2 shadow-sm transition hover:shadow-md dark:bg-gray-800"
                   >
-                    <span className='font-semibold text-gray-700 dark:text-gray-200'>
+                    <span className="font-semibold text-gray-700 dark:text-gray-200">
                       {item.inventory.name}
                     </span>
-                    <span className='text-gray-500 dark:text-gray-400'>
-                      Qty: {item.quantity}
+
+                    <span className="text-gray-500 dark:text-gray-400">
+                      Qty: {item.quantity} {item.unitOfMeasurement?.name ?? ""}
                     </span>
-                    <span className='text-gray-500 dark:text-gray-400'>
+
+                    <span className="text-gray-500 dark:text-gray-400">
                       Price: ৳{item.price.toLocaleString()}
                     </span>
-                    <span className='font-medium text-gray-700 dark:text-gray-200'>
+
+                    <span className="font-medium text-gray-700 dark:text-gray-200">
                       Total: ৳{item.total.toLocaleString()}
                     </span>
                   </div>

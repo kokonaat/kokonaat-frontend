@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 import { useFieldArray } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -40,12 +40,16 @@ import { PaymentFields } from './PaymentFields'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 import { useDebounce } from '@/hooks/useDebounce'
 import { Input } from '../ui/input'
+import { useUomList } from '@/hooks/useUom'
 
 const TransactionMutateDrawer = ({
   open,
   onOpenChange,
   currentRow,
 }: TransactionMutateDrawerProps) => {
+  // flag uom
+  const [uomSearchQueries, setUomSearchQueries] = useState<Record<number, string>>({})
+
   const shopId = useShopStore((s) => s.currentShopId)
 
   const {
@@ -108,6 +112,23 @@ const TransactionMutateDrawer = ({
     [inventoryResponse.items]
   )
 
+  // flag uom
+  const { data: uomResponse = { items: [] }, isFetching: isUomLoading } = useUomList(
+    shopId || '',
+    1,
+    10,
+    undefined,
+    { enabled: !!shopId && showInventoryFields }
+  )
+
+  const uomList = useMemo(() => uomResponse.items || [], [uomResponse.items])
+  const uomOptions = useMemo(() => {
+    return uomList.map((item) => ({
+      value: item.id,
+      label: item.name,
+    }))
+  }, [uomList])
+
   const inventoryOptions = useMemo(() => {
     return inventoryList.map((item) => ({
       value: item.id,
@@ -130,7 +151,7 @@ const TransactionMutateDrawer = ({
 
   useEffect(() => {
     if (showInventoryFields && fields.length === 0) {
-      append({ inventoryId: '', quantity: 0, price: 0 })
+      append({ inventoryId: '', quantity: 0, price: 0, unitOfMeasurementId: '' })
     }
   }, [showInventoryFields, append, fields.length])
 
@@ -205,6 +226,7 @@ const TransactionMutateDrawer = ({
       | 'RECEIVABLE'
       | 'COMMISSION'
 
+    // flag uom
     const inventoryDetailsPayload = showInventoryFields
       ? values.inventories?.map((
         item: TransactionFormValues['inventories'][number], index: number
@@ -219,12 +241,21 @@ const TransactionMutateDrawer = ({
 
         const isExistingInventory = isInOptions || isInCache || looksLikeUUID
 
+        // Check if UOM is an existing ID (UUID) or a custom name
+        const uomValue = item.unitOfMeasurementId
+        const isExistingUom = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uomValue)
+
         if (isExistingInventory) {
           return {
             inventoryId: inputValue,
             quantity: item.quantity as number,
             price: item.price as number,
             total: (item.quantity as number) * (item.price as number),
+            // Use unitOfMeasurementId if it's a UUID, otherwise use unitOfMeasurementName
+            ...(isExistingUom
+              ? { unitOfMeasurementId: uomValue }
+              : { unitOfMeasurementName: uomValue }
+            ),
           }
         } else {
           return {
@@ -232,6 +263,11 @@ const TransactionMutateDrawer = ({
             quantity: item.quantity as number,
             price: item.price as number,
             total: (item.quantity as number) * (item.price as number),
+            // Use unitOfMeasurementId if it's a UUID, otherwise use unitOfMeasurementName
+            ...(isExistingUom
+              ? { unitOfMeasurementId: uomValue }
+              : { unitOfMeasurementName: uomValue }
+            ),
           }
         }
       })
@@ -385,6 +421,12 @@ const TransactionMutateDrawer = ({
                   isInventoryLoading={isInventoryLoading}
                   transactionType={transactionType}
                   onInventorySearch={setInventorySearchQuery}
+                  // flag uom
+                  uomOptions={uomOptions}
+                  uomList={uomList}
+                  isUomLoading={isUomLoading}
+                  uomSearchQueries={uomSearchQueries}
+                  setUomSearchQueries={setUomSearchQueries}
                 />
               ) : showAmountField ? (
                 <AmountField form={form} />

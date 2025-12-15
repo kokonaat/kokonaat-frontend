@@ -14,7 +14,6 @@ export const expenseFormSchema = z.object({
     // Keep id optional here as it's needed for form reset/default values
     id: z.string().optional(),
     title: z.string().min(1, "Title is required"),
-    description: z.string().optional(),
     type: z.enum(expenseTypesArray),
     // Ensures amount is handled as a number by Zod
     amount: z.number().min(0.01, "Amount must be greater than 0"),

@@ -37,27 +37,6 @@ export const ExpenseColumns: ColumnDef<ExpenseItemInterface>[] = [
         header: ({ column }) => <DataTableColumnHeader column={column} title='Title' />,
     },
     {
-        accessorKey: 'description',
-        header: ({ column }) => <DataTableColumnHeader column={column} title='Description' />,
-        cell: ({ row }) => {
-            const text = row.getValue<string>('description')
-            if (!text) return null
-
-            return (
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <div className='max-w-[200px] truncate cursor-help'>{text}</div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p className='max-w-xs wrap-break-word'>{text}</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-            )
-        },
-    },
-    {
         accessorKey: 'type',
         header: ({ column }) => <DataTableColumnHeader column={column} title='Type' />,
     },

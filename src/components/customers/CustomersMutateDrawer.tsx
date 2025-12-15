@@ -77,9 +77,20 @@ const CustomersMutateDrawer = ({
   // tract inB2B
   const isCheckedIsB2B = form.watch("isB2B")
 
+  // isDirty is to check any field change or not
+  const {
+    formState: { isDirty },
+  } = form
+
   //  submit data
   const onSubmit: SubmitHandler<CustomerFormSchema> = (data) => {
     if (!shopId) return toast.error("Shop ID not found!")
+
+    // prevent api call if no input field changed
+    if (isUpdate && !isDirty) {
+      toast.info("No changes detected. Please modify something before saving.")
+      return
+    }
 
     const normalizedData = {
       ...data,
@@ -104,7 +115,7 @@ const CustomersMutateDrawer = ({
             toast.success("Customer updated successfully.")
           },
           onError: (err: unknown) => {
-            const error = err as AxiosError<{message: string}>
+            const error = err as AxiosError<{ message: string }>
             toast.error(error?.response?.data?.message || "Update failed")
           },
         }
@@ -118,7 +129,7 @@ const CustomersMutateDrawer = ({
           toast.success("Customer created successfully.")
         },
         onError: (err: unknown) => {
-          const error = err as AxiosError<{message: string}>
+          const error = err as AxiosError<{ message: string }>
           toast.error(error?.response?.data?.message || "Creation failed")
         },
       })
@@ -209,7 +220,7 @@ const CustomersMutateDrawer = ({
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input {...field}  placeholder="Shyamoli,Dhaka" />
+                    <Input {...field} placeholder="Shyamoli,Dhaka" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -1,4 +1,3 @@
-
 export interface UnitOfMeasurement {
   id: string
   name: string
@@ -34,6 +33,7 @@ export interface InventoryFormInterface {
   quantity: number
   lastPrice: number
   shopId: string
+  unitOfMeasurementId: string
 }
 
 export interface InventoryListItem {
@@ -62,7 +62,7 @@ export interface InventoryListResponseInterface {
 export interface InventoryMutateDrawerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  currentRow?: InventoryFormInterface
+  currentRow?: InventoryItemInterface
   onSave?: (data: InventoryFormInterface) => void
 }
 

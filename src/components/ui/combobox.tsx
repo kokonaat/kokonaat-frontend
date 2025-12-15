@@ -117,7 +117,7 @@ export function Combobox({
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+        <PopoverContent className="w-(--radix-popover-trigger-width) p-0" align="start">
           <Command
             filter={() => 1}
             shouldFilter={false}

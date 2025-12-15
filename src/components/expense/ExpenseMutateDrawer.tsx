@@ -74,8 +74,19 @@ const ExpenseMutateDrawer = ({
         }
     }, [currentRow, open, form, shopId])
 
+    // isDirty is to check any field change or not
+    const {
+        formState: { isDirty },
+    } = form
+
     const onSubmit: SubmitHandler<ExpenseFormType> = (data) => {
         if (!shopId) return toast.error("Shop ID not found!")
+
+        // prevent api call if no input field changed
+        if (isUpdate && !isDirty) {
+            toast.info("No changes detected. Please modify something before saving.")
+            return
+        }
 
         const payload: ExpenseFormInterface = {
             ...data,
@@ -194,13 +205,8 @@ const ExpenseMutateDrawer = ({
                                                 placeholder="0.00"
                                                 value={field.value ?? ""}
                                                 onChange={(e) => {
-                                                    const v = e.target.value
-                                                    field.onChange(v === "" ? undefined : Number(v))
-                                                }}
-                                                onBlur={() => {
-                                                    if (field.value !== undefined) {
-                                                        field.onChange(Number(field.value.toFixed(2)))
-                                                    }
+                                                    const val = e.target.value
+                                                    field.onChange(val === '' ? '' : Number(val))
                                                 }}
                                             />
                                         </FormControl>

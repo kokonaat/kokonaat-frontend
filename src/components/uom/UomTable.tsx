@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react"
 import {
   type SortingState,
   type VisibilityState,
@@ -11,17 +11,27 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   useReactTable,
-} from '@tanstack/react-table'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { UomColumns as columns } from './UomColumns'
-import { Input } from '@/components/ui/input'
-import { DataTableViewOptions } from '@/features/users/components/data-table-view-options'
-import { DataTablePagination } from '@/features/users/components/data-table-pagination'
-import { useDebounce } from '@/hooks/useDebounce'
-import { NoDataFound } from '../NoDataFound'
-import { Card, CardContent } from '../ui/card'
-import { UomTableBulkActions } from './UomTableBulkActions'
-import type { UomInterface, UomTableProps } from '@/interface/uomInterface'
+} from "@tanstack/react-table"
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+import { UomColumns as columns } from "./UomColumns"
+import { Input } from "@/components/ui/input"
+import { DataTableViewOptions } from "@/features/users/components/data-table-view-options"
+import { DataTablePagination } from "@/features/users/components/data-table-pagination"
+import { useDebounce } from "@/hooks/useDebounce"
+import DateRangeSearch from "@/components/DateRangeSearch"
+import { NoDataFound } from "../NoDataFound"
+import { Card, CardContent } from "../ui/card"
+import { UomTableBulkActions } from "./UomTableBulkActions"
+import type { UomTableProps } from "@/interface/uomInterface"
 
 const UomTable = ({
   data,
@@ -30,33 +40,46 @@ const UomTable = ({
   total,
   onPageChange,
   onSearchChange,
-}: UomTableProps & {
-  onDateChange?: (from?: Date, to?: Date) => void
-}) => {
-  // Table states
+}: UomTableProps) => {
+  // table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [globalFilter, setGlobalFilter] = useState('')
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] =
+    useState<VisibilityState>({})
+  const [globalFilter, setGlobalFilter] = useState("")
+  const [columnFilters, setColumnFilters] =
+    useState<ColumnFiltersState>([])
 
-  // Search state
-  const [searchInput, setSearchInput] = useState('')
+  // search states
+  const [searchInput, setSearchInput] = useState("")
+  const [dateRange, setDateRange] = useState<{
+    from?: Date
+    to?: Date
+  }>({})
+
   const debouncedSearch = useDebounce(searchInput, 300)
 
-  // Drawer state
-  const [_currentRow, setCurrentRow] = useState<UomInterface | null>(null)
-  const [_drawerOpen, setDrawerOpen] = useState(false)
-
-  // Trigger debounced search
+  // trigger server search
   useEffect(() => {
-    if (onSearchChange) {
-      onSearchChange(debouncedSearch)
-    }
-    // Don't reset page here - let parent component handle it
-  }, [debouncedSearch, onSearchChange])
+    onPageChange(0)
+    onSearchChange?.(
+      debouncedSearch,
+      dateRange.from,
+      dateRange.to
+    )
+  }, [
+    debouncedSearch,
+    dateRange.from,
+    dateRange.to,
+    onPageChange,
+    onSearchChange,
+  ])
 
-  // Table setup
+  const handleDateChange = (from?: Date, to?: Date) => {
+    setDateRange({ from, to })
+    onPageChange(0)
+  }
+
   const table = useReactTable({
     data,
     columns,
@@ -70,48 +93,52 @@ const UomTable = ({
     },
     manualPagination: true,
     pageCount: Math.ceil(total / pageSize),
+
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
-    onPaginationChange: updater => {
-      if (typeof updater === 'function') {
+
+    onPaginationChange: (updater) => {
+      if (typeof updater === "function") {
         const newState = updater({ pageIndex, pageSize })
         onPageChange(newState.pageIndex)
       } else {
         onPageChange(updater.pageIndex)
       }
     },
+
+    globalFilterFn: (row, _columnId, filterValue) => {
+      const id = String(row.index + 1).toLowerCase()
+      const name = String(row.getValue("name")).toLowerCase()
+      const searchValue = String(filterValue).toLowerCase()
+      return id.includes(searchValue) || name.includes(searchValue)
+    },
+
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    globalFilterFn: (row, _columnId, filterValue) => {
-      const id = String(row.index + 1).toLowerCase()
-      const name = String(row.getValue('name')).toLowerCase()
-      const searchValue = String(filterValue).toLowerCase()
-      return id.includes(searchValue) || name.includes(searchValue)
-    },
   })
 
   const pageCount = table.getPageCount()
 
-  // Prevent going beyond last page
   useEffect(() => {
     if (pageCount > 0 && table.getState().pagination.pageIndex >= pageCount) {
-      table.setPageIndex(Math.max(0, pageCount - 1))
+      table.setPageIndex(pageCount - 1)
     }
   }, [table, pageCount])
 
   return (
     <div className="space-y-4 max-sm:has-[div[role='toolbar']]:mb-16">
-      {/* Top Toolbar */}
+      {/* Toolbar */}
       <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2 md:flex-row md:items-center gap-x-2">
+          <DateRangeSearch onDateChange={handleDateChange} />
           <Input
             placeholder="Search uom..."
             value={searchInput}
@@ -129,13 +156,16 @@ const UomTable = ({
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
+                {headerGroup.headers.map((header) => (
                   <TableHead key={header.id} colSpan={header.colSpan}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                      : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -144,19 +174,17 @@ const UomTable = ({
 
           <TableBody>
             {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map(row => (
+              table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  onClick={() => {
-                    setCurrentRow(row.original)
-                    setDrawerOpen(true)
-                  }}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className="cursor-pointer"
+                  data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map(cell => (
+                  {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -164,10 +192,10 @@ const UomTable = ({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  <Card className='m-4'>
+                  <Card className="m-4">
                     <CardContent>
                       <NoDataFound
-                        message='No Uom found!'
+                        message="No Uom found!"
                         details="Create a Uom first."
                       />
                     </CardContent>
@@ -179,10 +207,7 @@ const UomTable = ({
         </Table>
       </div>
 
-      {/* Pagination */}
       {data.length > 0 && <DataTablePagination table={table} />}
-
-      {/* Bulk Actions */}
       <UomTableBulkActions table={table} />
     </div>
   )

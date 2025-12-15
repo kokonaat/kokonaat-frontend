@@ -5,4 +5,5 @@ export const inventoryFormSchema = z.object({
     description: z.string().optional(),
     quantity: z.number().min(0, "Quantity must be at least 0"),
     lastPrice: z.number().min(0, "Last price must be at least 0"),
+    unitOfMeasurementId: z.string().min(1, "UOM is required"),
 })

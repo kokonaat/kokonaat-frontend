@@ -19,8 +19,12 @@ export interface UomTableProps {
   pageIndex: number
   pageSize: number
   total: number
-  onPageChange: (index: number) => void
-  onSearchChange: (value: string) => void
+  onPageChange: (pageIndex: number) => void
+  onSearchChange?: (
+    value?: string,
+    from?: Date,
+    to?: Date
+  ) => void
 }
 
 export interface UomMutateDrawerProps {

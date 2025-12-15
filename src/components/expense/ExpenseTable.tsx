@@ -176,7 +176,6 @@ const ExpenseTable = ({
                                         setCurrentRow({
                                             ...row.original,
                                             shopId,
-                                            description: row.original.description || '',
                                             remarks: row.original.remarks || '',
                                         })
                                         setDrawerOpen(true)

@@ -12,8 +12,6 @@ const Uom = () => {
 
   const [pageIndex, setPageIndex] = useState(0)
   const [searchBy, setSearchBy] = useState("")
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined)
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined)
 
   const pageSize = 10
 
@@ -22,10 +20,8 @@ const Uom = () => {
   }, [])
 
   const handleSearchChange = useCallback(
-    (value?: string, from?: Date, to?: Date) => {
+    (value?: string) => {
       setSearchBy(value || "")
-      setStartDate(from)
-      setEndDate(to)
     },
     []
   )
@@ -35,8 +31,6 @@ const Uom = () => {
     pageIndex + 1,
     pageSize,
     searchBy,
-    startDate,
-    endDate
   )
 
   if (isError) return <p>Error loading uoms.</p>

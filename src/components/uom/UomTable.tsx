@@ -27,7 +27,6 @@ import { Input } from "@/components/ui/input"
 import { DataTableViewOptions } from "@/features/users/components/data-table-view-options"
 import { DataTablePagination } from "@/features/users/components/data-table-pagination"
 import { useDebounce } from "@/hooks/useDebounce"
-import DateRangeSearch from "@/components/DateRangeSearch"
 import { NoDataFound } from "../NoDataFound"
 import { Card, CardContent } from "../ui/card"
 import { UomTableBulkActions } from "./UomTableBulkActions"
@@ -52,10 +51,6 @@ const UomTable = ({
 
   // search states
   const [searchInput, setSearchInput] = useState("")
-  const [dateRange, setDateRange] = useState<{
-    from?: Date
-    to?: Date
-  }>({})
 
   const debouncedSearch = useDebounce(searchInput, 300)
 
@@ -64,21 +59,12 @@ const UomTable = ({
     onPageChange(0)
     onSearchChange?.(
       debouncedSearch,
-      dateRange.from,
-      dateRange.to
     )
   }, [
     debouncedSearch,
-    dateRange.from,
-    dateRange.to,
     onPageChange,
     onSearchChange,
   ])
-
-  const handleDateChange = (from?: Date, to?: Date) => {
-    setDateRange({ from, to })
-    onPageChange(0)
-  }
 
   const table = useReactTable({
     data,
@@ -138,7 +124,6 @@ const UomTable = ({
       {/* Toolbar */}
       <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2 md:flex-row md:items-center gap-x-2">
-          <DateRangeSearch onDateChange={handleDateChange} />
           <Input
             placeholder="Search uom..."
             value={searchInput}

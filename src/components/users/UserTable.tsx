@@ -20,6 +20,8 @@ import { DataTableBulkActions } from './DataTableBulkActions'
 import { DataTableViewOptions } from '@/features/users/components/data-table-view-options'
 import type { UserListItem } from '@/interface/userInterface'
 import { useDebounce } from '@/hooks/useDebounce'
+import { Card, CardContent } from '../ui/card'
+import { NoDataFound } from '../NoDataFound'
 
 type UsersTableProps = {
     data: UserListItem[]
@@ -150,7 +152,14 @@ export function UsersTable({
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
+                                    <Card className='m-4'>
+                                        <CardContent>
+                                            <NoDataFound
+                                                message='No User found!'
+                                                details="Create a user first."
+                                            />
+                                        </CardContent>
+                                    </Card>
                                 </TableCell>
                             </TableRow>
                         )}

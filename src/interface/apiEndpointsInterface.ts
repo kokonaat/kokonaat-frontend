@@ -69,4 +69,11 @@ export interface ApiEndpoints {
     createUser: string
     changePassword: string
   }
+  subscriptionPlans: {
+    subscriptionList: string
+    createSubscriptionPlan: string
+    updateSubscriptionPlan: string
+    getSubscriptionPlanById: string
+    deleteSubscriptionPlan: string
+  }
 }

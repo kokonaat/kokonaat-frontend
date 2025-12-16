@@ -77,6 +77,7 @@ export const InventoryRow = ({
 
     return (
         <div key={field.id} className='flex items-end gap-4'>
+            {/* Inventory */}
             <FormField
                 control={form.control}
                 name={`inventories.${index}.inventoryId`}
@@ -141,7 +142,55 @@ export const InventoryRow = ({
                 )}
             />
 
+            {/* unit of measurement */}
+            <FormField
+                control={form.control}
+                name={`inventories.${index}.unitOfMeasurementId`}
+                render={({ field }) => {
+                    // Use locked value if available, otherwise use field value
+                    const displayValue = lockedUomValue || field.value || ''
+                    const isUomLocked = !!lockedUomValue
+
+                    return (
+                        <FormItem className='flex-1'>
+                            <FormLabel>UOM</FormLabel>
+                            <FormControl>
+                                <Combobox
+                                    options={uomOptions}
+                                    className='w-full'
+                                    placeholder='Select UOM...'
+                                    value={displayValue}
+                                    onSelect={(val) => {
+                                        if (!isUomLocked) {
+                                            // Check if it's an existing UOM option
+                                            const selectedUom = uomOptions.find((opt) => opt.value === val)
+
+                                            if (selectedUom) {
+                                                // It's an existing UOM
+                                                onUomSelect(val, index)
+                                            }
+                                        }
+                                    }}
+                                    onSearch={(query) => {
+                                        if (!isUomLocked) {
+                                            // Allow typing custom UOM names for new inventories
+                                            onUomSearch(query, index)
+                                        }
+                                    }}
+                                    loading={isUomLoading}
+                                    disabled={isUomLocked}
+                                    allowCustomValue={!isUomLocked && transactionType === 'PURCHASE'}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+
+                    )
+                }}
+            />
+
             <div className='flex flex-1 items-end gap-4'>
+                {/* quantity */}
                 <FormField
                     control={form.control}
                     name={`inventories.${index}.quantity`}
@@ -200,60 +249,14 @@ export const InventoryRow = ({
                     )}
                 />
 
-                {/* Add this right after Quantity FormField */}
-                <FormField
-                    control={form.control}
-                    name={`inventories.${index}.unitOfMeasurementId`}
-                    render={({ field }) => {
-                        // Use locked value if available, otherwise use field value
-                        const displayValue = lockedUomValue || field.value || ''
-                        const isUomLocked = !!lockedUomValue
-
-                        return (
-                            <FormItem className='flex-1'>
-                                <FormLabel>UOM</FormLabel>
-                                <FormControl>
-                                    <Combobox
-                                        options={uomOptions}
-                                        className='w-full'
-                                        placeholder='Select UOM...'
-                                        value={displayValue}
-                                        onSelect={(val) => {
-                                            if (!isUomLocked) {
-                                                // Check if it's an existing UOM option
-                                                const selectedUom = uomOptions.find((opt) => opt.value === val)
-
-                                                if (selectedUom) {
-                                                    // It's an existing UOM
-                                                    onUomSelect(val, index)
-                                                }
-                                            }
-                                        }}
-                                        onSearch={(query) => {
-                                            if (!isUomLocked) {
-                                                // Allow typing custom UOM names for new inventories
-                                                onUomSearch(query, index)
-                                            }
-                                        }}
-                                        loading={isUomLoading}
-                                        disabled={isUomLocked}
-                                        allowCustomValue={!isUomLocked && transactionType === 'PURCHASE'}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-
-                        )
-                    }}
-                />
-
+                {/* unit price */}
                 <FormField
                     control={form.control}
                     name={`inventories.${index}.price`}
                     render={({ field }) => (
                         <FormItem className='flex-1'>
                             <div className='flex items-center justify-between'>
-                                <FormLabel>Price</FormLabel>
+                                <FormLabel>Unit Price</FormLabel>
                                 {itemDisplayData?.lastPrice !== undefined &&
                                     itemDisplayData.lastPrice !== null && (
                                         <p className='text-xs text-green-700 font-semibold mt-1'>

@@ -33,7 +33,7 @@ const TransactionDetails = () => {
                         <div className="space-y-2">
                             <p><strong>Name:</strong> {transaction.vendor?.name ?? transaction.customer?.name}</p>
                             <p><strong>Amount:</strong> ৳{transaction.totalAmount}</p>
-                            <p><strong>Paid:</strong> ৳{transaction.advancePaid}</p>
+                            <p><strong>Advance Paid:</strong> ৳{transaction.advancePaid}</p>
                             <p><strong>Paid:</strong> ৳{transaction.paid}</p>
                             <p><strong>Pending:</strong> ৳{transaction.pending}</p>
                         </div>

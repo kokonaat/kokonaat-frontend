@@ -21,8 +21,6 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
         (s) => s.shop?.id === shop.shopId
     )?.role
 
-    console.log(userRole)
-
     return (
         <Card
             onClick={() => {

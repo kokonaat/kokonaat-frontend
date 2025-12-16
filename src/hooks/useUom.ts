@@ -15,8 +15,6 @@ export const useUomList = (
     page: number,
     limit: number,
     searchBy?: string,
-    startDate?: Date,
-    endDate?: Date,
     options?: { enabled?: boolean }
 ) =>
     useQuery<{
@@ -28,11 +26,9 @@ export const useUomList = (
             page,
             limit,
             searchBy,
-            startDate,
-            endDate,
         ],
         queryFn: () =>
-            uomList(shopId, page, limit, searchBy, startDate, endDate),
+            uomList(shopId, page, limit, searchBy),
         enabled: options?.enabled !== false && !!shopId,
         placeholderData: keepPreviousData,
     })

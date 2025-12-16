@@ -73,4 +73,11 @@ export const apiEndpoints: ApiEndpoints = {
     createUser: '/user/add-user-to-shop',
     changePassword: '/user/change-password',
   },
+  subscriptionPlans: {
+    subscriptionList: '/subscription/plans',
+    createSubscriptionPlan: '/subscription/plans',
+    updateSubscriptionPlan: '/subscription/plans/{id}',
+    getSubscriptionPlanById: '/subscription/plans/{id}',
+    deleteSubscriptionPlan: '/subscription/plans/{id}',
+  },
 }

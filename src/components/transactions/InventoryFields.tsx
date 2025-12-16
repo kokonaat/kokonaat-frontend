@@ -67,6 +67,12 @@ export const InventoryFields = ({
   // flag uom to track locked UOM values
   const [lockedUomValues, setLockedUomValues] = useState<Record<number, string>>({})
 
+  // Track UOM input values (similar to inventory input values)
+  const [uomInputValues, setUomInputValues] = useState<Record<number, string>>({})
+
+  // Cache for selected UOM options (similar to inventory cache)
+  const [selectedUomOptionsCache, setSelectedUomOptionsCache] = useState<Record<string, ComboboxOptionInterface>>({})
+
   // Update cache when inventoryOptions change and we have selected inventories
   useEffect(() => {
     Object.entries(inventoryInputValues).forEach(([inventoryId]) => {
@@ -134,6 +140,21 @@ export const InventoryFields = ({
           ...prev,
           [index]: uomId,
         }))
+
+        // Store in UOM input values
+        setUomInputValues((prev) => ({
+          ...prev,
+          [index]: uomId,
+        }))
+
+        // Cache the UOM option
+        const uomOption = uomOptions.find((opt) => opt.value === uomId)
+        if (uomOption) {
+          setSelectedUomOptionsCache((prev) => ({
+            ...prev,
+            [uomId]: uomOption,
+          }))
+        }
       } else {
         form.setValue(`inventories.${index}.unitOfMeasurementId`, '')
         // Remove from locked values
@@ -175,6 +196,11 @@ export const InventoryFields = ({
 
     // ALSO clear the UOM field so user can select/type a new one
     form.setValue(`inventories.${index}.unitOfMeasurementId`, '')
+    setUomInputValues((prev) => {
+      const newValues = { ...prev }
+      delete newValues[index]
+      return newValues
+    })
 
     // If user typed a completely new inventory name,
     // clear search after a short delay so list refetches full data
@@ -183,12 +209,56 @@ export const InventoryFields = ({
     }
   }
 
+  const handleUomSelect = (val: string, index: number) => {
+    const selectedUom = uomList.find((item) => item.id === val)
+
+    if (selectedUom) {
+      // Store the UOM option in cache
+      const option = uomOptions.find((opt) => opt.value === val)
+      if (option) {
+        setSelectedUomOptionsCache((prev) => ({
+          ...prev,
+          [val]: option,
+        }))
+      }
+
+      form.setValue(`inventories.${index}.unitOfMeasurementId`, val)
+      setUomInputValues((prev) => ({
+        ...prev,
+        [index]: val,
+      }))
+
+      // Reset UOM search for this row
+      setUomSearchQueries((prev) => ({
+        ...prev,
+        [index]: '',
+      }))
+    }
+  }
+
+  const handleUomSearch = (query: string, index: number) => {
+    // Update search query for this row
+    setUomSearchQueries((prev) => ({
+      ...prev,
+      [index]: query,
+    }))
+
+    // Update form value with the typed query
+    form.setValue(`inventories.${index}.unitOfMeasurementId`, query)
+    setUomInputValues((prev) => ({
+      ...prev,
+      [index]: query,
+    }))
+  }
+
   const handleAppend = () => {
     append({ inventoryId: '', quantity: 0, price: 0, unitOfMeasurementId: '' })
   }
 
   const handleRemove = (index: number) => {
     const removedInventoryId = inventoryInputValues[index]
+    const removedUomId = uomInputValues[index]
+
     remove(index)
     // Reindex display data
     setInventoryDisplayData((prev) => {
@@ -225,7 +295,22 @@ export const InventoryFields = ({
     )
     setInventoryInputValues(newInputValues)
 
-    // Remove from cache if it's no longer used in any row
+    // Reindex UOM input values
+    const newUomInputValues = Object.keys(uomInputValues).reduce(
+      (acc, key) => {
+        const numKey = Number(key)
+        if (numKey > index) {
+          acc[numKey - 1] = uomInputValues[numKey]
+        } else if (numKey !== index) {
+          acc[numKey] = uomInputValues[numKey]
+        }
+        return acc
+      },
+      {} as Record<number, string>
+    )
+    setUomInputValues(newUomInputValues)
+
+    // Remove from inventory cache if it's no longer used in any row
     if (
       removedInventoryId &&
       !Object.values(newInputValues).includes(removedInventoryId)
@@ -236,12 +321,25 @@ export const InventoryFields = ({
         return newCache
       })
     }
+
+    // Remove from UOM cache if it's no longer used in any row
+    if (
+      removedUomId &&
+      !Object.values(newUomInputValues).includes(removedUomId)
+    ) {
+      setSelectedUomOptionsCache((prev) => {
+        const newCache = { ...prev }
+        delete newCache[removedUomId]
+        return newCache
+      })
+    }
   }
 
   return (
     <>
       {fields.map((field, index) => {
         const currentInputValue = inventoryInputValues[index] ?? ''
+        const currentUomInputValue = uomInputValues[index] ?? ''
         const itemDisplayData = inventoryDisplayData[index]
 
         const allOtherSelectedValues = Object.entries(inventoryInputValues)
@@ -292,11 +390,41 @@ export const InventoryFields = ({
           }
         }
 
+        // Filter UOM options and include currently selected UOM
+        let filteredUomOptions = [...uomOptions]
+
+        if (currentUomInputValue) {
+          let currentSelectedUomOption = uomOptions.find(
+            (opt) => opt.value === currentUomInputValue
+          )
+
+          if (
+            !currentSelectedUomOption &&
+            selectedUomOptionsCache[currentUomInputValue]
+          ) {
+            currentSelectedUomOption = selectedUomOptionsCache[currentUomInputValue]
+          }
+
+          if (
+            currentSelectedUomOption &&
+            !filteredUomOptions.some((opt) => opt.value === currentUomInputValue)
+          ) {
+            filteredUomOptions = [
+              currentSelectedUomOption,
+              ...filteredUomOptions,
+            ]
+          }
+        }
+
         const isAlreadyUsed = (value: string): boolean => {
           const normalized = value.toLowerCase().trim()
           if (!normalized) return false
           return allOtherSelectedNames.includes(normalized)
         }
+
+        const isExistingInventory = !!inventoryList.find(
+          (item) => item.id === currentInputValue
+        )
 
         return (
           <InventoryRow
@@ -305,6 +433,7 @@ export const InventoryFields = ({
             field={field}
             index={index}
             currentInputValue={currentInputValue}
+            currentUomInputValue={currentUomInputValue}
             itemDisplayData={itemDisplayData}
             filteredInventoryOptions={filteredInventoryOptions}
             inventoryOptions={inventoryOptions}
@@ -317,18 +446,13 @@ export const InventoryFields = ({
             onAppend={handleAppend}
             onRemove={handleRemove}
             showRemoveButton={index > 0}
-            // flag uom
-            uomOptions={uomOptions}
+            uomOptions={filteredUomOptions}
             uomList={uomList}
             isUomLoading={isUomLoading}
-            uomSearchQuery={uomSearchQueries[index] || ''} // Pass row-specific query
-            onUomSearch={(query) => {
-              setUomSearchQueries((prev) => ({
-                ...prev,
-                [index]: query,
-              }))
-            }}
-            isExistingInventory={!!inventoryList.find((item) => item.id === (inventoryInputValues[index] || ''))}
+            uomSearchQuery={uomSearchQueries[index] || ''}
+            onUomSelect={handleUomSelect}
+            onUomSearch={handleUomSearch}
+            isExistingInventory={isExistingInventory}
             lockedUomValue={lockedUomValues[index]}
           />
         )

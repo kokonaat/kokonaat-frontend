@@ -28,14 +28,6 @@ export const useCustomerList = (
     })
 
 // get customer by id
-// export const useCustomerById = (shopId: string, id: string) => {
-//     return useQuery<VendorFormInterface>({
-//         queryKey: ["customers", shopId, id],
-//         queryFn: () => getCustomerById(id, shopId),
-//         enabled: !!shopId && !!id,
-//     })
-// }
-
 export const useCustomerById = (
     shopId: string,
     id: string,

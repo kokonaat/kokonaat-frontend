@@ -33,12 +33,13 @@ const TransactionDetails = () => {
                         <div className="space-y-2">
                             <p><strong>Name:</strong> {transaction.vendor?.name ?? transaction.customer?.name}</p>
                             <p><strong>Amount:</strong> ৳{transaction.totalAmount}</p>
+                            <p><strong>Paid:</strong> ৳{transaction.advancePaid}</p>
+                            <p><strong>Paid:</strong> ৳{transaction.paid}</p>
                             <p><strong>Pending:</strong> ৳{transaction.pending}</p>
-                            {/* <p><strong>Is Paid:</strong> {transaction.isPaid ? "Yes" : "No"}</p> */}
-                            <p><strong>Payment Type:</strong> {(transaction.paymentType ?? "N/A").replace("_", " ")}</p>
                         </div>
 
                         <div className="space-y-2">
+                            <p><strong>Payment Type:</strong> {(transaction.paymentType ?? "N/A").replace("_", " ")}</p>
                             <p><strong>Status:</strong> {transaction.transactionStatus ?? "Pending"}</p>
                             {/* <p><strong>Partner Type:</strong> {transaction.partnerType}</p> */}
                             <p><strong>Created At:</strong> {new Date(transaction.createdAt).toLocaleString()}</p>

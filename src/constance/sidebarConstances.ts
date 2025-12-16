@@ -1,8 +1,10 @@
 import {
   ChartNoAxesCombined,
+  ClipboardPlus,
   ContactRound,
   LayoutDashboard,
   Package,
+  PanelTopOpenIcon,
   Scale,
   ShoppingBag,
   UserRoundCheck,
@@ -30,7 +32,7 @@ export const sidebarData: Omit<SidebarData, 'teams'> = {
         { title: 'Inventory', url: '/inventory', icon: ShoppingBag },
         { title: 'Transaction Board', url: '/transactions', icon: Package },
         { title: 'Expense', url: '/expense', icon: ChartNoAxesCombined },
-        { title: 'Reports', url: '/reports', icon: Scale, },
+        { title: 'Reports', url: '/reports', icon: ClipboardPlus },
         {
           title: 'User Management',
           icon: UserRoundCheck,
@@ -47,7 +49,7 @@ export const sidebarData: Omit<SidebarData, 'teams'> = {
             },
           ],
         },
-        { title: 'Plans', url: '/plans', icon: Scale, },
+        { title: 'Plans', url: '/plans', icon: PanelTopOpenIcon, },
       ],
     },
   ],

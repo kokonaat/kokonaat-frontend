@@ -15,9 +15,8 @@ export const expenseFormSchema = z.object({
     id: z.string().optional(),
     title: z.string().min(1, "Title is required"),
     type: z.enum(expenseTypesArray),
-    // Ensures amount is handled as a number by Zod
     amount: z.number().min(0.01, "Amount must be greater than 0"),
-    remarks: z.string().optional(),
+    remarks: z.string().min(1, "Remarks is required"),
     shopId: z.string().min(1, "Shop ID is required"),
 })
 

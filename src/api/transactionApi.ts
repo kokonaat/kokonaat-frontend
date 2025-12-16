@@ -5,6 +5,8 @@ import type { CreateTransactionDto, TransactionListResponse } from "@/interface/
 export const getTransactions = async (
   shopId: string,
   page: number,
+  limit: number,
+  searchBy?: string,
   startDate?: string,
   endDate?: string
 ) => {
@@ -14,6 +16,8 @@ export const getTransactions = async (
       params: {
         shopId,
         page,
+        limit,
+        searchBy,
         startDate,
         endDate,
       },

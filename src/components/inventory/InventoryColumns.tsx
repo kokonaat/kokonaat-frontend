@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "../customers/DataTableColumnHeader"
 import { DataTableRowActions } from "./DataTableRowActions"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
+import { ChevronRight } from "lucide-react"
 
 export const InventoryColumns: ColumnDef<InventoryItemInterface>[] = [
     {
@@ -71,6 +72,17 @@ export const InventoryColumns: ColumnDef<InventoryItemInterface>[] = [
     {
         accessorKey: 'lastPrice',
         header: ({ column }) => <DataTableColumnHeader column={column} title='Last Price' />,
+    },
+    {
+        id: 'open',
+        header: '',
+        cell: () => (
+            <div className="flex justify-center">
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </div>
+        ),
+        enableSorting: false,
+        enableHiding: false,
     },
     {
         id: 'actions',

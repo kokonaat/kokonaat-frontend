@@ -47,7 +47,18 @@ const InventoryMutateDrawer = ({
   const createMutation = useCreateInventory(shopId || "")
   const updateMutation = useUpdateInventory(shopId || "")
 
-  const { data: uomListData, isLoading: isUomLoading } = useUomList(shopId || "", 1, 10)
+  const { data: uomListData, isLoading: isUomLoading } = useUomList(
+    shopId || "",
+    1,
+    10,
+    // useUom expects search params, start and end date params
+    undefined,
+    undefined,
+    undefined,
+    // only fetch when drawer is open
+    { enabled: open && !!shopId }
+  )
+
   const uomItems = uomListData?.items ?? []
 
   const uomOptions: ComboboxOption[] = uomItems.map(uom => ({
@@ -267,11 +278,14 @@ const InventoryMutateDrawer = ({
                       <Input
                         {...field}
                         type="number"
-                        placeholder="0"
+                        placeholder="0.00"
                         min={0}
+                        step="0.01"
                         value={field.value ?? ''}
-                        onChange={(e) =>
-                          field.onChange(e.target.value ? Number(e.target.value) : null)
+                        onChange={(e) => {
+                          const value = e.target.value
+                          field.onChange(value === '' ? null : parseFloat(value))
+                        }
                         }
                       />
                     </FormControl>

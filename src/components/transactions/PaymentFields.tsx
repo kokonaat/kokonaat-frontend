@@ -61,10 +61,11 @@ export const PaymentFields = ({
                                     {...field}
                                     placeholder='0.00'
                                     min={0}
+                                    step="0.01"
                                     value={field.value ?? ''}
                                     onChange={(e) => {
                                         const val = e.target.value
-                                        field.onChange(val === '' ? '' : Number(val))
+                                        field.onChange(val === '' ? null : parseFloat(val))
                                     }}
                                 />
                             </FormControl>
@@ -86,10 +87,11 @@ export const PaymentFields = ({
                                     {...field}
                                     placeholder='0.00'
                                     min={0}
+                                    step="0.01"
                                     value={field.value ?? ''}
                                     onChange={(e) => {
                                         const val = e.target.value
-                                        field.onChange(val === '' ? '' : Number(val))
+                                        field.onChange(val === '' ? null : parseFloat(val))
                                     }}
                                 />
                             </FormControl>
@@ -111,10 +113,11 @@ export const PaymentFields = ({
                                     {...field}
                                     placeholder='0.00'
                                     min={0}
+                                    step="0.01"
                                     value={field.value ?? calculatedPending}
                                     onChange={(e) => {
                                         const val = e.target.value
-                                        field.onChange(val === '' ? '' : Number(val))
+                                        field.onChange(val === '' ? null : parseFloat(val))
                                     }}
                                 />
                             </FormControl>

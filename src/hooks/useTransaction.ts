@@ -10,12 +10,14 @@ const TRANSACTIONS_KEYS = {
 export const useTransactionList = (
     shopId: string,
     page: number,
+    limit: number,
+    searchBy?: string,
     startDate?: string,
     endDate?: string
 ) => {
     return useQuery<TransactionListResponse>({
-        queryKey: ["transactions", shopId, page, startDate, endDate],
-        queryFn: () => getTransactions(shopId, page, startDate, endDate),
+        queryKey: ["transactions", shopId, page, limit, searchBy, startDate, endDate],
+        queryFn: () => getTransactions(shopId, page, limit, searchBy, startDate, endDate),
         placeholderData: keepPreviousData,
         enabled: !!shopId,
     })

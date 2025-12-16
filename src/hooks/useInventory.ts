@@ -13,6 +13,7 @@ import type { InventoryFormInterface, InventoryItemInterface } from "@/interface
 const INVENTORY_KEYS = {
   all: ["inventories"] as const,
   detail: (id: string) => [...INVENTORY_KEYS.all, id] as const,
+  tracking: (inventoryId: string, shopId: string) => [...INVENTORY_KEYS.all, 'tracking', inventoryId, shopId] as const,
 }
 
 // inventory list
@@ -45,11 +46,11 @@ export const useCreateInventory = (shopId: string) => {
 }
 
 // fetch multiple inventories by selected IDs
-export const useInventoryDetail = (inventoryId: string | null) => {
+export const useInventoryDetail = (inventoryId: string | null, options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: INVENTORY_KEYS.detail(inventoryId || ''),
     queryFn: () => getInventoryById(inventoryId!),
-    enabled: !!inventoryId,
+    enabled: (options?.enabled !== false) && !!inventoryId,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   })
@@ -120,10 +121,11 @@ export const useTrackInventoryById = (
   inventoryId: string | null,
   shopId: string | null,
   page: number = 1,
-  limit: number = 10
+  limit: number = 10,
+  options?: { enabled?: boolean }
 ) => {
   return useQuery({
-    queryKey: ["inventory-tracking", inventoryId, shopId, page, limit],
+    queryKey: [...INVENTORY_KEYS.tracking(inventoryId || '', shopId || ''), page, limit],
     queryFn: () =>
       trackInventoryById({
         inventoryId: inventoryId!,
@@ -131,7 +133,8 @@ export const useTrackInventoryById = (
         page,
         limit,
       }),
-    enabled: !!inventoryId && !!shopId,
+    // fetch when explicitly enabled and have required ids
+    enabled: (options?.enabled !== false) && !!inventoryId && !!shopId,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     placeholderData: keepPreviousData,

@@ -23,6 +23,7 @@ interface InventoryRowProps {
     field: FieldArrayWithId<TransactionFormValues, 'inventories', 'id'>
     index: number
     currentInputValue: string
+    currentUomInputValue: string
     itemDisplayData: { lastPrice: number | null; stockQuantity: number | null; description: string | null } | undefined
     filteredInventoryOptions: ComboboxOptionInterface[]
     inventoryOptions: ComboboxOptionInterface[]
@@ -39,8 +40,9 @@ interface InventoryRowProps {
     uomOptions: ComboboxOptionInterface[]
     uomList: UomInterface[]
     isUomLoading: boolean
+    onUomSelect: (val: string, index: number) => void
     uomSearchQuery: string // Row-specific query
-    onUomSearch: (query: string) => void // Row-specific handler
+    onUomSearch: (query: string, index: number) => void
     isExistingInventory: boolean
     lockedUomValue?: string
 }
@@ -50,6 +52,7 @@ export const InventoryRow = ({
     field,
     index,
     currentInputValue,
+    // currentUomInputValue,
     itemDisplayData,
     filteredInventoryOptions,
     inventoryOptions,
@@ -66,11 +69,12 @@ export const InventoryRow = ({
     // uomList,
     isUomLoading,
     // uomSearchQuery,
+    onUomSelect,
     onUomSearch,
-    isExistingInventory,
+    // isExistingInventory,
     lockedUomValue,
 }: InventoryRowProps) => {
-    console.log(itemDisplayData)
+
     return (
         <div key={field.id} className='flex items-end gap-4'>
             <FormField
@@ -203,6 +207,7 @@ export const InventoryRow = ({
                     render={({ field }) => {
                         // Use locked value if available, otherwise use field value
                         const displayValue = lockedUomValue || field.value || ''
+                        const isUomLocked = !!lockedUomValue
 
                         return (
                             <FormItem className='flex-1'>
@@ -214,29 +219,25 @@ export const InventoryRow = ({
                                         placeholder='Select UOM...'
                                         value={displayValue}
                                         onSelect={(val) => {
-                                            if (!isExistingInventory) { // Only allow changes for new inventories
+                                            if (!isUomLocked) {
                                                 // Check if it's an existing UOM option
                                                 const selectedUom = uomOptions.find((opt) => opt.value === val)
 
                                                 if (selectedUom) {
-                                                    // It's an existing UOM, use its ID
-                                                    field.onChange(val)
-                                                } else {
-                                                    // It's a custom typed UOM name, store it as is
-                                                    field.onChange(val)
+                                                    // It's an existing UOM
+                                                    onUomSelect(val, index)
                                                 }
-                                                onUomSearch('')
                                             }
                                         }}
                                         onSearch={(query) => {
-                                            if (!isExistingInventory) { // Only allow search/typing for new inventories
-                                                // Allow typing custom UOM names
-                                                field.onChange(query)
-                                                onUomSearch(query)
+                                            if (!isUomLocked) {
+                                                // Allow typing custom UOM names for new inventories
+                                                onUomSearch(query, index)
                                             }
                                         }}
                                         loading={isUomLoading}
-                                        disabled={isExistingInventory} // Disable for existing inventories
+                                        disabled={isUomLocked}
+                                        allowCustomValue={!isUomLocked && transactionType === 'PURCHASE'}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -266,10 +267,11 @@ export const InventoryRow = ({
                                     {...field}
                                     placeholder='0.00'
                                     min={0}
+                                    step="0.01"
                                     value={field.value === 0 ? '' : field.value ?? ''}
                                     onChange={(e) => {
                                         const val = e.target.value
-                                        field.onChange(val === '' ? '' : Number(val))
+                                        field.onChange(val === '' ? null : parseFloat(val))
                                     }}
                                 />
                             </FormControl>

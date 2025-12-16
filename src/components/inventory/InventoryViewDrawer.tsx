@@ -36,7 +36,9 @@ const InventoryViewDrawer = ({
     inventoryId,
     shopId,
     pageIndex + 1,
-    pageSize
+    pageSize,
+    // only fetch when drawer is open
+    { enabled: open && !!inventoryId && !!shopId }
   )
 
   // Now we can safely stop UI rendering
@@ -63,7 +65,7 @@ const InventoryViewDrawer = ({
           </div>
           <div>
             <span className="font-medium text-foreground">Stock In Hand:</span>{' '}
-            {currentRow.quantity}
+            {currentRow.quantity} {currentRow.unitOfMeasurement?.name || ' '}
           </div>
           <div className='flex gap-1'>
             <span className="font-medium text-foreground">Description:</span>{' '}

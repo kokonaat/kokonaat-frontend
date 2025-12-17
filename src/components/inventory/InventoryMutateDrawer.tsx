@@ -53,8 +53,6 @@ const InventoryMutateDrawer = ({
     10,
     // useUom expects search params, start and end date params
     undefined,
-    undefined,
-    undefined,
     // only fetch when drawer is open
     { enabled: open && !!shopId }
   )
@@ -92,7 +90,7 @@ const InventoryMutateDrawer = ({
       if (currentRow) {
         defaults = {
           name: currentRow.name,
-          description: currentRow.description,
+          description: currentRow.description ?? '',
           quantity: currentRow.quantity ?? 0,
           lastPrice: currentRow.lastPrice ?? 0,
           unitOfMeasurementId: currentRow.unitOfMeasurement?.id ?? "",

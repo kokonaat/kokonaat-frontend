@@ -74,9 +74,13 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
     header: 'Total / Paid / Pending',
     cell: ({ row }) => {
       const data = row.original
+      const total = data.totalAmount
+      const paid = data.paid + data.advancePaid
+      const pending = total - paid
+
       return (
-        <div>
-          {data.totalAmount} / {data.paid + data.advancePaid} / {(data.totalAmount) - (data.advancePaid + data.paid)}
+        <div className="font-mono">
+          {total.toFixed(2)} / {paid.toFixed(2)} / {pending.toFixed(2)}
         </div>
       )
     },

@@ -51,144 +51,162 @@ export interface Entity {
     };
 }
 
-// Value extractors
-const getItemName = (item: TransactionDetail): string =>
+// --- Helper Functions ---
+const getItemName = (item: TransactionDetail) =>
     item.inventory?.name || item.itemName || item.name || "N/A";
 
-const getQuantity = (item: TransactionDetail): number =>
-    item.quantity ?? item.qty ?? 0;
+const getQuantity = (item: TransactionDetail) =>
+    Number(item.quantity ?? item.qty ?? 0);
 
-const getPrice = (item: TransactionDetail): number =>
-    item.price ?? item.unitPrice ?? 0;
+const getPrice = (item: TransactionDetail) =>
+    Number(item.price ?? item.unitPrice ?? 0);
 
-const getTotal = (item: TransactionDetail): number => {
-    if (item.total != null) return item.total;
-    if (item.amount != null) return item.amount;
+const getTotal = (item: TransactionDetail) => {
+    if (item.total != null) return Number(item.total);
+    if (item.amount != null) return Number(item.amount);
     return getQuantity(item) * getPrice(item);
 };
 
-// Remove currency sign, Taka will be added in summary
-const formatNumber = (num: number) => num.toFixed(2);
+const formatNumber = (num: number | string | undefined | null) => {
+    const n = Number(num) || 0;
+    return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
 
+// --- Main PDF Function ---
 export const generatePDF = (
     entity: Entity,
     transactions: Transaction[],
-    summary: Summary
+    summary: Summary,
+    // dateRange?: { from: string; to: string }
 ) => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // Header
+    // --- Header ---
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    const shopNameWidth = doc.getTextWidth(entity.shop.name);
-    doc.text(entity.shop.name, (pageWidth - shopNameWidth) / 2, 15);
+    doc.setFontSize(20);
+    doc.text(entity.shop.name.toUpperCase(), pageWidth / 2, 15, { align: "center" });
 
-    if (entity.shop.address) {
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(12);
-        const shopAddressWidth = doc.getTextWidth(entity.shop.address);
-        doc.text(entity.shop.address, (pageWidth - shopAddressWidth) / 2, 22);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Transaction Report", pageWidth / 2, 22, { align: "center" });
+
+    // --- Info Section ---
+    doc.setLineWidth(0.5);
+    doc.line(14, 28, pageWidth - 14, 28);
+
+    // Determine account label (Customer / Vendor / Account Holder)
+    let accountLabel = "Account Holder:";
+    let accountName = entity.name;
+
+    if (transactions.length > 0) {
+        const firstTrx = transactions[0];
+        if (firstTrx.customer) {
+            accountLabel = "Customer:";
+            accountName = firstTrx.customer.name;
+        } else if (firstTrx.vendor) {
+            accountLabel = "Vendor:";
+            accountName = firstTrx.vendor.name;
+        }
     }
 
-    // Report Title
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    const reportTitle = "Transaction Report";
-    doc.text(reportTitle, pageWidth / 2, 28, { align: "center" });
-
-    // Entity Info - Date left, Customer/Vendor right
-    const firstTrx = transactions[0];
-    let entityLabel = "Customer / Vendor: N/A";
-    if (firstTrx.customer) entityLabel = `Customer: ${firstTrx.customer.name}`;
-    else if (firstTrx.vendor) entityLabel = `Vendor: ${firstTrx.vendor.name}`;
-
+    doc.setFontSize(11);
+    doc.text(accountLabel, 14, 38);
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(12);
+    doc.text(accountName, 30, 38);
 
-    const leftX = 14; // left margin
-    const rightX = pageWidth - 14; // right margin
-    const y = 45; // vertical position
+    doc.setFont("helvetica", "bold");
+    doc.text(`Generated On:`, pageWidth - 34, 38, { align: "right" });
+    doc.setFont("helvetica", "normal");
+    doc.text(new Date().toLocaleDateString(), pageWidth - 14, 38, { align: "right" });
 
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, leftX, y);
-    doc.text(entityLabel, rightX, y, { align: "right" });
+    // Optional contact info
+    if (entity.phone) {
+        doc.setFont("helvetica");
+        doc.setFont("helvetica", "bold");
+        doc.text(`Phone: ${entity.phone}`, pageWidth - 14, 46, { align: "right" });
+    }
 
-    // Contact info (phone/email) below right-aligned
-    let contactInfo = "";
-    // if (entity.email) contactInfo += `Email: ${entity.email}`;
-    if (entity.phone) contactInfo += contactInfo ? ` | Phone: ${entity.phone}` : `Phone: ${entity.phone}`;
-    if (contactInfo) doc.text(contactInfo, rightX, y + 7, { align: "right" });
-
-    // Table
-    const rows = transactions.flatMap(trx =>
+    // --- Table Section ---
+    const tableRows = transactions.flatMap(trx =>
         trx.details.map(item => [
+            new Date(trx.no).toLocaleDateString(),
+            trx.no,
             getItemName(item),
-            getQuantity(item),
+            trx.transactionType,
+            getQuantity(item).toString(),
             formatNumber(getPrice(item)),
-            formatNumber(getTotal(item))
+            formatNumber(getTotal(item)),
         ])
     );
 
+    // Calculate subtotal for Qty and Total
+    const subtotalQty = transactions.flatMap(trx => trx.details.map(getQuantity))
+        .reduce((acc, q) => acc + q, 0);
+
+    const subtotalTotal = transactions.flatMap(trx => trx.details.map(getTotal))
+        .reduce((acc, t) => acc + t, 0);
+
+    // Add subtotal row
+    tableRows.push([
+        "", "", "", "Subtotal", subtotalQty.toString(), "", formatNumber(subtotalTotal)
+    ]);
+
     autoTable(doc, {
-        startY: 65,
-        head: [["Item Name", "Quantity", "Price", "Total"]],
-        body: rows,
-        theme: "grid",
-        headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: "bold", halign: "center" },
-        bodyStyles: { fontSize: 11 },
-        alternateRowStyles: { fillColor: [245, 245, 245] },
+        startY: 60,
+        head: [["Date", "Trx No", "Item", "Type", "Qty", "Price", "Total"]],
+        body: tableRows,
+        theme: "striped",
+        headStyles: { fillColor: [51, 65, 85], textColor: 255, halign: "center" },
         columnStyles: {
-            0: { halign: "left" },
-            1: { halign: "center" },
-            2: { halign: "center" },
-            3: { halign: "center" },
-        }
+            0: { cellWidth: 25 },
+            5: { halign: "right" },
+            6: { halign: "right" },
+        },
+        styles: { fontSize: 9 },
+        didParseCell: (dataCell) => {
+            // Bold the subtotal row
+            if (dataCell.row.index === tableRows.length - 1) {
+                dataCell.cell.styles.fontStyle = "bold";
+            }
+        },
     });
 
-    // Summary Box
+    // --- Summary Box ---
     const finalY = (doc as any).lastAutoTable.finalY + 10;
-    const boxWidth = 76;
-    const boxHeight = 32;
-    const boxX = pageWidth - boxWidth - 14;
-    const boxY = finalY;
+    const summaryX = pageWidth - 80;
 
-    doc.setDrawColor(0);
-    doc.setLineWidth(0.5);
-    doc.rect(boxX, boxY, boxWidth, boxHeight);
+    doc.setFillColor(248, 250, 252);
+    doc.rect(summaryX, finalY, 66, 35, "F");
+    doc.setDrawColor(226, 232, 240);
+    doc.rect(summaryX, finalY, 66, 35, "S");
 
-    const summaryLines = [
-        `Subtotal: ${formatNumber(summary.totalAmount)} Taka`,
-        `Paid: ${formatNumber(summary.totalPaid ?? 0)} Taka`,
-        `Advance Paid: ${formatNumber(summary.totalAdvancePaid)} Taka`,
-        `Total Payable: ${formatNumber(summary.totalAmount - ((summary.totalPaid ?? 0) + summary.totalAdvancePaid))} Taka`
-    ];
+    const drawRow = (label: string, value: number, y: number, isBold = false) => {
+        if (isBold) doc.setFont("helvetica", "bold");
+        doc.text(label, summaryX + 2, y);
+        doc.text(`${formatNumber(value)} Taka`, pageWidth - 16, y, { align: "right" });
+        doc.setFont("helvetica", "normal");
+    };
 
-    summaryLines.forEach((line, i) => {
-        doc.setFont("helvetica", i === summaryLines.length - 1 ? "bold" : "normal"); // bold last line
-        doc.text(line, pageWidth - 16, boxY + 7 + i * 7, { align: "right" });
-    });
+    drawRow("Total Amount:", summary.totalAmount, finalY + 7);
+    drawRow("Total Paid:", summary.totalPaid ?? 0, finalY + 14);
+    drawRow("Advance Paid:", summary.totalAdvancePaid, finalY + 21);
 
-    // Footer
-    const footerPrefix = "Powered by ";
-    const footerCompany = COMPANY_NAME || "Your Company";
+    doc.setDrawColor(200);
+    doc.line(summaryX + 2, finalY + 24, pageWidth - 16, finalY + 24);
+    drawRow("Balance Due:", summary.totalPending ?? (summary.totalAmount - ((summary.totalPaid ?? 0) + summary.totalAdvancePaid)), finalY + 31, true);
 
-    doc.setFontSize(10);
-    const prefixWidth = doc.getTextWidth(footerPrefix);
-    const companyWidth = doc.getTextWidth(footerCompany);
-    const totalWidth = prefixWidth + companyWidth;
-    const startX = (pageWidth - totalWidth) / 2;
-    const pageHeight = doc.internal.pageSize.getHeight();
-    const footerY = pageHeight - 10;
+    // --- Footer ---
+    const pageCount = (doc as any).internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "italic");
+        doc.text(`Powered by ${COMPANY_NAME}`, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: "center" });
+        doc.text(`Page ${i} of ${pageCount}`, pageWidth - 14, doc.internal.pageSize.getHeight() - 10, { align: "right" });
+    }
 
-    doc.setFont("helvetica", "normal");
-    doc.text(footerPrefix, startX, footerY);
-    doc.setFont("helvetica", "bold");
-    doc.text(footerCompany, startX + prefixWidth, footerY);
-
-    // Page number
-    doc.setFont("helvetica", "normal");
-    doc.text("Page 1 of 1", pageWidth - 14, footerY, { align: "right" });
-
-    // Save PDF
-    doc.save(`Transaction_Report_${entity.name}.pdf`);
+    // --- Save PDF ---
+    doc.save(`Transaction_Report_${entity.name.replace(/\s+/g, "_")}_${Date.now()}.pdf`);
 }

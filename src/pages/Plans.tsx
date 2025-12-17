@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator"
 import { Plus } from "lucide-react"
 import { useSubscriptionList } from "@/hooks/usePlans"
 import SubscriptionPlanCard from "@/components/plans/SubscriptionPlanCard"
-import SubscriptionPlanDrawer from "@/components/plans/SubscriptionPlanDrawer"
+import SubscriptionPlanMutateDrawer from "@/components/plans/SubscriptionPlanMutateDrawer"
 import type { SubscriptionPlanInterface } from "@/interface/subscriptionInterface"
 import { SubscriptionPlanDeleteDialog } from "@/components/plans/SubscriptionPlanDeleteDialogs"
 
@@ -65,7 +65,7 @@ const Plans = () => {
       </div>
 
       {/* Create / Edit Drawer */}
-      <SubscriptionPlanDrawer
+      <SubscriptionPlanMutateDrawer
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
         currentPlan={currentPlan}

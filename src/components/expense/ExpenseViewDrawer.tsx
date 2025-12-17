@@ -26,7 +26,7 @@ const ExpenseViewDrawer = ({
             <DrawerContent className="max-w-xl mx-auto p-6 space-y-6">
                 <DrawerHeader>
                     <DrawerTitle className="text-lg font-semibold">
-                        Expense Details
+                        Details
                     </DrawerTitle>
                     <DrawerDescription className="text-sm text-muted-foreground">
                         View details for{' '}
@@ -35,7 +35,7 @@ const ExpenseViewDrawer = ({
                 </DrawerHeader>
 
                 {/* Expense Info */}
-                <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
+                <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
                     <div>
                         <span className="font-medium text-foreground">Title:</span>{' '}
                         {currentRow.title}
@@ -43,7 +43,7 @@ const ExpenseViewDrawer = ({
 
                     <div>
                         <span className="font-medium text-foreground">Type:</span>{' '}
-                        {currentRow.type}
+                        {currentRow.type.replace(/_/g, ' ')}
                     </div>
 
                     <div>

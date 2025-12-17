@@ -118,8 +118,6 @@ const TransactionMutateDrawer = ({
     1,
     10,
     undefined,
-    undefined,
-    undefined,
     { enabled: !!shopId && showInventoryFields }
   )
 

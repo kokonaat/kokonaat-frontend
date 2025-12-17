@@ -29,7 +29,7 @@ import { toast } from "sonner"
 
 type SubscriptionPlanForm = z.infer<typeof subscriptionFormSchema>
 
-const SubscriptionPlanDrawer = ({ open, onOpenChange, currentPlan }: SubscriptionPlanDrawerProps) => {
+const SubscriptionPlanMutateDrawer = ({ open, onOpenChange, currentPlan }: SubscriptionPlanDrawerProps) => {
     const isEdit = !!currentPlan
     const [loading, setLoading] = useState(false)
 
@@ -122,7 +122,7 @@ const SubscriptionPlanDrawer = ({ open, onOpenChange, currentPlan }: Subscriptio
                                 <FormItem>
                                     <FormLabel>Plan Name</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="Basic / Pro" />
+                                        <Input {...field} placeholder="Plan name" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -141,32 +141,57 @@ const SubscriptionPlanDrawer = ({ open, onOpenChange, currentPlan }: Subscriptio
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="price"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Price</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="totalTransactions"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Total Transactions</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+
+                        <div className="flex items-center gap-2">
+                            <FormField
+                                control={form.control}
+                                name="price"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Price</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                type="number"
+                                                placeholder="0.00"
+                                                min={0}
+                                                step="0.01"
+                                                value={field.value ?? ''}
+                                                onChange={(e) => {
+                                                    const value = e.target.value
+                                                    field.onChange(value === '' ? null : parseFloat(value))
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="totalTransactions"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Total Transactions</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                min={0}
+                                                {...field}
+                                                value={field.value ?? ''}
+                                                onChange={(e) => {
+                                                    const value = e.target.value
+                                                    field.onChange(value === '' ? null : Number(value))
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
                         <FormField
                             control={form.control}
                             name="dashboardAccess"
@@ -195,4 +220,4 @@ const SubscriptionPlanDrawer = ({ open, onOpenChange, currentPlan }: Subscriptio
     )
 }
 
-export default SubscriptionPlanDrawer
+export default SubscriptionPlanMutateDrawer

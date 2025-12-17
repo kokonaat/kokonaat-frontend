@@ -27,14 +27,6 @@ export const useVendorList = (
     })
 
 // get vendor by id
-// export const useVendorById = (shopId: string, id: string) => {
-//     return useQuery<VendorFormInterface>({
-//         queryKey: ["vendors", shopId, id],
-//         queryFn: () => getVendorById(id, shopId),
-//         enabled: !!shopId && !!id,
-//     })
-// }
-
 export const useVendorById = (
     shopId: string,
     id: string,

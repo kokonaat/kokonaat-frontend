@@ -17,7 +17,7 @@ export const generateLedgerExcel = (
         Price: item.price,
         Total: item.total,
         "Payment Type": item.paymentType,
-        Customer: item.customerName,
+        Customer: item.entityName,
     }));
 
     // Create a worksheet

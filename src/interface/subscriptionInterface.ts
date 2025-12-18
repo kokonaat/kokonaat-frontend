@@ -23,8 +23,6 @@ export interface UpdateSubscriptionPlanParams {
 
 export interface SubscriptionPlanCardProps {
     plan: SubscriptionPlanInterface
-    onEdit: (plan: SubscriptionPlanInterface) => void
-    onDelete: (id: string) => void
 }
 
 export interface SubscriptionPlanDrawerProps {

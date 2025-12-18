@@ -19,6 +19,7 @@ import { ReportTable } from "@/components/report/ReportTable"
 import { ReportColumns } from "@/components/report/ReportColumns"
 import type { TransactionLedgerDetailItem, TransactionLedgerItem } from "@/interface/reportInterface"
 import { generateLedgerPDF } from "@/utils/enums/customerOrVendorLedgerPdf"
+import { NoDataFound } from "@/components/NoDataFound"
 
 const Reports = () => {
   const shopId = useShopStore((s) => s.currentShopId) ?? ""
@@ -122,6 +123,7 @@ const Reports = () => {
       </div>
 
       <div className="flex items-center gap-4 flex-wrap">
+        {/* date range */}
         <div>
           <label className="text-sm text-muted-foreground mb-1 block">Date Range</label>
           <DateRangeSearch
@@ -130,10 +132,13 @@ const Reports = () => {
           />
         </div>
 
+        {/* reoort type */}
         <div>
           <label className="text-sm text-muted-foreground mb-1 block">Report Type</label>
           <Select value={reportType} onValueChange={(v) => setReportType(v as ReportType)} disabled={!isReportTypeEnabled}>
-            <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Select type" />
+            </SelectTrigger>
             <SelectContent>
               {Object.values(ReportType).map((t) => (
                 <SelectItem key={t} value={t}>{t}</SelectItem>
@@ -142,37 +147,42 @@ const Reports = () => {
           </Select>
         </div>
 
-        <div>
-          <label className="text-sm text-muted-foreground mb-1 block">
-            {reportType === ReportType.CUSTOMER_LEDGER ? "Customer" : "Vendor"}
-          </label>
-          <Select
-            disabled={!isEntityEnabled}
-            value={selectedEntityId}
-            onValueChange={setSelectedEntityId}
-          >
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              {reportType === ReportType.CUSTOMER_LEDGER &&
-                customerResponse?.customers.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              {reportType === ReportType.VENDOR_LEDGER &&
-                vendorResponse?.data.map((v) => (
-                  <SelectItem key={v.id} value={v.id}>
-                    {v.name}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {/* csutomer/vendor list */}
+        {isEntityEnabled && (
+          <div>
+            <label className="text-sm text-muted-foreground mb-1 block">
+              {reportType === ReportType.CUSTOMER_LEDGER ? "Select Customer" : "Select Vendor"}
+            </label>
 
+            <Select
+              value={selectedEntityId}
+              onValueChange={setSelectedEntityId}
+            >
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder={`Select ${reportType === ReportType.CUSTOMER_LEDGER ? "Customer" : "Vendor"}`} />
+              </SelectTrigger>
+
+              <SelectContent>
+                {reportType === ReportType.CUSTOMER_LEDGER &&
+                  customerResponse?.customers.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+
+                {reportType === ReportType.VENDOR_LEDGER &&
+                  vendorResponse?.data.map((v) => (
+                    <SelectItem key={v.id} value={v.id}>
+                      {v.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
 
+      {/* card data */}
       {detailRows.length > 0 && selectedEntityId && ledger && (
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
           <ReportCard label="Total Amount" value={ledger.totalAmount} />
@@ -184,6 +194,18 @@ const Reports = () => {
 
       {isLoading && <p className="mt-6 text-muted-foreground">Loading transactions...</p>}
 
+      {/* if selected customer or vendor has no transaction */}
+      {selectedEntityId &&
+        !isLoading &&
+        ledger &&
+        detailRows.length === 0 && (
+          <NoDataFound
+            message="No Transactions Found"
+            details={`This ${reportType === ReportType.CUSTOMER_LEDGER ? "customer" : "vendor"} has no transactions in the selected date range.`}
+          />
+        )}
+
+      {/* table data */}
       {detailRows.length > 0 && selectedEntityId && ledger && (
         <ReportTable
           data={detailRows}

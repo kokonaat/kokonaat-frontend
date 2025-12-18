@@ -6,14 +6,11 @@ import { Plus } from "lucide-react"
 import { useSubscriptionList } from "@/hooks/usePlans"
 import SubscriptionPlanCard from "@/components/plans/SubscriptionPlanCard"
 import SubscriptionPlanMutateDrawer from "@/components/plans/SubscriptionPlanMutateDrawer"
-import type { SubscriptionPlanInterface } from "@/interface/subscriptionInterface"
-import { SubscriptionPlanDeleteDialog } from "@/components/plans/SubscriptionPlanDeleteDialogs"
+// import type { SubscriptionPlanInterface } from "@/interface/subscriptionInterface"
 
 const Plans = () => {
   const { data, isLoading } = useSubscriptionList()
-  const [currentPlan, setCurrentPlan] = useState<SubscriptionPlanInterface | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [deleteOpen, setDeleteOpen] = useState(false)
 
   return (
     <Main>
@@ -27,10 +24,7 @@ const Plans = () => {
 
         <Button
           className="flex items-center gap-2"
-          onClick={() => {
-            setCurrentPlan(null) // reset for create
-            setDrawerOpen(true)
-          }}
+          onClick={() => setDrawerOpen(true)}
         >
           Create Plan
           <Plus className="h-4 w-4" />
@@ -51,31 +45,14 @@ const Plans = () => {
           <SubscriptionPlanCard
             key={plan.id}
             plan={plan}
-            onEdit={(plan) => {
-              setCurrentPlan(plan)
-              setDrawerOpen(true)
-            }}
-            onDelete={(planId) => {
-              const planToDelete = data.find((p) => p.id === planId) || null
-              setCurrentPlan(planToDelete)
-              setDeleteOpen(true)
-            }}
           />
         ))}
       </div>
 
-      {/* Create / Edit Drawer */}
+      {/* Create */}
       <SubscriptionPlanMutateDrawer
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
-        currentPlan={currentPlan}
-      />
-
-      {/* Delete Confirmation */}
-      <SubscriptionPlanDeleteDialog
-        currentPlan={currentPlan}
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
       />
     </Main>
   )

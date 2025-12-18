@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import type { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -22,15 +22,19 @@ import {
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
-import { useCreateSubscriptionPlan, useUpdateSubscriptionPlan } from "@/hooks/usePlans"
-import type { CreateSubscriptionPlanDto, SubscriptionPlanDrawerProps } from "@/interface/subscriptionInterface"
+import { useCreateSubscriptionPlan } from "@/hooks/usePlans"
+import type { CreateSubscriptionPlanDto } from "@/interface/subscriptionInterface"
 import { subscriptionFormSchema } from "@/schema/subscriptionFormSchema"
-import { toast } from "sonner"
+// import { toast } from "sonner"
 
 type SubscriptionPlanForm = z.infer<typeof subscriptionFormSchema>
 
-const SubscriptionPlanMutateDrawer = ({ open, onOpenChange, currentPlan }: SubscriptionPlanDrawerProps) => {
-    const isEdit = !!currentPlan
+interface Props {
+    open: boolean
+    onOpenChange: (open: boolean) => void
+}
+
+const SubscriptionPlanMutateDrawer = ({ open, onOpenChange }: Props) => {
     const [loading, setLoading] = useState(false)
 
     const form = useForm<SubscriptionPlanForm>({
@@ -45,30 +49,8 @@ const SubscriptionPlanMutateDrawer = ({ open, onOpenChange, currentPlan }: Subsc
     })
 
     const { mutate: createPlan } = useCreateSubscriptionPlan()
-    const { mutate: updatePlan } = useUpdateSubscriptionPlan()
-
-    // reset form whenever currentPlan or drawer open state changes
-    useEffect(() => {
-        if (open) {
-            form.reset({
-                name: currentPlan?.name || "",
-                price: currentPlan?.price || 0,
-                totalTransactions: currentPlan?.totalTransactions || 0,
-                dashboardAccess: currentPlan?.dashboardAccess || false,
-                description: currentPlan?.description || "",
-            })
-        }
-    }, [currentPlan, open, form])
-
-    // isDirty is to check any field change or not
-    const { formState: { isDirty } } = form
 
     const onSubmit = (data: SubscriptionPlanForm) => {
-        // prevent api call when nothing change in edit
-        if (isEdit && !isDirty) {
-            toast.info("No changes detected. Please modify something before saving.")
-            return
-        }
         setLoading(true)
 
         // ensure description is always a string
@@ -77,36 +59,22 @@ const SubscriptionPlanMutateDrawer = ({ open, onOpenChange, currentPlan }: Subsc
             description: data.description || "",
         }
 
-        if (isEdit && currentPlan) {
-            updatePlan({ id: currentPlan.id, data: payload }, {
-                onSuccess: () => {
-                    setLoading(false)
-                    onOpenChange(false)
-                    form.reset()
-                },
-                onError: () => setLoading(false),
-            })
-        } else {
-            createPlan(payload, {
-                onSuccess: () => {
-                    setLoading(false)
-                    onOpenChange(false)
-                    form.reset()
-                },
-                onError: () => setLoading(false),
-            })
-        }
+        createPlan(payload, {
+            onSuccess: () => {
+                setLoading(false)
+                onOpenChange(false)
+                form.reset()
+            },
+            onError: () => setLoading(false),
+        })
     }
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent
-                // resets when drawer opens automatically
-                onOpenAutoFocus={() => form.reset()}
-                className="flex flex-col px-2">
+            <SheetContent className="flex flex-col px-2">
                 <SheetHeader>
-                    <SheetTitle>{isEdit ? "Edit Subscription Plan" : "Create Subscription Plan"}</SheetTitle>
-                    <SheetDescription>{isEdit ? "Update plan details." : "Add a new subscription plan."}</SheetDescription>
+                    <SheetTitle> Create Subscription Plan</SheetTitle>
+                    <SheetDescription>Add a new subscription plan.</SheetDescription>
                 </SheetHeader>
 
                 <Form {...form}>
@@ -211,8 +179,12 @@ const SubscriptionPlanMutateDrawer = ({ open, onOpenChange, currentPlan }: Subsc
                     <SheetClose asChild>
                         <Button variant="outline">Cancel</Button>
                     </SheetClose>
-                    <Button type="submit" form="subscription-plan-form" disabled={loading}>
-                        {loading ? (isEdit ? "Updating..." : "Creating...") : (isEdit ? "Update Plan" : "Create Plan")}
+                    <Button
+                        type="submit"
+                        form="subscription-plan-form"
+                        disabled={loading}
+                    >
+                        {loading ? "Creating..." : "Create Plan"}
                     </Button>
                 </SheetFooter>
             </SheetContent>

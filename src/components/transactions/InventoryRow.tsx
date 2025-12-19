@@ -75,6 +75,12 @@ export const InventoryRow = ({
     lockedUomValue,
 }: InventoryRowProps) => {
 
+    const stock = itemDisplayData?.stockQuantity
+    const isOverStock = transactionType === 'SALE' &&
+        stock !== null &&
+        stock !== undefined &&
+        (form.watch(`inventories.${index}.quantity`) > stock)
+
     return (
         <div key={field.id} className='flex items-end gap-4'>
             {/* Inventory */}
@@ -214,6 +220,7 @@ export const InventoryRow = ({
                                 <Input
                                     type='number'
                                     {...field}
+                                    className={isOverStock ? "border-destructive focus-visible:ring-destructive" : ""}
                                     placeholder='0'
                                     min={0}
                                     value={field.value === 0 ? '' : field.value ?? ''}
@@ -223,6 +230,12 @@ export const InventoryRow = ({
                                     }}
                                 />
                             </FormControl>
+                            {isOverStock && (
+                                <p className="text-[0.8rem] font-medium text-destructive mt-1">
+                                    Insufficient stock! Max: {stock}
+                                </p>
+                            )}
+
                             {/* description */}
                             {itemDisplayData?.description && (
                                 <TooltipProvider>

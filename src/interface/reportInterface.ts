@@ -1,3 +1,28 @@
+export interface TransactionReportItem {
+    id: string
+    no: string
+    createdAt: string
+    transactionType: string
+    vendor?: Entity
+    customer?: Entity
+    details: TransactionDetailItem[]
+    totalAmount: number
+    paid: number
+    advancePaid: number
+    pending: number
+    paymentType: string
+}
+
+export interface ExpenseReportItem {
+    id: string
+    title: string
+    type: string
+    amount: number
+    remarks: string
+    createdAt: string
+}
+
+// Keep all your existing interfaces as they are
 export interface TransactionLedgerResponse {
     page: number
     limit: number

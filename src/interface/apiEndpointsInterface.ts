@@ -76,4 +76,10 @@ export interface ApiEndpoints {
     getSubscriptionPlanById: string
     deleteSubscriptionPlan: string
   }
+  reports: {
+    reportTransactions: string
+    reportStocks: string
+    reportStockTrack: string
+    reportExpenses: string
+  }
 }

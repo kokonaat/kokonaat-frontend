@@ -226,6 +226,19 @@ const TransactionMutateDrawer = ({
       | 'RECEIVABLE'
       | 'COMMISSION'
 
+    // validation for Sale Quantity is < Stock
+    if (values.transactionType === 'SALE') {
+      const hasInsufficientStock = values.inventories.some((item, index) => {
+        const stock = inventoryDisplayData[index]?.stockQuantity;
+        return stock !== null && stock !== undefined && item.quantity > stock;
+      });
+
+      if (hasInsufficientStock) {
+        toast.error("One or more items exceed available stock quantity.");
+        return; // Stop the API call
+      }
+    }
+
     // flag uom
     const inventoryDetailsPayload = showInventoryFields
       ? values.inventories?.map((

@@ -86,6 +86,20 @@ export const transactionFormSchema = z
       message: "Please add at least one inventory item with a positive quantity and price.",
     }
   )
+  // schema for checkoing qty is larger than stock or not for sale
+  .refine(
+    (data) => {
+      if (data.transactionType === "SALE") {
+        // This is a structural check. 
+        // Note: Actual stock value validation usually happens in the component 
+        // or via a custom context because the schema doesn't know "current stock" 
+        // unless passed in.
+        return data.inventories.every((item) => item.quantity > 0);
+      }
+      return true;
+    },
+    { path: ["inventories"], message: "Invalid quantity for sale." }
+  )
   .refine(
     (data) => {
       // conditional refinement for non-inventory-based transactions (PAYMENT, COMMISSION, SALE)

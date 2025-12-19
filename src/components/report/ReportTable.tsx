@@ -14,21 +14,22 @@ import { Card, CardContent } from '../ui/card'
 import { NoDataFound } from '../NoDataFound'
 import { Button } from '../ui/button'
 import { TransactionLedgerDataTablePagination } from '../customers/TransactionLedgerDataTablePagination'
-import type { TransactionLedgerDetailItem } from '@/interface/reportInterface'
-import { generateLedgerExcel } from '@/utils/enums/customerOrVendorLedgerExcel'
+// import { generateLedgerExcel } from '@/utils/enums/customerOrVendorLedgerExcel'
 
-interface ReportTableProps {
-    data: TransactionLedgerDetailItem[]
+interface ReportTableProps<TData> {
+    data: TData[]
     pageIndex: number
     pageSize: number
     total: number
-    columns: ColumnDef<TransactionLedgerDetailItem>[]
+    columns: ColumnDef<TData>[]
     onPageChange: (page: number) => void
     onDownloadPdf: () => void
-    entityName: string
+    onDownloadExcel?: () => void
+    entityName?: string
+    title?: string
 }
 
-export const ReportTable = ({
+export const ReportTable = <TData,>({
     data,
     pageIndex,
     pageSize,
@@ -36,8 +37,10 @@ export const ReportTable = ({
     columns,
     onPageChange,
     onDownloadPdf,
-    entityName,
-}: ReportTableProps) => {
+    onDownloadExcel,
+    // entityName,
+    title = 'Ledger Details',
+}: ReportTableProps<TData>) => {
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = useState({})
@@ -81,14 +84,16 @@ export const ReportTable = ({
         <div className="space-y-4 mt-5">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-semibold">Ledger Details</h2>
+                    <h2 className="text-2xl font-semibold">{title}</h2>
                 </div>
                 <div className='flex items-center gap-2'>
-                    <Button onClick={() => generateLedgerExcel(entityName, data)}>
-                        Download as Excel
-                    </Button>
+                    {onDownloadExcel && (
+                        <Button onClick={onDownloadExcel}>
+                            Download as Excel
+                        </Button>
+                    )}
 
-                    <Button onClick={onDownloadPdf}>Download as Pdf</Button>
+                    <Button onClick={onDownloadPdf}>Download as PDF</Button>
                 </div>
             </div>
 

@@ -80,4 +80,10 @@ export const apiEndpoints: ApiEndpoints = {
     getSubscriptionPlanById: '/subscription/plans/{id}',
     deleteSubscriptionPlan: '/subscription/plans/{id}',
   },
+  reports : {
+    reportTransactions: '/report/transactions',
+    reportStocks: '/report/stocks',
+    reportStockTrack: '/report/stocks/track',
+    reportExpenses: '/report/expenses',
+  }
 }

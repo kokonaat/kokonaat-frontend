@@ -1,7 +1,8 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import type { ExpenseReportItem, TransactionLedgerDetailItem, TransactionReportItem } from '@/interface/reportInterface'
+import type { ExpenseReportItem, StockReportItem, StockTrackReportItem, TransactionLedgerDetailItem, TransactionReportItem } from '@/interface/reportInterface'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 
+// cus/vend ledger table col
 export const LedgerReportColumns: ColumnDef<TransactionLedgerDetailItem>[] = [
   {
     accessorKey: 'transactionNo',
@@ -49,6 +50,7 @@ export const LedgerReportColumns: ColumnDef<TransactionLedgerDetailItem>[] = [
   },
 ]
 
+// transactoin report table col
 export const TransactionReportColumns: ColumnDef<TransactionReportItem>[] = [
   {
     accessorKey: 'no',
@@ -129,6 +131,7 @@ export const TransactionReportColumns: ColumnDef<TransactionReportItem>[] = [
   },
 ]
 
+// expense report table col
 export const ExpensesReportColumns: ColumnDef<ExpenseReportItem>[] = [
   {
     accessorKey: "title",
@@ -152,5 +155,76 @@ export const ExpensesReportColumns: ColumnDef<ExpenseReportItem>[] = [
     accessorKey: "createdAt",
     header: "Date",
     cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString()
+  },
+]
+
+// stock report table col
+export const StocksReportColumns: ColumnDef<StockReportItem>[] = [
+  {
+    accessorKey: "no",
+    header: "Ref No"
+  },
+  {
+    accessorKey: "name",
+    header: "Name"
+  },
+  {
+    accessorKey: "description",
+    header: "Description",
+    cell: ({ getValue }) => (getValue() as string) || "N/A"
+  },
+  {
+    accessorKey: "quantity",
+    header: "Quantity"
+  },
+  {
+    accessorFn: (row) => row.unitOfMeasurement?.name ?? 'N/A',
+    id: "unitOfMeasurement",
+    header: "UOM"
+  },
+  {
+    accessorKey: "lastPrice",
+    header: "Last Price",
+    cell: ({ getValue }) => `৳${Number(getValue()).toFixed(2)}`
+  },
+]
+
+// stock report tracking inventory table col
+export const StockTrackReportColumns: ColumnDef<StockTrackReportItem>[] = [
+  {
+    accessorKey: "createdAt",
+    header: "Date",
+    cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString()
+  },
+  {
+    accessorKey: "isPurchased",
+    header: "Type",
+    cell: ({ row }) => {
+      const isPurchased = row.original.isPurchased;
+      const label = isPurchased ? "PURCHASE" : "SALE";
+
+      return (
+        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${isPurchased
+            ? 'bg-blue-100 text-blue-700'  // Style for PURCHASE
+            : 'bg-orange-100 text-orange-700' // Style for SALE
+          }`}>
+          {label}
+        </span>
+      );
+    }
+  },
+  {
+    id: "inventory",
+    header: "Item Name",
+    accessorFn: (row) => row.inventory?.name ?? 'N/A',
+  },
+  {
+    accessorKey: "stock",
+    header: "Stock"
+  },
+  {
+    accessorKey: "price",
+    header: "Price",
+    cell: ({ getValue }) => `৳${Number(getValue()).toFixed(2)}`
   },
 ]

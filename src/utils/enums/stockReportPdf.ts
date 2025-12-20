@@ -1,9 +1,9 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import type { ExpenseReportItem } from "@/interface/reportInterface";
+import type { StockReportItem } from "@/interface/reportInterface";
 
-export const generateExpenseReportPDF = (
-    data: ExpenseReportItem[],
+export const generateStockReportPDF = (
+    data: StockReportItem[],
     shopName: string,
     dateRange?: { from: string; to: string }
 ) => {
@@ -18,7 +18,7 @@ export const generateExpenseReportPDF = (
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text("Expense Report", pageWidth / 2, 22, { align: "center" });
+    doc.text("Stock Report", pageWidth / 2, 22, { align: "center" });
 
     // --- Info Section ---
     doc.setLineWidth(0.5);
@@ -40,31 +40,35 @@ export const generateExpenseReportPDF = (
 
     // --- Table Section ---
     const tableRows = data.map((item) => [
-        new Date(item.createdAt).toLocaleDateString(),
-        item.title,
-        item.remarks || "N/A",
-        item.type,
-        Number(item.amount).toLocaleString(),
+        item.no,
+        item.name,
+        item.description || "N/A",
+        Number(item.quantity).toLocaleString(),
+        item.unitOfMeasurement?.name || "N/A",
+        Number(item.lastPrice).toLocaleString(),
     ]);
 
     // --- Total Row ---
-    const totalExpenses = data.reduce((acc, item) => acc + Number(item.amount), 0);
+    const totalQuantity = data.reduce((acc, item) => acc + Number(item.quantity), 0);
+    const totalValue = data.reduce((acc, item) => acc + (Number(item.quantity) * Number(item.lastPrice)), 0);
+
     tableRows.push([
-        "", "", "", "Total Expenses", totalExpenses.toLocaleString()
+        "", "", "Total", totalQuantity.toLocaleString(), "", totalValue.toLocaleString()
     ]);
 
     autoTable(doc, {
         startY: 50,
-        head: [["Date", "Title", "Remarks", "Type", "Amount"]],
+        head: [["Ref No", "Name", "Description", "Quantity", "UOM", "Last Price"]],
         body: tableRows,
         theme: "striped",
         headStyles: { fillColor: [51, 65, 85], textColor: 255, halign: "center" },
         columnStyles: {
             0: { cellWidth: 25 },
-            1: { cellWidth: 40 },
+            1: { cellWidth: 35 },
             2: { cellWidth: 45 },
-            3: { cellWidth: 40 },
-            4: { halign: "right", cellWidth: 40 },
+            3: { halign: "right", cellWidth: 25 },
+            4: { halign: "center", cellWidth: 20 },
+            5: { halign: "right", cellWidth: 30 },
         },
         styles: { fontSize: 9 },
         didParseCell: (dataCell) => {
@@ -81,13 +85,19 @@ export const generateExpenseReportPDF = (
     const summaryX = pageWidth - 90;
 
     doc.setFillColor(248, 250, 252);
-    doc.rect(summaryX, finalY, 76, 15, "F");
+    doc.rect(summaryX, finalY, 76, 25, "F");
     doc.setDrawColor(226, 232, 240);
-    doc.rect(summaryX, finalY, 76, 15, "S");
+    doc.rect(summaryX, finalY, 76, 25, "S");
 
     doc.setFont("helvetica", "bold");
-    doc.text("Total Expenses:", summaryX + 2, finalY + 10);
-    doc.text(`${totalExpenses.toLocaleString()} Taka`, pageWidth - 16, finalY + 10, { align: "right" });
+    doc.text("Total Items:", summaryX + 2, finalY + 8);
+    doc.text(`${data.length}`, pageWidth - 16, finalY + 8, { align: "right" });
+
+    doc.text("Total Quantity:", summaryX + 2, finalY + 15);
+    doc.text(`${totalQuantity.toLocaleString()}`, pageWidth - 16, finalY + 15, { align: "right" });
+
+    doc.text("Total Value:", summaryX + 2, finalY + 22);
+    doc.text(`${totalValue.toLocaleString()} Taka`, pageWidth - 16, finalY + 22, { align: "right" });
 
     // --- Footer ---
     const pageCount = (doc as any).internal.getNumberOfPages();
@@ -104,5 +114,5 @@ export const generateExpenseReportPDF = (
         doc.text(`Page ${i} of ${pageCount}`, pageWidth - 14, doc.internal.pageSize.getHeight() - 10, { align: "right" });
     }
 
-    doc.save(`Expense_Report_${Date.now()}.pdf`);
+    doc.save(`Stock_Report_${Date.now()}.pdf`);
 }

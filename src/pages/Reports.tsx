@@ -1193,20 +1193,31 @@ const Reports = () => {
             <label className="text-sm font-medium mb-1 block">
               Select Inventories {reportType === ReportType.STOCK_REPORT ? "(Optional)" : "(Required)"}
             </label>
-            <Select onValueChange={handleInventorySelect}>
+            <Select
+              // always empty to allow unselection
+              value=""
+              onValueChange={handleInventorySelect}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Select Inventories" />
               </SelectTrigger>
               <SelectContent>
-                {allInventoriesResponse?.data?.map((inventory: StockReportItem) => (
-                  <SelectItem
-                    key={inventory.id}
-                    value={inventory.id}
-                    disabled={selectedInventoryIds.includes(inventory.id)}
-                  >
-                    {inventory.name}
-                  </SelectItem>
-                ))}
+                {allInventoriesResponse?.data?.map((inventory: StockReportItem) => {
+                  const isSelected = selectedInventoryIds.includes(inventory.id)
+                  return (
+                    <SelectItem
+                      key={inventory.id}
+                      value={inventory.id}
+                      className={isSelected ? "bg-primary/10 font-medium" : ""}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span>{inventory.name}</span>
+                        {isSelected && (
+                          <span className="ml-2 text-primary text-xs">✓</span>
+                        )}
+                      </div>
+                    </SelectItem>
+                  )
+                })}
               </SelectContent>
             </Select>
           </div>
@@ -1229,10 +1240,18 @@ const Reports = () => {
         </Button>
       </div>
 
-      {/* Selected inventories badges */}
+      {/* Selected inventories badges with unselect feature */}
       {(reportType === ReportType.STOCK_REPORT || reportType === ReportType.STOCK_TRACK_REPORT) && selectedInventoryIds.length > 0 && (
         <div className="px-4 pb-4">
           <label className="text-sm font-medium mb-2 block">Selected Inventories:</label>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSelectedInventoryIds([])}
+            className="h-7 text-xs text-muted-foreground hover:text-foreground"
+          >
+            Clear All
+          </Button>
           <div className="flex flex-wrap gap-2">
             {selectedInventoryIds.map((id) => {
               const inventory = allInventoriesResponse?.data?.find((inv: StockReportItem) => inv.id === id)

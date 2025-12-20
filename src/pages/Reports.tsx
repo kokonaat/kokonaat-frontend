@@ -548,7 +548,25 @@ const Reports = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setSelectedInventoryIds([])}
+            onClick={() => {
+              setSelectedInventoryIds([])
+              // clear and re-search with no inventory filter
+              if (reportType === ReportType.STOCK_REPORT) {
+                setAppliedFilters({
+                  reportType,
+                  entityId: selectedEntityId,
+                  dateRange,
+                  transactionType,
+                  // Clear inventory filter
+                  inventoryIds: undefined
+                })
+              }
+              // clear the table data since inventory is required
+              if (reportType === ReportType.STOCK_TRACK_REPORT) {
+                // Clear the applied filters to hide the table
+                setAppliedFilters(null)
+              }
+            }}
             className="h-7 text-xs text-muted-foreground hover:text-foreground"
           >
             Clear All

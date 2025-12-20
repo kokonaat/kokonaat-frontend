@@ -1,5 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import type { ExpenseReportItem, TransactionLedgerDetailItem, TransactionReportItem } from '@/interface/reportInterface'
+import type { ExpenseReportItem, StockReportItem, TransactionLedgerDetailItem, TransactionReportItem } from '@/interface/reportInterface'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 
 export const LedgerReportColumns: ColumnDef<TransactionLedgerDetailItem>[] = [
@@ -152,5 +152,35 @@ export const ExpensesReportColumns: ColumnDef<ExpenseReportItem>[] = [
     accessorKey: "createdAt",
     header: "Date",
     cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString()
+  },
+]
+
+export const StocksReportColumns: ColumnDef<StockReportItem>[] = [
+  {
+    accessorKey: "no",
+    header: "Ref No"
+  },
+  {
+    accessorKey: "name",
+    header: "Name"
+  },
+  {
+    accessorKey: "description",
+    header: "Description",
+    cell: ({ getValue }) => (getValue() as string) || "N/A"
+  },
+  {
+    accessorKey: "quantity",
+    header: "Quantity"
+  },
+  {
+    accessorFn: (row) => row.unitOfMeasurement?.name ?? 'N/A',
+    id: "unitOfMeasurement",
+    header: "UOM"
+  },
+  {
+    accessorKey: "lastPrice",
+    header: "Last Price",
+    cell: ({ getValue }) => `৳${Number(getValue()).toFixed(2)}`
   },
 ]

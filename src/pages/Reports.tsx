@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { Search } from "lucide-react"
+import { Search, X } from "lucide-react"
 import { ReportType } from "@/utils/enums/reportType"
 import { useShopStore } from "@/stores/shopStore"
 import { useCustomerList } from "@/hooks/useCustomer"
@@ -23,7 +23,9 @@ import type {
   TransactionReportItem,
   TransactionLedgerItem,
   TransactionDetailItem,
-  ExpenseReportItem
+  ExpenseReportItem,
+  StockReportItem,
+  TransactionReportParams
 } from "@/interface/reportInterface"
 import { generateLedgerPDF } from "@/utils/enums/customerOrVendorLedgerPdf"
 import { generateTransactionReportPDF } from "@/utils/enums/transactionReportPdf"
@@ -31,12 +33,14 @@ import { generateTransactionReportExcel } from "@/utils/enums/transactionReportE
 import { generateLedgerExcel } from "@/utils/enums/customerOrVendorLedgerExcel"
 import { NoDataFound } from "@/components/NoDataFound"
 import { TRANSACTION_TYPES } from "@/constance/transactionConstances"
-import { useExpensesReport, useTransactionReport } from "@/hooks/useReport"
-import type { TransactionReportParams } from "@/api/reportApi"
-import { ExpensesReportColumns, LedgerReportColumns, TransactionReportColumns } from "@/components/report/ReportColumns"
+import { useExpensesReport, useStocksReport, useTransactionReport } from "@/hooks/useReport"
+import { ExpensesReportColumns, LedgerReportColumns, TransactionReportColumns, StocksReportColumns } from "@/components/report/ReportColumns"
 import Loader from "@/components/layout/Loader"
 import { generateExpenseReportPDF } from "@/utils/enums/expensesreportPdf"
 import { generateExpenseReportExcel } from "@/utils/enums/expensesreportExcel"
+import { generateStockReportPDF } from "@/utils/enums/stockReportPdf"
+import { generateStockReportExcel } from "@/utils/enums/stockReportExcel"
+import { Badge } from "@/components/ui/badge"
 
 const Reports = () => {
   const shopId = useShopStore((s) => s.currentShopId) ?? ""
@@ -48,6 +52,7 @@ const Reports = () => {
   const [selectedEntityId, setSelectedEntityId] = useState<string>()
   const [transactionType, setTransactionType] = useState<string>()
   const [dateRange, setDateRange] = useState<DateRange>()
+  const [selectedInventoryIds, setSelectedInventoryIds] = useState<string[]>([])
 
   // trigger api states
   const [appliedFilters, setAppliedFilters] = useState<{
@@ -55,6 +60,7 @@ const Reports = () => {
     entityId?: string;
     dateRange?: DateRange;
     transactionType?: string;
+    inventoryIds?: string[];
   } | null>(null)
 
   const isReportTypeEnabled = !!dateRange?.from && !!dateRange?.to
@@ -70,6 +76,20 @@ const Reports = () => {
   const { data: vendorResponse } = useVendorList(
     shopId, page, limit, undefined, undefined, undefined,
     { enabled: reportType === ReportType.VENDOR_LEDGER && isEntityEnabled }
+  )
+
+  // Fetch all inventories for the select box (when Stock Report is selected)
+  const { data: allInventoriesResponse } = useStocksReport(
+    {
+      shopId,
+      page: page,
+      limit: limit, // Get all inventories
+      startDate: dateRange?.from?.toISOString(),
+      endDate: dateRange?.to?.toISOString(),
+    },
+    {
+      enabled: reportType === ReportType.STOCK_REPORT && isEntityEnabled
+    }
   )
 
   // customer/vendor ledger hook
@@ -119,17 +139,41 @@ const Reports = () => {
     }
   )
 
+  // stock report hook
+  const { data: stocksResponse, isLoading: isStocksLoading } = useStocksReport(
+    {
+      shopId,
+      page: page,
+      limit: limit,
+      startDate: appliedFilters?.dateRange?.from?.toISOString(),
+      endDate: appliedFilters?.dateRange?.to?.toISOString(),
+      ids: appliedFilters?.inventoryIds,
+    },
+    {
+      enabled:
+        !!appliedFilters &&
+        appliedFilters.reportType === ReportType.STOCK_REPORT &&
+        !!appliedFilters.dateRange?.from &&
+        !!appliedFilters.dateRange?.to,
+    }
+  )
+
+  console.log('Stocks Response:', stocksResponse)
+  console.log('All Inventories Response:', allInventoriesResponse)
+
   // reset logic when parents change
   useEffect(() => {
     setReportType(undefined)
     setSelectedEntityId(undefined)
     setTransactionType(undefined)
+    setSelectedInventoryIds([])
     setAppliedFilters(null)
   }, [dateRange])
 
   useEffect(() => {
     setSelectedEntityId(undefined)
     setTransactionType(undefined)
+    setSelectedInventoryIds([])
     setAppliedFilters(null)
   }, [reportType])
 
@@ -138,8 +182,22 @@ const Reports = () => {
       reportType,
       entityId: selectedEntityId,
       dateRange,
-      transactionType
+      transactionType,
+      inventoryIds: selectedInventoryIds.length > 0 ? selectedInventoryIds : undefined
     })
+  }
+
+  const handleInventorySelect = (inventoryId: string) => {
+    setSelectedInventoryIds(prev => {
+      if (prev.includes(inventoryId)) {
+        return prev.filter(id => id !== inventoryId)
+      }
+      return [...prev, inventoryId]
+    })
+  }
+
+  const handleRemoveInventory = (inventoryId: string) => {
+    setSelectedInventoryIds(prev => prev.filter(id => id !== inventoryId))
   }
 
   const detailRows: TransactionLedgerDetailItem[] = ledger?.transactions.flatMap(
@@ -193,6 +251,19 @@ const Reports = () => {
       return
     }
 
+    // stock report pdf
+    if (appliedFilters?.reportType === ReportType.STOCK_REPORT && stocksData.length > 0) {
+      generateStockReportPDF(
+        stocksData,
+        "Shop Name",
+        appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
+          from: appliedFilters.dateRange.from.toLocaleDateString(),
+          to: appliedFilters.dateRange.to.toLocaleDateString()
+        } : undefined
+      );
+      return;
+    }
+
     // ledger report pdf
     if (!ledger || !appliedFilters?.entityId) return;
 
@@ -242,6 +313,19 @@ const Reports = () => {
       return;
     }
 
+    // stock report excel
+    if (appliedFilters?.reportType === ReportType.STOCK_REPORT && stocksData.length > 0) {
+      generateStockReportExcel(
+        stocksData,
+        "Shop Name",
+        appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
+          from: appliedFilters.dateRange.from.toLocaleDateString(),
+          to: appliedFilters.dateRange.to.toLocaleDateString()
+        } : undefined
+      );
+      return;
+    }
+
     // ledger report excel
     if (!ledger || !appliedFilters?.entityId) return
     generateLedgerExcel(entityName, detailRows)
@@ -251,20 +335,28 @@ const Reports = () => {
   const isTransactionReport = appliedFilters?.reportType === ReportType.TRANSACTION_REPORT
   const isLedgerReport = appliedFilters?.reportType === ReportType.CUSTOMER_LEDGER || appliedFilters?.reportType === ReportType.VENDOR_LEDGER
   const isExpenseReport = appliedFilters?.reportType === ReportType.EXPENSE_REPORT
+  const isStockReport = appliedFilters?.reportType === ReportType.STOCK_REPORT
 
   // determine loading state
   const isLoading = isTransactionReport
     ? isTransactionLoading
     : isExpenseReport
       ? isExpensesLoading
-      : isLedgerLoading
+      : isStockReport
+        ? isStocksLoading
+        : isLedgerLoading
+
+  // Extract stock data from response
+  const stocksData = stocksResponse?.data || []
 
   // determine if we have data to show
   const hasData = isTransactionReport
     ? (transactionData?.data && transactionData.data.length > 0)
     : isExpenseReport
-      ? (expensesdata && expensesdata.length > 0)
-      : (detailRows.length > 0 && ledger)
+      ? (!!expensesdata && expensesdata.length > 0)
+      : isStockReport
+        ? (stocksData.length > 0)
+        : (detailRows.length > 0 && ledger)
 
   return (
     <Main>
@@ -344,6 +436,29 @@ const Reports = () => {
             </div>
           )}
 
+        {/* inventory select box - Only show for STOCK_REPORT */}
+        {isEntityEnabled && reportType === ReportType.STOCK_REPORT && (
+          <div>
+            <label className="text-sm font-medium mb-1 block">Select Inventories (Optional)</label>
+            <Select onValueChange={handleInventorySelect}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Select Inventories" />
+              </SelectTrigger>
+              <SelectContent>
+                {allInventoriesResponse?.data?.map((inventory: StockReportItem) => (
+                  <SelectItem
+                    key={inventory.id}
+                    value={inventory.id}
+                    disabled={selectedInventoryIds.includes(inventory.id)}
+                  >
+                    {inventory.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         {/* search button */}
         <Button
           onClick={handleSearch}
@@ -359,6 +474,27 @@ const Reports = () => {
           Search
         </Button>
       </div>
+
+      {/* Selected inventories badges */}
+      {reportType === ReportType.STOCK_REPORT && selectedInventoryIds.length > 0 && (
+        <div className="px-4 pb-4">
+          <label className="text-sm font-medium mb-2 block">Selected Inventories:</label>
+          <div className="flex flex-wrap gap-2">
+            {selectedInventoryIds.map((id) => {
+              const inventory = allInventoriesResponse?.data?.find((inv: StockReportItem) => inv.id === id)
+              return (
+                <Badge key={id} variant="secondary" className="flex items-center gap-1">
+                  {inventory?.name || id}
+                  <X
+                    className="h-3 w-3 cursor-pointer"
+                    onClick={() => handleRemoveInventory(id)}
+                  />
+                </Badge>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* cards data for customer/vendor ledger */}
       {appliedFilters && isLedgerReport && hasData && ledger && (
@@ -412,8 +548,20 @@ const Reports = () => {
       {/* empty state */}
       {appliedFilters && !isLoading && !hasData && (
         <NoDataFound
-          message="No Transactions Found"
-          details="No data matches your selected filters and date range."
+          message={
+            isExpenseReport
+              ? "No Expenses Found"
+              : isStockReport
+                ? "No Stock Data Found"
+                : "No Transactions Found"
+          }
+          details={
+            isExpenseReport
+              ? "There are no recorded expenses for the selected date range."
+              : isStockReport
+                ? "No stock data matches your selected filters and date range."
+                : "No data matches your selected filters and date range."
+          }
         />
       )}
 
@@ -457,6 +605,21 @@ const Reports = () => {
           pageSize={10}
           total={expensesdata.length}
           title="Expenses Report"
+          onPageChange={() => { }}
+          onDownloadPdf={handleDownloadPdf}
+          onDownloadExcel={handleDownloadExcel}
+        />
+      )}
+
+      {/* stocks table */}
+      {appliedFilters && !isLoading && isStockReport && stocksData.length > 0 && (
+        <ReportTable<StockReportItem>
+          data={stocksData}
+          columns={StocksReportColumns}
+          pageIndex={0}
+          pageSize={10}
+          total={stocksResponse?.total ?? stocksData.length}
+          title="Stock Report"
           onPageChange={() => { }}
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}

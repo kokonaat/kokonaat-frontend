@@ -109,3 +109,45 @@ export interface FlattenedTransactionDetail {
     total: string
     paymentType: string
 }
+
+export interface TransactionReportParams {
+    page: number
+    limit: number
+    shopId: string
+    searchBy?: string
+    startDate: string
+    endDate: string
+    transactionType: "SALE" | "PURCHASE" | "PAYMENT" | "COMMISSION" | "RECEIVABLE"
+}
+
+export interface ExpensesReportParams {
+    page: number
+    limit: number
+    shopId: string
+    searchBy?: string
+    startDate: string
+    endDate: string
+}
+
+export interface StocksReportParams {
+    page: number
+    limit: number
+    shopId: string
+    searchBy?: string
+    startDate: string
+    endDate: string
+    ids: string[]
+}
+
+export interface StockReportItem {
+    no: string
+    id: string
+    name: string
+    description: string | null
+    quantity: number
+    lastPrice: number
+    unitOfMeasurement: {
+        id: string
+        name: string
+    }
+}

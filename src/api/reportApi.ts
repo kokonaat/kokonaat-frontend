@@ -1,24 +1,6 @@
 import { apiEndpoints } from "@/config/api";
 import { axiosInstance } from "./axios";
-
-export interface TransactionReportParams {
-    page: number
-    limit: number
-    shopId: string
-    searchBy?: string
-    startDate: string
-    endDate: string
-    transactionType: "SALE" | "PURCHASE" | "PAYMENT" | "COMMISSION" | "RECEIVABLE"
-}
-
-export interface ExpensesReportParams {
-    page: number
-    limit: number
-    shopId: string
-    searchBy?: string
-    startDate: string
-    endDate: string
-}
+import type { ExpensesReportParams, StocksReportParams, TransactionReportParams } from "@/interface/reportInterface";
 
 export const reportTransactions = async (params: TransactionReportParams) => {
     const res = await axiosInstance.get(
@@ -30,4 +12,14 @@ export const reportTransactions = async (params: TransactionReportParams) => {
 export const reportExpenses = async (params: ExpensesReportParams) => {
     const res = await axiosInstance.get(apiEndpoints.reports.reportExpenses, { params })
     return res.data.data
+}
+
+export const reportStocks = async (params: Partial<StocksReportParams>) => {
+    const res = await axiosInstance.get(apiEndpoints.reports.reportStocks, { params })
+    return res.data
+}
+
+export const reportStocksTracking = async (params: Partial<StocksReportParams>) => {
+    const res = await axiosInstance.get(apiEndpoints.reports.reportStockTrack, { params })
+    return res.data
 }

@@ -53,7 +53,7 @@ export const generateStockReportPDF = (
     const totalValue = data.reduce((acc, item) => acc + (Number(item.quantity) * Number(item.lastPrice)), 0);
 
     tableRows.push([
-        "", "Total", "", totalQuantity.toLocaleString(), "", totalValue.toLocaleString()
+        "", "", "Total", totalQuantity.toLocaleString(), "", totalValue.toLocaleString()
     ]);
 
     autoTable(doc, {

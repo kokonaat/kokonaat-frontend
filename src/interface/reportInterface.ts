@@ -151,3 +151,17 @@ export interface StockReportItem {
         name: string
     }
 }
+
+export interface StockTrackReportItem {
+    id: string
+    no: string
+    inventory: {
+        id: string
+        name: string
+    }
+    stock: number
+    price: number
+    customerName?: string
+    createdAt: string
+    isPurchased: boolean
+}

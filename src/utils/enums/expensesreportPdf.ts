@@ -42,29 +42,29 @@ export const generateExpenseReportPDF = (
     const tableRows = data.map((item) => [
         new Date(item.createdAt).toLocaleDateString(),
         item.title,
+        item.remarks || "N/A",
         item.type,
         Number(item.amount).toLocaleString(),
-        item.remarks || "N/A",
     ]);
 
     // --- Total Row ---
     const totalExpenses = data.reduce((acc, item) => acc + Number(item.amount), 0);
     tableRows.push([
-        "", "", "Total Expenses", totalExpenses.toLocaleString(), ""
+        "", "", "", "Total Expenses", totalExpenses.toLocaleString()
     ]);
 
     autoTable(doc, {
         startY: 50,
-        head: [["Date", "Title", "Type", "Amount", "Remarks"]],
+        head: [["Date", "Title", "Remarks", "Type", "Amount"]],
         body: tableRows,
         theme: "striped",
         headStyles: { fillColor: [51, 65, 85], textColor: 255, halign: "center" },
         columnStyles: {
             0: { cellWidth: 25 },
             1: { cellWidth: 40 },
-            2: { cellWidth: 50 },
-            3: { halign: "right", cellWidth: 30 },
-            4: { cellWidth: 45 },
+            2: { cellWidth: 45 },
+            3: { cellWidth: 40 },
+            4: { halign: "right", cellWidth: 40 },
         },
         styles: { fontSize: 9 },
         didParseCell: (dataCell) => {

@@ -19,7 +19,7 @@ export const generateLedgerExcel = (
         "Payment Type": item.paymentType,
         Customer: item.entityName,
     }));
-
+    
     // Create a worksheet
     const ws = XLSX.utils.json_to_sheet(rows);
 

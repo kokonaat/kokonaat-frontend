@@ -20,7 +20,7 @@ import type { TeamSwitcherProps } from '@/interface/sidebarDataInerface'
 
 export function TeamSwitcher({ teams }: TeamSwitcherProps) {
   const currentShopId = useShopStore((s) => s.currentShopId)
-  const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
+  const setCurrentShop = useShopStore((s) => s.setCurrentShop)
   const { isMobile } = useSidebar()
 
   // prevent undefined crash
@@ -40,9 +40,9 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
       setActiveTeam(selected)
     } else if (teams.length > 0) {
       setActiveTeam(teams[0])
-      setCurrentShopId(teams[0].id)
+      setCurrentShop(teams[0].id, teams[0].name)
     }
-  }, [teams, currentShopId, setCurrentShopId])
+  }, [teams, currentShopId, setCurrentShop])
 
   return (
     <SidebarMenu>
@@ -78,7 +78,7 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
                 key={team.name}
                 onClick={() => {
                   setActiveTeam(team)
-                  setCurrentShopId(team.id)
+                  setCurrentShop(team.id, team.name)
                 }}
                 className='gap-2 p-2'
               >

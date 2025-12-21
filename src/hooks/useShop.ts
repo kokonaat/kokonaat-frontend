@@ -23,7 +23,7 @@ export const useCreateShop = () => {
     const queryClient = useQueryClient()
     const navigate = useNavigate()
     // set shoopId in ls
-    const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
+    const setCurrentShop = useShopStore((s) => s.setCurrentShop)
 
     return useMutation({
         mutationFn: async (data: CreateShopInterface) => {
@@ -36,7 +36,7 @@ export const useCreateShop = () => {
         onSuccess: ({ shopsRes, createShopRes }) => {
             // store the created shop ID in Zustand (and persist via localStorage if using persist)
             if (createShopRes?.id) {
-                setCurrentShopId(createShopRes.id)
+                setCurrentShop(createShopRes.id, createShopRes.name)
             }
 
             toast.success("Shop created successfully")

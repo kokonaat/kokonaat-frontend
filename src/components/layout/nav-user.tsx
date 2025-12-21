@@ -37,12 +37,12 @@ type NavUserProps = {
 export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar()
   const { clearTokens } = useAuthStore()
-  const { clearCurrentShopId } = useShopStore()
+  const { clearCurrentShop } = useShopStore()
   const navigate = useNavigate()
 
   const handleLogOut = () => {
     clearTokens()
-    clearCurrentShopId()
+    clearCurrentShop()
     navigate('/sign-in')
   }
 

@@ -14,14 +14,22 @@ const Shops = () => {
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [currentShop, setCurrentShop] = useState<ShopInterface | undefined>(undefined)
     const { data, isLoading } = useShopList() as { data?: UserRoleWiseShopInterface[]; isLoading: boolean }
-    
-    const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
+
+    const setGlobalShop = useShopStore((s) => s.setCurrentShop)
 
     useEffect(() => {
-        if (data?.length === 1 && data[0].shopId) {
-            setCurrentShopId(data[0].shopId)
+        if (data?.length === 1 && data[0].shopId && data[0].shopName) {
+            const shop: ShopInterface = {
+                shopId: data[0].shopId,
+                shopName: data[0].shopName,
+                shopAddress: data[0].shopAddress,
+            }
+            // local state
+            setCurrentShop(shop)
+            // zustand
+            setGlobalShop(shop.shopId, shop.shopName)
         }
-    }, [data, setCurrentShopId])
+    }, [data, setGlobalShop])
 
     return (
         <div>
@@ -61,7 +69,13 @@ const Shops = () => {
                                 key={item.shopId}
                                 shop={item}
                                 onEdit={() => {
-                                    setCurrentShop(item)
+                                    const shop: ShopInterface = {
+                                        shopId: item.shopId,
+                                        shopName: item.shopName,
+                                        shopAddress: item.shopAddress,
+                                    }
+                                    setCurrentShop(shop)
+                                    setGlobalShop(shop.shopId, shop.shopName)
                                     setDrawerOpen(true)
                                 }}
                             />

@@ -86,7 +86,7 @@ export const ReportTable = <TData,>({
                 <div>
                     <h2 className="text-2xl font-semibold">{title}</h2>
                 </div>
-                <div className='flex items-center gap-2'>
+                <div className='flex flex-col md:items-center gap-2'>
                     {onDownloadExcel && (
                         <Button onClick={onDownloadExcel}>
                             Download as Excel

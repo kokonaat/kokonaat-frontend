@@ -88,9 +88,8 @@ const Dashboard = () => {
               <CardContent className="text-2xl font-bold">
                 {isLoading
                   ? 'Loading...'
-                  : `${data?.totalCustomers ?? 0} / ${
-                      data?.totalVendors ?? 0
-                    }`}
+                  : `${data?.totalCustomers ?? 0} / ${data?.totalVendors ?? 0
+                  }`}
               </CardContent>
             </Card>
 
@@ -110,15 +109,14 @@ const Dashboard = () => {
               <CardContent className="text-2xl font-bold">
                 {isLoading
                   ? 'Loading...'
-                  : `${data?.salesCount ?? 0} / ${
-                      data?.purchasesCount ?? 0
-                    }`}
+                  : `${data?.salesCount ?? 0} / ${data?.purchasesCount ?? 0
+                  }`}
               </CardContent>
             </Card>
           </div>
 
           {/* overview table */}
-          <div className="grid gap-4 lg:grid-cols-7">
+          <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
             <Card className="lg:col-span-4">
               <CardHeader>
                 <CardTitle>Overview</CardTitle>

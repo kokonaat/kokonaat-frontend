@@ -13,7 +13,7 @@ import { useShopStore } from "@/stores/shopStore"
 import { useUser } from "@/hooks/useUser"
 
 const ShopCard = ({ shop, onEdit }: ShopProps) => {
-    const setCurrentShopId = useShopStore((s) => s.setCurrentShopId)
+    const setCurrentShop = useShopStore((s) => s.setCurrentShop)
     const { data: user } = useUser()
 
     // find role for this shop from user data
@@ -24,7 +24,7 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
     return (
         <Card
             onClick={() => {
-                if (shop.shopId) setCurrentShopId(shop.shopId)
+                if (shop.shopId) setCurrentShop(shop.shopId, shop.shopName)
             }}
             className="list-none relative rounded-lg border p-4 hover:shadow-md cursor-pointer"
         >

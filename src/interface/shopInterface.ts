@@ -4,7 +4,7 @@ export interface CreateShopInterface {
 }
 
 export interface ShopInterface {
-    shopId?: string
+    shopId: string
     shopName: string
     shopAddress: string | null
 }
@@ -46,6 +46,7 @@ export interface ShopProps {
 
 export interface ShopStoreInterface {
     currentShopId: string | null
-    setCurrentShopId: (id: string) => void
-    clearCurrentShopId: () => void
+    currentShopName: string | null
+    setCurrentShop: (id: string, name: string) => void
+    clearCurrentShop: () => void
 }

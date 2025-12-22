@@ -50,6 +50,8 @@ const Reports = () => {
   const page = 1
   const limit = 10
 
+  const currentShopName = useShopStore((s) => s.currentShopName)
+
   //  states for immediate ui change
   const [reportType, setReportType] = useState<ReportType>()
   const [selectedEntityId, setSelectedEntityId] = useState<string>()
@@ -248,7 +250,7 @@ const Reports = () => {
     if (appliedFilters?.reportType === ReportType.TRANSACTION_REPORT && transactionData?.data) {
       generateTransactionReportPDF(
         transactionData.data,
-        "Shop Name",
+        currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
           from: appliedFilters.dateRange.from.toLocaleDateString(),
           to: appliedFilters.dateRange.to.toLocaleDateString()
@@ -262,7 +264,7 @@ const Reports = () => {
     if (appliedFilters?.reportType === ReportType.EXPENSE_REPORT && expensesdata) {
       generateExpenseReportPDF(
         expensesdata,
-        "Shop Name",
+        currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
           from: appliedFilters.dateRange.from.toLocaleDateString(),
           to: appliedFilters.dateRange.to.toLocaleDateString()
@@ -275,7 +277,7 @@ const Reports = () => {
     if (appliedFilters?.reportType === ReportType.STOCK_REPORT && stocksData.length > 0) {
       generateStockReportPDF(
         stocksData,
-        "Shop Name",
+        currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
           from: appliedFilters.dateRange.from.toLocaleDateString(),
           to: appliedFilters.dateRange.to.toLocaleDateString()
@@ -288,7 +290,7 @@ const Reports = () => {
     if (appliedFilters?.reportType === ReportType.STOCK_TRACK_REPORT && stockTrackData.length > 0) {
       generateStockTrackReportPDF(
         stockTrackData,
-        "Shop Name",
+        currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
           from: appliedFilters.dateRange.from.toLocaleDateString(),
           to: appliedFilters.dateRange.to.toLocaleDateString()
@@ -302,7 +304,7 @@ const Reports = () => {
 
     generateLedgerPDF(
       entityName,
-      "Shop Name",
+      currentShopName ?? "Shop Name",
       detailRows,
       {
         totalAmount: ledger.totalAmount,
@@ -323,7 +325,7 @@ const Reports = () => {
     if (appliedFilters?.reportType === ReportType.TRANSACTION_REPORT && transactionData?.data) {
       generateTransactionReportExcel(
         transactionData.data,
-        "Shop Name",
+        currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
           from: appliedFilters.dateRange.from.toLocaleDateString(),
           to: appliedFilters.dateRange.to.toLocaleDateString()
@@ -337,7 +339,7 @@ const Reports = () => {
     if (appliedFilters?.reportType === ReportType.EXPENSE_REPORT && expensesdata) {
       generateExpenseReportExcel(
         expensesdata,
-        "Shop Name",
+        currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
           from: appliedFilters.dateRange.from.toLocaleDateString(),
           to: appliedFilters.dateRange.to.toLocaleDateString()
@@ -350,7 +352,7 @@ const Reports = () => {
     if (appliedFilters?.reportType === ReportType.STOCK_REPORT && stocksData.length > 0) {
       generateStockReportExcel(
         stocksData,
-        "Shop Name",
+        currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
           from: appliedFilters.dateRange.from.toLocaleDateString(),
           to: appliedFilters.dateRange.to.toLocaleDateString()
@@ -363,7 +365,7 @@ const Reports = () => {
     if (appliedFilters?.reportType === ReportType.STOCK_TRACK_REPORT && stockTrackData.length > 0) {
       generateStockTrackReportExcel(
         stockTrackData,
-        "Shop Name",
+        currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
           from: appliedFilters.dateRange.from.toLocaleDateString(),
           to: appliedFilters.dateRange.to.toLocaleDateString()

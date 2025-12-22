@@ -17,13 +17,13 @@ import { useUserStore } from '@/stores/userStore'
 
 export function ProfileDropdown() {
   const { clearTokens } = useAuthStore()
-  const { clearCurrentShopId } = useShopStore()
+  const { clearCurrentShop } = useShopStore()
   const user = useUserStore((s) => s.user)
   const navigate = useNavigate()
 
   const handleLogOut = () => {
     clearTokens()
-    clearCurrentShopId()
+    clearCurrentShop()
     navigate('/sign-in')
   }
 

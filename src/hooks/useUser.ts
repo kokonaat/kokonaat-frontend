@@ -4,12 +4,14 @@ import { createUser, fetchCurrentUser, fetchUserList, fetchUserRoles } from "@/a
 import { useUserStore } from "@/stores/userStore"
 import type { CreateUserRequest, CreateUserResponse, FetchUserListParams, UserInterface, UserListItem } from "@/interface/userInterface"
 import { useAuthStore } from "@/stores/authStore"
+import { useShopStore } from "@/stores/shopStore"
 
 // current user info
 export const useUser = () => {
     const { access_token } = useAuthStore()
     const setUser = useUserStore((s) => s.setUser)
     const user = useUserStore((s) => s.user)
+    const setCurrentShop = useShopStore((s) => s.setCurrentShop)
 
     const query = useQuery<UserInterface, Error>({
         queryKey: ["user"],
@@ -25,24 +27,21 @@ export const useUser = () => {
 
     // sync query result to Zustand
     useEffect(() => {
-        if (query.data && query.data !== user) {
-            setUser(query.data)
+        if (!query.data) return
+
+        setUser(query.data)
+
+        const currentShop = query.data.shopWiseUserRoles.find(
+            (r) => r.isCurrent
+        )?.shop
+
+        if (currentShop) {
+            setCurrentShop(currentShop.id, currentShop.name)
         }
-    }, [query.data, setUser, user])
+    }, [query.data, setUser, setCurrentShop])
 
     return query
 }
-
-// user list
-// export const useUserList = (shopId: string) => {
-//     return useQuery<UserListItem[], Error>({
-//         queryKey: ["userList", shopId],
-//         queryFn: () => fetchUserList(shopId),
-//         enabled: !!shopId,
-//         staleTime: 1000 * 60 * 5,
-//         refetchOnWindowFocus: true,
-//     })
-// }
 
 export const useUserList = (params: FetchUserListParams) => {
     const { shopId, page = 1, limit = 10, searchBy = '' } = params

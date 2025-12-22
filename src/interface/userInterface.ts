@@ -47,13 +47,16 @@ export interface Role {
 
 export interface Shop {
     id: string
-    name?: string
+    name: string
+    address?: string
+    isActive?: boolean
 }
 
 export interface ShopWiseUserRole {
     id: string
     shopId: string
-    shop?: Shop
+    isCurrent: boolean
+    shop: Shop
     role: Role
 }
 

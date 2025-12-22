@@ -88,7 +88,7 @@ export const useAuth = () => {
                         return
                     }
 
-                    useShopStore.getState().setCurrentShopId(shop.shopId)
+                    useShopStore.getState().setCurrentShop(shop.shopId, shop.shopName)
                     navigate("/")
                     return
                 }

@@ -64,12 +64,12 @@ export default function DateRangeSearch({ value, onDateChange }: DateRangeSearch
                     </Button>
                 </PopoverTrigger>
 
-                <PopoverContent className="w-auto p-3 space-y-3" align="start">
+                <PopoverContent className="w-auto p-3 space-y-3 max-h-[90vh] overflow-y-auto sm:max-h-none" align="start" side="bottom" sideOffset={8} >
                     <Calendar
                         mode="range"
                         selected={tempRange}
                         onSelect={setTempRange}
-                        numberOfMonths={2}
+                        numberOfMonths={window.innerWidth < 640 ? 1 : 2}
                         initialFocus
                     />
 

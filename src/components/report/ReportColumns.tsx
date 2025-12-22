@@ -86,7 +86,7 @@ export const TransactionReportColumns: ColumnDef<TransactionReportItem>[] = [
       const fullText = details
         .map(
           (d) =>
-            `${d.inventory?.name} (${d.quantity} ${d.unitOfMeasurement.name})`
+            `${d.inventory?.name ?? 'N/A'} (${d.quantity ?? 'N/A'} ${d.unitOfMeasurement?.name ?? 'N/A'})`
         )
         .join(", ")
 

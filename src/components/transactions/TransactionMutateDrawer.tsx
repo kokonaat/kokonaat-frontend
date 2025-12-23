@@ -166,14 +166,8 @@ const TransactionMutateDrawer = ({
   const total = calculateTotal(inventories)
 
   const amount = showInventoryFields ? total : (form.watch('transactionAmount') ?? 0)
-  const advancePaid = form.watch('advancePaid') ?? 0
   const paid = form.watch('paid') ?? 0
-  const calculatedPending = calculatePending(amount, advancePaid, paid)
-
-  useEffect(() => {
-    const pending = calculatePending(amount, advancePaid, paid)
-    form.setValue('pending', pending)
-  }, [amount, advancePaid, paid, form])
+  const calculatedPending = calculatePending(amount, paid)
 
   const handleOpenChange = (isOpen: boolean) => {
     onOpenChange(isOpen)
@@ -286,37 +280,26 @@ const TransactionMutateDrawer = ({
       })
       : undefined
 
-    const pendingValue = Number(values.pending) || 0
-    // const isPaid = pendingValue === 0
-
     const payload =
       selectedBusinessEntity === BusinessEntityType.VENDOR
         ? {
           shopId,
-          // partnerType: 'VENDOR' as const,
           vendorId: values.entityTypeId,
           transactionType: transactionTypeCasted,
           remarks: values.remarks,
           paymentType: values.paymentType,
-          advancePaid: Number(values.advancePaid),
           paid: Number(values.paid),
-          pending: pendingValue,
           totalAmount: showInventoryFields ? undefined : values.transactionAmount,
-          // isPaid,
           details: inventoryDetailsPayload,
         }
         : {
           shopId,
-          // partnerType: 'CUSTOMER' as const,
           customerId: values.entityTypeId,
           transactionType: transactionTypeCasted,
           remarks: values.remarks,
           paymentType: values.paymentType,
-          advancePaid: Number(values.advancePaid),
           paid: Number(values.paid),
-          pending: pendingValue,
           totalAmount: showInventoryFields ? undefined : values.transactionAmount,
-          // isPaid,
           details: inventoryDetailsPayload,
         }
 

@@ -55,8 +55,6 @@ export interface Transaction {
   transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT" | "RECEIVABLE"
   transactionStatus: string | null
   totalAmount: number
-  pending: number
-  advancePaid: number
   paid: number
   paymentType: "CASH" | "CREDIT_CARD" | "BANK_TRANSFER" | "MOBILE_PAYMENT"
   isPaid: boolean
@@ -107,9 +105,7 @@ export interface TransactionLedgerInterface {
   transactionType: string
   transactionStatus: string
   totalAmount: number
-  pending: number
   paid: number
-  advancePaid: number
   paymentType: string
   isPaid: boolean
   remarks: string

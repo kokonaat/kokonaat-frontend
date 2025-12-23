@@ -309,8 +309,6 @@ const Reports = () => {
       {
         totalAmount: ledger.totalAmount,
         totalPaid: ledger.totalPaid,
-        totalPending: ledger.totalPending,
-        totalAdvancePaid: ledger.totalAdvancePaid,
       },
       appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
         from: appliedFilters.dateRange.from.toLocaleDateString(),
@@ -602,17 +600,16 @@ const Reports = () => {
 
       {/* cards data for customer/vendor ledger */}
       {appliedFilters && isLedgerReport && hasData && ledger && (
-        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           <ReportCard label="Total Amount" value={ledger.totalAmount} />
           <ReportCard label="Total Paid" value={ledger.totalPaid} />
-          <ReportCard label="Advance Paid" value={ledger.totalAdvancePaid} />
-          <ReportCard label="Total Pending" value={ledger.totalPending} />
+          <ReportCard label="Total Pending" value={ledger.totalAmount - ledger.totalPaid} />
         </div>
       )}
 
       {/* card data for transaction reports */}
       {appliedFilters && isTransactionReport && hasData && transactionData?.data && (
-        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           <ReportCard
             label="Total Amount"
             value={transactionData.data.reduce(
@@ -624,14 +621,9 @@ const Reports = () => {
               (sum: number, t: TransactionReportItem) => sum + t.paid, 0)}
           />
           <ReportCard
-            label="Advance Paid"
-            value={transactionData.data.reduce(
-              (sum: number, t: TransactionReportItem) => sum + t.advancePaid, 0)}
-          />
-          <ReportCard
             label="Total Due"
             value={transactionData.data.reduce(
-              (sum: number, t: TransactionReportItem) => sum + t.pending, 0)}
+              (sum: number, t: TransactionReportItem) => sum + (t.totalAmount - t.paid), 0)}
           />
         </div>
       )}

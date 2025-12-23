@@ -68,9 +68,7 @@ const TransactionLedger = () => {
   const total = data?.total ?? 0
   const totalAmount = data?.totalAmount ?? 0
   const totalPaid = data?.totalPaid ?? 0
-  const totalAdvancePaid = data?.totalAdvancePaid ?? 0
-  const totalPending = data?.totalPending ?? 0
-  const totalCombinedPaid = totalPaid + totalAdvancePaid
+  const totalPending = totalAmount - totalPaid
 
   // loading handler
   if (isCustomerLoading || isVendorLoading) {
@@ -187,7 +185,7 @@ const TransactionLedger = () => {
 
                       <div className="flex items-center gap-2 bg-green-100 text-green-700 dark:bg-green-900/30 px-3 py-2 rounded-lg">
                         <span className="text-sm">Paid</span>
-                        <span className="font-semibold">{totalCombinedPaid}</span>
+                        <span className="font-semibold">{totalPaid}</span>
                       </div>
 
                       <div className="flex items-center gap-2 bg-red-100 text-red-700 dark:bg-red-900/30 px-3 py-2 rounded-lg">
@@ -199,8 +197,6 @@ const TransactionLedger = () => {
                         onClick={() => generatePDF(entity as Entity, transactions, {
                           totalAmount,
                           totalPaid,
-                          totalAdvancePaid,
-                          totalPending
                         })}
                         className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
                       >

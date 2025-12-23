@@ -38,13 +38,11 @@ export const calculateTotal = (
 
 export const calculatePending = (
     amount: number,
-    advancePaid: number,
     paid: number
 ): number => {
     const totalAmount = Number(amount) || 0
-    const totalAdvance = Number(advancePaid) || 0
     const totalPaid = Number(paid) || 0
-    return Math.max(0, totalAmount - totalAdvance - totalPaid)
+    return Math.max(0, totalAmount - totalPaid)
 }
 
 // Determine which entity type to show based on transaction type

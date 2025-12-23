@@ -5,8 +5,6 @@ import type { TransactionLedgerDetailItem } from "@/interface/reportInterface";
 interface Summary {
     totalAmount: number;
     totalPaid: number;
-    totalPending: number;
-    totalAdvancePaid: number;
 }
 
 export const generateLedgerPDF = (
@@ -102,9 +100,9 @@ export const generateLedgerPDF = (
     const summaryX = pageWidth - 90;
 
     doc.setFillColor(248, 250, 252);
-    doc.rect(summaryX, finalY, 76, 35, "F");
+    doc.rect(summaryX, finalY, 76, 28, "F");
     doc.setDrawColor(226, 232, 240);
-    doc.rect(summaryX, finalY, 76, 35, "S");
+    doc.rect(summaryX, finalY, 76, 28, "S");
 
     const drawRow = (label: string, value: number, y: number, isBold = false) => {
         if (isBold) doc.setFont("helvetica", "bold");
@@ -115,11 +113,10 @@ export const generateLedgerPDF = (
 
     drawRow("Total Amount:", summary.totalAmount, finalY + 7);
     drawRow("Total Paid:", summary.totalPaid, finalY + 14);
-    drawRow("Advance Paid:", summary.totalAdvancePaid, finalY + 21);
 
     doc.setDrawColor(200);
-    doc.line(summaryX + 2, finalY + 24, pageWidth - 16, finalY + 24);
-    drawRow("Balance Due:", summary.totalPending, finalY + 31, true);
+    doc.line(summaryX + 2, finalY + 17, pageWidth - 16, finalY + 17);
+    drawRow("Balance Due:", summary.totalAmount - summary.totalPaid, finalY + 24, true);
 
     // --- Footer ---
     const pageCount = (doc as any).internal.getNumberOfPages();

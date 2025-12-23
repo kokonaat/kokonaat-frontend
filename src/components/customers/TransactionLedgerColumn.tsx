@@ -67,9 +67,9 @@ export const TransactionLedgerColumn: ColumnDef<TransactionLedgerInterface>[] =
       cell: ({ row }) => `৳${row.original.paid.toLocaleString()}`,
     },
     {
-      id: 'pending',
+      accessorKey: 'pending',
       header: 'Pending',
-      cell: ({ row }) => `৳${(row.original.totalAmount - row.original.paid).toLocaleString()}`,
+      cell: ({ row }) => `৳${row.original.pending.toLocaleString()}`,
     },
     // devider
     {

@@ -76,7 +76,7 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
       const data = row.original
       const total = data.totalAmount
       const paid = data.paid
-      const pending = total - paid
+      const pending = data.pending
 
       return (
         <div className="font-mono">

@@ -119,6 +119,7 @@ export interface VendorTransactionInterface {
   transactionStatus: string
   amount: number
   paid: number
+  pending: number
   paymentType: string
   isPaid: boolean
   remarks: string

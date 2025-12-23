@@ -51,9 +51,9 @@ export const CustomerTransactionColumns: ColumnDef<VendorTransactionInterface>[]
       cell: ({ row }) => `৳${row.original.paid}`,
     },
     {
-      id: 'pending',
+      accessorKey: 'pending',
       header: 'Pending',
-      cell: ({ row }) => `৳${row.original.amount - row.original.paid}`,
+      cell: ({ row }) => `৳${row.original.pending}`,
     },
     {
       accessorKey: 'remarks',

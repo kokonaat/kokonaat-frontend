@@ -603,7 +603,7 @@ const Reports = () => {
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           <ReportCard label="Total Amount" value={ledger.totalAmount} />
           <ReportCard label="Total Paid" value={ledger.totalPaid} />
-          <ReportCard label="Total Pending" value={ledger.totalAmount - ledger.totalPaid} />
+          <ReportCard label="Total Pending" value={ledger.totalPending} />
         </div>
       )}
 

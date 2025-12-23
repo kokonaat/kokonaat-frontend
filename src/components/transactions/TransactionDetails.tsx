@@ -34,7 +34,7 @@ const TransactionDetails = () => {
                             <p><strong>Name:</strong> {transaction.vendor?.name ?? transaction.customer?.name}</p>
                             <p><strong>Amount:</strong> ৳{transaction.totalAmount}</p>
                             <p><strong>Paid:</strong> ৳{transaction.paid}</p>
-                            <p><strong>Pending:</strong> ৳{transaction.totalAmount - transaction.paid}</p>
+                            <p><strong>Pending:</strong> ৳{transaction.pending}</p>
                         </div>
 
                         <div className="space-y-2">

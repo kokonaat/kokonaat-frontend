@@ -8,6 +8,7 @@ export interface TransactionReportItem {
     details: TransactionDetailItem[]
     totalAmount: number
     paid: number
+    pending: number
     paymentType: string
 }
 
@@ -28,6 +29,7 @@ export interface TransactionLedgerResponse {
     transactions: TransactionLedgerItem[]
     totalAmount: number
     totalPaid: number
+    totalPending: number
 }
 
 export interface TransactionLedgerItem {
@@ -40,6 +42,7 @@ export interface TransactionLedgerItem {
     customerId?: string
     totalAmount: number
     paid: number
+    pending: number
     paymentType: string
     remarks?: string | null
     shopId: string

@@ -252,8 +252,8 @@ const Reports = () => {
         transactionData.data,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined,
         appliedFilters.transactionType
       );
@@ -266,8 +266,8 @@ const Reports = () => {
         expensesdata,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined
       );
       return
@@ -279,8 +279,8 @@ const Reports = () => {
         stocksData,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined
       );
       return;
@@ -292,8 +292,8 @@ const Reports = () => {
         stockTrackData,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined
       );
       return;
@@ -308,11 +308,11 @@ const Reports = () => {
       detailRows,
       {
         totalAmount: ledger.totalAmount,
-        totalPaid: ledger.totalPaid,
+        totalPaid: ledger.paid,
       },
       appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-        from: appliedFilters.dateRange.from.toLocaleDateString(),
-        to: appliedFilters.dateRange.to.toLocaleDateString()
+        from: appliedFilters.dateRange.from.toISOString(),
+        to: appliedFilters.dateRange.to.toISOString()
       } : undefined,
       appliedFilters.reportType === ReportType.CUSTOMER_LEDGER ? "customer" : "vendor"
     )
@@ -325,8 +325,8 @@ const Reports = () => {
         transactionData.data,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined,
         appliedFilters.transactionType
       )
@@ -339,8 +339,8 @@ const Reports = () => {
         expensesdata,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined
       );
       return;
@@ -352,8 +352,8 @@ const Reports = () => {
         stocksData,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined
       );
       return;
@@ -365,8 +365,8 @@ const Reports = () => {
         stockTrackData,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined
       );
       return;
@@ -380,8 +380,8 @@ const Reports = () => {
       detailRows,
       appliedFilters?.dateRange?.from && appliedFilters?.dateRange?.to
         ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString(),
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString(),
         }
         : undefined
     )
@@ -602,7 +602,7 @@ const Reports = () => {
       {appliedFilters && isLedgerReport && hasData && ledger && (
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           <ReportCard label="Total Amount" value={ledger.totalAmount} />
-          <ReportCard label="Total Paid" value={ledger.totalPaid} />
+          <ReportCard label="Total Paid" value={ledger.paid} />
           <ReportCard label="Total Pending" value={ledger.totalPending} />
         </div>
       )}

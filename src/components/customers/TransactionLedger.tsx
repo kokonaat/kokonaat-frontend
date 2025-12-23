@@ -67,8 +67,8 @@ const TransactionLedger = () => {
   const transactions = data?.transactions ?? []
   const total = data?.total ?? 0
   const totalAmount = data?.totalAmount ?? 0
-  const totalPaid = data?.totalPaid ?? 0
-  const totalPending = totalAmount - totalPaid
+  const totalPaid = data?.paid ?? 0
+  const totalPending = data?.totalPending ?? 0
 
   // loading handler
   if (isCustomerLoading || isVendorLoading) {

@@ -27,14 +27,13 @@ interface Transaction {
     vendor?: { id: string; name: string };
     details: TransactionDetail[];
     totalAmount: number;
-    advancePaid: number;
+    paid: number;
+    createdAt: string;
 }
 
 interface Summary {
     totalAmount: number;
-    totalAdvancePaid: number;
-    totalPaid?: number;
-    totalPending?: number;
+    totalPaid: number;
 }
 
 export interface Entity {
@@ -131,7 +130,7 @@ export const generatePDF = (
     // --- Table Section ---
     const tableRows = transactions.flatMap(trx =>
         trx.details.map(item => [
-            new Date(trx.no).toLocaleDateString(),
+            new Date(trx.createdAt).toLocaleDateString(),
             trx.no,
             getItemName(item),
             trx.transactionType,
@@ -178,9 +177,9 @@ export const generatePDF = (
     const summaryX = pageWidth - 80;
 
     doc.setFillColor(248, 250, 252);
-    doc.rect(summaryX, finalY, 66, 35, "F");
+    doc.rect(summaryX, finalY, 66, 28, "F");
     doc.setDrawColor(226, 232, 240);
-    doc.rect(summaryX, finalY, 66, 35, "S");
+    doc.rect(summaryX, finalY, 66, 28, "S");
 
     const drawRow = (label: string, value: number, y: number, isBold = false) => {
         if (isBold) doc.setFont("helvetica", "bold");
@@ -190,12 +189,11 @@ export const generatePDF = (
     };
 
     drawRow("Total Amount:", summary.totalAmount, finalY + 7);
-    drawRow("Total Paid:", summary.totalPaid ?? 0, finalY + 14);
-    drawRow("Advance Paid:", summary.totalAdvancePaid, finalY + 21);
+    drawRow("Total Paid:", summary.totalPaid, finalY + 14);
 
     doc.setDrawColor(200);
-    doc.line(summaryX + 2, finalY + 24, pageWidth - 16, finalY + 24);
-    drawRow("Balance Due:", summary.totalPending ?? (summary.totalAmount - ((summary.totalPaid ?? 0) + summary.totalAdvancePaid)), finalY + 31, true);
+    doc.line(summaryX + 2, finalY + 17, pageWidth - 16, finalY + 17);
+    drawRow("Balance Due:", summary.totalAmount - summary.totalPaid, finalY + 24, true);
 
     // --- Footer ---
     const pageCount = (doc as any).internal.getNumberOfPages();

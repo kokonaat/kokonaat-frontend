@@ -48,33 +48,7 @@ export const PaymentFields = ({
                     </FormControl>
                 </FormItem>
 
-                {/* advance paid */}
-                <FormField
-                    control={form.control}
-                    name='advancePaid'
-                    render={({ field }) => (
-                        <FormItem className='flex-1 max-w-52'>
-                            <FormLabel>Advance Paid</FormLabel>
-                            <FormControl>
-                                <Input
-                                    type='number'
-                                    {...field}
-                                    placeholder='0.00'
-                                    min={0}
-                                    step="0.01"
-                                    value={field.value ?? ''}
-                                    onChange={(e) => {
-                                        const val = e.target.value
-                                        field.onChange(val === '' ? null : parseFloat(val))
-                                    }}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                {/* paid */}
+                    {/* paid */}
                 <FormField
                     control={form.control}
                     name='paid'
@@ -99,31 +73,18 @@ export const PaymentFields = ({
                     )}
                 />
 
-                {/* pending */}
-                <FormField
-                    control={form.control}
-                    name='pending'
-                    render={({ field }) => (
-                        <FormItem className='flex-1 max-w-52'>
-                            <FormLabel>Pending</FormLabel>
-                            <FormControl>
-                                <Input
-                                    type='number'
-                                    {...field}
-                                    placeholder='0.00'
-                                    min={0}
-                                    step="0.01"
-                                    value={field.value ?? calculatedPending}
-                                    onChange={(e) => {
-                                        const val = e.target.value
-                                        field.onChange(val === '' ? null : parseFloat(val))
-                                    }}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                {/* pending (read-only computed) */}
+                <FormItem className='flex-1 max-w-52'>
+                    <FormLabel>Pending</FormLabel>
+                    <FormControl>
+                        <Input
+                            type='number'
+                            value={calculatedPending}
+                            readOnly
+                            className='cursor-not-allowed bg-gray-100'
+                        />
+                    </FormControl>
+                </FormItem>
             </div>
         </>
     )

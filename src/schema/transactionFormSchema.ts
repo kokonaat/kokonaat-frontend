@@ -44,9 +44,7 @@ export const transactionFormSchema = z
       .optional(),
     paymentType: z.string().min(1, "Please select a payment type"),
     remarks: z.string().optional(),
-    advancePaid: zNumberOrZero,
     paid: zNumberOrZero,
-    pending: z.number().nonnegative().default(0),
     // array of inventories for dynamic rows
     inventories: z
       .array(

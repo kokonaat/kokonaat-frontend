@@ -388,8 +388,8 @@ const Reports = () => {
         transactionData.data,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined,
         appliedFilters.transactionTypes?.join(", ")
       );
@@ -402,8 +402,8 @@ const Reports = () => {
         expensesdata,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined
       );
       return
@@ -415,8 +415,8 @@ const Reports = () => {
         stocksData,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined
       );
       return;
@@ -428,8 +428,8 @@ const Reports = () => {
         stockTrackData,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined
       );
       return;
@@ -444,13 +444,11 @@ const Reports = () => {
       detailRows,
       {
         totalAmount: ledger.totalAmount,
-        totalPaid: ledger.totalPaid,
-        totalPending: ledger.totalPending,
-        totalAdvancePaid: ledger.totalAdvancePaid,
+        totalPaid: ledger.paid,
       },
       appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-        from: appliedFilters.dateRange.from.toLocaleDateString(),
-        to: appliedFilters.dateRange.to.toLocaleDateString()
+        from: appliedFilters.dateRange.from.toISOString(),
+        to: appliedFilters.dateRange.to.toISOString()
       } : undefined,
       appliedFilters.reportType === ReportType.CUSTOMER_LEDGER ? "customer" : "vendor"
     )
@@ -463,8 +461,8 @@ const Reports = () => {
         transactionData.data,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined,
         appliedFilters.transactionTypes?.join(", ")
       )
@@ -477,8 +475,8 @@ const Reports = () => {
         expensesdata,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined
       );
       return;
@@ -490,8 +488,8 @@ const Reports = () => {
         stocksData,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined
       );
       return;
@@ -503,8 +501,8 @@ const Reports = () => {
         stockTrackData,
         currentShopName ?? "Shop Name",
         appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString()
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString()
         } : undefined
       );
       return;
@@ -518,8 +516,8 @@ const Reports = () => {
       detailRows,
       appliedFilters?.dateRange?.from && appliedFilters?.dateRange?.to
         ? {
-          from: appliedFilters.dateRange.from.toLocaleDateString(),
-          to: appliedFilters.dateRange.to.toLocaleDateString(),
+          from: appliedFilters.dateRange.from.toISOString(),
+          to: appliedFilters.dateRange.to.toISOString(),
         }
         : undefined
     )
@@ -823,17 +821,16 @@ const Reports = () => {
 
       {/* cards data for customer/vendor ledger */}
       {appliedFilters && isLedgerReport && hasData && ledger && (
-        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           <ReportCard label="Total Amount" value={ledger.totalAmount} />
-          {/* <ReportCard label="Total Paid" value={ledger.totalPaid} />
-          <ReportCard label="Advance Paid" value={ledger.totalAdvancePaid} /> */}
+          <ReportCard label="Total Paid" value={ledger.paid} />
           <ReportCard label="Total Pending" value={ledger.totalPending} />
         </div>
       )}
 
       {/* card data for transaction reports */}
       {appliedFilters && isTransactionReport && hasData && transactionData?.data && (
-        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           <ReportCard
             label="Total Amount"
             value={transactionData.data.reduce(
@@ -845,14 +842,9 @@ const Reports = () => {
               (sum: number, t: TransactionReportItem) => sum + t.paid, 0)}
           />
           <ReportCard
-            label="Advance Paid"
-            value={transactionData.data.reduce(
-              (sum: number, t: TransactionReportItem) => sum + t.advancePaid, 0)}
-          />
-          <ReportCard
             label="Total Due"
             value={transactionData.data.reduce(
-              (sum: number, t: TransactionReportItem) => sum + t.pending, 0)}
+              (sum: number, t: TransactionReportItem) => sum + (t.totalAmount - t.paid), 0)}
           />
         </div>
       )}

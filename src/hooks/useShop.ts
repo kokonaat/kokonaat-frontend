@@ -40,7 +40,8 @@ export const useCreateShop = () => {
             }
 
             toast.success("Shop created successfully")
-            queryClient.invalidateQueries({ queryKey: SHOP_KEYS.all })
+            queryClient.invalidateQueries({ queryKey: ["shops"] })
+            queryClient.invalidateQueries({queryKey: ["user"]})
 
             const totalShops = shopsRes?.length ?? 0
 

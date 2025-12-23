@@ -4,7 +4,12 @@ import type { ExpensesReportParams, StocksReportParams, TransactionReportParams 
 
 export const reportTransactions = async (params: TransactionReportParams) => {
     const res = await axiosInstance.get(
-        apiEndpoints.reports.reportTransactions, { params }
+        apiEndpoints.reports.reportTransactions, {
+        params: {
+            ...params,
+            transactionTypes: params.transactionTypes
+        }
+    }
     )
     return res.data
 }

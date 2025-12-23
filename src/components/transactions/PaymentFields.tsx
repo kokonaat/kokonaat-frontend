@@ -59,13 +59,12 @@ export const PaymentFields = ({
                                 <Input
                                     type='number'
                                     {...field}
-                                    placeholder='0.00'
+                                    placeholder='0'
                                     min={0}
-                                    step="0.01"
-                                    value={field.value ?? ''}
+                                    value={field.value === 0 ? '' : field.value ?? ''}
                                     onChange={(e) => {
                                         const val = e.target.value
-                                        field.onChange(val === '' ? null : parseFloat(val))
+                                        field.onChange(val === '' ? '' : parseFloat(val))
                                     }}
                                 />
                             </FormControl>

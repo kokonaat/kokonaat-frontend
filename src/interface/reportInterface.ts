@@ -114,7 +114,7 @@ export interface TransactionReportParams {
     searchBy?: string
     startDate: string
     endDate: string
-    transactionType: "SALE" | "PURCHASE" | "PAYMENT" | "COMMISSION" | "RECEIVABLE"
+    transactionTypes: string[]
 }
 
 export interface ExpensesReportParams {

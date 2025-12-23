@@ -376,7 +376,17 @@ const Reports = () => {
 
     // ledger report excel
     if (!ledger || !appliedFilters?.entityId) return
-    generateLedgerExcel(entityName, detailRows)
+    generateLedgerExcel(
+      currentShopName ?? "Shop Name",
+      entityName,
+      detailRows,
+      appliedFilters?.dateRange?.from && appliedFilters?.dateRange?.to
+        ? {
+          from: appliedFilters.dateRange.from.toLocaleDateString(),
+          to: appliedFilters.dateRange.to.toLocaleDateString(),
+        }
+        : undefined
+    )
   }
 
   // determine if we're in transaction report mode

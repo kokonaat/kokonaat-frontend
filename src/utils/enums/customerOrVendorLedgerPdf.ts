@@ -107,7 +107,7 @@ export const generateLedgerPDF = (
     const drawRow = (label: string, value: number, y: number, isBold = false) => {
         if (isBold) doc.setFont("helvetica", "bold");
         doc.text(label, summaryX + 2, y);
-        doc.text(`${value.toLocaleString()} Taka`, pageWidth - 16, y, { align: "right" });
+        doc.text(`${value ? value.toLocaleString() : '0.00'} Taka`, pageWidth - 16, y, { align: "right" });
         doc.setFont("helvetica", "normal");
     };
 

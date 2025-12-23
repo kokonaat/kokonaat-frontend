@@ -28,6 +28,7 @@ interface Transaction {
     details: TransactionDetail[];
     totalAmount: number;
     paid: number;
+    createdAt: string;
 }
 
 interface Summary {
@@ -129,7 +130,7 @@ export const generatePDF = (
     // --- Table Section ---
     const tableRows = transactions.flatMap(trx =>
         trx.details.map(item => [
-            new Date(trx.no).toLocaleDateString(),
+            new Date(trx.createdAt).toLocaleDateString(),
             trx.no,
             getItemName(item),
             trx.transactionType,

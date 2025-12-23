@@ -7,7 +7,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MoreVertical, ShoppingBag, Pencil } from "lucide-react"
+import { MoreVertical, ShoppingBag, Pencil, CheckCheck } from "lucide-react"
 import type { ShopProps } from "@/interface/shopInterface"
 import { useShopStore } from "@/stores/shopStore"
 import { useUser } from "@/hooks/useUser"
@@ -35,22 +35,24 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
                     setCurrentShop(shop.shopId, shop.shopName);
                 }
             }}
-            className={`list-none relative rounded-lg border-2 p-4 transition-all duration-200 cursor-pointer
+            className={`list-none relative rounded-lg border p-4 transition-all duration-200 cursor-pointer
                 ${isActive
-                    ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary"
-                    : "hover:shadow-md border-border hover:border-muted-foreground/50"
+                    ? "border-muted-foreground/30"
+                    : "hover:shadow-sm border-border hover:border-muted-foreground/30"
                 }`}
         >
-            {isActive && (
-                <div className="absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full p-1 shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </div>
-            )}
             {/* top row: icon & menu */}
             <div className="mb-4 ml-2 flex items-start justify-between">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-lg p-2 transition-colors
-                    ${isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-                    <ShoppingBag className="h-6 w-6" />
+                <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg p-2 bg-muted text-muted-foreground">
+                        <ShoppingBag className="h-6 w-6" />
+                    </div>
+                    {isActive && (
+                        <span className="text-sm flex items-center gap-1 text-muted-foreground">
+                            <CheckCheck className="h-4 w-4" />
+                            Selected
+                        </span>
+                    )}
                 </div>
 
                 {/* edit dropdown */}

@@ -1,14 +1,7 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import type { DateRange } from "react-day-picker"
 import { Main } from "@/components/layout/main"
 import DateRangeSearch from "@/components/DateRangeSearch"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Search, X } from "lucide-react"
 import { ReportType } from "@/utils/enums/reportType"
@@ -26,7 +19,6 @@ import type {
   ExpenseReportItem,
   StockReportItem,
   StockTrackReportItem,
-  TransactionReportParams
 } from "@/interface/reportInterface"
 import { generateLedgerPDF } from "@/utils/enums/customerOrVendorLedgerPdf"
 import { generateTransactionReportPDF } from "@/utils/enums/transactionReportPdf"
@@ -44,6 +36,7 @@ import { generateStockReportExcel } from "@/utils/enums/stockReportExcel"
 import { Badge } from "@/components/ui/badge"
 import { generateStockTrackReportPDF } from "@/utils/enums/stockTrackreportPdf"
 import { generateStockTrackReportExcel } from "@/utils/enums/stockTrackreportExcel"
+import { Combobox } from "@/components/ui/combobox"
 
 const Reports = () => {
   const shopId = useShopStore((s) => s.currentShopId) ?? ""
@@ -54,17 +47,21 @@ const Reports = () => {
 
   //  states for immediate ui change
   const [reportType, setReportType] = useState<ReportType>()
-  const [selectedEntityId, setSelectedEntityId] = useState<string>()
-  const [transactionType, setTransactionType] = useState<string>()
+  const [reportTypeSearch, setReportTypeSearch] = useState("")
+  const [selectedEntityIds, setSelectedEntityIds] = useState<string[]>([])
+  const [entitySearch, setEntitySearch] = useState("")
+  const [transactionTypes, setTransactionTypes] = useState<string[]>([])
+  const [transactionTypeSearch, setTransactionTypeSearch] = useState("")
   const [dateRange, setDateRange] = useState<DateRange>()
   const [selectedInventoryIds, setSelectedInventoryIds] = useState<string[]>([])
+  const [inventorySearch, setInventorySearch] = useState("")
 
   // trigger api states
   const [appliedFilters, setAppliedFilters] = useState<{
     reportType?: ReportType;
-    entityId?: string;
+    entityIds?: string[];
     dateRange?: DateRange;
-    transactionType?: string;
+    transactionTypes?: string[];
     inventoryIds?: string[];
   } | null>(null)
 
@@ -73,13 +70,13 @@ const Reports = () => {
 
   // customer hook
   const { data: customerResponse } = useCustomerList(
-    shopId, page, limit, undefined, undefined, undefined,
+    shopId, page, limit, entitySearch, undefined, undefined,
     { enabled: reportType === ReportType.CUSTOMER_LEDGER && isEntityEnabled }
   )
 
   // vendor hook
   const { data: vendorResponse } = useVendorList(
-    shopId, page, limit, undefined, undefined, undefined,
+    shopId, page, limit, entitySearch, undefined, undefined,
     { enabled: reportType === ReportType.VENDOR_LEDGER && isEntityEnabled }
   )
 
@@ -91,6 +88,7 @@ const Reports = () => {
       limit: limit,
       startDate: dateRange?.from?.toISOString(),
       endDate: dateRange?.to?.toISOString(),
+      searchBy: inventorySearch,
     },
     {
       enabled: (reportType === ReportType.STOCK_REPORT || reportType === ReportType.STOCK_TRACK_REPORT) && isEntityEnabled
@@ -101,7 +99,7 @@ const Reports = () => {
   const { data: ledger, isLoading: isLedgerLoading } = useTransactionLedger(
     shopId,
     page,
-    appliedFilters?.entityId ?? "",
+    appliedFilters?.entityIds?.[0] ?? "",
     limit,
     appliedFilters?.dateRange?.from?.toISOString(),
     appliedFilters?.dateRange?.to?.toISOString(),
@@ -115,12 +113,13 @@ const Reports = () => {
       limit: limit,
       startDate: appliedFilters?.dateRange?.from?.toISOString(),
       endDate: appliedFilters?.dateRange?.to?.toISOString(),
-      transactionType: appliedFilters?.transactionType as TransactionReportParams['transactionType'],
+      transactionTypes: appliedFilters?.transactionTypes,
     },
     {
       enabled: !!appliedFilters &&
         appliedFilters.reportType === ReportType.TRANSACTION_REPORT &&
-        !!appliedFilters.transactionType &&
+        !!appliedFilters.transactionTypes &&
+        appliedFilters.transactionTypes.length > 0 &&
         !!appliedFilters.dateRange?.from &&
         !!appliedFilters.dateRange?.to
     }
@@ -186,41 +185,174 @@ const Reports = () => {
   // reset logic when parents change
   useEffect(() => {
     setReportType(undefined)
-    setSelectedEntityId(undefined)
-    setTransactionType(undefined)
+    setReportTypeSearch("")
+    setSelectedEntityIds([])
+    setEntitySearch("")
+    setTransactionTypes([])
+    setTransactionTypeSearch("")
     setSelectedInventoryIds([])
+    setInventorySearch("")
     setAppliedFilters(null)
   }, [dateRange])
 
   useEffect(() => {
-    setSelectedEntityId(undefined)
-    setTransactionType(undefined)
+    setSelectedEntityIds([])
+    setEntitySearch("")
+    setTransactionTypes([])
+    setTransactionTypeSearch("")
     setSelectedInventoryIds([])
+    setInventorySearch("")
     setAppliedFilters(null)
+    // don't reset reportTypeSearch here since we're in reportType's useEffect
   }, [reportType])
 
   const handleSearch = () => {
     setAppliedFilters({
       reportType,
-      entityId: selectedEntityId,
+      entityIds: selectedEntityIds.length > 0 ? selectedEntityIds : undefined,
       dateRange,
-      transactionType,
+      transactionTypes: transactionTypes.length > 0 ? transactionTypes : undefined,
       inventoryIds: selectedInventoryIds.length > 0 ? selectedInventoryIds : undefined
     })
   }
 
-  const handleInventorySelect = (inventoryId: string) => {
-    setSelectedInventoryIds(prev => {
-      if (prev.includes(inventoryId)) {
-        return prev.filter(id => id !== inventoryId)
-      }
-      return [...prev, inventoryId]
+  // report type handler
+  const handleReportTypeSelect = (value: string) => {
+    setReportType(value as ReportType)
+    // clear search after selection
+    setReportTypeSearch("")
+  }
+
+  const handleReportTypeSearchClear = () => {
+    setReportTypeSearch("")
+  }
+
+  // handlers for entity (customer/vendor) multi-select
+  const handleEntitySelect = (value: string) => {
+    if (!value.trim()) return;
+
+    // Check if already selected
+    if (!selectedEntityIds.includes(value)) {
+      setSelectedEntityIds(prev => [...prev, value])
+    }
+
+    // Clear search after selection
+    setEntitySearch("")
+  }
+
+  const handleRemoveEntity = (entityId: string) => {
+    console.log("Removing entity:", entityId)
+    console.log("Current entities:", selectedEntityIds)
+    setSelectedEntityIds(prev => {
+      const newIds = prev.filter(id => id !== entityId)
+      console.log("New entities:", newIds)
+      return newIds
     })
   }
 
-  const handleRemoveInventory = (inventoryId: string) => {
-    setSelectedInventoryIds(prev => prev.filter(id => id !== inventoryId))
+  const handleEntitySearchClear = () => {
+    setEntitySearch("")
   }
+
+  // handlers for transaction type multi-select
+  const handleTransactionTypeSelect = (value: string) => {
+    if (!value.trim()) return;
+
+    // Check if already selected
+    if (!transactionTypes.includes(value)) {
+      setTransactionTypes(prev => [...prev, value])
+    }
+
+    // Clear search after selection
+    setTransactionTypeSearch("")
+  }
+
+  const handleRemoveTransactionType = (transactionType: string) => {
+    console.log("Removing transaction type:", transactionType)
+    console.log("Current types:", transactionTypes)
+    setTransactionTypes(prev => {
+      const newTypes = prev.filter(type => type !== transactionType)
+      console.log("New types:", newTypes)
+      return newTypes
+    })
+  }
+
+  const handleTransactionTypeSearchClear = () => {
+    setTransactionTypeSearch("")
+  }
+
+  const handleInventorySelect = (value: string) => {
+    if (!value.trim()) return;
+
+    // Check if already selected
+    if (!selectedInventoryIds.includes(value)) {
+      setSelectedInventoryIds(prev => [...prev, value])
+    }
+
+    // Clear search after selection
+    setInventorySearch("")
+  }
+
+  const handleRemoveInventory = (inventoryId: string) => {
+    console.log("Removing inventory:", inventoryId)
+    console.log("Current inventories:", selectedInventoryIds)
+    setSelectedInventoryIds(prev => {
+      const newIds = prev.filter(id => id !== inventoryId)
+      console.log("New inventories:", newIds)
+      return newIds
+    })
+  }
+
+  const handleInventorySearchClear = () => {
+    setInventorySearch("")
+  }
+
+  // filter inventories based on search and already selected
+  const filteredInventories = useMemo(() => {
+    if (!allInventoriesResponse?.data) return []
+
+    const searchLower = inventorySearch.toLowerCase()
+    return allInventoriesResponse.data
+      .filter((inventory: StockReportItem) => {
+        const matchesSearch = !inventorySearch ||
+          inventory.name.toLowerCase().includes(searchLower)
+        const notSelected = !selectedInventoryIds.includes(inventory.id)
+        return matchesSearch && notSelected
+      })
+      .map((inventory: StockReportItem) => ({
+        value: inventory.id,
+        label: inventory.name
+      }))
+  }, [allInventoriesResponse, inventorySearch, selectedInventoryIds])
+
+  // filter transaction types based on search and already selected
+  const filteredTransactionTypes = useMemo(() => {
+    const searchLower = transactionTypeSearch.toLowerCase()
+    return TRANSACTION_TYPES.filter(type => {
+      const matchesSearch = !transactionTypeSearch ||
+        type.label.toLowerCase().includes(searchLower) ||
+        type.value.toLowerCase().includes(searchLower)
+      const notSelected = !transactionTypes.includes(type.value)
+      return matchesSearch && notSelected
+    }).map(type => ({
+      value: type.value,
+      label: type.label
+    }))
+  }, [transactionTypeSearch, transactionTypes])
+
+  // filter report types based on search
+  const filteredReportTypes = useMemo(() => {
+    const searchLower = reportTypeSearch.toLowerCase()
+    return Object.values(ReportType)
+      .filter(type => {
+        if (!reportTypeSearch) return true
+        return type.toLowerCase().includes(searchLower)
+      })
+      .map(type => ({
+        value: type,
+        label: type
+      }))
+  }, [reportTypeSearch])
 
   const detailRows: TransactionLedgerDetailItem[] = ledger?.transactions.flatMap(
     (tran: TransactionLedgerItem) =>
@@ -239,11 +371,15 @@ const Reports = () => {
       }))
   ) ?? []
 
-  const entityName = appliedFilters?.entityId
-    ? appliedFilters.reportType === ReportType.CUSTOMER_LEDGER
-      ? customerResponse?.customers.find(c => c.id === appliedFilters.entityId)?.name ?? "Customer"
-      : vendorResponse?.data.find(v => v.id === appliedFilters.entityId)?.name ?? "Vendor"
-    : "Unknown";
+  const entityNames = appliedFilters?.entityIds
+    ? appliedFilters.entityIds.map(id => {
+      if (appliedFilters.reportType === ReportType.CUSTOMER_LEDGER) {
+        return customerResponse?.customers.find(c => c.id === id)?.name ?? "Customer"
+      } else {
+        return vendorResponse?.data.find(v => v.id === id)?.name ?? "Vendor"
+      }
+    }).join(", ")
+    : "Unknown"
 
   const handleDownloadPdf = () => {
     // transaction report pdf
@@ -255,9 +391,9 @@ const Reports = () => {
           from: appliedFilters.dateRange.from.toLocaleDateString(),
           to: appliedFilters.dateRange.to.toLocaleDateString()
         } : undefined,
-        appliedFilters.transactionType
+        appliedFilters.transactionTypes?.join(", ")
       );
-      return;
+      return
     }
 
     // expense report pdf
@@ -300,10 +436,10 @@ const Reports = () => {
     }
 
     // ledger report pdf
-    if (!ledger || !appliedFilters?.entityId) return;
+    if (!ledger || !appliedFilters?.entityIds || appliedFilters.entityIds.length === 0) return; // ← CHANGE
 
     generateLedgerPDF(
-      entityName,
+      entityNames,
       currentShopName ?? "Shop Name",
       detailRows,
       {
@@ -330,7 +466,7 @@ const Reports = () => {
           from: appliedFilters.dateRange.from.toLocaleDateString(),
           to: appliedFilters.dateRange.to.toLocaleDateString()
         } : undefined,
-        appliedFilters.transactionType
+        appliedFilters.transactionTypes?.join(", ")
       )
       return
     }
@@ -375,10 +511,10 @@ const Reports = () => {
     }
 
     // ledger report excel
-    if (!ledger || !appliedFilters?.entityId) return
+    if (!ledger || !appliedFilters?.entityIds || appliedFilters.entityIds.length === 0) return // ← CHANGE
     generateLedgerExcel(
       currentShopName ?? "Shop Name",
-      entityName,
+      entityNames,
       detailRows,
       appliedFilters?.dateRange?.from && appliedFilters?.dateRange?.to
         ? {
@@ -388,6 +524,26 @@ const Reports = () => {
         : undefined
     )
   }
+
+  // filter customers/vendors based on search and already selected
+  const filteredEntities = useMemo(() => {
+    if (reportType === ReportType.CUSTOMER_LEDGER && customerResponse?.customers) {
+      return customerResponse.customers
+        .filter(c => !selectedEntityIds.includes(c.id))
+        .map(c => ({
+          value: c.id,
+          label: c.name
+        }))
+    } else if (reportType === ReportType.VENDOR_LEDGER && vendorResponse?.data) {
+      return vendorResponse.data
+        .filter(v => !selectedEntityIds.includes(v.id))
+        .map(v => ({
+          value: v.id,
+          label: v.name
+        }))
+    }
+    return []
+  }, [reportType, customerResponse, vendorResponse, selectedEntityIds])
 
   // determine if we're in transaction report mode
   const isTransactionReport = appliedFilters?.reportType === ReportType.TRANSACTION_REPORT
@@ -441,98 +597,75 @@ const Reports = () => {
           />
         </div>
 
-        {/* report type select box */}
+        {/* report type combobox */}
         <div>
           <label className="text-sm font-medium mb-1 block">Report Type</label>
-          <Select value={reportType} onValueChange={(v) => setReportType(v as ReportType)} disabled={!isReportTypeEnabled}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Select type" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.values(ReportType).map((t) => (
-                <SelectItem key={t} value={t}>{t}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Combobox
+            options={filteredReportTypes}
+            placeholder="Search & select report type"
+            emptyMessage="No report types found"
+            value={reportType || reportTypeSearch}
+            onSelect={handleReportTypeSelect}
+            onSearch={setReportTypeSearch}
+            onSearchClear={handleReportTypeSearchClear}
+            disabled={!isReportTypeEnabled}
+            className="w-64"
+          />
         </div>
 
-        {/* transaction type select box */}
+        {/* transaction type combobox */}
         {reportType === ReportType.TRANSACTION_REPORT && (
           <div>
-            <label className="text-sm font-medium mb-1 block">Transaction Type</label>
-            <Select value={transactionType} onValueChange={setTransactionType}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="All Types" />
-              </SelectTrigger>
-              <SelectContent>
-                {TRANSACTION_TYPES.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <label className="text-sm font-medium mb-1 block">Transaction Types (Required)</label>
+            <Combobox
+              options={filteredTransactionTypes}
+              placeholder="Search & select types"
+              emptyMessage="No transaction types found"
+              value={transactionTypeSearch}
+              onSelect={handleTransactionTypeSelect}
+              onSearch={setTransactionTypeSearch}
+              onSearchClear={handleTransactionTypeSearchClear}
+              className="w-64"
+            />
           </div>
         )}
 
-        {/* customer/vendor select box - Only show for CUSTOMER_LEDGER and VENDOR_LEDGER */}
+        {/* customer/vendor combobox - Only show for CUSTOMER_LEDGER and VENDOR_LEDGER */}
         {isEntityEnabled &&
           (reportType === ReportType.CUSTOMER_LEDGER || reportType === ReportType.VENDOR_LEDGER) && (
             <div>
               <label className="text-sm font-medium mb-1 block">
-                {reportType === ReportType.CUSTOMER_LEDGER ? "Select Customer" : "Select Vendor"}
+                {reportType === ReportType.CUSTOMER_LEDGER ? "Select Customers (Required)" : "Select Vendors (Required)"}
               </label>
-              <Select value={selectedEntityId} onValueChange={setSelectedEntityId}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder={`Select ${reportType === ReportType.CUSTOMER_LEDGER ? "Customer" : "Vendor"}`} />
-                </SelectTrigger>
-                <SelectContent>
-                  {reportType === ReportType.CUSTOMER_LEDGER &&
-                    customerResponse?.customers.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                    ))}
-                  {reportType === ReportType.VENDOR_LEDGER &&
-                    vendorResponse?.data.map((v) => (
-                      <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
+              <Combobox
+                options={filteredEntities}
+                placeholder={`Search & select ${reportType === ReportType.CUSTOMER_LEDGER ? "customers" : "vendors"}`}
+                emptyMessage={`No ${reportType === ReportType.CUSTOMER_LEDGER ? "customers" : "vendors"} found`}
+                value={entitySearch}
+                onSelect={handleEntitySelect}
+                onSearch={setEntitySearch}
+                onSearchClear={handleEntitySearchClear}
+                className="w-64"
+              />
             </div>
           )}
 
-        {/* inventory select box - Show for STOCK_REPORT and STOCK_TRACK_REPORT */}
+        {/* inventory combobox - Show for STOCK_REPORT and STOCK_TRACK_REPORT */}
         {isEntityEnabled && (reportType === ReportType.STOCK_REPORT || reportType === ReportType.STOCK_TRACK_REPORT) && (
           <div>
             <label className="text-sm font-medium mb-1 block">
               Select Inventories {reportType === ReportType.STOCK_REPORT ? "(Optional)" : "(Required)"}
             </label>
-            <Select
-              // always empty to allow unselection
-              value=""
-              onValueChange={handleInventorySelect}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Select Inventories" />
-              </SelectTrigger>
-              <SelectContent>
-                {allInventoriesResponse?.data?.map((inventory: StockReportItem) => {
-                  const isSelected = selectedInventoryIds.includes(inventory.id)
-                  return (
-                    <SelectItem
-                      key={inventory.id}
-                      value={inventory.id}
-                      className={isSelected ? "bg-primary/10 font-medium" : ""}
-                    >
-                      <div className="flex items-center justify-between w-full">
-                        <span>{inventory.name}</span>
-                        {isSelected && (
-                          <span className="ml-2 text-primary text-xs">✓</span>
-                        )}
-                      </div>
-                    </SelectItem>
-                  )
-                })}
-              </SelectContent>
-            </Select>
+            <Combobox
+              options={filteredInventories}
+              placeholder="Search & select inventories"
+              emptyMessage="No inventories found"
+              value={inventorySearch}
+              onSelect={handleInventorySelect}
+              onSearch={setInventorySearch}
+              onSearchClear={handleInventorySearchClear}
+              className="w-64"
+            />
           </div>
         )}
 
@@ -542,8 +675,8 @@ const Reports = () => {
           disabled={
             !reportType ||
             !dateRange?.from ||
-            (reportType === ReportType.TRANSACTION_REPORT && !transactionType) ||
-            ((reportType === ReportType.CUSTOMER_LEDGER || reportType === ReportType.VENDOR_LEDGER) && !selectedEntityId) ||
+            (reportType === ReportType.TRANSACTION_REPORT && transactionTypes.length === 0) ||
+            ((reportType === ReportType.CUSTOMER_LEDGER || reportType === ReportType.VENDOR_LEDGER) && selectedEntityIds.length === 0) || // ← CHANGE
             (reportType === ReportType.STOCK_TRACK_REPORT && selectedInventoryIds.length === 0)
           }
           className="flex gap-2"
@@ -553,46 +686,134 @@ const Reports = () => {
         </Button>
       </div>
 
-      {/* Selected inventories badges with unselect feature */}
+      {/* Transaction Types Badges */}
+      {reportType === ReportType.TRANSACTION_REPORT && transactionTypes.length > 0 && (
+        <div className="px-4 pb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <label className="text-sm font-medium">Selected Transaction Types:</label>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setTransactionTypes([])
+                setAppliedFilters(null)
+              }}
+              className="h-7 text-xs text-muted-foreground hover:text-foreground"
+            >
+              Clear All
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {transactionTypes.map((type) => {
+              const transactionType = TRANSACTION_TYPES.find(t => t.value === type)
+              return (
+                <Badge key={type} variant="secondary" className="flex items-center gap-2 px-2 py-1">
+                  <span>{transactionType?.label || type}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log("X button clicked for:", type)
+                      handleRemoveTransactionType(type)
+                    }}
+                    className="ml-1 hover:bg-destructive/20 rounded-full p-0.5"
+                  >
+                    <X className="h-3 w-3 cursor-pointer hover:text-destructive" />
+                  </button>
+                </Badge>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Entities Badges */}
+      {(reportType === ReportType.CUSTOMER_LEDGER || reportType === ReportType.VENDOR_LEDGER) && selectedEntityIds.length > 0 && (
+        <div className="px-4 pb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <label className="text-sm font-medium">
+              Selected {reportType === ReportType.CUSTOMER_LEDGER ? "Customers" : "Vendors"}:
+            </label>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSelectedEntityIds([])
+                setAppliedFilters(null)
+              }}
+              className="h-7 text-xs text-muted-foreground hover:text-foreground"
+            >
+              Clear All
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {selectedEntityIds.map((id) => {
+              const entity = reportType === ReportType.CUSTOMER_LEDGER
+                ? customerResponse?.customers.find(c => c.id === id)
+                : vendorResponse?.data.find(v => v.id === id)
+              return (
+                <Badge key={id} variant="secondary" className="flex items-center gap-2 px-2 py-1">
+                  <span>{entity?.name || id}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log("X button clicked for entity:", id)
+                      handleRemoveEntity(id)
+                    }}
+                    className="ml-1 hover:bg-destructive/20 rounded-full p-0.5"
+                  >
+                    <X className="h-3 w-3 cursor-pointer hover:text-destructive" />
+                  </button>
+                </Badge>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Inventories Badges */}
       {(reportType === ReportType.STOCK_REPORT || reportType === ReportType.STOCK_TRACK_REPORT) && selectedInventoryIds.length > 0 && (
         <div className="px-4 pb-4">
-          <label className="text-sm font-medium mb-2 block">Selected Inventories:</label>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setSelectedInventoryIds([])
-              // clear and re-search with no inventory filter
-              if (reportType === ReportType.STOCK_REPORT) {
-                setAppliedFilters({
-                  reportType,
-                  entityId: selectedEntityId,
-                  dateRange,
-                  transactionType,
-                  // Clear inventory filter
-                  inventoryIds: undefined
-                })
-              }
-              // clear the table data since inventory is required
-              if (reportType === ReportType.STOCK_TRACK_REPORT) {
-                // Clear the applied filters to hide the table
-                setAppliedFilters(null)
-              }
-            }}
-            className="h-7 text-xs text-muted-foreground hover:text-foreground"
-          >
-            Clear All
-          </Button>
+          <div className="flex items-center gap-2 mb-2">
+            <label className="text-sm font-medium">Selected Inventories:</label>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSelectedInventoryIds([])
+                if (reportType === ReportType.STOCK_REPORT) {
+                  setAppliedFilters({
+                    reportType,
+                    entityIds: selectedEntityIds,
+                    dateRange,
+                    transactionTypes,
+                    inventoryIds: undefined
+                  })
+                }
+                if (reportType === ReportType.STOCK_TRACK_REPORT) {
+                  setAppliedFilters(null)
+                }
+              }}
+              className="h-7 text-xs text-muted-foreground hover:text-foreground"
+            >
+              Clear All
+            </Button>
+          </div>
           <div className="flex flex-wrap gap-2">
             {selectedInventoryIds.map((id) => {
               const inventory = allInventoriesResponse?.data?.find((inv: StockReportItem) => inv.id === id)
               return (
-                <Badge key={id} variant="secondary" className="flex items-center gap-1">
-                  {inventory?.name || id}
-                  <X
-                    className="h-3 w-3 cursor-pointer"
-                    onClick={() => handleRemoveInventory(id)}
-                  />
+                <Badge key={id} variant="secondary" className="flex items-center gap-2 px-2 py-1">
+                  <span>{inventory?.name || id}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log("X button clicked for inventory:", id)
+                      handleRemoveInventory(id)
+                    }}
+                    className="ml-1 hover:bg-destructive/20 rounded-full p-0.5"
+                  >
+                    <X className="h-3 w-3 cursor-pointer hover:text-destructive" />
+                  </button>
                 </Badge>
               )
             })}
@@ -604,8 +825,8 @@ const Reports = () => {
       {appliedFilters && isLedgerReport && hasData && ledger && (
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
           <ReportCard label="Total Amount" value={ledger.totalAmount} />
-          <ReportCard label="Total Paid" value={ledger.totalPaid} />
-          <ReportCard label="Advance Paid" value={ledger.totalAdvancePaid} />
+          {/* <ReportCard label="Total Paid" value={ledger.totalPaid} />
+          <ReportCard label="Advance Paid" value={ledger.totalAdvancePaid} /> */}
           <ReportCard label="Total Pending" value={ledger.totalPending} />
         </div>
       )}
@@ -699,7 +920,7 @@ const Reports = () => {
           onPageChange={(page) => console.log('Change page:', page)}
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}
-          entityName={entityName}
+          entityName={entityNames}
           title="Ledger Details"
         />
       )}

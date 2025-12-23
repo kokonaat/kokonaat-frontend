@@ -9,7 +9,10 @@ export const useTransactionReport = (
   return useQuery({
     queryKey: ["transactionReport", params],
     queryFn: () => reportTransactions(params as TransactionReportParams),
-    enabled: !!params.shopId && !!params.transactionType && (options?.enabled ?? true),
+    enabled: !!params.shopId &&
+      !!params.transactionTypes &&
+      params.transactionTypes.length > 0 &&
+      (options?.enabled ?? true),
   })
 }
 

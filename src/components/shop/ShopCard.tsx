@@ -13,8 +13,14 @@ import { useShopStore } from "@/stores/shopStore"
 import { useUser } from "@/hooks/useUser"
 
 const ShopCard = ({ shop, onEdit }: ShopProps) => {
-    const setCurrentShop = useShopStore((s) => s.setCurrentShop)
+    // currentShopId from store to compare
+    const currentShopId = useShopStore((s) => s.currentShopId);
+    const setCurrentShop = useShopStore((s) => s.setCurrentShop);
+
     const { data: user } = useUser()
+
+    // check if this card is the active one
+    const isActive = currentShopId === shop.shopId;
 
     // find role for this shop from user data
     const userRole = user?.shopWiseUserRoles.find(
@@ -23,14 +29,27 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
 
     return (
         <Card
+            // only switch if it's a different shop
             onClick={() => {
-                if (shop.shopId) setCurrentShop(shop.shopId, shop.shopName)
+                if (shop.shopId && !isActive) {
+                    setCurrentShop(shop.shopId, shop.shopName);
+                }
             }}
-            className="list-none relative rounded-lg border p-4 hover:shadow-md cursor-pointer"
+            className={`list-none relative rounded-lg border-2 p-4 transition-all duration-200 cursor-pointer
+                ${isActive
+                    ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary"
+                    : "hover:shadow-md border-border hover:border-muted-foreground/50"
+                }`}
         >
+            {isActive && (
+                <div className="absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full p-1 shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+            )}
             {/* top row: icon & menu */}
             <div className="mb-4 ml-2 flex items-start justify-between">
-                <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-lg p-2">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-lg p-2 transition-colors
+                    ${isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
                     <ShoppingBag className="h-6 w-6" />
                 </div>
 

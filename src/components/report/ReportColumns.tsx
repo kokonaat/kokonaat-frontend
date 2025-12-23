@@ -86,7 +86,7 @@ export const TransactionReportColumns: ColumnDef<TransactionReportItem>[] = [
       const fullText = details
         .map(
           (d) =>
-            `${d.inventory?.name} (${d.quantity} ${d.unitOfMeasurement.name})`
+            `${d.inventory?.name ?? 'N/A'} (${d.quantity ?? 'N/A'} ${d.unitOfMeasurement?.name ?? 'N/A'})`
         )
         .join(", ")
 
@@ -205,8 +205,8 @@ export const StockTrackReportColumns: ColumnDef<StockTrackReportItem>[] = [
 
       return (
         <span className={`px-2 py-1 rounded-full text-xs font-semibold ${isPurchased
-            ? 'bg-blue-100 text-blue-700'  // Style for PURCHASE
-            : 'bg-orange-100 text-orange-700' // Style for SALE
+          ? 'bg-blue-100 text-blue-700'  // Style for PURCHASE
+          : 'bg-orange-100 text-orange-700' // Style for SALE
           }`}>
           {label}
         </span>

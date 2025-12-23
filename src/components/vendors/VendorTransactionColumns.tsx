@@ -46,11 +46,6 @@ export const VendorTransactionColumns: ColumnDef<VendorTransactionInterface>[] =
       cell: ({ row }) => `৳${row.original.amount}`,
     },
     {
-      accessorKey: 'advancePaid',
-      header: 'Advance Paid',
-      cell: ({ row }) => `৳${row.original.advancePaid}`,
-    },
-    {
       accessorKey: 'paid',
       header: 'Paid',
       cell: ({ row }) => `৳${row.original.paid}`,

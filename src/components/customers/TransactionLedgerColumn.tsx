@@ -67,11 +67,6 @@ export const TransactionLedgerColumn: ColumnDef<TransactionLedgerInterface>[] =
       cell: ({ row }) => `৳${row.original.paid.toLocaleString()}`,
     },
     {
-      accessorKey: 'advancePaid',
-      header: 'Advance Paid',
-      cell: ({ row }) => `৳${row.original.advancePaid.toLocaleString()}`,
-    },
-    {
       accessorKey: 'pending',
       header: 'Pending',
       cell: ({ row }) => `৳${row.original.pending.toLocaleString()}`,

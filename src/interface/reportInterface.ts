@@ -8,7 +8,6 @@ export interface TransactionReportItem {
     details: TransactionDetailItem[]
     totalAmount: number
     paid: number
-    advancePaid: number
     pending: number
     paymentType: string
 }
@@ -31,7 +30,6 @@ export interface TransactionLedgerResponse {
     totalAmount: number
     totalPaid: number
     totalPending: number
-    totalAdvancePaid: number
 }
 
 export interface TransactionLedgerItem {
@@ -43,7 +41,6 @@ export interface TransactionLedgerItem {
     vendorId?: string
     customerId?: string
     totalAmount: number
-    advancePaid: number
     paid: number
     pending: number
     paymentType: string

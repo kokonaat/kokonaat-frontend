@@ -20,8 +20,6 @@ export const DEFAULT_VALUES = {
   partnerType: '',
   entityTypeId: '',
   paymentType: '',
-  advancePaid: 0,
-  pending: 0,
   paid: 0,
   transactionAmount: null,
   inventories: [],

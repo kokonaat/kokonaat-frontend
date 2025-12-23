@@ -280,6 +280,18 @@ const TransactionMutateDrawer = ({
       })
       : undefined
 
+    // For PAYMENT, RECEIVABLE, COMMISSION: paid = entered amount, totalAmount = 0
+    // For PURCHASE, SALE: paid is from the form, totalAmount is calculated from inventory
+    const isAmountOnlyTransaction = ['PAYMENT', 'RECEIVABLE', 'COMMISSION'].includes(transactionTypeCasted)
+    
+    const paidValue = isAmountOnlyTransaction 
+      ? Number(values.transactionAmount) 
+      : Number(values.paid)
+    
+    const totalAmountValue = isAmountOnlyTransaction 
+      ? 0 
+      : undefined // Let backend calculate from inventory details
+
     const payload =
       selectedBusinessEntity === BusinessEntityType.VENDOR
         ? {
@@ -288,8 +300,8 @@ const TransactionMutateDrawer = ({
           transactionType: transactionTypeCasted,
           remarks: values.remarks,
           paymentType: values.paymentType,
-          paid: Number(values.paid),
-          totalAmount: showInventoryFields ? undefined : values.transactionAmount,
+          paid: paidValue,
+          totalAmount: totalAmountValue,
           details: inventoryDetailsPayload,
         }
         : {
@@ -298,8 +310,8 @@ const TransactionMutateDrawer = ({
           transactionType: transactionTypeCasted,
           remarks: values.remarks,
           paymentType: values.paymentType,
-          paid: Number(values.paid),
-          totalAmount: showInventoryFields ? undefined : values.transactionAmount,
+          paid: paidValue,
+          totalAmount: totalAmountValue,
           details: inventoryDetailsPayload,
         }
 

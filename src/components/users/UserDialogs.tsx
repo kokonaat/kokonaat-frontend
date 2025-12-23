@@ -1,5 +1,5 @@
 import { UsersActionDialog } from './UserActionDialog'
-import { UsersDeleteDialog } from './UserDeleteDialog'
+// import { UsersDeleteDialog } from './UserDeleteDialog'
 import { useUsers } from './UserProvider'
 import { UsersInviteDialog } from './UserInviteDialog'
 
@@ -33,7 +33,7 @@ export function UsersDialogs() {
                         currentRow={currentRow}
                     />
 
-                    <UsersDeleteDialog
+                    {/* <UsersDeleteDialog
                         key={`user-delete-${currentRow.id}`}
                         open={open === 'delete'}
                         onOpenChange={() => {
@@ -43,7 +43,7 @@ export function UsersDialogs() {
                             }, 500)
                         }}
                         currentRow={currentRow}
-                    />
+                    /> */}
                 </>
             )}
         </>

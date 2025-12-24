@@ -23,9 +23,12 @@ export const getTransactions = async (
         searchBy,
         startDate,
         endDate,
-        transactionTypes: transactionTypes?.length ? transactionTypes.join(',') : undefined,
-        vendorIds: vendorIds?.length ? vendorIds.join(',') : undefined,
-        customerIds: customerIds?.length ? customerIds.join(',') : undefined,
+        transactionTypes: transactionTypes?.length ? transactionTypes : undefined,
+        vendorIds: vendorIds?.length ? vendorIds : undefined,
+        customerIds: customerIds?.length ? customerIds : undefined,
+      },
+      paramsSerializer: {
+        indexes: null, // This makes arrays serialize as key=val1&key=val2 instead of key[0]=val1&key[1]=val2
       },
     }
   )

@@ -11,9 +11,11 @@ import {
   type VisibilityState,
   type ColumnFiltersState,
 } from "@tanstack/react-table"
+import { X } from "lucide-react"
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "../ui/card"
+import { Badge } from "../ui/badge"
 import { DataTableViewOptions } from "./DataTableViewOption"
 import { DataTablePagination } from "./DataTablePagination"
 import { TransactionColumns as columns } from "./TransactionColumns"
@@ -60,10 +62,11 @@ const TransactionTable = ({
   const [searchInput, setSearchInput] = useState("")
   const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({})
 
-  // Filter states
-  const [selectedTransactionType, setSelectedTransactionType] = useState<string>("")
-  const [selectedVendorId, setSelectedVendorId] = useState<string>("")
-  const [selectedCustomerId, setSelectedCustomerId] = useState<string>("")
+  // Filter states - now using arrays for multi-select
+  const [selectedTransactionTypes, setSelectedTransactionTypes] = useState<string[]>([])
+  const [selectedVendorIds, setSelectedVendorIds] = useState<string[]>([])
+  const [selectedCustomerIds, setSelectedCustomerIds] = useState<string[]>([])
+  const [transactionTypeSearch, setTransactionTypeSearch] = useState("")
   const [vendorSearch, setVendorSearch] = useState("")
   const [customerSearch, setCustomerSearch] = useState("")
 
@@ -71,21 +74,56 @@ const TransactionTable = ({
   const { data: vendorResponse } = useVendorList(shopId, 1, 50, vendorSearch)
   const { data: customerResponse } = useCustomerList(shopId, 1, 50, customerSearch)
 
-  // Memoized options for comboboxes
+  // Memoized options for comboboxes - filter out already selected items
   const transactionTypeOptions = useMemo(() => 
-    [{ value: "", label: "All Types" }, ...TRANSACTION_TYPES.map(t => ({ value: t.value, label: t.label }))],
-    []
+    TRANSACTION_TYPES
+      .filter(t => !selectedTransactionTypes.includes(t.value))
+      .map(t => ({ value: t.value, label: t.label })),
+    [selectedTransactionTypes]
   )
 
   const vendorOptions = useMemo(() => {
-    const options = vendorResponse?.data?.map(v => ({ value: v.id, label: v.name })) || []
-    return [{ value: "", label: "All Vendors" }, ...options]
-  }, [vendorResponse])
+    return (vendorResponse?.data || [])
+      .filter(v => !selectedVendorIds.includes(v.id))
+      .map(v => ({ value: v.id, label: v.name }))
+  }, [vendorResponse, selectedVendorIds])
 
   const customerOptions = useMemo(() => {
-    const options = customerResponse?.customers?.map(c => ({ value: c.id, label: c.name })) || []
-    return [{ value: "", label: "All Customers" }, ...options]
-  }, [customerResponse])
+    return (customerResponse?.customers || [])
+      .filter(c => !selectedCustomerIds.includes(c.id))
+      .map(c => ({ value: c.id, label: c.name }))
+  }, [customerResponse, selectedCustomerIds])
+
+  // Handlers for multi-select
+  const handleTransactionTypeSelect = (value: string) => {
+    if (!value.trim() || selectedTransactionTypes.includes(value)) return
+    setSelectedTransactionTypes(prev => [...prev, value])
+    setTransactionTypeSearch("")
+  }
+
+  const handleRemoveTransactionType = (value: string) => {
+    setSelectedTransactionTypes(prev => prev.filter(t => t !== value))
+  }
+
+  const handleVendorSelect = (value: string) => {
+    if (!value.trim() || selectedVendorIds.includes(value)) return
+    setSelectedVendorIds(prev => [...prev, value])
+    setVendorSearch("")
+  }
+
+  const handleRemoveVendor = (value: string) => {
+    setSelectedVendorIds(prev => prev.filter(v => v !== value))
+  }
+
+  const handleCustomerSelect = (value: string) => {
+    if (!value.trim() || selectedCustomerIds.includes(value)) return
+    setSelectedCustomerIds(prev => [...prev, value])
+    setCustomerSearch("")
+  }
+
+  const handleRemoveCustomer = (value: string) => {
+    setSelectedCustomerIds(prev => prev.filter(c => c !== value))
+  }
 
   // Debounce search input (300ms delay)
   const debouncedSearch = useDebounce(searchInput, 300)
@@ -95,9 +133,9 @@ const TransactionTable = ({
   const prevSearchRef = useRef(debouncedSearch)
   const prevDateFromRef = useRef(dateRange.from)
   const prevDateToRef = useRef(dateRange.to)
-  const prevTransactionTypeRef = useRef(selectedTransactionType)
-  const prevVendorIdRef = useRef(selectedVendorId)
-  const prevCustomerIdRef = useRef(selectedCustomerId)
+  const prevTransactionTypesRef = useRef<string[]>([])
+  const prevVendorIdsRef = useRef<string[]>([])
+  const prevCustomerIdsRef = useRef<string[]>([])
 
   // Handle search input and date range changes - only reset page when values change
   useEffect(() => {
@@ -126,24 +164,19 @@ const TransactionTable = ({
     }
   }, [debouncedSearch, onPageChange, onSearchChange, dateRange.from, dateRange.to])
 
-  // Handle filter changes
+  // Handle filter changes - only trigger when arrays actually change
   useEffect(() => {
-    const typeChanged = prevTransactionTypeRef.current !== selectedTransactionType
-    const vendorChanged = prevVendorIdRef.current !== selectedVendorId
-    const customerChanged = prevCustomerIdRef.current !== selectedCustomerId
+    const typesChanged = JSON.stringify(prevTransactionTypesRef.current) !== JSON.stringify(selectedTransactionTypes)
+    const vendorsChanged = JSON.stringify(prevVendorIdsRef.current) !== JSON.stringify(selectedVendorIds)
+    const customersChanged = JSON.stringify(prevCustomerIdsRef.current) !== JSON.stringify(selectedCustomerIds)
 
-    if (typeChanged || vendorChanged || customerChanged) {
-      const types = selectedTransactionType ? [selectedTransactionType] : []
-      const vendors = selectedVendorId ? [selectedVendorId] : []
-      const customers = selectedCustomerId ? [selectedCustomerId] : []
-      onFiltersChange?.(types, vendors, customers)
-
-      // Update refs
-      prevTransactionTypeRef.current = selectedTransactionType
-      prevVendorIdRef.current = selectedVendorId
-      prevCustomerIdRef.current = selectedCustomerId
+    if (typesChanged || vendorsChanged || customersChanged) {
+      prevTransactionTypesRef.current = [...selectedTransactionTypes]
+      prevVendorIdsRef.current = [...selectedVendorIds]
+      prevCustomerIdsRef.current = [...selectedCustomerIds]
+      onFiltersChange?.(selectedTransactionTypes, selectedVendorIds, selectedCustomerIds)
     }
-  }, [selectedTransactionType, selectedVendorId, selectedCustomerId, onFiltersChange])
+  }, [selectedTransactionTypes, selectedVendorIds, selectedCustomerIds, onFiltersChange])
 
   // Handle date range changes
   const handleDateChange = (from?: Date, to?: Date) => {
@@ -211,30 +244,94 @@ const TransactionTable = ({
           <Combobox
             options={transactionTypeOptions}
             placeholder="Transaction Type"
-            emptyMessage="No types found"
-            value={selectedTransactionType}
-            onSelect={setSelectedTransactionType}
+            emptyMessage="No more types"
+            value={transactionTypeSearch}
+            onSelect={handleTransactionTypeSelect}
+            onSearch={setTransactionTypeSearch}
+            onSearchClear={() => setTransactionTypeSearch("")}
             className="h-8 w-[160px]"
           />
           <Combobox
             options={vendorOptions}
             placeholder="Vendor"
             emptyMessage="No vendors found"
-            value={selectedVendorId}
-            onSelect={setSelectedVendorId}
+            value={vendorSearch}
+            onSelect={handleVendorSelect}
             onSearch={setVendorSearch}
+            onSearchClear={() => setVendorSearch("")}
             className="h-8 w-[160px]"
           />
           <Combobox
             options={customerOptions}
             placeholder="Customer"
             emptyMessage="No customers found"
-            value={selectedCustomerId}
-            onSelect={setSelectedCustomerId}
+            value={customerSearch}
+            onSelect={handleCustomerSelect}
             onSearch={setCustomerSearch}
+            onSearchClear={() => setCustomerSearch("")}
             className="h-8 w-[160px]"
           />
         </div>
+
+        {/* Selected filters badges */}
+        {(selectedTransactionTypes.length > 0 || selectedVendorIds.length > 0 || selectedCustomerIds.length > 0) && (
+          <div className="flex flex-wrap gap-2 items-center">
+            {selectedTransactionTypes.map(type => {
+              const label = TRANSACTION_TYPES.find(t => t.value === type)?.label || type
+              return (
+                <Badge key={type} variant="secondary" className="flex items-center gap-1 px-2 py-1">
+                  <span className="text-xs">{label}</span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleRemoveTransactionType(type)
+                    }}
+                    className="ml-1 hover:text-destructive"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )
+            })}
+            {selectedVendorIds.map(id => {
+              const vendor = vendorResponse?.data?.find(v => v.id === id)
+              return (
+                <Badge key={id} variant="secondary" className="flex items-center gap-1 px-2 py-1">
+                  <span className="text-xs text-blue-600 dark:text-blue-400">V: {vendor?.name || id}</span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleRemoveVendor(id)
+                    }}
+                    className="ml-1 hover:text-destructive"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )
+            })}
+            {selectedCustomerIds.map(id => {
+              const customer = customerResponse?.customers?.find(c => c.id === id)
+              return (
+                <Badge key={id} variant="secondary" className="flex items-center gap-1 px-2 py-1">
+                  <span className="text-xs text-green-600 dark:text-green-400">C: {customer?.name || id}</span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleRemoveCustomer(id)
+                    }}
+                    className="ml-1 hover:text-destructive"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       <div className="rounded-md border">

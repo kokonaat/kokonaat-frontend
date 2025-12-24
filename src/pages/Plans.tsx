@@ -1,8 +1,6 @@
 import { useState } from "react"
 import { Main } from "@/components/layout/main"
-import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { Plus } from "lucide-react"
 import { useSubscriptionList } from "@/hooks/usePlans"
 import SubscriptionPlanCard from "@/components/plans/SubscriptionPlanCard"
 import SubscriptionPlanMutateDrawer from "@/components/plans/SubscriptionPlanMutateDrawer"
@@ -21,14 +19,6 @@ const Plans = () => {
             Here is a list of all your subscription plans
           </p>
         </div>
-
-        <Button
-          className="flex items-center gap-2"
-          onClick={() => setDrawerOpen(true)}
-        >
-          Create Plan
-          <Plus className="h-4 w-4" />
-        </Button>
       </div>
 
       <Separator className="my-6" />

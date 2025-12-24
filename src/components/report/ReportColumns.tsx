@@ -1,6 +1,24 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import type { ExpenseReportItem, StockReportItem, StockTrackReportItem, TransactionLedgerDetailItem, TransactionReportItem } from '@/interface/reportInterface'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import { Badge } from '../ui/badge'
+
+const getTransactionTypeColor = (type: string) => {
+  switch (type) {
+    case 'PURCHASE':
+      return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+    case 'SALE':
+      return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+    case 'PAYMENT':
+      return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+    case 'RECEIVABLE':
+      return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+    case 'COMMISSION':
+      return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400'
+    default:
+      return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
+  }
+}
 
 // cus/vend ledger table col
 export const LedgerReportColumns: ColumnDef<TransactionLedgerDetailItem>[] = [
@@ -16,6 +34,14 @@ export const LedgerReportColumns: ColumnDef<TransactionLedgerDetailItem>[] = [
   {
     accessorKey: 'transactionType',
     header: 'Type',
+    cell: ({ getValue }) => {
+      const type = getValue() as string
+      return (
+        <Badge variant="secondary" className={`font-medium ${getTransactionTypeColor(type)}`}>
+          {type}
+        </Badge>
+      )
+    },
   },
   {
     accessorKey: 'entityName',
@@ -65,12 +91,14 @@ export const TransactionReportColumns: ColumnDef<TransactionReportItem>[] = [
   {
     accessorKey: 'transactionType',
     header: 'Type',
-    cell: ({ getValue }) => (
-      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getValue() === 'SALE' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
-        }`}>
-        {getValue() as string}
-      </span>
-    ),
+    cell: ({ getValue }) => {
+      const type = getValue() as string
+      return (
+        <Badge variant="secondary" className={`font-medium ${getTransactionTypeColor(type)}`}>
+          {type}
+        </Badge>
+      )
+    },
   },
   {
     id: 'party',
@@ -204,12 +232,9 @@ export const StockTrackReportColumns: ColumnDef<StockTrackReportItem>[] = [
       const label = isPurchased ? "PURCHASE" : "SALE";
 
       return (
-        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${isPurchased
-          ? 'bg-blue-100 text-blue-700'  // Style for PURCHASE
-          : 'bg-orange-100 text-orange-700' // Style for SALE
-          }`}>
+        <Badge variant="secondary" className={`font-medium ${getTransactionTypeColor(label)}`}>
           {label}
-        </span>
+        </Badge>
       );
     }
   },

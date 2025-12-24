@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {
   flexRender,
@@ -55,10 +55,37 @@ const TransactionTable = ({
   // Debounce search input (300ms delay)
   const debouncedSearch = useDebounce(searchInput, 300)
 
-  // Handle search input and date range changes
+  // Track if this is the initial render
+  const isFirstRender = useRef(true)
+  const prevSearchRef = useRef(debouncedSearch)
+  const prevDateFromRef = useRef(dateRange.from)
+  const prevDateToRef = useRef(dateRange.to)
+
+  // Handle search input and date range changes - only reset page when values change
   useEffect(() => {
-    onPageChange(0) // Reset to first page
-    onSearchChange?.(debouncedSearch, dateRange.from, dateRange.to)
+    // On initial render, just update refs without resetting page
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      prevSearchRef.current = debouncedSearch
+      prevDateFromRef.current = dateRange.from
+      prevDateToRef.current = dateRange.to
+      return
+    }
+
+    // Only reset page if search or date values actually changed
+    const searchChanged = prevSearchRef.current !== debouncedSearch
+    const dateFromChanged = prevDateFromRef.current !== dateRange.from
+    const dateToChanged = prevDateToRef.current !== dateRange.to
+
+    if (searchChanged || dateFromChanged || dateToChanged) {
+      onPageChange(0) // Reset to first page only when search/date changes
+      onSearchChange?.(debouncedSearch, dateRange.from, dateRange.to)
+
+      // Update refs
+      prevSearchRef.current = debouncedSearch
+      prevDateFromRef.current = dateRange.from
+      prevDateToRef.current = dateRange.to
+    }
   }, [debouncedSearch, onPageChange, onSearchChange, dateRange.from, dateRange.to])
 
   // Handle date range changes

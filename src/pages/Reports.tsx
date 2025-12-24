@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import type { DateRange } from "react-day-picker"
 import { Main } from "@/components/layout/main"
 import DateRangeSearch from "@/components/DateRangeSearch"
@@ -40,8 +40,11 @@ import { Combobox } from "@/components/ui/combobox"
 
 const Reports = () => {
   const shopId = useShopStore((s) => s.currentShopId) ?? ""
-  const page = 1
+  const [pageIndex, setPageIndex] = useState(0)
   const limit = 10
+
+  // Calculate API page (1-indexed) from pageIndex (0-indexed)
+  const page = pageIndex + 1
 
   const currentShopName = useShopStore((s) => s.currentShopName)
 
@@ -207,6 +210,7 @@ const Reports = () => {
   }, [reportType])
 
   const handleSearch = () => {
+    setPageIndex(0) // Reset to first page when searching
     setAppliedFilters({
       reportType,
       entityIds: selectedEntityIds.length > 0 ? selectedEntityIds : undefined,
@@ -215,6 +219,11 @@ const Reports = () => {
       inventoryIds: selectedInventoryIds.length > 0 ? selectedInventoryIds : undefined
     })
   }
+
+  // Handle page changes for report tables
+  const handlePageChange = useCallback((newPageIndex: number) => {
+    setPageIndex(newPageIndex)
+  }, [])
 
   // report type handler
   const handleReportTypeSelect = (value: string) => {
@@ -891,10 +900,10 @@ const Reports = () => {
         <ReportTable<TransactionReportItem>
           data={transactionData.data}
           columns={TransactionReportColumns}
-          pageIndex={0}
-          pageSize={10}
+          pageIndex={pageIndex}
+          pageSize={limit}
           total={transactionData.total ?? 0}
-          onPageChange={(page) => console.log('Change page:', page)}
+          onPageChange={handlePageChange}
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}
           title="Transaction Report"
@@ -906,10 +915,10 @@ const Reports = () => {
         <ReportTable<TransactionLedgerDetailItem>
           data={detailRows}
           columns={LedgerReportColumns}
-          pageIndex={0}
-          pageSize={10}
+          pageIndex={pageIndex}
+          pageSize={limit}
           total={ledger.total}
-          onPageChange={(page) => console.log('Change page:', page)}
+          onPageChange={handlePageChange}
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}
           entityName={entityNames}
@@ -922,11 +931,11 @@ const Reports = () => {
         <ReportTable<ExpenseReportItem>
           data={expensesdata}
           columns={ExpensesReportColumns}
-          pageIndex={0}
-          pageSize={10}
+          pageIndex={pageIndex}
+          pageSize={limit}
           total={expensesdata.length}
           title="Expenses Report"
-          onPageChange={() => { }}
+          onPageChange={handlePageChange}
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}
         />
@@ -937,11 +946,11 @@ const Reports = () => {
         <ReportTable<StockReportItem>
           data={stocksData}
           columns={StocksReportColumns}
-          pageIndex={0}
-          pageSize={10}
+          pageIndex={pageIndex}
+          pageSize={limit}
           total={stocksResponse?.total ?? stocksData.length}
           title="Stock Report"
-          onPageChange={() => { }}
+          onPageChange={handlePageChange}
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}
         />
@@ -952,11 +961,11 @@ const Reports = () => {
         <ReportTable<StockTrackReportItem>
           data={stockTrackData}
           columns={StockTrackReportColumns}
-          pageIndex={0}
-          pageSize={10}
+          pageIndex={pageIndex}
+          pageSize={limit}
           total={stockTrackResponse?.total ?? stockTrackData.length}
           title="Stock Track Report"
-          onPageChange={() => { }}
+          onPageChange={handlePageChange}
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}
         />

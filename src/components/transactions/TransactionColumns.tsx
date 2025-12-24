@@ -5,6 +5,24 @@ import type { Transaction } from '@/interface/transactionInterface'
 import { ChevronRight } from 'lucide-react'
 import { Tooltip, TooltipContent } from '../ui/tooltip'
 import { TooltipTrigger } from '@radix-ui/react-tooltip'
+import { Badge } from '../ui/badge'
+
+const getTransactionTypeColor = (type: string) => {
+  switch (type) {
+    case 'PURCHASE':
+      return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+    case 'SALE':
+      return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+    case 'PAYMENT':
+      return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+    case 'RECEIVABLE':
+      return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+    case 'COMMISSION':
+      return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400'
+    default:
+      return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
+  }
+}
 
 export const TransactionColumns: ColumnDef<Transaction>[] = [
   {
@@ -14,6 +32,14 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
   {
     accessorKey: 'transactionType',
     header: 'Transaction Type',
+    cell: ({ row }) => {
+      const type = row.original.transactionType
+      return (
+        <Badge variant="secondary" className={`font-medium ${getTransactionTypeColor(type)}`}>
+          {type}
+        </Badge>
+      )
+    },
   },
   {
     accessorKey: 'remarks',

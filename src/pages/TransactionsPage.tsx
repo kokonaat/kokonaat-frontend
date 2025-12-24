@@ -14,8 +14,9 @@ const TransactionsPage = () => {
   const [startDate, setStartDate] = useState<Date | undefined>(undefined)
   const [endDate, setEndDate] = useState<Date | undefined>(undefined)
   const [transactionTypes, setTransactionTypes] = useState<string[]>([])
-  const [vendorId, setVendorId] = useState<string | undefined>(undefined)
-  const [customerId, setCustomerId] = useState<string | undefined>(undefined)
+  const [vendorIds, setVendorIds] = useState<string[]>([])
+  const [customerIds, setCustomerIds] = useState<string[]>([])
+
   const pageSize = 10
 
   // useCallback ensures stable function references
@@ -35,12 +36,12 @@ const TransactionsPage = () => {
 
   const handleFiltersChange = useCallback((
     types: string[],
-    vendor?: string,
-    customer?: string
+    vendors: string[],
+    customers: string[]
   ) => {
     setTransactionTypes(types)
-    setVendorId(vendor)
-    setCustomerId(customer)
+    setVendorIds(vendors)
+    setCustomerIds(customers)
     setPageIndex(0) // Reset to first page when filters change
   }, [])
 
@@ -56,8 +57,8 @@ const TransactionsPage = () => {
     startDateString,
     endDateString,
     transactionTypes.length > 0 ? transactionTypes : undefined,
-    vendorId,
-    customerId
+    vendorIds.length > 0 ? vendorIds : undefined,
+    customerIds.length > 0 ? customerIds : undefined
   )
 
   if (!shopId) return <div>No shop selected</div>

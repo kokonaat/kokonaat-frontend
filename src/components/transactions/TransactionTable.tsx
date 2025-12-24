@@ -36,7 +36,7 @@ interface TransactionTableProps {
   total: number
   onPageChange: (pageIndex: number) => void
   onSearchChange?: (searchBy?: string, startDate?: Date, endDate?: Date) => void
-  onFiltersChange?: (transactionTypes: string[], vendorId?: string, customerId?: string) => void
+  onFiltersChange?: (transactionTypes: string[], vendorIds: string[], customerIds: string[]) => void
 }
 
 const TransactionTable = ({
@@ -134,7 +134,9 @@ const TransactionTable = ({
 
     if (typeChanged || vendorChanged || customerChanged) {
       const types = selectedTransactionType ? [selectedTransactionType] : []
-      onFiltersChange?.(types, selectedVendorId || undefined, selectedCustomerId || undefined)
+      const vendors = selectedVendorId ? [selectedVendorId] : []
+      const customers = selectedCustomerId ? [selectedCustomerId] : []
+      onFiltersChange?.(types, vendors, customers)
 
       // Update refs
       prevTransactionTypeRef.current = selectedTransactionType

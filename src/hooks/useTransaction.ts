@@ -15,12 +15,12 @@ export const useTransactionList = (
     startDate?: string,
     endDate?: string,
     transactionTypes?: string[],
-    vendorId?: string,
-    customerId?: string
+    vendorIds?: string[],
+    customerIds?: string[]
 ) => {
     return useQuery<TransactionListResponse>({
-        queryKey: ["transactions", shopId, page, limit, searchBy, startDate, endDate, transactionTypes, vendorId, customerId],
-        queryFn: () => getTransactions(shopId, page, limit, searchBy, startDate, endDate, transactionTypes, vendorId, customerId),
+        queryKey: ["transactions", shopId, page, limit, searchBy, startDate, endDate, transactionTypes, vendorIds, customerIds],
+        queryFn: () => getTransactions(shopId, page, limit, searchBy, startDate, endDate, transactionTypes, vendorIds, customerIds),
         placeholderData: keepPreviousData,
         enabled: !!shopId,
     })

@@ -10,8 +10,8 @@ export const getTransactions = async (
   startDate?: string,
   endDate?: string,
   transactionTypes?: string[],
-  vendorId?: string,
-  customerId?: string
+  vendorIds?: string[],
+  customerIds?: string[]
 ) => {
   const res = await axiosInstance.get<TransactionListResponse>(
     apiEndpoints.transactions.transactionsList,
@@ -24,8 +24,8 @@ export const getTransactions = async (
         startDate,
         endDate,
         transactionTypes: transactionTypes?.length ? transactionTypes.join(',') : undefined,
-        vendorId,
-        customerId,
+        vendorIds: vendorIds?.length ? vendorIds.join(',') : undefined,
+        customerIds: customerIds?.length ? customerIds.join(',') : undefined,
       },
     }
   )

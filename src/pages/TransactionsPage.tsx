@@ -13,6 +13,9 @@ const TransactionsPage = () => {
   const [searchBy, setSearchBy] = useState('')
   const [startDate, setStartDate] = useState<Date | undefined>(undefined)
   const [endDate, setEndDate] = useState<Date | undefined>(undefined)
+  const [transactionTypes, setTransactionTypes] = useState<string[]>([])
+  const [vendorId, setVendorId] = useState<string | undefined>(undefined)
+  const [customerId, setCustomerId] = useState<string | undefined>(undefined)
   const pageSize = 10
 
   // useCallback ensures stable function references
@@ -30,6 +33,17 @@ const TransactionsPage = () => {
     setEndDate(to)
   }, [])
 
+  const handleFiltersChange = useCallback((
+    types: string[],
+    vendor?: string,
+    customer?: string
+  ) => {
+    setTransactionTypes(types)
+    setVendorId(vendor)
+    setCustomerId(customer)
+    setPageIndex(0) // Reset to first page when filters change
+  }, [])
+
   // Format dates to ISO string for API
   const startDateString = startDate ? startDate.toISOString() : undefined
   const endDateString = endDate ? endDate.toISOString() : undefined
@@ -40,7 +54,10 @@ const TransactionsPage = () => {
     pageSize,
     searchBy,
     startDateString,
-    endDateString
+    endDateString,
+    transactionTypes.length > 0 ? transactionTypes : undefined,
+    vendorId,
+    customerId
   )
 
   if (!shopId) return <div>No shop selected</div>
@@ -72,6 +89,7 @@ const TransactionsPage = () => {
               total={total}
               onPageChange={handlePageChange}
               onSearchChange={handleSearchChange}
+              onFiltersChange={handleFiltersChange}
             />
           )}
         </div>

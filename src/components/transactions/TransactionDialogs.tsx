@@ -10,7 +10,7 @@ const TransactionDialogs = () => {
       <TransactionMutateDrawer
         key='transaction-create'
         open={open === 'create'}
-        onOpenChange={() => setOpen('create')}
+        onOpenChange={(isOpen) => setOpen(isOpen ? 'create' : null)}
       />
     </>
   )

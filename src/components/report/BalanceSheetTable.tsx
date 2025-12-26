@@ -178,11 +178,11 @@ export const BalanceSheetTable = ({
                     <span className="ml-2 font-semibold">৳{dayItem.closingBalance.openingBalance.toFixed(2)}</span>
                   </div>
                   <div>
-                    <span className="text-green-600">Total Inflow:</span>
+                    <span className="text-green-600">Total In:</span>
                     <span className="ml-2 font-semibold">৳{dayItem.closingBalance.totalInflow.toFixed(2)}</span>
                   </div>
                   <div>
-                    <span className="text-red-600">Total Outflow:</span>
+                    <span className="text-red-600">Total Out:</span>
                     <span className="ml-2 font-semibold">৳{dayItem.closingBalance.totalOutflow.toFixed(2)}</span>
                   </div>
                   <div>

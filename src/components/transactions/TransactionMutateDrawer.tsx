@@ -4,6 +4,7 @@ import { useFieldArray } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import {
   Sheet,
   SheetClose,
@@ -49,6 +50,8 @@ const TransactionMutateDrawer = ({
 }: TransactionMutateDrawerProps) => {
   // flag uom
   const [uomSearchQueries, setUomSearchQueries] = useState<Record<number, string>>({})
+  const [showCloseConfirm, setShowCloseConfirm] = useState(false)
+  const [pendingClose, setPendingClose] = useState(false)
 
   const shopId = useShopStore((s) => s.currentShopId)
 
@@ -164,18 +167,55 @@ const TransactionMutateDrawer = ({
 
   const inventories = form.watch('inventories') || []
   const total = calculateTotal(inventories)
+  const transactionAmount = form.watch('transactionAmount')
+  const paid = form.watch('paid')
+  const remarks = form.watch('remarks')
 
-  const amount = showInventoryFields ? total : (form.watch('transactionAmount') ?? 0)
-  const paid = form.watch('paid') ?? 0
+  const amount = showInventoryFields ? total : (transactionAmount ?? 0)
   const calculatedPending = calculatePending(amount, paid)
 
+  // Check if form has any data entered
+  const hasFormData = useMemo(() => {
+    const hasTransactionType = !!transactionType
+    const hasEntityId = !!entityTypeId
+    const hasPaymentType = !!paymentType
+    const hasAmount = showAmountField ? (transactionAmount ?? 0) > 0 : false
+    const hasInventories = showInventoryFields ? (inventories?.length ?? 0) > 0 && 
+      inventories?.some(inv => inv.inventoryId || inv.quantity > 0 || inv.price > 0) : false
+    const hasPaid = (paid ?? 0) > 0
+    const hasRemarks = !!remarks
+
+    return hasTransactionType || hasEntityId || hasPaymentType || hasAmount || hasInventories || hasPaid || hasRemarks
+  }, [transactionType, entityTypeId, paymentType, transactionAmount, inventories, paid, remarks, showAmountField, showInventoryFields])
+
   const handleOpenChange = (isOpen: boolean) => {
+    // If opening, just open normally
+    if (isOpen) {
+      onOpenChange(isOpen)
+      setInventorySearchQuery('')
+      setPendingClose(false)
+      return
+    }
+
+    // If closing and there's unsaved data, show confirmation
+    if (!isOpen && hasFormData && !pendingClose) {
+      setShowCloseConfirm(true)
+      return
+    }
+
+    // Otherwise, close normally (either no data or confirmed close)
     onOpenChange(isOpen)
     if (!isOpen) {
       resetFormStates()
-    } else {
-      setInventorySearchQuery('')
+      setPendingClose(false)
     }
+  }
+
+  const handleConfirmClose = () => {
+    setPendingClose(true)
+    setShowCloseConfirm(false)
+    onOpenChange(false)
+    resetFormStates()
   }
 
   const handleTransactionTypeChange = (value: string) => {
@@ -323,6 +363,8 @@ const TransactionMutateDrawer = ({
           // await refetchInventories()
         } catch (_) { /* empty */ }
 
+        // Mark as pending close to bypass confirmation
+        setPendingClose(true)
         resetFormStates()
         onOpenChange(false)
       },
@@ -341,8 +383,19 @@ const TransactionMutateDrawer = ({
   const showPaymentFields = showInventoryFields
 
   return (
-    <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetContent variant='wide' className='flex flex-col'>
+    <>
+      <ConfirmDialog
+        open={showCloseConfirm}
+        onOpenChange={setShowCloseConfirm}
+        title="Discard Changes?"
+        desc="You have unsaved changes. Are you sure you want to close? All entered data will be lost."
+        confirmText="Discard"
+        cancelBtnText="Cancel"
+        destructive
+        handleConfirm={handleConfirmClose}
+      />
+      <Sheet open={open} onOpenChange={handleOpenChange}>
+        <SheetContent variant='wide' className='flex flex-col'>
         <SheetHeader className='text-start'>
           <SheetTitle>
             {currentRow ? 'Update' : 'Create'} Transaction
@@ -454,15 +507,19 @@ const TransactionMutateDrawer = ({
         </Form>
 
         <SheetFooter className='gap-2'>
-          <SheetClose asChild>
-            <Button variant='outline'>Close</Button>
-          </SheetClose>
+          <Button 
+            variant='outline' 
+            onClick={() => handleOpenChange(false)}
+          >
+            Close
+          </Button>
           <Button form={FORM_ID} type='submit' disabled={isPending}>
             {isPending ? 'Saving...' : 'Save changes'}
           </Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>
+    </>
   )
 }
 

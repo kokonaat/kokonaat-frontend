@@ -4,6 +4,7 @@ import {
   YAxis,
   Bar,
   CartesianGrid,
+  Legend,
 } from "recharts"
 import { format, parseISO } from "date-fns"
 // import { TrendingUp } from "lucide-react"
@@ -20,9 +21,10 @@ import { NoDataFound } from "../NoDataFound"
 
 interface DashboardOverviewProps {
   data?: {
-    last12MonthsRevenue?: Array<{
+    last12MonthsInflowOutflow?: Array<{
       month: string
-      revenue: number
+      totalInflow: number
+      totalOutflow: number
     }>
   }
   isLoading?: boolean
@@ -30,28 +32,37 @@ interface DashboardOverviewProps {
 
 // chart configuration for ChartContainer
 const chartConfig = {
-  total: {
-    label: "Revenue",
-    // using the primary color from your theme
-    color: "hsl(var(--primary))",
+  inflow: {
+    label: "In",
+    theme: {
+      light: "hsl(0, 0%, 20%)", // dark gray/black for light mode
+      dark: "hsl(0, 0%, 70%)", // light gray for dark mode
+    },
+  },
+  outflow: {
+    label: "Out",
+    theme: {
+      light: "hsl(0, 0%, 50%)", // medium gray for light mode
+      dark: "hsl(0, 0%, 50%)", // medium gray for dark mode
+    },
   },
 } satisfies ChartConfig
 
 const DashboardOverview = ({ data, isLoading }: DashboardOverviewProps) => {
 
   const chartData =
-    data?.last12MonthsRevenue
+    data?.last12MonthsInflowOutflow
       ?.map((item) => {
         // format the month from "YYYY-MM" to "MMM" (e.g., "Jan")
         const monthName = format(parseISO(item.month + "-01"), "MMM")
         return {
           name: monthName,
-          total: item.revenue || 0,
+          inflow: item.totalInflow || 0,
+          outflow: item.totalOutflow || 0,
         }
-      })
-      .reverse() || []
+      }) || []
 
-  const hasData = chartData.some((item) => item.total > 0)
+  const hasData = chartData.some((item) => item.inflow > 0 || item.outflow > 0)
 
   if (isLoading) {
     return (
@@ -85,35 +96,45 @@ const DashboardOverview = ({ data, isLoading }: DashboardOverviewProps) => {
   return (
 
     <ChartContainer config={chartConfig} className="min-h-[340px] w-full">
-      <RechartsBarChart accessibilityLayer data={chartData}>
+      <RechartsBarChart 
+        accessibilityLayer 
+        data={chartData}
+        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+      >
         <CartesianGrid vertical={false} />
         <XAxis
           dataKey="name"
           tickLine={false}
           tickMargin={10}
           axisLine={false}
-        // The stroke and fontSize are now often handled by CSS vars via shadcn's component
         />
         <YAxis
           tickLine={false}
           axisLine={false}
-          tickFormatter={(value) => `৳${value}`} // Keep your custom formatter
+          tickFormatter={(value) => `৳${value}`}
         />
-
-        <ChartTooltip cursor={false} content={<ChartTooltipContent
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          formatter={(value: any) => {
-            const numericValue = typeof value === 'string' ? parseFloat(value) : value
-            return `৳${numericValue.toFixed(0)}`
-          }}
-        />} />
+        <ChartTooltip 
+          cursor={false} 
+          content={<ChartTooltipContent
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            formatter={(value: any) => {
+              const numericValue = typeof value === 'string' ? parseFloat(value) : value
+              return `৳${numericValue.toFixed(0)}`
+            }}
+          />} 
+        />
+        <Legend />
         <Bar
-          dataKey="total"
-          // using the color from chartConfig
-          fill="var(--color-total)"
+          dataKey="inflow"
+          fill="var(--color-inflow)"
           radius={[4, 4, 0, 0]}
-          // Using utility class for the primary color
-          className="fill-primary"
+          name="In"
+        />
+        <Bar
+          dataKey="outflow"
+          fill="var(--color-outflow)"
+          radius={[4, 4, 0, 0]}
+          name="Out"
         />
       </RechartsBarChart>
     </ChartContainer>

@@ -940,8 +940,8 @@ const Reports = () => {
             return (
               <>
                 <ReportCard label="Opening Balance" value={closingBalance.openingBalance} />
-                <ReportCard label="Total Inflow" value={closingBalance.totalInflow} />
-                <ReportCard label="Total Outflow" value={closingBalance.totalOutflow} />
+                <ReportCard label="Total In" value={closingBalance.totalInflow} />
+                <ReportCard label="Total Out" value={closingBalance.totalOutflow} />
                 <ReportCard label="Closing Balance" value={closingBalance.closingBalance} />
               </>
             )

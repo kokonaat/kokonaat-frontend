@@ -155,7 +155,7 @@ const TransactionTable = ({
 
     if (searchChanged || dateFromChanged || dateToChanged) {
       onPageChange(0) // Reset to first page only when search/date changes
-      onSearchChange?.(debouncedSearch, dateRange.from, dateRange.to)
+    onSearchChange?.(debouncedSearch, dateRange.from, dateRange.to)
 
       // Update refs
       prevSearchRef.current = debouncedSearch
@@ -224,19 +224,19 @@ const TransactionTable = ({
       <div className="flex flex-1 flex-col gap-y-2">
         {/* First row: Date range, search input, and view options */}
         <div className="flex flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-col gap-2 md:flex-row md:items-center gap-x-2">
-            <DateRangeSearch onDateChange={handleDateChange} />
-            <Input
-              placeholder="Filter transactions..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              className="h-8 w-[150px] lg:w-[250px]"
-            />
-          </div>
+        <div className="flex flex-col gap-2 md:flex-row md:items-center gap-x-2">
+          <DateRangeSearch onDateChange={handleDateChange} />
+          <Input
+            placeholder="Filter transactions..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="h-8 w-[150px] lg:w-[250px]"
+          />
+        </div>
 
-          <div className="flex items-center">
-            <DataTableViewOptions table={table} />
-          </div>
+        <div className="flex items-center">
+          <DataTableViewOptions table={table} />
+        </div>
         </div>
 
         {/* Second row: Filter comboboxes */}

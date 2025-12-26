@@ -45,7 +45,7 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
             <div className="mb-4 ml-2 flex items-start justify-between">
                 <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg p-2 bg-muted text-muted-foreground">
-                        <ShoppingBag className="h-6 w-6" />
+                    <ShoppingBag className="h-6 w-6" />
                     </div>
                     {isActive && (
                         <span className="text-sm flex items-center gap-1 text-muted-foreground">

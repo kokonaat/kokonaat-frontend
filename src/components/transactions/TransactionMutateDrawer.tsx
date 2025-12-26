@@ -7,7 +7,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
   SheetFooter,

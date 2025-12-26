@@ -10,8 +10,8 @@ export const getTransactions = async (
   startDate?: string,
   endDate?: string,
   transactionTypes?: string[],
-  vendorId?: string,
-  customerId?: string
+  vendorIds?: string[],
+  customerIds?: string[]
 ) => {
   const res = await axiosInstance.get<TransactionListResponse>(
     apiEndpoints.transactions.transactionsList,
@@ -23,9 +23,12 @@ export const getTransactions = async (
         searchBy,
         startDate,
         endDate,
-        transactionTypes: transactionTypes?.length ? transactionTypes.join(',') : undefined,
-        vendorId,
-        customerId,
+        transactionTypes: transactionTypes?.length ? transactionTypes : undefined,
+        vendorIds: vendorIds?.length ? vendorIds : undefined,
+        customerIds: customerIds?.length ? customerIds : undefined,
+      },
+      paramsSerializer: {
+        indexes: null, // This makes arrays serialize as key=val1&key=val2 instead of key[0]=val1&key[1]=val2
       },
     }
   )

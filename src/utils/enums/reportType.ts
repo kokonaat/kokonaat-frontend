@@ -4,5 +4,6 @@ export enum ReportType {
     TRANSACTION_REPORT = "Transaction Report",
     STOCK_REPORT = "Stock Report",
     STOCK_TRACK_REPORT = "Stock Track Report",
-    EXPENSE_REPORT= "Expense Report",
+    EXPENSE_REPORT = "Expense Report",
+    BALANCE_SHEET = "Balance Sheet",
 }

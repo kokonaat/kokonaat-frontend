@@ -81,5 +81,6 @@ export interface ApiEndpoints {
     reportStocks: string
     reportStockTrack: string
     reportExpenses: string
+    reportBalanceSheet: string
   }
 }

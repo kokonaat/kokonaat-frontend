@@ -1,6 +1,6 @@
 import { apiEndpoints } from "@/config/api";
 import { axiosInstance } from "./axios";
-import type { ExpensesReportParams, StocksReportParams, TransactionReportParams } from "@/interface/reportInterface";
+import type { BalanceSheetParams, ExpensesReportParams, StocksReportParams, TransactionReportParams } from "@/interface/reportInterface";
 
 export const reportTransactions = async (params: TransactionReportParams) => {
     const res = await axiosInstance.get(
@@ -26,5 +26,10 @@ export const reportStocks = async (params: Partial<StocksReportParams>) => {
 
 export const reportStocksTracking = async (params: Partial<StocksReportParams>) => {
     const res = await axiosInstance.get(apiEndpoints.reports.reportStockTrack, { params })
+    return res.data
+}
+
+export const reportBalanceSheet = async (params: BalanceSheetParams) => {
+    const res = await axiosInstance.get(apiEndpoints.reports.reportBalanceSheet, { params })
     return res.data
 }

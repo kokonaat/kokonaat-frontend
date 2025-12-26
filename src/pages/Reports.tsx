@@ -11,6 +11,7 @@ import { useVendorList } from "@/hooks/useVendor"
 import { useTransactionLedger } from "@/hooks/useTransaction"
 import { ReportCard } from "@/components/report/ReportCard"
 import { ReportTable } from "@/components/report/ReportTable"
+import { BalanceSheetTable } from "@/components/report/BalanceSheetTable"
 import type {
   TransactionLedgerDetailItem,
   TransactionReportItem,
@@ -26,7 +27,7 @@ import { generateTransactionReportExcel } from "@/utils/enums/transactionReportE
 import { generateLedgerExcel } from "@/utils/enums/customerOrVendorLedgerExcel"
 import { NoDataFound } from "@/components/NoDataFound"
 import { TRANSACTION_TYPES } from "@/constance/transactionConstances"
-import { useExpensesReport, useStocksReport, useStocksReportTracking, useTransactionReport } from "@/hooks/useReport"
+import { useBalanceSheetReport, useExpensesReport, useStocksReport, useStocksReportTracking, useTransactionReport } from "@/hooks/useReport"
 import { ExpensesReportColumns, LedgerReportColumns, TransactionReportColumns, StocksReportColumns, StockTrackReportColumns } from "@/components/report/ReportColumns"
 import Loader from "@/components/layout/Loader"
 import { generateExpenseReportPDF } from "@/utils/enums/expensesreportPdf"
@@ -182,6 +183,24 @@ const Reports = () => {
         !!appliedFilters.dateRange?.from &&
         !!appliedFilters.dateRange?.to &&
         (appliedFilters.inventoryIds?.length ?? 0) > 0,
+    }
+  )
+
+  // balance sheet report hook
+  const { data: balanceSheetResponse, isLoading: isBalanceSheetLoading } = useBalanceSheetReport(
+    {
+      shopId,
+      page: page,
+      limit: limit,
+      startDate: appliedFilters?.dateRange?.from?.toISOString(),
+      endDate: appliedFilters?.dateRange?.to?.toISOString(),
+    },
+    {
+      enabled:
+        !!appliedFilters &&
+        appliedFilters.reportType === ReportType.BALANCE_SHEET &&
+        !!appliedFilters.dateRange?.from &&
+        !!appliedFilters.dateRange?.to,
     }
   )
 
@@ -592,6 +611,7 @@ const Reports = () => {
   const isExpenseReport = appliedFilters?.reportType === ReportType.EXPENSE_REPORT
   const isStockReport = appliedFilters?.reportType === ReportType.STOCK_REPORT
   const isStockTrackReport = appliedFilters?.reportType === ReportType.STOCK_TRACK_REPORT
+  const isBalanceSheetReport = appliedFilters?.reportType === ReportType.BALANCE_SHEET
 
   // determine loading state
   const isLoading = isTransactionReport
@@ -602,11 +622,14 @@ const Reports = () => {
         ? isStocksLoading
         : isStockTrackReport
           ? isStockTrackLoading
-          : isLedgerLoading
+          : isBalanceSheetReport
+            ? isBalanceSheetLoading
+            : isLedgerLoading
 
   // Extract stock data from response
   const stocksData = stocksResponse?.data || []
   const stockTrackData = stockTrackResponse?.data || []
+
 
   // determine if we have data to show
   const hasData = isTransactionReport
@@ -617,7 +640,9 @@ const Reports = () => {
         ? (stocksData.length > 0)
         : isStockTrackReport
           ? (stockTrackData.length > 0)
-          : (detailRows.length > 0 && ledger)
+          : isBalanceSheetReport
+            ? (balanceSheetResponse?.data && balanceSheetResponse.data.length > 0)
+            : (detailRows.length > 0 && ledger)
 
   return (
     <Main>
@@ -717,7 +742,7 @@ const Reports = () => {
             !reportType ||
             !dateRange?.from ||
             (reportType === ReportType.TRANSACTION_REPORT && transactionTypes.length === 0) ||
-            ((reportType === ReportType.CUSTOMER_LEDGER || reportType === ReportType.VENDOR_LEDGER) && selectedEntityIds.length === 0) || // ← CHANGE
+            ((reportType === ReportType.CUSTOMER_LEDGER || reportType === ReportType.VENDOR_LEDGER) && selectedEntityIds.length === 0) ||
             (reportType === ReportType.STOCK_TRACK_REPORT && selectedInventoryIds.length === 0)
           }
           className="flex gap-2"
@@ -905,6 +930,25 @@ const Reports = () => {
         </div>
       )}
 
+      {/* balance sheet cards */}
+      {appliedFilters && isBalanceSheetReport && hasData && balanceSheetResponse?.data && balanceSheetResponse.data.length > 0 && (
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+          {(() => {
+            // Backend sends data in ascending order, so last item is the latest
+            const latestDay = balanceSheetResponse.data[balanceSheetResponse.data.length - 1]
+            const closingBalance = latestDay.closingBalance
+            return (
+              <>
+                <ReportCard label="Opening Balance" value={closingBalance.openingBalance} />
+                <ReportCard label="Total Inflow" value={closingBalance.totalInflow} />
+                <ReportCard label="Total Outflow" value={closingBalance.totalOutflow} />
+                <ReportCard label="Closing Balance" value={closingBalance.closingBalance} />
+              </>
+            )
+          })()}
+        </div>
+      )}
+
       {/* loading state */}
       {isLoading && <Loader />}
 
@@ -918,7 +962,9 @@ const Reports = () => {
                 ? "No Stock Data Found"
                 : isStockTrackReport
                   ? "No Stock Track Data Found"
-                  : "No Transactions Found"
+                  : isBalanceSheetReport
+                    ? "No Balance Sheet Data Found"
+                    : "No Transactions Found"
           }
           details={
             isExpenseReport
@@ -927,7 +973,9 @@ const Reports = () => {
                 ? "No stock data matches your selected filters and date range."
                 : isStockTrackReport
                   ? "No stock tracking data matches your selected filters and date range."
-                  : "No data matches your selected filters and date range."
+                  : isBalanceSheetReport
+                    ? "No balance sheet data matches your selected date range."
+                    : "No data matches your selected filters and date range."
           }
         />
       )}
@@ -1002,6 +1050,20 @@ const Reports = () => {
           pageSize={limit}
           total={stockTrackResponse?.total ?? stockTrackData.length}
           title="Stock Track Report"
+          onPageChange={handlePageChange}
+          onDownloadPdf={handleDownloadPdf}
+          onDownloadExcel={handleDownloadExcel}
+        />
+      )}
+
+      {/* balance sheet table */}
+      {appliedFilters && !isLoading && isBalanceSheetReport && balanceSheetResponse?.data && balanceSheetResponse.data.length > 0 && (
+        <BalanceSheetTable
+          data={balanceSheetResponse.data}
+          pageIndex={pageIndex}
+          pageSize={limit}
+          total={balanceSheetResponse.total ?? balanceSheetResponse.data.length}
+          title="Balance Sheet Report"
           onPageChange={handlePageChange}
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
-import { reportExpenses, reportStocks, reportStocksTracking, reportTransactions } from "@/api/reportApi"
-import type { ExpensesReportParams, StocksReportParams, TransactionReportParams } from "@/interface/reportInterface"
+import { reportBalanceSheet, reportExpenses, reportStocks, reportStocksTracking, reportTransactions } from "@/api/reportApi"
+import type { BalanceSheetParams, ExpensesReportParams, StocksReportParams, TransactionReportParams } from "@/interface/reportInterface"
 
 export const useTransactionReport = (
   params: Partial<TransactionReportParams>,
@@ -45,6 +45,17 @@ export const useStocksReportTracking = (
   return useQuery({
     queryKey: ["stocksReportTracking", params],
     queryFn: () => reportStocksTracking(params as StocksReportParams),
+    enabled: !!params.shopId && (options?.enabled ?? true),
+  })
+}
+
+export const useBalanceSheetReport = (
+  params: Partial<BalanceSheetParams>,
+  options?: { enabled?: boolean }
+) => {
+  return useQuery({
+    queryKey: ["balanceSheetReport", params],
+    queryFn: () => reportBalanceSheet(params as BalanceSheetParams),
     enabled: !!params.shopId && (options?.enabled ?? true),
   })
 }

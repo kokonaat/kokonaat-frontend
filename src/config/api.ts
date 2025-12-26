@@ -85,5 +85,6 @@ export const apiEndpoints: ApiEndpoints = {
     reportStocks: '/report/stocks',
     reportStockTrack: '/report/stocks/track',
     reportExpenses: '/report/expenses',
+    reportBalanceSheet: '/report/balance-sheet',
   }
 }

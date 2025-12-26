@@ -155,7 +155,7 @@ const TransactionTable = ({
 
     if (searchChanged || dateFromChanged || dateToChanged) {
       onPageChange(0) // Reset to first page only when search/date changes
-    onSearchChange?.(debouncedSearch, dateRange.from, dateRange.to)
+      onSearchChange?.(debouncedSearch, dateRange.from, dateRange.to)
 
       // Update refs
       prevSearchRef.current = debouncedSearch
@@ -224,19 +224,19 @@ const TransactionTable = ({
       <div className="flex flex-1 flex-col gap-y-2">
         {/* First row: Date range, search input, and view options */}
         <div className="flex flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-col gap-2 md:flex-row md:items-center gap-x-2">
-          <DateRangeSearch onDateChange={handleDateChange} />
-          <Input
-            placeholder="Filter transactions..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            className="h-8 w-[150px] lg:w-[250px]"
-          />
-        </div>
+          <div className="flex flex-col gap-2 md:flex-row md:items-center gap-x-2">
+            <DateRangeSearch onDateChange={handleDateChange} />
+            <Input
+              placeholder="Filter transactions..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="h-8 w-[150px] lg:w-[250px]"
+            />
+          </div>
 
-        <div className="flex items-center">
-          <DataTableViewOptions table={table} />
-        </div>
+          <div className="flex items-center">
+            <DataTableViewOptions table={table} />
+          </div>
         </div>
 
         {/* Second row: Filter comboboxes */}
@@ -274,12 +274,18 @@ const TransactionTable = ({
         </div>
 
         {/* Selected filters badges */}
-        {(selectedTransactionTypes.length > 0 || selectedVendorIds.length > 0 || selectedCustomerIds.length > 0) && (
+        {(selectedTransactionTypes.length > 0 ||
+          selectedVendorIds.length > 0 ||
+          selectedCustomerIds.length > 0) && (
           <div className="flex flex-wrap gap-2 items-center">
-            {selectedTransactionTypes.map(type => {
-              const label = TRANSACTION_TYPES.find(t => t.value === type)?.label || type
+            {selectedTransactionTypes.map((type) => {
+              const label = TRANSACTION_TYPES.find((t) => t.value === type)?.label || type
               return (
-                <Badge key={type} variant="secondary" className="flex items-center gap-1 px-2 py-1">
+                <Badge
+                  key={type}
+                  variant="secondary"
+                  className="flex items-center gap-1 px-2 py-1"
+                >
                   <span className="text-xs">{label}</span>
                   <button
                     type="button"
@@ -294,11 +300,17 @@ const TransactionTable = ({
                 </Badge>
               )
             })}
-            {selectedVendorIds.map(id => {
-              const vendor = vendorResponse?.data?.find(v => v.id === id)
+            {selectedVendorIds.map((id) => {
+              const vendor = vendorResponse?.data?.find((v) => v.id === id)
               return (
-                <Badge key={id} variant="secondary" className="flex items-center gap-1 px-2 py-1">
-                  <span className="text-xs text-blue-600 dark:text-blue-400">V: {vendor?.name || id}</span>
+                <Badge
+                  key={id}
+                  variant="secondary"
+                  className="flex items-center gap-1 px-2 py-1"
+                >
+                  <span className="text-xs text-blue-600 dark:text-blue-400">
+                    V: {vendor?.name || id}
+                  </span>
                   <button
                     type="button"
                     onClick={(e) => {
@@ -312,11 +324,17 @@ const TransactionTable = ({
                 </Badge>
               )
             })}
-            {selectedCustomerIds.map(id => {
-              const customer = customerResponse?.customers?.find(c => c.id === id)
+            {selectedCustomerIds.map((id) => {
+              const customer = customerResponse?.customers?.find((c) => c.id === id)
               return (
-                <Badge key={id} variant="secondary" className="flex items-center gap-1 px-2 py-1">
-                  <span className="text-xs text-green-600 dark:text-green-400">C: {customer?.name || id}</span>
+                <Badge
+                  key={id}
+                  variant="secondary"
+                  className="flex items-center gap-1 px-2 py-1"
+                >
+                  <span className="text-xs text-green-600 dark:text-green-400">
+                    C: {customer?.name || id}
+                  </span>
                   <button
                     type="button"
                     onClick={(e) => {
@@ -341,7 +359,9 @@ const TransactionTable = ({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableCell key={header.id}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableCell>
                 ))}
               </TableRow>
@@ -354,18 +374,23 @@ const TransactionTable = ({
                 <TableRow
                   key={row.id}
                   title="Click to view transaction ledger"
-                  data-state={row.getIsSelected() && 'selected'}
+                  data-state={row.getIsSelected() && "selected"}
                   onClick={() => handleClick(row.original.id)}
                   className="cursor-pointer"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   <Card className="m-4">
                     <CardContent>
                       <NoDataFound

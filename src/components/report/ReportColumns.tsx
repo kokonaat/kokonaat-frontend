@@ -1,5 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import type { ExpenseReportItem, StockReportItem, StockTrackReportItem, TransactionLedgerDetailItem, TransactionReportItem } from '@/interface/reportInterface'
+import type { BalanceSheetTableItem, ExpenseReportItem, StockReportItem, StockTrackReportItem, TransactionLedgerDetailItem, TransactionReportItem } from '@/interface/reportInterface'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import { Badge } from '../ui/badge'
 
@@ -251,5 +251,112 @@ export const StockTrackReportColumns: ColumnDef<StockTrackReportItem>[] = [
     accessorKey: "price",
     header: "Price",
     cell: ({ getValue }) => `৳${Number(getValue()).toFixed(2)}`
+  },
+]
+
+// balance sheet table col
+export const BalanceSheetReportColumns: ColumnDef<BalanceSheetTableItem>[] = [
+  {
+    accessorKey: "date",
+    header: "Date",
+    cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString()
+  },
+  {
+    accessorKey: "itemType",
+    header: "Item Type",
+    cell: ({ getValue }) => {
+      const type = getValue() as string
+      return (
+        <Badge variant="secondary" className={`font-medium ${
+          type === "transaction" 
+            ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+            : "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
+        }`}>
+          {type.toUpperCase()}
+        </Badge>
+      )
+    }
+  },
+  {
+    accessorKey: "no",
+    header: "Ref No",
+    cell: ({ getValue }) => (getValue() as string) || "N/A"
+  },
+  {
+    id: "type",
+    header: "Type",
+    cell: ({ row }) => {
+      const item = row.original
+      if (item.itemType === "transaction") {
+        const type = item.transactionType || "N/A"
+        return (
+          <Badge variant="secondary" className={`font-medium ${getTransactionTypeColor(type)}`}>
+            {type}
+          </Badge>
+        )
+      } else {
+        return <span>{item.expenseType || "N/A"}</span>
+      }
+    }
+  },
+  {
+    id: "description",
+    header: "Description",
+    cell: ({ row }) => {
+      const item = row.original
+      if (item.itemType === "transaction") {
+        return item.customerName || item.vendorName || "N/A"
+      } else {
+        return item.expenseTitle || "N/A"
+      }
+    }
+  },
+  {
+    id: "amount",
+    header: "Amount",
+    cell: ({ row }) => {
+      const item = row.original
+      if (item.itemType === "transaction") {
+        return `৳${(item.totalAmount || 0).toFixed(2)}`
+      } else {
+        return `৳${(item.expenseAmount || 0).toFixed(2)}`
+      }
+    }
+  },
+  {
+    id: "paid",
+    header: "Paid",
+    cell: ({ row }) => {
+      const item = row.original
+      if (item.itemType === "transaction" && item.paid !== undefined) {
+        return <span className="text-green-600">৳{item.paid.toFixed(2)}</span>
+      }
+      return "N/A"
+    }
+  },
+  {
+    id: "pending",
+    header: "Pending",
+    cell: ({ row }) => {
+      const item = row.original
+      if (item.itemType === "transaction" && item.pending !== undefined) {
+        return (
+          <span className={item.pending > 0 ? "text-destructive font-bold" : ""}>
+            ৳{item.pending.toFixed(2)}
+          </span>
+        )
+      }
+      return "N/A"
+    }
+  },
+  {
+    accessorKey: "paymentType",
+    header: "Payment Method",
+    cell: ({ getValue }) => (getValue() as string) || "N/A"
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Created At",
+    cell: ({ getValue }) => new Date(getValue() as string).toLocaleDateString()
   },
 ]

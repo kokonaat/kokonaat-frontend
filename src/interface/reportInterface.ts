@@ -162,3 +162,87 @@ export interface StockTrackReportItem {
     createdAt: string
     isPurchased: boolean
 }
+
+export interface BalanceSheetParams {
+    page: number
+    limit: number
+    shopId: string
+    startDate: string
+    endDate: string
+}
+
+export interface BalanceSheetTransactionItem {
+    type: "transaction"
+    id: string
+    no: string | null
+    transactionType: string
+    createdAt: string
+    customerId?: string
+    customerName?: string
+    vendorId?: string
+    vendorName?: string
+    totalAmount: number
+    paid: number
+    pending: number
+    paymentType: string
+    remarks: string | null
+}
+
+export interface BalanceSheetExpenseItem {
+    type: "expense"
+    id: string
+    no: string | null
+    expenseType: string
+    expenseTitle: string
+    expenseAmount: number
+    expenseDetails: string
+    createdAt: string
+}
+
+export type BalanceSheetItem = BalanceSheetTransactionItem | BalanceSheetExpenseItem
+
+export interface ClosingBalance {
+    openingBalance: number
+    totalInflow: number
+    totalOutflow: number
+    closingBalance: number
+}
+
+export interface BalanceSheetDayItem {
+    date: string
+    items: BalanceSheetItem[]
+    closingBalance: ClosingBalance
+}
+
+export interface BalanceSheetResponse {
+    msg: string
+    statusCode: number
+    data: BalanceSheetDayItem[]
+    page: number
+    limit: number
+    total: number
+}
+
+// Flattened item for table display
+export interface BalanceSheetTableItem {
+    date: string
+    itemType: "transaction" | "expense"
+    id: string
+    no: string | null
+    transactionType?: string
+    expenseType?: string
+    expenseTitle?: string
+    createdAt: string
+    customerId?: string
+    customerName?: string
+    vendorId?: string
+    vendorName?: string
+    totalAmount?: number
+    paid?: number
+    pending?: number
+    expenseAmount?: number
+    paymentType?: string
+    remarks?: string | null
+    expenseDetails?: string
+    closingBalance?: ClosingBalance
+}

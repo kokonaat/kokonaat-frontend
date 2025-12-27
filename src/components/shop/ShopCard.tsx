@@ -12,6 +12,7 @@ import type { ShopProps } from "@/interface/shopInterface"
 import { useShopStore } from "@/stores/shopStore"
 import { useUser } from "@/hooks/useUser"
 
+
 const ShopCard = ({ shop, onEdit }: ShopProps) => {
     // currentShopId from store to compare
     const currentShopId = useShopStore((s) => s.currentShopId);

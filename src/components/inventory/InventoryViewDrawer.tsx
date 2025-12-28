@@ -6,12 +6,16 @@ import {
   DrawerTitle,
   DrawerDescription,
 } from '@/components/ui/drawer'
+import { Button } from '@/components/ui/button'
+import { Download } from 'lucide-react'
 import { useTrackInventoryById } from '@/hooks/useInventory'
 import { useShopStore } from '@/stores/shopStore'
 import type { InventoryItemInterface } from '@/interface/inventoryInterface'
 import InventoryDetailsTrackingTable from './InventoryDetailsTrackingTable'
 import { NoDataFound } from '../NoDataFound'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import { toast } from 'sonner'
+import { generateInventoryTrackingPDF } from '@/utils/enums/inventoryTrackingReportPdf'
 
 type InventoryViewDrawerProps = {
   open: boolean
@@ -26,6 +30,7 @@ const InventoryViewDrawer = ({
 }: InventoryViewDrawerProps) => {
   // Hooks MUST run unconditionally
   const shopId = useShopStore((s) => s.currentShopId)
+  const shopName = useShopStore((s) => s.currentShopName)
 
   const inventoryId = currentRow?.id ?? ''
 
@@ -41,20 +46,64 @@ const InventoryViewDrawer = ({
     { enabled: open && !!inventoryId && !!shopId }
   )
 
-  // Now we can safely stop UI rendering
+  const handleDownloadPDF = () => {
+    if (!currentRow || !data || data.items.length === 0) {
+      toast.error('No tracking data available to download')
+      return
+    }
+
+    try {
+      generateInventoryTrackingPDF(
+        {
+          no: currentRow.no || 'N/A',
+          name: currentRow.name,
+          description: currentRow.description,
+          quantity: currentRow.quantity,
+          lastPrice: currentRow.lastPrice,
+          unitOfMeasurement: currentRow.unitOfMeasurement,
+        },
+        data.items,
+        shopName || 'Shop Name'
+      )
+      toast.success('PDF downloaded successfully')
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+      toast.error('Failed to generate PDF')
+    }
+  }
+
+  // safely stop ui rendering
   if (!currentRow) return null
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-w-2xl mx-auto p-6 space-y-6">
         <DrawerHeader>
-          <DrawerTitle className="text-lg font-semibold">
-            Inventory history
-          </DrawerTitle>
-          <DrawerDescription className="text-sm text-muted-foreground">
-            View information for{' '}
-            <span className="font-medium">{currentRow.name}</span>
-          </DrawerDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <DrawerTitle className="text-lg font-semibold">
+                Inventory history
+              </DrawerTitle>
+              <DrawerDescription className="text-sm text-muted-foreground">
+                View information for{' '}
+                <span className="font-medium">{currentRow.name}</span>
+              </DrawerDescription>
+            </div>
+            
+            {/* Download PDF Button */}
+            {data && data.items.length > 0 && (
+              <Button
+                onClick={handleDownloadPDF}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                disabled={isLoading}
+              >
+                <Download className="h-4 w-4" />
+                Download PDF
+              </Button>
+            )}
+          </div>
         </DrawerHeader>
 
         {/* Inventory Info */}

@@ -88,7 +88,7 @@ export const generatePDF = (
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text("Transaction Report", pageWidth / 2, 22, { align: "center" });
+    doc.text("Transaction Report with Details", pageWidth / 2, 22, { align: "center" });
 
     // --- Info Section ---
     doc.setLineWidth(0.5);
@@ -127,72 +127,169 @@ export const generatePDF = (
         doc.setFont("helvetica", "normal");
     }
 
-    // --- Table Section ---
+    // --- Table Section with Details ---
     const tableRows: any[] = [];
     let subtotalQty = 0;
     let subtotalTotal = 0;
 
     transactions.forEach(trx => {
+        // Transaction Header Row
+        tableRows.push([
+            {
+                content: new Date(trx.createdAt).toLocaleDateString(),
+                styles: { fontStyle: 'bold', fillColor: [241, 245, 249] }
+            },
+            {
+                content: trx.no,
+                styles: { fontStyle: 'bold', fillColor: [241, 245, 249] }
+            },
+            {
+                content: trx.transactionType,
+                styles: { fontStyle: 'bold', fillColor: [241, 245, 249] }
+            },
+            {
+                content: trx.paymentType || '-',
+                styles: { fontStyle: 'bold', fillColor: [241, 245, 249] }
+            },
+            {
+                content: '',
+                styles: { fillColor: [241, 245, 249] }
+            },
+            {
+                content: '',
+                styles: { fillColor: [241, 245, 249] }
+            },
+            {
+                content: formatNumber(trx.totalAmount),
+                styles: { fontStyle: 'bold', fillColor: [241, 245, 249], halign: 'right' }
+            },
+        ]);
+
         // Handle transactions with details (PURCHASE, SALE, etc.)
         if (trx.details && trx.details.length > 0) {
-            trx.details.forEach(item => {
+            trx.details.forEach((item, idx) => {
                 const qty = getQuantity(item);
                 const total = getTotal(item);
 
                 subtotalQty += qty;
                 subtotalTotal += total;
 
+                // Item row (indented)
                 tableRows.push([
-                    new Date(trx.createdAt).toLocaleDateString(),
-                    trx.no,
-                    getItemName(item),
-                    trx.transactionType,
+                    '',
+                    `  ${idx + 1}.`,
+                    `  ${getItemName(item)}`,
+                    '',
                     qty.toString(),
                     formatNumber(getPrice(item)),
                     formatNumber(total),
                 ]);
             });
+
+            // Transaction Summary Row (Paid/Pending)
+            tableRows.push([
+                '',
+                '',
+                {
+                    content: `  Paid: ${formatNumber(trx.paid)} | Pending: ${formatNumber(trx.pending)}`,
+                    colSpan: 3,
+                    styles: { fontStyle: 'italic', textColor: [100, 116, 139] }
+                },
+                '',
+                '',
+                '',
+                ''
+            ]);
         } else {
             // Handle transactions without details (PAYMENT, RECEIVABLE, COMMISSION)
-            // These transactions represent monetary movements without item details
             const amount = trx.paid || trx.totalAmount || 0;
             subtotalTotal += amount;
 
             tableRows.push([
-                new Date(trx.createdAt).toLocaleDateString(),
-                trx.no,
-                trx.transactionType, // Use transaction type as description
-                trx.transactionType,
-                "-", // No quantity for payment/receivable transactions
-                "-", // No price for payment/receivable transactions
+                '',
+                '',
+                `  ${trx.transactionType}`,
+                '',
+                '-',
+                '-',
                 formatNumber(amount),
             ]);
+
+            // Payment details
+            if (trx.paid > 0) {
+                tableRows.push([
+                    '',
+                    '',
+                    {
+                        content: `  Paid: ${formatNumber(trx.paid)}`,
+                        colSpan: 3,
+                        styles: { fontStyle: 'italic', textColor: [100, 116, 139] }
+                    },
+                    '',
+                    '',
+                    '',
+                    ''
+                ]);
+            }
         }
+
+        // Add spacing row between transactions
+        tableRows.push([
+            { content: '', colSpan: 7, styles: { minCellHeight: 2, fillColor: [255, 255, 255] } },
+            '', '', '', '', '', ''
+        ]);
     });
 
     // Add subtotal row
     tableRows.push([
-        "", "", "", "Subtotal", subtotalQty > 0 ? subtotalQty.toString() : "-", "", formatNumber(subtotalTotal)
+        '',
+        '',
+        '',
+        {
+            content: 'Subtotal',
+            styles: { fontStyle: 'bold', fillColor: [226, 232, 240] }
+        },
+        {
+            content: subtotalQty > 0 ? subtotalQty.toString() : '-',
+            styles: { fontStyle: 'bold', fillColor: [226, 232, 240], halign: 'center' }
+        },
+        {
+            content: '',
+            styles: { fillColor: [226, 232, 240] }
+        },
+        {
+            content: formatNumber(subtotalTotal),
+            styles: { fontStyle: 'bold', fillColor: [226, 232, 240], halign: 'right' }
+        }
     ]);
 
     autoTable(doc, {
         startY: 60,
-        head: [["Date", "Trx No", "Item/Description", "Type", "Qty", "Price", "Amount"]],
+        head: [["Date", "Trx No", "Description", "Payment", "Qty", "Price", "Amount"]],
         body: tableRows,
-        theme: "striped",
-        headStyles: { fillColor: [51, 65, 85], textColor: 255, halign: "center" },
-        columnStyles: {
-            0: { cellWidth: 25 },
-            4: { halign: "center" },
-            5: { halign: "right" },
-            6: { halign: "right" },
+        theme: "plain",
+        headStyles: {
+            fillColor: [51, 65, 85],
+            textColor: 255,
+            halign: "center",
+            fontStyle: 'bold',
+            fontSize: 9
         },
-        styles: { fontSize: 9 },
-        didParseCell: (dataCell) => {
-            // Bold the subtotal row
-            if (dataCell.row.index === tableRows.length - 1) {
-                dataCell.cell.styles.fontStyle = "bold";
-            }
+        columnStyles: {
+            0: { cellWidth: 22 },
+            1: { cellWidth: 22 },
+            2: { cellWidth: 'auto' },
+            3: { cellWidth: 25 },
+            4: { halign: "center", cellWidth: 15 },
+            5: { halign: "right", cellWidth: 22 },
+            6: { halign: "right", cellWidth: 25 },
+        },
+        styles: {
+            fontSize: 8,
+            cellPadding: 2
+        },
+        alternateRowStyles: {
+            fillColor: [255, 255, 255]
         },
     });
 

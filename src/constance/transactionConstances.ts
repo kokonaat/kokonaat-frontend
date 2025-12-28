@@ -1,8 +1,8 @@
 import type { ComboboxOptionInterface } from "@/interface/transactionInterface"
 
 export const TRANSACTION_TYPES = [
-  { value: "PURCHASE", label: "Purchase" },
   { value: "SALE", label: "Sale" },
+  { value: "PURCHASE", label: "Purchase" },
   { value: "PAYMENT", label: "Payment" },
   { value: "RECEIVABLE", label: "Receivable" },
   { value: "COMMISSION", label: "Commission" },

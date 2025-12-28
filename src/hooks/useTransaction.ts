@@ -56,7 +56,8 @@ export const useTransactionLedger = (
     limit: number = 10,
     searchBy?: string,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
+    options?: { enabled?: boolean }
 ) => {
     return useQuery({
         queryKey: [
@@ -72,7 +73,9 @@ export const useTransactionLedger = (
         queryFn: () =>
             transactionLedger(shopId, pageSize, customerOrVendorId, limit, searchBy, startDate, endDate),
         // only fetch when both IDs exist
-        enabled: !!shopId && !!customerOrVendorId,
+        enabled: options?.enabled !== undefined 
+            ? options.enabled 
+            : (!!shopId && !!customerOrVendorId),
         placeholderData: keepPreviousData,
     })
 }

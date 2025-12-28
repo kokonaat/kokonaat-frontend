@@ -189,7 +189,7 @@ const TransactionLedger = () => {
                       </div>
 
                       <div className="flex items-center gap-2 bg-red-100 text-red-700 dark:bg-red-900/30 px-3 py-2 rounded-lg">
-                        <span className="text-sm">Pending</span>
+                        <span className="text-sm">Balance</span>
                         <span className="font-semibold">{totalPending}</span>
                       </div>
 

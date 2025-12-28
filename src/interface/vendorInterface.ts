@@ -21,6 +21,7 @@ export interface VendorListInterface {
 
 export interface Vendor {
   id: string
+  no?: string
   name: string
   email: string | null
   phone: string

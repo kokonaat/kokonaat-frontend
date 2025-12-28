@@ -271,10 +271,10 @@ const Reports = () => {
   const handleRemoveEntity = (entityId: string) => {
     const newIds = selectedEntityIds.filter(id => id !== entityId)
     setSelectedEntityIds(newIds)
-    
+
     // Update applied filters to trigger data refetch
-    if (appliedFilters?.reportType === ReportType.CUSTOMER_LEDGER || 
-        appliedFilters?.reportType === ReportType.VENDOR_LEDGER) {
+    if (appliedFilters?.reportType === ReportType.CUSTOMER_LEDGER ||
+      appliedFilters?.reportType === ReportType.VENDOR_LEDGER) {
       if (newIds.length === 0) {
         setAppliedFilters(null)
       } else {
@@ -306,14 +306,14 @@ const Reports = () => {
   const handleRemoveTransactionType = (transactionType: string) => {
     const newTypes = transactionTypes.filter(type => type !== transactionType)
     setTransactionTypes(newTypes)
-    
+
     // Update applied filters to trigger data refetch
     if (appliedFilters?.reportType === ReportType.TRANSACTION_REPORT) {
       // If all types removed, fetch with all transaction types
-      const typesToApply = newTypes.length === 0 
-        ? TRANSACTION_TYPES.map(t => t.value) 
+      const typesToApply = newTypes.length === 0
+        ? TRANSACTION_TYPES.map(t => t.value)
         : newTypes
-      
+
       setAppliedFilters({
         ...appliedFilters,
         transactionTypes: typesToApply
@@ -340,7 +340,7 @@ const Reports = () => {
   const handleRemoveInventory = (inventoryId: string) => {
     const newIds = selectedInventoryIds.filter(id => id !== inventoryId)
     setSelectedInventoryIds(newIds)
-    
+
     // Update applied filters to trigger data refetch
     if (appliedFilters?.reportType === ReportType.STOCK_REPORT) {
       // Stock report allows empty inventory selection (shows all)
@@ -843,28 +843,28 @@ const Reports = () => {
         <div className="px-4 pb-4">
           <div className="flex items-center gap-2 mb-2">
             <label className="text-sm font-medium">Selected Inventories:</label>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setSelectedInventoryIds([])
-              if (reportType === ReportType.STOCK_REPORT) {
-                setAppliedFilters({
-                  reportType,
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSelectedInventoryIds([])
+                if (reportType === ReportType.STOCK_REPORT) {
+                  setAppliedFilters({
+                    reportType,
                     entityIds: selectedEntityIds,
-                  dateRange,
+                    dateRange,
                     transactionTypes,
-                  inventoryIds: undefined
-                })
-              }
-              if (reportType === ReportType.STOCK_TRACK_REPORT) {
-                setAppliedFilters(null)
-              }
-            }}
-            className="h-7 text-xs text-muted-foreground hover:text-foreground"
-          >
-            Clear All
-          </Button>
+                    inventoryIds: undefined
+                  })
+                }
+                if (reportType === ReportType.STOCK_TRACK_REPORT) {
+                  setAppliedFilters(null)
+                }
+              }}
+              className="h-7 text-xs text-muted-foreground hover:text-foreground"
+            >
+              Clear All
+            </Button>
           </div>
           <div className="flex flex-wrap gap-2">
             {selectedInventoryIds.map((id) => {
@@ -953,6 +953,13 @@ const Reports = () => {
       {isLoading && <Loader />}
 
       {/* empty state */}
+      {!appliedFilters && (
+        <NoDataFound
+          message="Select a report to get started"
+          details="Select a date range, choose a report type, and optionally filter by customer, vendor, inventory, or transaction type to view detailed reports."
+        />
+      )}
+
       {appliedFilters && !isLoading && !hasData && (
         <NoDataFound
           message={

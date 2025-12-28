@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useMemo } from 'react'
 import { Main } from '@/components/layout/main'
 import { CustomersProvider } from '@/components/customers/customer-provider'
 import { useVendorList } from '@/hooks/useVendor'
@@ -11,8 +11,20 @@ const Vendors = () => {
   const shopId = useShopStore(s => s.currentShopId)
   const [pageIndex, setPageIndex] = useState(0)
   const [searchBy, setSearchBy] = useState('')
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined)
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined)
+  
+  // Initialize with last 30 days
+  const defaultDateRange = useMemo(() => {
+    const today = new Date()
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(today.getDate() - 30)
+    return {
+      from: thirtyDaysAgo,
+      to: today
+    }
+  }, [])
+  
+  const [startDate, setStartDate] = useState<Date | undefined>(defaultDateRange.from)
+  const [endDate, setEndDate] = useState<Date | undefined>(defaultDateRange.to)
   const pageSize = 10
 
   // useCallback ensures stable function references
@@ -65,6 +77,7 @@ const Vendors = () => {
               total={total}
               onPageChange={handlePageChange}
               onSearchChange={handleSearchChange}
+              initialDateRange={defaultDateRange}
             />
           )}
         </div>

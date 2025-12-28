@@ -48,7 +48,7 @@ export const InventoryColumns: ColumnDef<InventoryItemInterface>[] = [
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <div className="max-w-[200px] truncate cursor-help">
+                            <div className="max-w-50 truncate cursor-help">
                                 {text}
                             </div>
                         </TooltipTrigger>

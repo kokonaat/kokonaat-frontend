@@ -39,17 +39,33 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
 
   return (
     <div className="space-y-8">
+      <div className="flex items-center gap-4 text-sm font-semibold text-muted-foreground">
+        <div className="flex flex-1 flex-wrap items-center justify-between">
+          <div>
+            <p>Type</p>
+          </div>
+          <div>Total</div>
+          <div>Pending</div>
+        </div>
+      </div>
+
       {lastFiveTransactions.map((tx) => (
         <div key={tx.id} className="flex items-center gap-4">
           <div className="flex flex-1 flex-wrap items-center justify-between">
             <div className="space-y-1">
-              <p className="text-sm leading-none font-medium">{tx.transactionType}</p>
+              <p className="text-sm leading-none font-medium">
+                {tx.transactionType}
+              </p>
               <p className="text-muted-foreground text-sm">{tx.no}</p>
             </div>
+
             <div className="font-medium">
               ৳{Number(tx?.totalAmount ?? 0).toLocaleString()}
             </div>
-            <div className="font-medium">৳{tx.pending.toLocaleString()}</div>
+
+            <div className="font-medium">
+              ৳{tx.pending.toLocaleString()}
+            </div>
           </div>
         </div>
       ))}

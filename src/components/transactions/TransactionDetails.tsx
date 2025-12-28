@@ -47,7 +47,7 @@ const TransactionDetails = () => {
                                 <strong>Remarks:</strong>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <span className="truncate max-w-[200px] block">
+                                        <span className="truncate max-w-50 block">
                                             {transaction.remarks || "N/A"}
                                         </span>
                                     </TooltipTrigger>

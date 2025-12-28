@@ -5,6 +5,7 @@ import { DataTableRowActions } from './DataTableRowActions'
 import type { CustomerListInterface } from '@/interface/customerInterface'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import { ChevronRight } from 'lucide-react'
+import { CustomerLedgerDownload } from './CustomerLedgerDownload'
 
 export const CustomerColumns: ColumnDef<CustomerListInterface>[] = [
   {
@@ -70,7 +71,7 @@ export const CustomerColumns: ColumnDef<CustomerListInterface>[] = [
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="max-w-[200px] truncate cursor-help">
+              <div className="max-w-50 truncate cursor-help">
                 {address}
               </div>
             </TooltipTrigger>
@@ -119,6 +120,15 @@ export const CustomerColumns: ColumnDef<CustomerListInterface>[] = [
       <div className="flex justify-center">
         <ChevronRight className="h-4 w-4 text-muted-foreground" />
       </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    id: 'ledger',
+    header: '',
+    cell: ({ row }) => (
+      <CustomerLedgerDownload customer={row.original} />
     ),
     enableSorting: false,
     enableHiding: false,

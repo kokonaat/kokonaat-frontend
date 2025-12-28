@@ -49,7 +49,7 @@ const InventoryViewDrawer = ({
       <DrawerContent className="max-w-2xl mx-auto p-6 space-y-6">
         <DrawerHeader>
           <DrawerTitle className="text-lg font-semibold">
-            Details
+            Inventory history
           </DrawerTitle>
           <DrawerDescription className="text-sm text-muted-foreground">
             View information for{' '}
@@ -72,7 +72,7 @@ const InventoryViewDrawer = ({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="max-w-[200px] truncate cursor-help">
+                  <div className="max-w-50 truncate cursor-help">
                     {currentRow.description || 'N/A'}
                   </div>
                 </TooltipTrigger>

@@ -1,11 +1,11 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Link } from 'react-router-dom'
-// import { DataTableRowActions } from './DataTableRowActions'
 import type { Transaction } from '@/interface/transactionInterface'
 import { ChevronRight } from 'lucide-react'
 import { Tooltip, TooltipContent } from '../ui/tooltip'
 import { TooltipTrigger } from '@radix-ui/react-tooltip'
 import { Badge } from '../ui/badge'
+import { TransactionsLedgerDownload } from './TransactionsLedgerDownload'
 
 const getTransactionTypeColor = (type: string) => {
   switch (type) {
@@ -31,7 +31,7 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
   },
   {
     accessorKey: 'transactionType',
-    header: 'Transaction Type',
+    header: 'Type',
     cell: ({ row }) => {
       const type = row.original.transactionType
       return (
@@ -49,7 +49,7 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
       return (
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="max-w-[200px] truncate">{text ?? 'N/A'}</div>
+            <div className="max-w-50 truncate">{text ?? 'N/A'}</div>
           </TooltipTrigger>
           <TooltipContent>
             <div className="max-w-sm wrap-break-word">{text ?? 'N/A'}</div>
@@ -111,11 +111,6 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
       )
     },
   },
-  // {
-  //   accessorKey: 'transactionStatus',
-  //   header: 'Status',
-  //   cell: ({ row }) => row.original.transactionStatus || 'N/A',
-  // },
   {
     accessorKey: 'createdAt',
     header: 'Date',
@@ -135,8 +130,13 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  // {
-  //   id: 'actions',
-  //   cell: ({ row }) => <DataTableRowActions row={row} />,
-  // },
+  {
+    id: 'ledger',
+    header: '',
+    cell: ({ row }) => (
+      <TransactionsLedgerDownload transaction={row.original} />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
 ]

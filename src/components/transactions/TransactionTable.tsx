@@ -39,6 +39,7 @@ interface TransactionTableProps {
   onPageChange: (pageIndex: number) => void
   onSearchChange?: (searchBy?: string, startDate?: Date, endDate?: Date) => void
   onFiltersChange?: (transactionTypes: string[], vendorIds: string[], customerIds: string[]) => void
+  initialDateRange?: { from: Date; to: Date }
 }
 
 const TransactionTable = ({
@@ -49,7 +50,8 @@ const TransactionTable = ({
   total,
   onPageChange,
   onSearchChange,
-  onFiltersChange
+  onFiltersChange,
+  initialDateRange
 }: TransactionTableProps) => {
   const navigate = useNavigate()
   const shopId = useShopStore((s) => s.currentShopId) ?? ""
@@ -60,7 +62,12 @@ const TransactionTable = ({
 
   // Search states
   const [searchInput, setSearchInput] = useState("")
-  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({})
+  // Initialize with default date range
+  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>(
+    initialDateRange || {}
+  )
+  // Track if date range is actively selected
+  const [isDateRangeActive, setIsDateRangeActive] = useState(true)
 
   // Filter states - now using arrays for multi-select
   const [selectedTransactionTypes, setSelectedTransactionTypes] = useState<string[]>([])
@@ -71,8 +78,8 @@ const TransactionTable = ({
   const [customerSearch, setCustomerSearch] = useState("")
 
   // Fetch vendors and customers for comboboxes
-  const { data: vendorResponse } = useVendorList(shopId, 1, 50, vendorSearch)
-  const { data: customerResponse } = useCustomerList(shopId, 1, 50, customerSearch)
+  const { data: vendorResponse } = useVendorList(shopId, 1, 10, vendorSearch)
+  const { data: customerResponse } = useCustomerList(shopId, 1, 10, customerSearch)
 
   // Memoized options for comboboxes - filter out already selected items
   const transactionTypeOptions = useMemo(() => 
@@ -137,7 +144,7 @@ const TransactionTable = ({
   const prevVendorIdsRef = useRef<string[]>([])
   const prevCustomerIdsRef = useRef<string[]>([])
 
-  // Handle search input and date range changes - only reset page when values change
+  // Handle search input and date range changes with conditional parameter sending
   useEffect(() => {
     // On initial render, just update refs without resetting page
     if (isFirstRender.current) {
@@ -155,14 +162,26 @@ const TransactionTable = ({
 
     if (searchChanged || dateFromChanged || dateToChanged) {
       onPageChange(0) // Reset to first page only when search/date changes
-      onSearchChange?.(debouncedSearch, dateRange.from, dateRange.to)
+      
+      // Apply conditional logic for sending parameters
+      if (debouncedSearch) {
+        // If there's a search query, don't send date range
+        onSearchChange?.(debouncedSearch, undefined, undefined)
+        setIsDateRangeActive(false)
+      } else if (isDateRangeActive && dateRange.from && dateRange.to) {
+        // If no search query and date range is active, send date range
+        onSearchChange?.(undefined, dateRange.from, dateRange.to)
+      } else {
+        // If no search and no active date range, send nothing
+        onSearchChange?.(undefined, undefined, undefined)
+      }
 
       // Update refs
       prevSearchRef.current = debouncedSearch
       prevDateFromRef.current = dateRange.from
       prevDateToRef.current = dateRange.to
     }
-  }, [debouncedSearch, onPageChange, onSearchChange, dateRange.from, dateRange.to])
+  }, [debouncedSearch, onPageChange, onSearchChange, dateRange.from, dateRange.to, isDateRangeActive])
 
   // Handle filter changes - only trigger when arrays actually change
   useEffect(() => {
@@ -178,10 +197,31 @@ const TransactionTable = ({
     }
   }, [selectedTransactionTypes, selectedVendorIds, selectedCustomerIds, onFiltersChange])
 
-  // Handle date range changes
+  // Handle date range changes from the date picker
   const handleDateChange = (from?: Date, to?: Date) => {
     setDateRange({ from, to })
+    setIsDateRangeActive(!!(from && to)) // Mark date range as active if both dates exist
+    
+    // Clear search input when date range is selected
+    if (from && to && searchInput) {
+      setSearchInput('')
+    }
+    
     onPageChange(0) // Reset to first page when date range changes
+  }
+
+  // Handle search input changes
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setSearchInput(value)
+    
+    // When user starts typing, deactivate date range
+    if (value) {
+      setIsDateRangeActive(false)
+    } else {
+      // When search is cleared, reactivate date range if it exists
+      setIsDateRangeActive(!!(dateRange.from && dateRange.to))
+    }
   }
 
   const table = useReactTable<Transaction>({
@@ -225,11 +265,16 @@ const TransactionTable = ({
         {/* First row: Date range, search input, and view options */}
         <div className="flex flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-2 md:flex-row md:items-center gap-x-2">
-            <DateRangeSearch onDateChange={handleDateChange} />
+            {/* Pass value prop to show selected date range */}
+            <DateRangeSearch 
+              onDateChange={handleDateChange}
+              value={isDateRangeActive && dateRange.from && dateRange.to ? { from: dateRange.from, to: dateRange.to } : undefined}
+            />
+            {/* Use custom handler instead of direct onChange */}
             <Input
               placeholder="Filter transactions..."
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              onChange={handleSearchInputChange}
               className="h-8 w-37.5 lg:w-62.5"
             />
           </div>

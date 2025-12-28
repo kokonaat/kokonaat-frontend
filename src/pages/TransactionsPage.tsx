@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useState, useMemo } from "react"
 import { Main } from "@/components/layout/main"
 import { TransactionProvider } from "@/components/transactions/transaction-provider"
 import TransactionDialogs from "@/components/transactions/TransactionDialogs"
@@ -11,8 +11,21 @@ const TransactionsPage = () => {
   const shopId = useShopStore((s) => s.currentShopId)
   const [pageIndex, setPageIndex] = useState(0)
   const [searchBy, setSearchBy] = useState('')
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined)
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined)
+  
+  // Initialize with last 30 days
+  const defaultDateRange = useMemo(() => {
+    const today = new Date()
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(today.getDate() - 30)
+    return {
+      from: thirtyDaysAgo,
+      to: today
+    }
+  }, [])
+  
+  // Initialize state with default range
+  const [startDate, setStartDate] = useState<Date | undefined>(defaultDateRange.from)
+  const [endDate, setEndDate] = useState<Date | undefined>(defaultDateRange.to)
   const [transactionTypes, setTransactionTypes] = useState<string[]>([])
   const [vendorIds, setVendorIds] = useState<string[]>([])
   const [customerIds, setCustomerIds] = useState<string[]>([])
@@ -91,6 +104,7 @@ const TransactionsPage = () => {
               onPageChange={handlePageChange}
               onSearchChange={handleSearchChange}
               onFiltersChange={handleFiltersChange}
+              initialDateRange={defaultDateRange} // Pass default date range
             />
           )}
         </div>

@@ -65,4 +65,25 @@ export const TransactionLedgerColumn: ColumnDef<TransactionLedgerInterface>[] =
       header: 'Pending',
       cell: ({ row }) => `৳${row.original.pending.toLocaleString()}`,
     },
+    {
+      accessorKey: 'createdAt',
+      header: 'Date',
+      cell: ({ row }) => {
+        const date = new Date(row.original.createdAt)
+
+        const datePart = date.toLocaleDateString('en-GB') // 28/12/2025
+        const timePart = date.toLocaleTimeString('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }) // 17:27
+
+        return (
+          <div className="text-sm">
+            <div>{datePart}</div>
+            <div className="text-muted-foreground">{timePart}</div>
+          </div>
+        )
+      },
+    },
   ]

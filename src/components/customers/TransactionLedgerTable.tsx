@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from "react"
+import { useState, useEffect } from "react"
 import {
     useReactTable,
     flexRender,
@@ -117,36 +117,27 @@ const TransactionLedgerTable = ({
                             ))}
                         </TableHeader>
 
-                        {/* <TableBody>
+                        <TableBody>
                             {table.getRowModel().rows.map((row) => (
                                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        <TableCell key={cell.id} className="align-top">
+                                            <div className="space-y-2">
+                                                {/* Main cell content */}
+                                                <div>
+                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                </div>
+
+                                                {/* Details row - only show in first cell */}
+                                                {cell.column.id === table.getVisibleFlatColumns()[0].id && (
+                                                    <div className="pt-2">
+                                                        <DetailsRow row={row.original} />
+                                                    </div>
+                                                )}
+                                            </div>
                                         </TableCell>
                                     ))}
                                 </TableRow>
-                            ))}
-                        </TableBody> */}
-                        <TableBody>
-                            {table.getRowModel().rows.map((row) => (
-                                <Fragment key={row.id}>
-                                    {/* Main Row */}
-                                    <TableRow data-state={row.getIsSelected() && "selected"}>
-                                        {row.getVisibleCells().map((cell) => (
-                                            <TableCell key={cell.id}>
-                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-
-                                    {/* Details Row */}
-                                    <TableRow>
-                                        <TableCell colSpan={table.getVisibleFlatColumns().length} className="p-0">
-                                            <DetailsRow row={row.original} />
-                                        </TableCell>
-                                    </TableRow>
-                                </Fragment>
                             ))}
                         </TableBody>
 
@@ -157,7 +148,7 @@ const TransactionLedgerTable = ({
                             <CardContent>
                                 <NoDataFound
                                     message="No Transactions Yet"
-                                    details="You haven’t recorded any transactions. Create a transaction to get started."
+                                    details="You haven't recorded any transactions. Create a transaction to get started."
                                 />
                             </CardContent>
                         </Card>

@@ -25,14 +25,19 @@ import DateRangeSearch from '../DateRangeSearch'
 import { NoDataFound } from '../NoDataFound'
 import { Card, CardContent } from '../ui/card'
 
+interface VendorTableProps extends DataTablePropsInterface {
+  initialDateRange?: { from: Date; to: Date }
+}
+
 const VendorTable = ({
   data,
   pageIndex,
   pageSize,
   total,
   onPageChange,
-  onSearchChange
-}: DataTablePropsInterface) => {
+  onSearchChange,
+  initialDateRange
+}: VendorTableProps) => {
   // table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -47,23 +52,58 @@ const VendorTable = ({
 
   // Search states
   const [searchInput, setSearchInput] = useState('')
-  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({})
+  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>(
+    initialDateRange || {}
+  )
+  const [isDateRangeActive, setIsDateRangeActive] = useState(true) // Track if date range is actively selected
 
   // Debounce search input only (300ms delay)
   const debouncedSearch = useDebounce(searchInput, 300)
 
   const navigate = useNavigate()
 
-  // Handle search input and date range changes
+  // Handle search input changes - clear date range when searching
   useEffect(() => {
     onPageChange(0) // Reset to first page
-    onSearchChange?.(debouncedSearch, dateRange.from, dateRange.to)
-  }, [debouncedSearch, onPageChange, onSearchChange, dateRange.from, dateRange.to])
+    
+    if (debouncedSearch) {
+      // If there's a search query, don't send date range
+      onSearchChange?.(debouncedSearch, undefined, undefined)
+      setIsDateRangeActive(false)
+    } else if (isDateRangeActive && dateRange.from && dateRange.to) {
+      // If no search query and date range is active, send date range
+      onSearchChange?.(undefined, dateRange.from, dateRange.to)
+    } else {
+      // If no search and no active date range, send nothing
+      onSearchChange?.(undefined, undefined, undefined)
+    }
+  }, [debouncedSearch, isDateRangeActive, dateRange.from, dateRange.to, onPageChange, onSearchChange])
 
-  // Handle date range changes
+  // Handle date range changes from the date picker
   const handleDateChange = (from?: Date, to?: Date) => {
     setDateRange({ from, to })
+    setIsDateRangeActive(!!(from && to)) // Mark date range as active if both dates exist
+    
+    // Clear search input when date range is selected
+    if (from && to && searchInput) {
+      setSearchInput('')
+    }
+    
     onPageChange(0) // Reset to first page when date range changes
+  }
+
+  // Handle search input changes
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setSearchInput(value)
+    
+    // When user starts typing, deactivate date range
+    if (value) {
+      setIsDateRangeActive(false)
+    } else {
+      // When search is cleared, reactivate date range if it exists
+      setIsDateRangeActive(!!(dateRange.from && dateRange.to))
+    }
   }
 
   const table = useReactTable<Vendor>({
@@ -125,11 +165,14 @@ const VendorTable = ({
       <div className='flex items-center justify-between'>
         <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-2 md:flex-row md:items-center gap-x-2">
-            <DateRangeSearch onDateChange={handleDateChange} />
+            <DateRangeSearch 
+              onDateChange={handleDateChange} 
+              value={isDateRangeActive && dateRange.from && dateRange.to ? { from: dateRange.from, to: dateRange.to } : undefined}
+            />
             <Input
               placeholder="Filter by id, name, phone or address..."
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              onChange={handleSearchInputChange}
               className="h-8 w-37.5 lg:w-62.5"
             />
           </div>

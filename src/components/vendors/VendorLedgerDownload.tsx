@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/tooltip'
 import { useTransactionLedger } from '@/hooks/useTransaction'
 import { toast } from 'sonner'
+import { useState } from 'react'
 
 interface Props {
     vendor: Vendor
@@ -18,8 +19,10 @@ interface Props {
 
 export const VendorLedgerDownload = ({ vendor }: Props) => {
     const { currentShopId, currentShopName } = useShopStore()
+    const [isDownloading, setIsDownloading] = useState(false)
 
-    const { isLoading, refetch } = useTransactionLedger(
+    // only fetch when needed
+    const { refetch } = useTransactionLedger(
         currentShopId ?? '',
         1,
         vendor.id,
@@ -27,6 +30,7 @@ export const VendorLedgerDownload = ({ vendor }: Props) => {
         undefined,
         undefined,
         undefined,
+        { enabled: false }
     )
 
     const handleDownload = async (e: React.MouseEvent) => {
@@ -37,8 +41,10 @@ export const VendorLedgerDownload = ({ vendor }: Props) => {
             return
         }
 
+        setIsDownloading(true)
+
         try {
-            // fetching latest data
+            // Fetch data only when download is clicked
             const { data: ledgerData } = await refetch()
 
             if (!ledgerData?.transactions?.length) {
@@ -71,6 +77,8 @@ export const VendorLedgerDownload = ({ vendor }: Props) => {
         } catch (error) {
             console.error('Download error:', error)
             toast.error('Failed to download ledger report. Please try again.')
+        } finally {
+            setIsDownloading(false)
         }
     }
 
@@ -80,11 +88,11 @@ export const VendorLedgerDownload = ({ vendor }: Props) => {
                 <TooltipTrigger asChild>
                     <button
                         onClick={handleDownload}
-                        disabled={isLoading}
+                        disabled={isDownloading}
                         className="p-1.5 hover:bg-muted rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         aria-label="Download vendor ledger"
                     >
-                        {isLoading ? (
+                        {isDownloading ? (
                             <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                         ) : (
                             <Download className="w-4 h-4 text-muted-foreground hover:text-foreground transition-colors" />

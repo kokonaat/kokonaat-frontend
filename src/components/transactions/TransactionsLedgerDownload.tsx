@@ -32,6 +32,7 @@ export const TransactionsLedgerDownload = ({ transaction }: Props) => {
         undefined,
         undefined,
         undefined,
+        { enabled: false },
     )
 
     const handleDownload = async (e: React.MouseEvent) => {

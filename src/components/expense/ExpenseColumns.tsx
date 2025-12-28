@@ -59,7 +59,7 @@ export const ExpenseColumns: ColumnDef<ExpenseItemInterface>[] = [
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <div className='max-w-[200px] truncate cursor-help'>{text}</div>
+                            <div className='max-w-50 truncate cursor-help'>{text}</div>
                         </TooltipTrigger>
                         <TooltipContent>
                             <p className='max-w-xs wrap-break-word'>{text}</p>

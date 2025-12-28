@@ -130,7 +130,7 @@ const VendorTable = ({
               placeholder="Filter by id, name, phone or address..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="h-8 w-[150px] lg:w-[250px]"
+              className="h-8 w-37.5 lg:w-62.5"
             />
           </div>
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, Fragment } from "react"
 import {
     useReactTable,
     flexRender,
@@ -18,6 +18,7 @@ import { NoDataFound } from "../NoDataFound"
 import DateRangeSearch from "../DateRangeSearch"
 import { Card, CardContent } from "../ui/card"
 import { TransactionLedgerDataTablePagination } from "./TransactionLedgerDataTablePagination"
+import { DetailsRow } from "./DetailsRow"
 
 const TransactionLedgerTable = ({
     data,
@@ -92,7 +93,7 @@ const TransactionLedgerTable = ({
                         placeholder="Filter by id, name, phone or address..."
                         // value={searchInput}
                         // onChange={(e) => setSearchInput(e.target.value)}
-                        className="h-8 w-[150px] lg:w-[250px]"
+                        className="h-8 w-37.5 lg:w-62.5"
                     />
                 </div>
 
@@ -116,7 +117,7 @@ const TransactionLedgerTable = ({
                             ))}
                         </TableHeader>
 
-                        <TableBody>
+                        {/* <TableBody>
                             {table.getRowModel().rows.map((row) => (
                                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                                     {row.getVisibleCells().map((cell) => (
@@ -126,7 +127,29 @@ const TransactionLedgerTable = ({
                                     ))}
                                 </TableRow>
                             ))}
+                        </TableBody> */}
+                        <TableBody>
+                            {table.getRowModel().rows.map((row) => (
+                                <Fragment key={row.id}>
+                                    {/* Main Row */}
+                                    <TableRow data-state={row.getIsSelected() && "selected"}>
+                                        {row.getVisibleCells().map((cell) => (
+                                            <TableCell key={cell.id}>
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+
+                                    {/* Details Row */}
+                                    <TableRow>
+                                        <TableCell colSpan={table.getVisibleFlatColumns().length} className="p-0">
+                                            <DetailsRow row={row.original} />
+                                        </TableCell>
+                                    </TableRow>
+                                </Fragment>
+                            ))}
                         </TableBody>
+
                     </Table>
                 ) : (
                     <div className="h-64 flex items-center justify-center">

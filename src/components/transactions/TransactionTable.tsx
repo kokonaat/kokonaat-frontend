@@ -230,7 +230,7 @@ const TransactionTable = ({
               placeholder="Filter transactions..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="h-8 w-[150px] lg:w-[250px]"
+              className="h-8 w-37.5 lg:w-62.5"
             />
           </div>
 
@@ -249,7 +249,7 @@ const TransactionTable = ({
             onSelect={handleTransactionTypeSelect}
             onSearch={setTransactionTypeSearch}
             onSearchClear={() => setTransactionTypeSearch("")}
-            className="h-8 w-[160px]"
+            className="h-8 w-40"
           />
           <Combobox
             options={vendorOptions}
@@ -259,7 +259,7 @@ const TransactionTable = ({
             onSelect={handleVendorSelect}
             onSearch={setVendorSearch}
             onSearchClear={() => setVendorSearch("")}
-            className="h-8 w-[160px]"
+            className="h-8 w-40"
           />
           <Combobox
             options={customerOptions}
@@ -269,7 +269,7 @@ const TransactionTable = ({
             onSelect={handleCustomerSelect}
             onSearch={setCustomerSearch}
             onSearchClear={() => setCustomerSearch("")}
-            className="h-8 w-[160px]"
+            className="h-8 w-40"
           />
         </div>
 

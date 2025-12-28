@@ -19,6 +19,7 @@ export interface CustomerFormInterface {
 
 export interface Customer {
   id: string;
+  no?: string
   name: string;
   email: string | null;
   phone: string;

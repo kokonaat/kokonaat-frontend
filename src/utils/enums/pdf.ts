@@ -38,15 +38,15 @@ interface Summary {
 
 export interface Entity {
     name: string;
-    no: string;
-    email?: string;
-    phone?: string;
-    address?: string;
-    city?: string;
-    country?: string;
+    no?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    address?: string | null;
+    city?: string | null;
+    country?: string | null;
     shop: {
         name: string;
-        address?: string;
+        address?: string | null;
     };
 }
 

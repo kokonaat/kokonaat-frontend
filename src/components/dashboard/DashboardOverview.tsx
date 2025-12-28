@@ -7,7 +7,6 @@ import {
   Legend,
 } from "recharts"
 import { format, parseISO } from "date-fns"
-// import { TrendingUp } from "lucide-react"
 import {
   Card,
 } from "@/components/ui/card"
@@ -67,7 +66,7 @@ const DashboardOverview = ({ data, isLoading }: DashboardOverviewProps) => {
   if (isLoading) {
     return (
       <Card>
-        <div className="flex items-center justify-center h-[350px]">
+        <div className="flex items-center justify-center h-87.5">
           <p className="text-muted-foreground">Loading chart...</p>
         </div>
       </Card>
@@ -95,7 +94,7 @@ const DashboardOverview = ({ data, isLoading }: DashboardOverviewProps) => {
 
   return (
 
-    <ChartContainer config={chartConfig} className="min-h-[340px] w-full">
+    <ChartContainer config={chartConfig} className="min-h-85 w-full">
       <RechartsBarChart 
         accessibilityLayer 
         data={chartData}

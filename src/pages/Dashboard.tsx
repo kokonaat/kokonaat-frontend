@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react'
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -63,7 +62,6 @@ const Dashboard = () => {
     <Main>
       <div className="mb-2 flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <Button>Download</Button>
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">

@@ -5,6 +5,7 @@ import { DataTableRowActions } from './DataTableRowActions'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import type { Vendor } from '@/interface/vendorInterface'
 import { ChevronRight } from 'lucide-react'
+import { VendorLedgerDownload } from './VendorLedgerDownload'
 
 export const VendorColumns: ColumnDef<Vendor>[] = [
   {
@@ -70,7 +71,7 @@ export const VendorColumns: ColumnDef<Vendor>[] = [
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="max-w-[200px] truncate cursor-help">
+              <div className="max-w-50 truncate cursor-help">
                 {address}
               </div>
             </TooltipTrigger>
@@ -119,6 +120,15 @@ export const VendorColumns: ColumnDef<Vendor>[] = [
       <div className="flex justify-center">
         <ChevronRight className="h-4 w-4 text-muted-foreground" />
       </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    id: 'ledger',
+    header: '',
+    cell: ({ row }) => (
+      <VendorLedgerDownload vendor={row.original} />
     ),
     enableSorting: false,
     enableHiding: false,

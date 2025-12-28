@@ -4,6 +4,7 @@ export interface UnitOfMeasurement {
 }
 export interface InventoryItemInterface {
   id: string
+  no?: string
   shopId?: string
   name: string
   description?: string
@@ -100,6 +101,7 @@ export interface InventoryTrackingItemInterface {
   }
   stock: number
   price: number
+  isPurchased?: boolean
   createdAt: string
   updatedAt: string
 }

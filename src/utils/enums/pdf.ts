@@ -28,6 +28,7 @@ interface Transaction {
     details: TransactionDetail[];
     totalAmount: number;
     paid: number;
+    pending: number;
     createdAt: string;
 }
 
@@ -76,7 +77,6 @@ export const generatePDF = (
     entity: Entity,
     transactions: Transaction[],
     summary: Summary,
-    // dateRange?: { from: string; to: string }
 ) => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -122,44 +122,68 @@ export const generatePDF = (
 
     // Optional contact info
     if (entity.phone) {
-        doc.setFont("helvetica");
         doc.setFont("helvetica", "bold");
         doc.text(`Phone: ${entity.phone}`, pageWidth - 14, 46, { align: "right" });
+        doc.setFont("helvetica", "normal");
     }
 
     // --- Table Section ---
-    const tableRows = transactions.flatMap(trx =>
-        trx.details.map(item => [
-            new Date(trx.createdAt).toLocaleDateString(),
-            trx.no,
-            getItemName(item),
-            trx.transactionType,
-            getQuantity(item).toString(),
-            formatNumber(getPrice(item)),
-            formatNumber(getTotal(item)),
-        ])
-    );
+    const tableRows: any[] = [];
+    let subtotalQty = 0;
+    let subtotalTotal = 0;
 
-    // Calculate subtotal for Qty and Total
-    const subtotalQty = transactions.flatMap(trx => trx.details.map(getQuantity))
-        .reduce((acc, q) => acc + q, 0);
+    transactions.forEach(trx => {
+        // Handle transactions with details (PURCHASE, SALE, etc.)
+        if (trx.details && trx.details.length > 0) {
+            trx.details.forEach(item => {
+                const qty = getQuantity(item);
+                const total = getTotal(item);
 
-    const subtotalTotal = transactions.flatMap(trx => trx.details.map(getTotal))
-        .reduce((acc, t) => acc + t, 0);
+                subtotalQty += qty;
+                subtotalTotal += total;
+
+                tableRows.push([
+                    new Date(trx.createdAt).toLocaleDateString(),
+                    trx.no,
+                    getItemName(item),
+                    trx.transactionType,
+                    qty.toString(),
+                    formatNumber(getPrice(item)),
+                    formatNumber(total),
+                ]);
+            });
+        } else {
+            // Handle transactions without details (PAYMENT, RECEIVABLE, COMMISSION)
+            // These transactions represent monetary movements without item details
+            const amount = trx.paid || trx.totalAmount || 0;
+            subtotalTotal += amount;
+
+            tableRows.push([
+                new Date(trx.createdAt).toLocaleDateString(),
+                trx.no,
+                trx.transactionType, // Use transaction type as description
+                trx.transactionType,
+                "-", // No quantity for payment/receivable transactions
+                "-", // No price for payment/receivable transactions
+                formatNumber(amount),
+            ]);
+        }
+    });
 
     // Add subtotal row
     tableRows.push([
-        "", "", "", "Subtotal", subtotalQty.toString(), "", formatNumber(subtotalTotal)
+        "", "", "", "Subtotal", subtotalQty > 0 ? subtotalQty.toString() : "-", "", formatNumber(subtotalTotal)
     ]);
 
     autoTable(doc, {
         startY: 60,
-        head: [["Date", "Trx No", "Item", "Type", "Qty", "Price", "Total"]],
+        head: [["Date", "Trx No", "Item/Description", "Type", "Qty", "Price", "Amount"]],
         body: tableRows,
         theme: "striped",
         headStyles: { fillColor: [51, 65, 85], textColor: 255, halign: "center" },
         columnStyles: {
             0: { cellWidth: 25 },
+            4: { halign: "center" },
             5: { halign: "right" },
             6: { halign: "right" },
         },

@@ -331,14 +331,15 @@ export const generatePDF = (
 
     // --- Summary Box ---
     const finalY = (doc as any).lastAutoTable.finalY + 12;
-    const summaryX = pageWidth - 85;
-    const summaryWidth = 71;
+    const summaryX = pageWidth - 95;
+    const summaryWidth = 81;
     const summaryHeight = 32;
+    const padding = 8;
 
-    // Draw summary box with professional styling
-    doc.setFillColor(240, 253, 244);
+    // Draw summary box with white background and black border (matching theme)
+    doc.setFillColor(255, 255, 255);
     doc.rect(summaryX, finalY, summaryWidth, summaryHeight, "F");
-    doc.setDrawColor(34, 197, 94);
+    doc.setDrawColor(0, 0, 0);
     doc.setLineWidth(0.5);
     doc.rect(summaryX, finalY, summaryWidth, summaryHeight, "S");
 
@@ -349,19 +350,20 @@ export const generatePDF = (
         doc.setFont("helvetica", isBold ? "bold" : "normal");
         doc.setFontSize(9);
         
-        // Label
-        doc.setTextColor(31, 41, 55);
-        doc.text(label, summaryX + 4, y);
+        // Label - with proper padding from left border
+        doc.setTextColor(0, 0, 0);
+        doc.text(label, summaryX + padding, y);
         
-        // Value
+        // Value - with proper padding from right border to prevent breaking
         if (isNegativeValue && value < 0) {
             doc.setTextColor(220, 38, 38); // Red for negative
         } else {
-            doc.setTextColor(31, 41, 55);
+            doc.setTextColor(0, 0, 0);
         }
         
         const valueText = formatNumber(Math.abs(value));
-        doc.text(valueText, pageWidth - 12, y, { align: "right" });
+        // Use summaryX + summaryWidth - padding to ensure proper spacing from right border
+        doc.text(valueText, summaryX + summaryWidth - padding, y, { align: "right" });
         
         doc.setFont("helvetica", "normal");
         doc.setTextColor(0, 0, 0);
@@ -370,10 +372,10 @@ export const generatePDF = (
     drawRow("Total Amount:", summary.totalAmount, finalY + 8);
     drawRow("Total Paid:", summary.totalPaid, finalY + 15);
 
-    // Divider line
-    doc.setDrawColor(34, 197, 94);
+    // Divider line - black to match theme
+    doc.setDrawColor(0, 0, 0);
     doc.setLineWidth(0.3);
-    doc.line(summaryX + 4, finalY + 20, pageWidth - 12, finalY + 20);
+    doc.line(summaryX + padding, finalY + 20, summaryX + summaryWidth - padding, finalY + 20);
     
     // Balance Due (highlighted)
     drawRow("Balance Due:", balanceDue, finalY + 27, true, true);

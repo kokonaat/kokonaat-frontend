@@ -19,7 +19,7 @@ export const trackingColumns: ColumnDef<InventoryTrackingItemInterface>[] = [
     {
         accessorKey: 'price',
         header: 'Price',
-        cell: ({ getValue }) => `৳${getValue<number>()}`,
+        cell: ({ getValue }) => `${getValue<number>()}`,
     },
     {
         accessorKey: 'createdAt',

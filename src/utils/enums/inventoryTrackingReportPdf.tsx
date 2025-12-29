@@ -81,7 +81,7 @@ export const generateInventoryTrackingPDF = (
     doc.setFont("helvetica", "bold");
     doc.text("Last Price:", pageWidth - 60, 46, { align: "right" });
     doc.setFont("helvetica", "normal");
-    doc.text(`৳${formatNumber(inventoryDetails.lastPrice)}`, pageWidth - 20, 46, { align: "right" });
+    doc.text(`${formatNumber(inventoryDetails.lastPrice)}`, pageWidth - 20, 46, { align: "right" });
 
     doc.setFont("helvetica", "bold");
     doc.text("Generated On:", pageWidth - 60, 54, { align: "right" });

@@ -140,5 +140,6 @@ export interface TransactionLedgerTableProps {
   pageSize: number
   total: number
   onPageChange: (pageIndex: number) => void
-  onDateChange?: (startDate?: string, endDate?: string) => void
+  onDateChange?: (from?: Date, to?: Date) => void
+  initialDateRange?: { from: Date; to: Date }
 }

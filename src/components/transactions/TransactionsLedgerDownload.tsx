@@ -108,7 +108,7 @@ export const TransactionsLedgerDownload = ({ transaction }: Props) => {
                     </button>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>Download {entityType === 'vendor' ? 'Vendor' : 'Customer'} Ledger Report</p>
+                    <p>Download PDF</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>

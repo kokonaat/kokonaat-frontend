@@ -93,7 +93,7 @@ export const CustomerLedgerDownload = ({ customer }: Props) => {
                     </button>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>Download Ledger Report</p>
+                    <p>Download PDF</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>

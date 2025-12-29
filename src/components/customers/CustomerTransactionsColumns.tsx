@@ -43,17 +43,17 @@ export const CustomerTransactionColumns: ColumnDef<VendorTransactionInterface>[]
     {
       accessorKey: 'amount',
       header: 'Amount',
-      cell: ({ row }) => `৳${row.original.amount}`,
+      cell: ({ row }) => `${row.original.amount}`,
     },
     {
       accessorKey: 'paid',
       header: 'Paid',
-      cell: ({ row }) => `৳${row.original.paid}`,
+      cell: ({ row }) => `${row.original.paid}`,
     },
     {
       accessorKey: 'pending',
       header: 'Pending',
-      cell: ({ row }) => `৳${row.original.pending}`,
+      cell: ({ row }) => `${row.original.pending}`,
     },
     {
       accessorKey: 'remarks',

@@ -52,18 +52,18 @@ export const TransactionLedgerColumn: ColumnDef<TransactionLedgerInterface>[] =
       header: 'Amount',
       cell: ({ row }) => {
         const amount = Number(row.original.totalAmount ?? 0)
-        return `৳${amount.toLocaleString()}`
+        return `${amount.toLocaleString()}`
       },
     },
     {
       accessorKey: 'paid',
       header: 'Paid',
-      cell: ({ row }) => `৳${row.original.paid.toLocaleString()}`,
+      cell: ({ row }) => `${row.original.paid.toLocaleString()}`,
     },
     {
       accessorKey: 'pending',
       header: 'Pending',
-      cell: ({ row }) => `৳${row.original.pending.toLocaleString()}`,
+      cell: ({ row }) => `${row.original.pending.toLocaleString()}`,
     },
     {
       accessorKey: 'createdAt',

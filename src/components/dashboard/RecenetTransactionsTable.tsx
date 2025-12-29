@@ -6,6 +6,7 @@ interface Transaction {
   partnerType: "CUSTOMER" | "VENDOR"
   transactionType: "SALE" | "PURCHASE"
   totalAmount: number
+  paid: number
   pending: number
   createdAt: string
   partnerName?: string
@@ -38,34 +39,32 @@ const RecentTransactionsTable = ({ data }: RecentTransactionsTableProps) => {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center gap-4 text-sm font-semibold text-muted-foreground">
-        <div className="flex flex-1 flex-wrap items-center justify-between">
-          <div>
-            <p>Type</p>
-          </div>
-          <div>Total</div>
-          <div>Pending</div>
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="grid grid-cols-[1fr_120px_120px] gap-4 text-sm font-semibold text-muted-foreground">
+        <div>
+          <p>Type</p>
         </div>
+        <div className="text-right">Total</div>
+        <div className="text-right">Pending</div>
       </div>
 
+      {/* Data Rows */}
       {lastFiveTransactions.map((tx) => (
-        <div key={tx.id} className="flex items-center gap-4">
-          <div className="flex flex-1 flex-wrap items-center justify-between">
-            <div className="space-y-1">
-              <p className="text-sm leading-none font-medium">
-                {tx.transactionType}
-              </p>
-              <p className="text-muted-foreground text-sm">{tx.no}</p>
-            </div>
+        <div key={tx.id} className="grid grid-cols-[1fr_120px_120px] gap-4 items-center">
+          <div className="space-y-1">
+            <p className="text-sm leading-none font-medium">
+              {tx.transactionType}
+            </p>
+            <p className="text-muted-foreground text-sm">{tx.no}</p>
+          </div>
 
-            <div className="font-medium">
-              ৳{Number(tx?.totalAmount ?? 0).toLocaleString()}
-            </div>
+          <div className="font-medium text-right">
+            {Number(tx.totalAmount ? tx.totalAmount : tx?.paid ? tx?.paid : 0).toLocaleString()}
+          </div>
 
-            <div className="font-medium">
-              ৳{tx.pending.toLocaleString()}
-            </div>
+          <div className="font-medium text-right">
+            {tx.pending.toLocaleString()}
           </div>
         </div>
       ))}

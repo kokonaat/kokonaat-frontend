@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react"
 import type { DateRange } from "react-day-picker"
+import { subDays } from "date-fns"
 import { Main } from "@/components/layout/main"
 import DateRangeSearch from "@/components/DateRangeSearch"
 import { Button } from "@/components/ui/button"
@@ -49,6 +50,16 @@ const Reports = () => {
 
   const currentShopName = useShopStore((s) => s.currentShopName)
 
+  // Default to last 30 days
+  const defaultDateRange = useMemo(() => {
+    const today = new Date()
+    const thirtyDaysAgo = subDays(today, 30)
+    return {
+      from: thirtyDaysAgo,
+      to: today
+    }
+  }, [])
+
   //  states for immediate ui change
   const [reportType, setReportType] = useState<ReportType>()
   const [reportTypeSearch, setReportTypeSearch] = useState("")
@@ -56,7 +67,7 @@ const Reports = () => {
   const [entitySearch, setEntitySearch] = useState("")
   const [transactionTypes, setTransactionTypes] = useState<string[]>([])
   const [transactionTypeSearch, setTransactionTypeSearch] = useState("")
-  const [dateRange, setDateRange] = useState<DateRange>()
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
   const [selectedInventoryIds, setSelectedInventoryIds] = useState<string[]>([])
   const [inventorySearch, setInventorySearch] = useState("")
 
@@ -955,8 +966,8 @@ const Reports = () => {
       {/* empty state */}
       {!appliedFilters && (
         <NoDataFound
-          message="Select a report to get started"
-          details="Select a date range, choose a report type, and optionally filter by customer, vendor, inventory, or transaction type to view detailed reports."
+          message="No report selected"
+          details="Select a date range and report type to generate your report."
         />
       )}
 

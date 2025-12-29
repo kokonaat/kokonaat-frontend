@@ -110,7 +110,7 @@ const DashboardOverview = ({ data, isLoading }: DashboardOverviewProps) => {
         <YAxis
           tickLine={false}
           axisLine={false}
-          tickFormatter={(value) => `৳${value}`}
+          tickFormatter={(value) => `${value}`}
         />
         <ChartTooltip 
           cursor={false} 
@@ -118,7 +118,7 @@ const DashboardOverview = ({ data, isLoading }: DashboardOverviewProps) => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             formatter={(value: any) => {
               const numericValue = typeof value === 'string' ? parseFloat(value) : value
-              return `৳${numericValue.toFixed(0)}`
+              return `${numericValue.toFixed(0)}`
             }}
           />} 
         />

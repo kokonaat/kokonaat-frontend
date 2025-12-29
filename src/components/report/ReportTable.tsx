@@ -13,6 +13,7 @@ import { DataTableViewOptions } from '@/features/users/components/data-table-vie
 import { Card, CardContent } from '../ui/card'
 import { NoDataFound } from '../NoDataFound'
 import { Button } from '../ui/button'
+import { Download } from 'lucide-react'
 import { TransactionLedgerDataTablePagination } from '../customers/TransactionLedgerDataTablePagination'
 // import { generateLedgerExcel } from '@/utils/enums/customerOrVendorLedgerExcel'
 
@@ -93,7 +94,10 @@ export const ReportTable = <TData,>({
                         </Button>
                     )}
 
-                    <Button onClick={onDownloadPdf}>Download as PDF</Button>
+                    <Button onClick={onDownloadPdf} className="gap-2">
+                        <Download className="h-4 w-4" />
+                        Download PDF
+                    </Button>
                 </div>
             </div>
 

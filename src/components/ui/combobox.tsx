@@ -109,7 +109,7 @@ export function Combobox({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={cn("justify-between", className)}
+            className={cn("justify-between h-8", className)}
             disabled={disabled}
           >
             <span className="truncate">{displayLabel}</span>

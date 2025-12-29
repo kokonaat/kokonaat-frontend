@@ -49,7 +49,7 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
                         <ShoppingBag className="h-6 w-6" />
                     </div>
                     {isActive && (
-                        <span className="text-sm flex items-center gap-1 text-muted-foreground">
+                        <span className="text-sm flex items-center gap-1 text-muted-foreground font-semibold">
                             <CheckCheck className="h-4 w-4" />
                             Selected
                         </span>

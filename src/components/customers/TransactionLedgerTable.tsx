@@ -21,7 +21,6 @@ import { Badge } from "../ui/badge"
 import { DetailsRow } from "./DetailsRow"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 import { ChevronDown } from "lucide-react"
-import type { DateRange } from "react-day-picker"
 
 const TransactionLedgerTable = ({
     data,

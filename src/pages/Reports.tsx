@@ -67,7 +67,7 @@ const Reports = () => {
   const [entitySearch, setEntitySearch] = useState("")
   const [transactionTypes, setTransactionTypes] = useState<string[]>([])
   const [transactionTypeSearch, setTransactionTypeSearch] = useState("")
-  const [dateRange, setDateRange] = useState<DateRange>(defaultDateRange)
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
   const [selectedInventoryIds, setSelectedInventoryIds] = useState<string[]>([])
   const [inventorySearch, setInventorySearch] = useState("")
 

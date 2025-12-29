@@ -21,6 +21,7 @@ interface TransactionDetail {
     quantity: number
     price: number
     total: number
+    unitOfMeasurement?: { name?: string }
 }
 
 interface TransactionDetailsTableProps {
@@ -37,11 +38,12 @@ export const TransactionDetailsTable = ({ data }: TransactionDetailsTableProps) 
 
     const columns: ColumnDef<TransactionDetail>[] = [
         {
-            header: "Inventory",
+            header: "Item",
             accessorKey: "inventory.name",
             cell: (info) => info.row.original.inventory?.name ?? "N/A",
         },
-        { header: "Quantity", accessorKey: "quantity" },
+        { header: "UOM", accessorKey: "unitOfMeasurement.name", cell: (info) => info.row.original.unitOfMeasurement?.name ?? "N/A" },
+        { header: "Qty", accessorKey: "quantity" },
         { header: "Price", accessorKey: "price", cell: (info) => `${info.getValue<number>()}` },
         { header: "Total", accessorKey: "total", cell: (info) => `${info.getValue<number>()}` },
     ]
@@ -74,10 +76,11 @@ export const TransactionDetailsTable = ({ data }: TransactionDetailsTableProps) 
         getPaginationRowModel: getPaginationRowModel(),
         globalFilterFn: (row, _colId, filterValue) => {
             const search = String(filterValue).toLowerCase()
-            return (
+            return !!(
                 row.original.inventory?.name?.toLowerCase().includes(search) ||
                 String(row.original.price).includes(search) ||
-                String(row.original.total).includes(search)
+                String(row.original.total).includes(search) ||
+                row.original.unitOfMeasurement?.name?.toLowerCase().includes(search)
             )
         },
     })
@@ -93,7 +96,7 @@ export const TransactionDetailsTable = ({ data }: TransactionDetailsTableProps) 
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <Input
-                    placeholder="Filter by name, price, total..."
+                    placeholder="Filter by name, price, total, UOM..."
                     value={globalFilter}
                     onChange={(e) => setGlobalFilter(e.target.value)}
                     className="h-8 w-[250px]"

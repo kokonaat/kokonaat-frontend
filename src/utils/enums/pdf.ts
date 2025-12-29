@@ -81,18 +81,19 @@ export const generatePDF = (
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // --- Header ---
+    // --- Header Section ---
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(20);
-    doc.text(entity.shop.name.toUpperCase(), pageWidth / 2, 15, { align: "center" });
+    doc.setFontSize(22);
+    doc.text(entity.shop.name.toUpperCase(), pageWidth / 2, 18, { align: "center" });
 
-    doc.setFontSize(10);
+    doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
-    doc.text("Transaction Report with Details", pageWidth / 2, 22, { align: "center" });
+    doc.text("Transaction Report with Details", pageWidth / 2, 25, { align: "center" });
 
-    // --- Info Section ---
+    // --- Divider Line ---
     doc.setLineWidth(0.5);
-    doc.line(14, 28, pageWidth - 14, 28);
+    doc.setDrawColor(0, 0, 0);
+    doc.line(14, 30, pageWidth - 14, 30);
 
     // Determine account label (Customer / Vendor / Account Holder)
     let accountLabel = "Account Holder:";
@@ -109,22 +110,38 @@ export const generatePDF = (
         }
     }
 
+    // --- Left Side Info ---
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.text(accountLabel, 14, 38);
+    doc.setFontSize(10);
+    doc.text(accountLabel, 14, 40);
     doc.setFont("helvetica", "normal");
-    doc.text(accountName, 30, 38);
+    doc.setFontSize(10);
+    doc.text(accountName, 14 + doc.getTextWidth(accountLabel) + 3, 40);
 
+    // --- Right Side Info ---
+    const generatedDate = new Date().toLocaleDateString("en-GB", { 
+        day: "2-digit", 
+        month: "2-digit", 
+        year: "numeric" 
+    });
+    
     doc.setFont("helvetica", "bold");
-    doc.text(`Generated On:`, pageWidth - 34, 38, { align: "right" });
+    doc.setFontSize(10);
+    doc.text("Generated On:", pageWidth - 14, 40, { align: "right" });
     doc.setFont("helvetica", "normal");
-    doc.text(new Date().toLocaleDateString(), pageWidth - 14, 38, { align: "right" });
+    doc.setFontSize(10);
+    const generatedTextWidth = doc.getTextWidth("Generated On: ");
+    doc.text(generatedDate, pageWidth - 14 - generatedTextWidth, 40, { align: "right" });
 
     // Optional contact info
     if (entity.phone) {
         doc.setFont("helvetica", "bold");
-        doc.text(`Phone: ${entity.phone}`, pageWidth - 14, 46, { align: "right" });
+        doc.setFontSize(10);
+        doc.text("Phone:", pageWidth - 14, 47, { align: "right" });
         doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        const phoneLabelWidth = doc.getTextWidth("Phone: ");
+        doc.text(entity.phone, pageWidth - 14 - phoneLabelWidth, 47, { align: "right" });
     }
 
     // --- Table Section with Details ---
@@ -134,34 +151,40 @@ export const generatePDF = (
 
     transactions.forEach(trx => {
         // Transaction Header Row
+        const trxDate = new Date(trx.createdAt).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        });
+        
         tableRows.push([
             {
-                content: new Date(trx.createdAt).toLocaleDateString(),
-                styles: { fontStyle: 'bold', fillColor: [241, 245, 249] }
+                content: trxDate,
+                styles: { fontStyle: 'bold', fillColor: [249, 250, 251], textColor: [17, 24, 39] }
             },
             {
                 content: trx.no,
-                styles: { fontStyle: 'bold', fillColor: [241, 245, 249] }
+                styles: { fontStyle: 'bold', fillColor: [249, 250, 251], textColor: [17, 24, 39] }
             },
             {
                 content: trx.transactionType,
-                styles: { fontStyle: 'bold', fillColor: [241, 245, 249] }
+                styles: { fontStyle: 'bold', fillColor: [249, 250, 251], textColor: [17, 24, 39] }
             },
             {
                 content: trx.paymentType || '-',
-                styles: { fontStyle: 'bold', fillColor: [241, 245, 249] }
+                styles: { fontStyle: 'bold', fillColor: [249, 250, 251], textColor: [17, 24, 39] }
             },
             {
                 content: '',
-                styles: { fillColor: [241, 245, 249] }
+                styles: { fillColor: [249, 250, 251] }
             },
             {
                 content: '',
-                styles: { fillColor: [241, 245, 249] }
+                styles: { fillColor: [249, 250, 251] }
             },
             {
                 content: formatNumber(trx.totalAmount),
-                styles: { fontStyle: 'bold', fillColor: [241, 245, 249], halign: 'right' }
+                styles: { fontStyle: 'bold', fillColor: [249, 250, 251], textColor: [17, 24, 39], halign: 'right' }
             },
         ]);
 
@@ -187,19 +210,21 @@ export const generatePDF = (
             });
 
             // Transaction Summary Row (Paid/Pending)
-            tableRows.push([
-                '',
-                '',
-                {
-                    content: `  Paid: ${formatNumber(trx.paid)} | Pending: ${formatNumber(trx.pending)}`,
-                    colSpan: 3,
-                    styles: { fontStyle: 'italic', textColor: [100, 116, 139] }
-                },
-                '',
-                '',
-                '',
-                ''
-            ]);
+            if (trx.paid > 0 || trx.pending > 0) {
+                tableRows.push([
+                    '',
+                    '',
+                    {
+                        content: `  Paid: ${formatNumber(trx.paid)} | Pending: ${formatNumber(trx.pending)}`,
+                        colSpan: 3,
+                        styles: { fontStyle: 'italic', textColor: [107, 114, 128], fontSize: 8 }
+                    },
+                    '',
+                    '',
+                    '',
+                    ''
+                ]);
+            }
         } else {
             // Handle transactions without details (PAYMENT, RECEIVABLE, COMMISSION)
             const amount = trx.paid || trx.totalAmount || 0;
@@ -223,7 +248,7 @@ export const generatePDF = (
                     {
                         content: `  Paid: ${formatNumber(trx.paid)}`,
                         colSpan: 3,
-                        styles: { fontStyle: 'italic', textColor: [100, 116, 139] }
+                        styles: { fontStyle: 'italic', textColor: [107, 114, 128], fontSize: 8 }
                     },
                     '',
                     '',
@@ -247,74 +272,112 @@ export const generatePDF = (
         '',
         {
             content: 'Subtotal',
-            styles: { fontStyle: 'bold', fillColor: [226, 232, 240] }
+            styles: { fontStyle: 'bold', fillColor: [243, 244, 246], textColor: [17, 24, 39] }
         },
         {
             content: subtotalQty > 0 ? subtotalQty.toString() : '-',
-            styles: { fontStyle: 'bold', fillColor: [226, 232, 240], halign: 'center' }
+            styles: { fontStyle: 'bold', fillColor: [243, 244, 246], textColor: [17, 24, 39], halign: 'center' }
         },
         {
             content: '',
-            styles: { fillColor: [226, 232, 240] }
+            styles: { fillColor: [243, 244, 246] }
         },
         {
             content: formatNumber(subtotalTotal),
-            styles: { fontStyle: 'bold', fillColor: [226, 232, 240], halign: 'right' }
+            styles: { fontStyle: 'bold', fillColor: [243, 244, 246], textColor: [17, 24, 39], halign: 'right' }
         }
     ]);
 
     autoTable(doc, {
-        startY: 60,
+        startY: 52,
         head: [["Date", "Trx No", "Description", "Payment", "Qty", "Price", "Amount"]],
         body: tableRows,
         theme: "plain",
         headStyles: {
-            fillColor: [51, 65, 85],
+            fillColor: [31, 41, 55],
             textColor: 255,
             halign: "center",
             fontStyle: 'bold',
-            fontSize: 9
+            fontSize: 9,
+            cellPadding: 3
         },
         columnStyles: {
-            0: { cellWidth: 22 },
-            1: { cellWidth: 22 },
-            2: { cellWidth: 'auto' },
-            3: { cellWidth: 25 },
-            4: { halign: "center", cellWidth: 15 },
+            0: { cellWidth: 22, halign: "left" },
+            1: { cellWidth: 25, halign: "left" },
+            2: { cellWidth: 'auto', halign: "left" },
+            3: { cellWidth: 22, halign: "center" },
+            4: { halign: "center", cellWidth: 18 },
             5: { halign: "right", cellWidth: 22 },
             6: { halign: "right", cellWidth: 25 },
         },
         styles: {
             fontSize: 8,
-            cellPadding: 2
+            cellPadding: 2.5,
+            lineColor: [229, 231, 235],
+            lineWidth: 0.1
         },
         alternateRowStyles: {
             fillColor: [255, 255, 255]
         },
+        didDrawCell: (data) => {
+            // Add subtle borders between rows
+            if (data.row.index > 0 && data.column.index === 0) {
+                doc.setDrawColor(229, 231, 235);
+                doc.setLineWidth(0.1);
+                doc.line(data.cell.x, data.cell.y, data.cell.x + data.cell.width, data.cell.y);
+            }
+        },
     });
 
     // --- Summary Box ---
-    const finalY = (doc as any).lastAutoTable.finalY + 10;
-    const summaryX = pageWidth - 80;
+    const finalY = (doc as any).lastAutoTable.finalY + 12;
+    const summaryX = pageWidth - 95;
+    const summaryWidth = 81;
+    const summaryHeight = 32;
+    const padding = 8;
 
-    doc.setFillColor(248, 250, 252);
-    doc.rect(summaryX, finalY, 66, 28, "F");
-    doc.setDrawColor(226, 232, 240);
-    doc.rect(summaryX, finalY, 66, 28, "S");
+    // Draw summary box with white background and black border (matching theme)
+    doc.setFillColor(255, 255, 255);
+    doc.rect(summaryX, finalY, summaryWidth, summaryHeight, "F");
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.5);
+    doc.rect(summaryX, finalY, summaryWidth, summaryHeight, "S");
 
-    const drawRow = (label: string, value: number, y: number, isBold = false) => {
-        if (isBold) doc.setFont("helvetica", "bold");
-        doc.text(label, summaryX + 2, y);
-        doc.text(`${formatNumber(value)} Taka`, pageWidth - 16, y, { align: "right" });
+    const balanceDue = summary.totalAmount - summary.totalPaid;
+
+    const drawRow = (label: string, value: number, y: number, isBold = false, isNegativeValue = false) => {
+        doc.setFont("helvetica", isBold ? "bold" : "normal");
+        doc.setFontSize(9);
+        
+        // Label - with proper padding from left border
+        doc.setTextColor(0, 0, 0);
+        doc.text(label, summaryX + padding, y);
+        
+        // Value - with proper padding from right border to prevent breaking
+        if (isNegativeValue && value < 0) {
+            doc.setTextColor(220, 38, 38); // Red for negative
+        } else {
+            doc.setTextColor(0, 0, 0);
+        }
+        
+        const valueText = formatNumber(Math.abs(value));
+        // Use summaryX + summaryWidth - padding to ensure proper spacing from right border
+        doc.text(valueText, summaryX + summaryWidth - padding, y, { align: "right" });
+        
         doc.setFont("helvetica", "normal");
+        doc.setTextColor(0, 0, 0);
     };
 
-    drawRow("Total Amount:", summary.totalAmount, finalY + 7);
-    drawRow("Total Paid:", summary.totalPaid, finalY + 14);
+    drawRow("Total Amount:", summary.totalAmount, finalY + 8);
+    drawRow("Total Paid:", summary.totalPaid, finalY + 15);
 
-    doc.setDrawColor(200);
-    doc.line(summaryX + 2, finalY + 17, pageWidth - 16, finalY + 17);
-    drawRow("Balance Due:", summary.totalAmount - summary.totalPaid, finalY + 24, true);
+    // Divider line - black to match theme
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.3);
+    doc.line(summaryX + padding, finalY + 20, summaryX + summaryWidth - padding, finalY + 20);
+    
+    // Balance Due (highlighted)
+    drawRow("Balance Due:", balanceDue, finalY + 27, true, true);
 
     // --- Footer ---
     const pageCount = (doc as any).internal.getNumberOfPages();

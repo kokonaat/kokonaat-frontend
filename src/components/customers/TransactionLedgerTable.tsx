@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import {
     useReactTable,
     getCoreRowModel,
@@ -9,7 +10,7 @@ import {
     type SortingState,
     type ColumnDef,
 } from "@tanstack/react-table"
-import type { TransactionLedgerInterface } from "@/interface/transactionInterface"
+import type { TransactionLedgerInterface, Transaction } from "@/interface/transactionInterface"
 import { Input } from "../ui/input"
 import { DataTableViewOptions } from "@/features/users/components/data-table-view-options"
 import type { TransactionLedgerTableProps } from "@/interface/transactionInterface"
@@ -20,7 +21,11 @@ import { TransactionLedgerDataTablePagination } from "./TransactionLedgerDataTab
 import { Badge } from "../ui/badge"
 import { DetailsRow } from "./DetailsRow"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, Download, Loader2 } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
+import { useShopStore } from "@/stores/shopStore"
+import { generateTransactionDetailsPDF } from "@/utils/enums/transactionDetailsPdf"
+import { toast } from "sonner"
 
 const TransactionLedgerTable = ({
     data,
@@ -31,6 +36,10 @@ const TransactionLedgerTable = ({
     onDateChange,
     initialDateRange,
 }: TransactionLedgerTableProps) => {
+    const navigate = useNavigate()
+    const { currentShopName } = useShopStore()
+    const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set())
+    
     // Properly typed states
     const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({})
     const [sorting, setSorting] = useState<SortingState>([])
@@ -38,6 +47,58 @@ const TransactionLedgerTable = ({
     const [globalFilter, setGlobalFilter] = useState("")
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
+
+    const handleDownload = async (e: React.MouseEvent, transaction: TransactionLedgerInterface) => {
+        e.stopPropagation()
+
+        if (!currentShopName) {
+            toast.error('Shop name is missing')
+            return
+        }
+
+        try {
+            setDownloadingIds(prev => new Set(prev).add(transaction.id))
+            
+            // Convert TransactionLedgerInterface to Transaction format
+            // Note: TransactionLedgerInterface has vendor field but partnerType indicates actual type
+            const isVendor = transaction.partnerType === "VENDOR" || transaction.partnerType === "vendor"
+            const transactionForPdf: Transaction = {
+                no: transaction.no,
+                id: transaction.id,
+                partnerType: (isVendor ? "VENDOR" : "CUSTOMER") as "VENDOR" | "CUSTOMER",
+                vendor: isVendor ? transaction.vendor : undefined,
+                customer: !isVendor ? { id: transaction.vendor.id, name: transaction.vendor.name } : undefined,
+                vendorId: isVendor ? transaction.vendorId : undefined,
+                customerId: !isVendor ? transaction.vendorId : undefined,
+                transactionType: transaction.transactionType as Transaction["transactionType"],
+                transactionStatus: transaction.transactionStatus,
+                totalAmount: transaction.totalAmount,
+                paid: transaction.paid,
+                pending: transaction.pending,
+                paymentType: transaction.paymentType as Transaction["paymentType"],
+                isPaid: transaction.isPaid,
+                remarks: transaction.remarks,
+                payable: transaction.payable,
+                receivable: transaction.receivable,
+                shopId: transaction.shopId,
+                createdAt: transaction.createdAt,
+                updatedAt: transaction.updatedAt,
+                details: transaction.details || []
+            }
+
+            generateTransactionDetailsPDF(transactionForPdf, currentShopName)
+            toast.success('Transaction report downloaded successfully')
+        } catch (error) {
+            console.error('Download error:', error)
+            toast.error('Failed to download transaction report. Please try again.')
+        } finally {
+            setDownloadingIds(prev => {
+                const newSet = new Set(prev)
+                newSet.delete(transaction.id)
+                return newSet
+            })
+        }
+    }
 
     // Create a minimal column definition for table functionality (sorting, filtering, pagination)
     const columns: ColumnDef<TransactionLedgerInterface>[] = [
@@ -128,6 +189,7 @@ const TransactionLedgerTable = ({
                                 <TableHead className="w-[100px] text-right">Paid</TableHead>
                                 <TableHead className="w-[100px] text-right">Pending</TableHead>
                                 <TableHead className="w-[100px] text-right">Date</TableHead>
+                                <TableHead className="w-[50px]"></TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -174,7 +236,15 @@ const TransactionLedgerTable = ({
                                                 )}
                                             </TableCell>
                                             <TableCell className="font-medium">
-                                                {transaction.no}
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        navigate(`/transactions/${transaction.id}`)
+                                                    }}
+                                                    className="text-primary hover:underline font-medium"
+                                                >
+                                                    {transaction.no}
+                                                </button>
                                             </TableCell>
                                             <TableCell>
                                                 <Badge
@@ -216,10 +286,33 @@ const TransactionLedgerTable = ({
                                                     </div>
                                                 </div>
                                             </TableCell>
+                                            <TableCell>
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <button
+                                                                onClick={(e) => handleDownload(e, transaction)}
+                                                                disabled={downloadingIds.has(transaction.id)}
+                                                                className="p-1.5 hover:bg-muted rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                aria-label="Download transaction report"
+                                                            >
+                                                                {downloadingIds.has(transaction.id) ? (
+                                                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                                                ) : (
+                                                                    <Download className="h-4 w-4" />
+                                                                )}
+                                                            </button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            <p>Download PDF</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+                                            </TableCell>
                                         </TableRow>
                                         {hasDetails && isExpanded && (
                                             <TableRow>
-                                                <TableCell colSpan={8} className="p-0 bg-muted/30">
+                                                <TableCell colSpan={9} className="p-0 bg-muted/30">
                                                     <div className="px-6 py-4">
                                                         <DetailsRow row={transaction} />
                                                     </div>

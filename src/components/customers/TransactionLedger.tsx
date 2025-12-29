@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react"
 import { useParams } from "react-router-dom"
-import { Mail, MapPin, Phone, User, Building2, Download } from "lucide-react"
+import { Mail, MapPin, Phone, User, Building2, Download, Briefcase, Contact } from "lucide-react"
 import { Badge } from "../ui/badge"
 import { generatePDF } from "@/utils/enums/pdf"
 import type { Entity } from "@/utils/enums/pdf"
@@ -119,55 +119,85 @@ const TransactionLedger = () => {
             </CardHeader>
 
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                {/* left */}
-                <div className="space-y-2">
-                  <p className="flex items-center gap-2">
-                    <Mail className="h-5 w-5 text-muted-foreground" />
-                    <span>{entity.email ?? "N/A"}</span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Phone className="h-5 w-5 text-muted-foreground" />
-                    <span>{entity.phone ?? "N/A"}</span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-muted-foreground shrink-0" />
-                    <span className="truncate">
-                      {[entity.address, entity.city].filter(Boolean).join(", ") ||
-                        <span className="text-muted-foreground">N/A</span>
-                      }
-                    </span>
-                  </p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                {/* Contact Information Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-2 border-b">
+                    <Contact className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+                      Contact Information
+                    </h3>
+                  </div>
+                  <div className="space-y-3.5">
+                    {entity.email && (
+                      <div className="flex items-start gap-3">
+                        <Mail className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-muted-foreground mb-0.5">Email</p>
+                          <p className="text-sm font-medium break-all">{entity.email}</p>
+                        </div>
+                      </div>
+                    )}
+                    {entity.phone && (
+                      <div className="flex items-start gap-3">
+                        <Phone className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-muted-foreground mb-0.5">Phone</p>
+                          <p className="text-sm font-medium">{entity.phone}</p>
+                        </div>
+                      </div>
+                    )}
+                    {(entity.address || entity.city) && (
+                      <div className="flex items-start gap-3">
+                        <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-muted-foreground mb-0.5">Address</p>
+                          <p className="text-sm font-medium">
+                            {[entity.address, entity.city].filter(Boolean).join(", ") || "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                {/* right */}
-                <div className="space-y-2">
-                  {isCustomer && (
-                    <>
-                      <p><strong>Shop:</strong> {entity.shop?.name ?? "N/A"}</p>
-
-                      <p>
-                        <strong>Business Type:</strong>{" "}
-                        {entity.isB2B ? (
-                          <Badge variant="default">B2B</Badge>
-                        ) : (
-                          <Badge variant="secondary">Individual</Badge>
-                        )}
-                      </p>
-                    </>
-                  )}
-
-                  <p>
-                    <strong>Contact Person:</strong>{" "}
-                    {entity.contactPerson || entity.contactPersonPhone ? (
-                      entity.contactPerson && entity.contactPersonPhone
-                        ? `${entity.contactPerson} (${entity.contactPersonPhone})`
-                        : entity.contactPerson || entity.contactPersonPhone
-                    ) : (
-                      <span className="text-muted-foreground">Not Provided</span>
+                {/* Business Details Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-2 border-b">
+                    <Briefcase className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+                      Business Details
+                    </h3>
+                  </div>
+                  <div className="space-y-3.5">
+                    {isCustomer && entity.shop?.name && (
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-0.5">Shop</p>
+                        <p className="text-sm font-medium">{entity.shop.name}</p>
+                      </div>
                     )}
-                  </p>
+                    {isCustomer && (
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1.5">Business Type</p>
+                        {entity.isB2B ? (
+                          <Badge variant="default" className="text-xs">B2B</Badge>
+                        ) : (
+                          <Badge variant="secondary" className="text-xs">Individual</Badge>
+                        )}
+                      </div>
+                    )}
+                    {(entity.contactPerson || entity.contactPersonPhone) && (
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-0.5">Contact Person</p>
+                        <p className="text-sm font-medium">
+                          {entity.contactPerson && entity.contactPersonPhone
+                            ? `${entity.contactPerson} (${entity.contactPersonPhone})`
+                            : entity.contactPerson || entity.contactPersonPhone}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
               </div>

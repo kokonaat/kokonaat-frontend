@@ -26,7 +26,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/
 import { useShopStore } from "@/stores/shopStore"
 import { generateTransactionDetailsPDF } from "@/utils/enums/transactionDetailsPdf"
 import { toast } from "sonner"
-import { useState } from "react"
 
 const TransactionLedgerTable = ({
     data,

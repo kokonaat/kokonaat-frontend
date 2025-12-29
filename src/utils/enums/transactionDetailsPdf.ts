@@ -26,17 +26,18 @@ export const generateTransactionDetailsPDF = (
 
     // --- Header Section ---
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(20);
-    doc.text(shopName.toUpperCase(), pageWidth / 2, startY, { align: "center" });
+    doc.setFontSize(22);
+    doc.text(shopName.toUpperCase(), pageWidth / 2, 18, { align: "center" });
 
-    doc.setFontSize(10);
+    doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
-    doc.text("Transaction Details", pageWidth / 2, startY + 7, { align: "center" });
+    doc.text("Transaction Details", pageWidth / 2, 25, { align: "center" });
 
-    startY += 15;
+    // --- Divider Line ---
     doc.setLineWidth(0.5);
-    doc.line(14, startY, pageWidth - 14, startY);
-    startY += 10;
+    doc.setDrawColor(0, 0, 0);
+    doc.line(14, 30, pageWidth - 14, 30);
+    startY = 40;
 
     // --- Transaction Information Section ---
     // Two-column layout: Left (14) and Right (pageWidth - 14 for right edge)
@@ -46,12 +47,12 @@ export const generateTransactionDetailsPDF = (
     let rightY = startY;
 
     // Left column: Transaction #, Type, Payment Type, Status
-    doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
     doc.text(`Transaction #${transaction.no}`, leftX, leftY);
     leftY += 8;
 
-    // Type (no colored background)
+    // Type
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.text(`Type: ${transaction.transactionType}`, leftX, leftY);
@@ -86,22 +87,27 @@ export const generateTransactionDetailsPDF = (
     rightY += remarksLines.length * 5;
 
     // Update startY to the maximum of leftY and rightY for next section
-    startY = Math.max(leftY, rightY) + 5;
+    startY = Math.max(leftY, rightY) + 8;
 
     // --- Transaction Details Table ---
     if (transaction.details && transaction.details.length > 0) {
-        startY += 5;
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
+        doc.setFontSize(11);
         doc.text("Transaction Details", 14, startY);
         startY += 8;
+
+        // Helper function to format numbers
+        const formatNumber = (num: number | string | undefined | null) => {
+            const n = Number(num) || 0;
+            return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        };
 
         // Prepare table data
         const tableRows = transaction.details.map((detail) => [
             detail.inventory?.name ?? "N/A",
-            Number(detail.quantity || 0).toFixed(2),
-            `${Number(detail.price || 0).toFixed(2)}`,
-            `${Number(detail.total || 0).toFixed(2)}`,
+            formatNumber(detail.quantity || 0),
+            formatNumber(detail.price || 0),
+            formatNumber(detail.total || 0),
         ]);
 
         // Calculate subtotal (sum of all item totals)
@@ -110,43 +116,78 @@ export const generateTransactionDetailsPDF = (
         const pending = transaction.pending || 0;
         const balance = transaction.paid || 0;
 
-        // Add summary rows at the end
-        tableRows.push(
-            ["", "", "Sub Total:", `${subtotal.toFixed(2)}`],
-            ["", "", "Total:", `${total.toFixed(2)}`],
-            ["", "", "Pending:", `${pending.toFixed(2)}`],
-            ["", "", "Balance:", `${balance.toFixed(2)}`]
-        );
-
         autoTable(doc, {
             startY: startY,
             head: [["Inventory", "Quantity", "Price", "Total"]],
             body: tableRows,
-            theme: "striped",
-            headStyles: { fillColor: [51, 65, 85], textColor: 255, halign: "center" },
+            theme: "plain",
+            headStyles: {
+                fillColor: [31, 41, 55],
+                textColor: 255,
+                halign: "center",
+                fontStyle: 'bold',
+                fontSize: 9,
+                cellPadding: 3
+            },
             columnStyles: {
-                0: { cellWidth: 60 },
-                1: { cellWidth: 40, halign: "right" },
-                2: { cellWidth: 40, halign: "right" },
+                0: { cellWidth: 70, halign: "left" },
+                1: { cellWidth: 35, halign: "right" },
+                2: { cellWidth: 35, halign: "right" },
                 3: { cellWidth: 40, halign: "right" },
             },
-            styles: { fontSize: 9 },
-            didParseCell: (dataCell) => {
-                const rowIndex = dataCell.row.index;
-                const totalRows = tableRows.length;
-                // Style the summary rows (last 4 rows)
-                if (rowIndex >= totalRows - 4) {
-                    dataCell.cell.styles.fontStyle = "bold";
-                    if (rowIndex === totalRows - 1) {
-                        // Last row (Balance) gets a different background
-                        dataCell.cell.styles.fillColor = [240, 240, 240];
-                    } else {
-                        // Other summary rows get light grey background
-                        dataCell.cell.styles.fillColor = [248, 250, 252];
-                    }
-                }
+            styles: {
+                fontSize: 8,
+                cellPadding: 2.5,
+                lineColor: [229, 231, 235],
+                lineWidth: 0.1
+            },
+            alternateRowStyles: {
+                fillColor: [255, 255, 255]
             },
         });
+
+        // --- Summary Section (white background with black borders) ---
+        const finalY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 12;
+        const summaryX = pageWidth - 90;
+        const summaryWidth = 76;
+        const summaryHeight = 32;
+        const padding = 6;
+
+        // Draw summary box with white background and black border only
+        doc.setFillColor(255, 255, 255);
+        doc.rect(summaryX, finalY, summaryWidth, summaryHeight, "F");
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(0.5);
+        doc.rect(summaryX, finalY, summaryWidth, summaryHeight, "S");
+
+        const drawRow = (label: string, value: number, y: number, isBold = false) => {
+            doc.setFont("helvetica", isBold ? "bold" : "normal");
+            doc.setFontSize(9);
+            
+            // Label - black text on white background, with proper padding from border
+            doc.setTextColor(0, 0, 0);
+            doc.text(label, summaryX + padding, y);
+            
+            // Value - black text on white background, with proper padding from right border
+            doc.setTextColor(0, 0, 0);
+            const valueText = formatNumber(value);
+            doc.text(valueText, summaryX + summaryWidth - padding, y, { align: "right" });
+            
+            doc.setFont("helvetica", "normal");
+        };
+
+        drawRow("Sub Total:", subtotal, finalY + 8);
+        drawRow("Total:", total, finalY + 15);
+
+        // Divider line - black on white background, with proper padding from borders
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(0.3);
+        doc.line(summaryX + padding, finalY + 20, summaryX + summaryWidth - padding, finalY + 20);
+        
+        drawRow("Pending:", pending, finalY + 27);
+        
+        // Balance row (if needed, can be added separately)
+        // drawRow("Balance:", balance, finalY + 34, true);
     }
 
     // --- Footer ---

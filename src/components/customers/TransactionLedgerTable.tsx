@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import {
     useReactTable,
     getCoreRowModel,
@@ -31,6 +32,8 @@ const TransactionLedgerTable = ({
     onDateChange,
     initialDateRange,
 }: TransactionLedgerTableProps) => {
+    const navigate = useNavigate()
+    
     // Properly typed states
     const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({})
     const [sorting, setSorting] = useState<SortingState>([])
@@ -174,7 +177,15 @@ const TransactionLedgerTable = ({
                                                 )}
                                             </TableCell>
                                             <TableCell className="font-medium">
-                                                {transaction.no}
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        navigate(`/transactions/${transaction.id}`)
+                                                    }}
+                                                    className="text-primary hover:underline font-medium"
+                                                >
+                                                    {transaction.no}
+                                                </button>
                                             </TableCell>
                                             <TableCell>
                                                 <Badge

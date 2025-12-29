@@ -66,9 +66,9 @@ export const generateTransactionReportExcel = (
         "Type",
         "Customer/Vendor",
         "Items",
-        "Bill Amount (৳)",
-        "Paid (৳)",
-        "Due (৳)",
+        "Bill Amount",
+        "Paid",
+        "Due",
         "Payment Method",
     ];
 
@@ -97,9 +97,9 @@ export const generateTransactionReportExcel = (
         [],
         ["Summary"],
         ["Total Transactions", summary.totalTransactions],
-        ["Total Bill Amount (৳)", summary.totalBillAmount.toFixed(2)],
-        ["Total Paid (৳)", summary.totalPaid.toFixed(2)],
-        ["Total Due (৳)", summary.totalDue.toFixed(2)],
+        ["Total Bill Amount", summary.totalBillAmount.toFixed(2)],
+        ["Total Paid", summary.totalPaid.toFixed(2)],
+        ["Total Due", summary.totalDue.toFixed(2)],
     ];
 
     // Combine all data

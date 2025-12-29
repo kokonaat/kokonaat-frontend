@@ -63,12 +63,12 @@ export const LedgerReportColumns: ColumnDef<TransactionLedgerDetailItem>[] = [
   {
     accessorKey: 'price',
     header: 'Price',
-    cell: ({ getValue }) => `৳${parseFloat(getValue() as string).toFixed(2)}`,
+    cell: ({ getValue }) => `${parseFloat(getValue() as string).toFixed(2)}`,
   },
   {
     accessorKey: 'total',
     header: 'Total',
-    cell: ({ getValue }) => `৳${parseFloat(getValue() as string).toFixed(2)}`,
+    cell: ({ getValue }) => `${parseFloat(getValue() as string).toFixed(2)}`,
   },
   {
     accessorKey: 'paymentType',
@@ -137,19 +137,19 @@ export const TransactionReportColumns: ColumnDef<TransactionReportItem>[] = [
   {
     accessorKey: 'totalAmount',
     header: 'Amount',
-    cell: ({ getValue }) => `৳${Number(getValue()).toFixed(2)}`,
+    cell: ({ getValue }) => `${Number(getValue()).toFixed(2)}`,
   },
   {
     accessorKey: 'paid',
     header: 'Paid',
-    cell: ({ getValue }) => <span className="text-green-600">৳{Number(getValue()).toFixed(2)}</span>,
+    cell: ({ getValue }) => <span className="text-green-600">{Number(getValue()).toFixed(2)}</span>,
   },
   {
     accessorKey: 'pending',
     header: 'Due',
     cell: ({ getValue }) => (
       <span className={Number(getValue()) > 0 ? "text-destructive font-bold" : ""}>
-        ৳{Number(getValue()).toFixed(2)}
+        {Number(getValue()).toFixed(2)}
       </span>
     ),
   },
@@ -172,7 +172,7 @@ export const ExpensesReportColumns: ColumnDef<ExpenseReportItem>[] = [
   {
     accessorKey: "amount",
     header: "Amount",
-    cell: ({ getValue }) => `৳${Number(getValue()).toFixed(2)}`
+    cell: ({ getValue }) => `${Number(getValue()).toFixed(2)}`
   },
   {
     accessorKey: "remarks",
@@ -213,7 +213,7 @@ export const StocksReportColumns: ColumnDef<StockReportItem>[] = [
   {
     accessorKey: "lastPrice",
     header: "Last Price",
-    cell: ({ getValue }) => `৳${Number(getValue()).toFixed(2)}`
+    cell: ({ getValue }) => `${Number(getValue()).toFixed(2)}`
   },
 ]
 
@@ -250,7 +250,7 @@ export const StockTrackReportColumns: ColumnDef<StockTrackReportItem>[] = [
   {
     accessorKey: "price",
     header: "Price",
-    cell: ({ getValue }) => `৳${Number(getValue()).toFixed(2)}`
+    cell: ({ getValue }) => `${Number(getValue()).toFixed(2)}`
   },
 ]
 
@@ -317,9 +317,9 @@ export const BalanceSheetReportColumns: ColumnDef<BalanceSheetTableItem>[] = [
     cell: ({ row }) => {
       const item = row.original
       if (item.itemType === "transaction") {
-        return `৳${(item.totalAmount || 0).toFixed(2)}`
+        return `${(item.totalAmount || 0).toFixed(2)}`
       } else {
-        return `৳${(item.expenseAmount || 0).toFixed(2)}`
+        return `${(item.expenseAmount || 0).toFixed(2)}`
       }
     }
   },
@@ -329,7 +329,7 @@ export const BalanceSheetReportColumns: ColumnDef<BalanceSheetTableItem>[] = [
     cell: ({ row }) => {
       const item = row.original
       if (item.itemType === "transaction" && item.paid !== undefined) {
-        return <span className="text-green-600">৳{item.paid.toFixed(2)}</span>
+        return <span className="text-green-600">{item.paid.toFixed(2)}</span>
       }
       return "N/A"
     }
@@ -342,7 +342,7 @@ export const BalanceSheetReportColumns: ColumnDef<BalanceSheetTableItem>[] = [
       if (item.itemType === "transaction" && item.pending !== undefined) {
         return (
           <span className={item.pending > 0 ? "text-destructive font-bold" : ""}>
-            ৳{item.pending.toFixed(2)}
+            {item.pending.toFixed(2)}
           </span>
         )
       }

@@ -3,12 +3,7 @@ import { useShopStore } from '@/stores/shopStore'
 import { generatePDF } from '@/utils/enums/pdf'
 import type { Entity } from '@/utils/enums/pdf'
 import type { Transaction } from '@/interface/transactionInterface'
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
 import { useTransactionLedger } from '@/hooks/useTransaction'
 import { toast } from 'sonner'
 
@@ -91,26 +86,18 @@ export const TransactionsLedgerDownload = ({ transaction }: Props) => {
     }
 
     return (
-        <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <button
-                        onClick={handleDownload}
-                        disabled={isLoading}
-                        className="p-1.5 hover:bg-muted rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        aria-label={`Download ${entityType} ledger`}
-                    >
-                        {isLoading ? (
-                            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-                        ) : (
-                            <Download className="w-4 h-4 text-muted-foreground hover:text-foreground transition-colors" />
-                        )}
-                    </button>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>Download {entityType === 'vendor' ? 'Vendor' : 'Customer'} Ledger Report</p>
-                </TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
+        <Button
+            onClick={handleDownload}
+            disabled={isLoading}
+            variant="default"
+            className="gap-2"
+        >
+            {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+                <Download className="h-4 w-4" />
+            )}
+            Download PDF
+        </Button>
     )
 }

@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator"
 import { useTransactionById } from "@/hooks/useTransaction"
 import { useShopStore } from "@/stores/shopStore"
 import { TransactionDetailsTable } from "./TransactionDetailsTable"
+import { TransactionDetailsDownload } from "./TransactionDetailsDownload"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 
 const TransactionDetails = () => {
@@ -23,8 +24,13 @@ const TransactionDetails = () => {
         <Main>
             <Card className="rounded-2xl shadow-sm border bg-card">
                 <CardHeader>
-                    <CardTitle>Transaction #{transaction.no}</CardTitle>
-                    <CardDescription>Type: {transaction.transactionType}</CardDescription>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle>Transaction #{transaction.no}</CardTitle>
+                            <CardDescription>Type: {transaction.transactionType}</CardDescription>
+                        </div>
+                        <TransactionDetailsDownload transaction={transaction} />
+                    </div>
                 </CardHeader>
 
                 <CardContent className="space-y-6">
@@ -32,9 +38,9 @@ const TransactionDetails = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <p><strong>Name:</strong> {transaction.vendor?.name ?? transaction.customer?.name}</p>
-                            <p><strong>Amount:</strong> ৳{transaction.totalAmount}</p>
-                            <p><strong>Paid:</strong> ৳{transaction.paid}</p>
-                            <p><strong>Pending:</strong> ৳{transaction.pending}</p>
+                            <p><strong>Amount:</strong> {transaction.totalAmount}</p>
+                            <p><strong>Paid:</strong> {transaction.paid}</p>
+                            <p><strong>Pending:</strong> {transaction.pending}</p>
                         </div>
 
                         <div className="space-y-2">

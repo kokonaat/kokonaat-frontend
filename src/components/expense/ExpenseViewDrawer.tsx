@@ -47,7 +47,7 @@ const ExpenseViewDrawer = ({
                     </div>
 
                     <div>
-                        <span className="font-medium text-foreground">Amount:</span> ৳
+                        <span className="font-medium text-foreground">Amount:</span>
                         {currentRow.amount}
                     </div>
 

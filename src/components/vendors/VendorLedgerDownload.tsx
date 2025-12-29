@@ -100,7 +100,7 @@ export const VendorLedgerDownload = ({ vendor }: Props) => {
                     </button>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>Download Ledger Report</p>
+                    <p>Download PDF</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>

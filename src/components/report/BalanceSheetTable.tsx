@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { NoDataFound } from "@/components/NoDataFound"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Download } from "lucide-react"
 import type { BalanceSheetDayItem, BalanceSheetItem } from "@/interface/reportInterface"
 
 interface BalanceSheetTableProps {
@@ -45,10 +46,10 @@ const renderItem = (item: BalanceSheetItem, index: number) => {
           </Badge>
         </TableCell>
         <TableCell>{item.customerName || item.vendorName || "N/A"}</TableCell>
-        <TableCell className="text-right">৳{item.totalAmount.toFixed(2)}</TableCell>
-        <TableCell className="text-right text-green-600">৳{item.paid.toFixed(2)}</TableCell>
+        <TableCell className="text-right">{item.totalAmount.toFixed(2)}</TableCell>
+        <TableCell className="text-right text-green-600">{item.paid.toFixed(2)}</TableCell>
         <TableCell className={`text-right ${item.pending > 0 ? "text-destructive font-bold" : ""}`}>
-          ৳{item.pending.toFixed(2)}
+          {item.pending.toFixed(2)}
         </TableCell>
         <TableCell>{item.paymentType}</TableCell>
         <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
@@ -64,7 +65,7 @@ const renderItem = (item: BalanceSheetItem, index: number) => {
           </Badge>
         </TableCell>
         <TableCell>{item.expenseTitle}</TableCell>
-        <TableCell className="text-right">৳{item.expenseAmount.toFixed(2)}</TableCell>
+        <TableCell className="text-right">{item.expenseAmount.toFixed(2)}</TableCell>
         <TableCell className="text-right">N/A</TableCell>
         <TableCell className="text-right">N/A</TableCell>
         <TableCell>N/A</TableCell>
@@ -115,7 +116,10 @@ export const BalanceSheetTable = ({
           {onDownloadExcel && (
             <Button onClick={onDownloadExcel}>Download as Excel</Button>
           )}
-          <Button onClick={onDownloadPdf}>Download as PDF</Button>
+          <Button onClick={onDownloadPdf} className="gap-2">
+            <Download className="h-4 w-4" />
+            Download PDF
+          </Button>
         </div>
       </div>
 
@@ -175,19 +179,19 @@ export const BalanceSheetTable = ({
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Opening Balance:</span>
-                    <span className="ml-2 font-semibold">৳{dayItem.closingBalance.openingBalance.toFixed(2)}</span>
+                    <span className="ml-2 font-semibold">{dayItem.closingBalance.openingBalance.toFixed(2)}</span>
                   </div>
                   <div>
                     <span className="text-green-600">Total In:</span>
-                    <span className="ml-2 font-semibold">৳{dayItem.closingBalance.totalInflow.toFixed(2)}</span>
+                    <span className="ml-2 font-semibold">{dayItem.closingBalance.totalInflow.toFixed(2)}</span>
                   </div>
                   <div>
                     <span className="text-red-600">Total Out:</span>
-                    <span className="ml-2 font-semibold">৳{dayItem.closingBalance.totalOutflow.toFixed(2)}</span>
+                    <span className="ml-2 font-semibold">{dayItem.closingBalance.totalOutflow.toFixed(2)}</span>
                   </div>
                   <div>
                     <span className="text-blue-600">Closing Balance:</span>
-                    <span className="ml-2 font-semibold">৳{dayItem.closingBalance.closingBalance.toFixed(2)}</span>
+                    <span className="ml-2 font-semibold">{dayItem.closingBalance.closingBalance.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

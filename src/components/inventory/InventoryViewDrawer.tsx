@@ -94,7 +94,7 @@ const InventoryViewDrawer = ({
             {data && data.items.length > 0 && (
               <Button
                 onClick={handleDownloadPDF}
-                variant="outline"
+                variant="default"
                 size="sm"
                 className="gap-2"
                 disabled={isLoading}
@@ -134,8 +134,7 @@ const InventoryViewDrawer = ({
             </TooltipProvider>
           </div>
           <div>
-            <span className="font-medium text-foreground">Last Price:</span> ৳
-            {currentRow.lastPrice}
+            <span className="font-medium text-foreground">Last Price:</span> {currentRow.lastPrice}
           </div>
         </div>
 

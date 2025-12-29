@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useParams } from "react-router-dom"
-import { Mail, MapPin, Phone, User, Building2 } from "lucide-react"
+import { Mail, MapPin, Phone, User, Building2, Download } from "lucide-react"
 import { Badge } from "../ui/badge"
 import { generatePDF } from "@/utils/enums/pdf"
 import type { Entity } from "@/utils/enums/pdf"
@@ -14,12 +14,14 @@ import {
   CardDescription,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
 import VendorDialogs from "@/components/vendors/VendorDialogs"
 import { useShopStore } from "@/stores/shopStore"
 import TransactionLedgerTable from "./TransactionLedgerTable"
 import { useTransactionLedger } from "@/hooks/useTransaction"
 import { useCustomerById } from "@/hooks/useCustomer"
 import { useVendorById } from "@/hooks/useVendor"
+import { format, subDays } from "date-fns"
 
 const TransactionLedger = () => {
   const shopId = useShopStore((s) => s.currentShopId)
@@ -27,9 +29,20 @@ const TransactionLedger = () => {
   // Now we have the type in URL
   const { id: entityId, type } = useParams<{ id: string; type: "vendor" | "customer" }>()
 
+  // Default to last 30 days
+  const defaultDateRange = useMemo(() => {
+    const today = new Date()
+    const thirtyDaysAgo = subDays(today, 30)
+    return {
+      from: thirtyDaysAgo,
+      to: today
+    }
+  }, [])
+
   const [pageIndex, setPageIndex] = useState(0)
-  const [startDate, setStartDate] = useState<string>()
-  const [endDate, setEndDate] = useState<string>()
+  const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>(defaultDateRange)
+  const [startDate, setStartDate] = useState<string>(format(defaultDateRange.from, 'yyyy-MM-dd'))
+  const [endDate, setEndDate] = useState<string>(format(defaultDateRange.to, 'yyyy-MM-dd'))
   const pageSize = 10
 
   const isVendor = type === "vendor"
@@ -193,15 +206,17 @@ const TransactionLedger = () => {
                         <span className="font-semibold">{totalPending}</span>
                       </div>
 
-                      <button
+                      <Button
                         onClick={() => generatePDF(entity as Entity, transactions, {
                           totalAmount,
                           totalPaid,
                         })}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                        variant="default"
+                        className="gap-2"
                       >
-                        Download PDF Report
-                      </button>
+                        <Download className="h-4 w-4" />
+                        Download PDF
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -218,9 +233,19 @@ const TransactionLedger = () => {
                     pageSize={pageSize}
                     total={total}
                     onPageChange={setPageIndex}
+                    initialDateRange={dateRange}
                     onDateChange={(from, to) => {
-                      setStartDate(from)
-                      setEndDate(to)
+                      if (from && to) {
+                        setDateRange({ from, to })
+                        setStartDate(format(from, 'yyyy-MM-dd'))
+                        setEndDate(format(to, 'yyyy-MM-dd'))
+                        setPageIndex(0) // Reset to first page when date range changes
+                      } else {
+                        setDateRange(defaultDateRange)
+                        setStartDate(format(defaultDateRange.from, 'yyyy-MM-dd'))
+                        setEndDate(format(defaultDateRange.to, 'yyyy-MM-dd'))
+                        setPageIndex(0) // Reset to first page when date range is cleared
+                      }
                     }}
                   />
                 )}
@@ -250,9 +275,19 @@ const TransactionLedger = () => {
                     pageSize={pageSize}
                     total={total}
                     onPageChange={setPageIndex}
+                    initialDateRange={dateRange}
                     onDateChange={(from, to) => {
-                      setStartDate(from)
-                      setEndDate(to)
+                      if (from && to) {
+                        setDateRange({ from, to })
+                        setStartDate(format(from, 'yyyy-MM-dd'))
+                        setEndDate(format(to, 'yyyy-MM-dd'))
+                        setPageIndex(0) // Reset to first page when date range changes
+                      } else {
+                        setDateRange(defaultDateRange)
+                        setStartDate(format(defaultDateRange.from, 'yyyy-MM-dd'))
+                        setEndDate(format(defaultDateRange.to, 'yyyy-MM-dd'))
+                        setPageIndex(0) // Reset to first page when date range is cleared
+                      }
                     }}
                   />
                 )}

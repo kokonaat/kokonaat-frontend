@@ -46,7 +46,7 @@ export const ExpenseColumns: ColumnDef<ExpenseItemInterface>[] = [
         header: ({ column }) => <DataTableColumnHeader column={column} title='Amount' />,
         cell: ({ row }) => {
             const value = row.getValue<number>('amount')
-            return <>৳{value}</>
+            return <>{value}</>
         },
     },
     {

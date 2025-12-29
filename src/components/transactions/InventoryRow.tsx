@@ -256,7 +256,7 @@ export const InventoryRow = ({
                                     {itemDisplayData?.lastPrice !== undefined &&
                                         itemDisplayData.lastPrice !== null && (
                                             <p className='text-xs text-green-700 font-semibold mt-1'>
-                                                Last Price: ৳{itemDisplayData.lastPrice.toFixed(2)}
+                                                Last Price: {itemDisplayData.lastPrice.toFixed(2)}
                                             </p>
                                         )}
                                 </div>

@@ -76,7 +76,7 @@ export const TransactionDetailsTable = ({ data }: TransactionDetailsTableProps) 
         getPaginationRowModel: getPaginationRowModel(),
         globalFilterFn: (row, _colId, filterValue) => {
             const search = String(filterValue).toLowerCase()
-            return (
+            return !!(
                 row.original.inventory?.name?.toLowerCase().includes(search) ||
                 String(row.original.price).includes(search) ||
                 String(row.original.total).includes(search) ||

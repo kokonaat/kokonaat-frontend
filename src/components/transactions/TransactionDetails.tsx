@@ -1,13 +1,12 @@
 import { useParams } from "react-router-dom"
 import { Main } from "@/components/layout/main"
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
 import { useTransactionById } from "@/hooks/useTransaction"
 import { useShopStore } from "@/stores/shopStore"
 import { TransactionDetailsTable } from "./TransactionDetailsTable"
 import { TransactionDetailsDownload } from "./TransactionDetailsDownload"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "../ui/tooltip"
-import { Receipt, User, Calendar, CreditCard, FileText, DollarSign, CheckCircle2, Clock, Briefcase, Contact } from "lucide-react"
+import { Receipt, User, Calendar, CreditCard, FileText, DollarSign, CheckCircle2, Clock, Briefcase } from "lucide-react"
 import { Badge } from "../ui/badge"
 
 const TransactionDetails = () => {

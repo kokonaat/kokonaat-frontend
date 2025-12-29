@@ -344,7 +344,6 @@ export const generatePDF = (
     doc.rect(summaryX, finalY, summaryWidth, summaryHeight, "S");
 
     const balanceDue = summary.totalAmount - summary.totalPaid;
-    const isNegative = balanceDue < 0;
 
     const drawRow = (label: string, value: number, y: number, isBold = false, isNegativeValue = false) => {
         doc.setFont("helvetica", isBold ? "bold" : "normal");

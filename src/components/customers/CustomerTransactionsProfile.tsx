@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { Mail, Phone, MapPin, User } from "lucide-react"
+import { Mail, Phone, MapPin, User, Briefcase, Contact } from "lucide-react"
 import { useCustomerById, useCustomerTransactions } from "@/hooks/useCustomer"
 import CustomerTransactionsTable from "./CustomerTransactionsTable"
 
@@ -63,51 +63,83 @@ const CustomerTransactionsProfile = () => {
 
             <CardContent className="space-y-6">
               {/* Basic Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <p className="flex items-center gap-2">
-                    <Mail className="h-5 w-5 text-muted-foreground" />
-                    <span>{customer.email ?? "N/A"}</span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Phone className="h-5 w-5 text-muted-foreground" />
-                    <span>{customer.phone ?? "N/A"}</span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-muted-foreground shrink-0" />
-                    <span className="truncate">
-                      {[customer.address, customer.city]
-                        .filter(Boolean)
-                        .join(', ') ||
-                        <span className="text-muted-foreground">N/A</span>
-                      }
-                    </span>
-                  </p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                {/* Contact Information Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-2 border-b">
+                    <Contact className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+                      Contact Information
+                    </h3>
+                  </div>
+                  <div className="space-y-3.5">
+                    {customer.email && (
+                      <div className="flex items-start gap-3">
+                        <Mail className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-muted-foreground mb-0.5">Email</p>
+                          <p className="text-sm font-medium break-all">{customer.email}</p>
+                        </div>
+                      </div>
+                    )}
+                    {customer.phone && (
+                      <div className="flex items-start gap-3">
+                        <Phone className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-muted-foreground mb-0.5">Phone</p>
+                          <p className="text-sm font-medium">{customer.phone}</p>
+                        </div>
+                      </div>
+                    )}
+                    {(customer.address || customer.city) && (
+                      <div className="flex items-start gap-3">
+                        <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-muted-foreground mb-0.5">Address</p>
+                          <p className="text-sm font-medium">
+                            {[customer.address, customer.city].filter(Boolean).join(", ") || "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <p>
-                    <strong>Shop:</strong>{" "}
-                    <span className="text-muted-foreground">{customer.shop?.name}</span>
-                  </p>
-                  <p>
-                    <strong>Business Type:</strong>{" "}
-                    {customer.isB2B ? (
-                      <Badge variant="default">B2B</Badge>
-                    ) : (
-                      <Badge variant="secondary">Individual</Badge>
+                {/* Business Details Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-2 border-b">
+                    <Briefcase className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+                      Business Details
+                    </h3>
+                  </div>
+                  <div className="space-y-3.5">
+                    {customer.shop?.name && (
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-0.5">Shop</p>
+                        <p className="text-sm font-medium">{customer.shop.name}</p>
+                      </div>
                     )}
-                  </p>
-                  <p>
-                    <strong>Contact Person:</strong>{" "}
-                    {customer.contactPerson || customer.contactPersonPhone ? (
-                      customer.contactPerson && customer.contactPersonPhone
-                        ? `${customer.contactPerson} (${customer.contactPersonPhone})`
-                        : customer.contactPerson || customer.contactPersonPhone
-                    ) : (
-                      <span className="text-muted-foreground">Not Provided</span>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1.5">Business Type</p>
+                      {customer.isB2B ? (
+                        <Badge variant="default" className="text-xs">B2B</Badge>
+                      ) : (
+                        <Badge variant="secondary" className="text-xs">Individual</Badge>
+                      )}
+                    </div>
+                    {(customer.contactPerson || customer.contactPersonPhone) && (
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-0.5">Contact Person</p>
+                        <p className="text-sm font-medium">
+                          {customer.contactPerson && customer.contactPersonPhone
+                            ? `${customer.contactPerson} (${customer.contactPersonPhone})`
+                            : customer.contactPerson || customer.contactPersonPhone}
+                        </p>
+                      </div>
                     )}
-                  </p>
+                  </div>
                 </div>
               </div>
 

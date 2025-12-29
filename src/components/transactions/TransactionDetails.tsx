@@ -6,7 +6,9 @@ import { useTransactionById } from "@/hooks/useTransaction"
 import { useShopStore } from "@/stores/shopStore"
 import { TransactionDetailsTable } from "./TransactionDetailsTable"
 import { TransactionDetailsDownload } from "./TransactionDetailsDownload"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "../ui/tooltip"
+import { Receipt, User, Calendar, CreditCard, FileText, DollarSign, CheckCircle2, Clock, Briefcase, Contact } from "lucide-react"
+import { Badge } from "../ui/badge"
 
 const TransactionDetails = () => {
     const { id } = useParams<{ id: string }>()
@@ -20,68 +22,176 @@ const TransactionDetails = () => {
 
     const showDetailsTable = transaction.transactionType === "PURCHASE" || transaction.transactionType === "SALE"
 
+    const name = transaction.vendor?.name ?? transaction.customer?.name ?? "N/A"
+    const partnerType = transaction.vendor ? "Vendor" : transaction.customer ? "Customer" : "N/A"
+    const paymentType = (transaction.paymentType ?? "N/A").replace("_", " ")
+    const status = transaction.transactionStatus ?? "Pending"
+    const isPaid = transaction.isPaid || transaction.pending === 0
+
     return (
         <Main>
-            <Card className="rounded-2xl shadow-sm border bg-card">
-                <CardHeader>
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <CardTitle>Transaction #{transaction.no}</CardTitle>
-                            <CardDescription>Type: {transaction.transactionType}</CardDescription>
+            <div className="space-y-6">
+                {/* Transaction Info Card */}
+                <Card className="rounded-2xl shadow-sm border bg-card">
+                    <CardHeader className="pb-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <Receipt className="h-8 w-8 text-primary" />
+                                <div>
+                                    <CardTitle>Transaction #{transaction.no}</CardTitle>
+                                    <CardDescription>
+                                        Type: {transaction.transactionType}
+                                    </CardDescription>
+                                </div>
+                            </div>
+                            <TransactionDetailsDownload transaction={transaction} />
                         </div>
-                        <TransactionDetailsDownload transaction={transaction} />
-                    </div>
-                </CardHeader>
+                    </CardHeader>
 
-                <CardContent className="space-y-6">
-                    {/* Basic Info */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                            <p><strong>Name:</strong> {transaction.vendor?.name ?? transaction.customer?.name}</p>
-                            <p><strong>Amount:</strong> {transaction.totalAmount}</p>
-                            <p><strong>Paid:</strong> {transaction.paid}</p>
-                            <p><strong>Pending:</strong> {transaction.pending}</p>
-                        </div>
+                    <CardContent className="space-y-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            
+                            {/* Transaction Information Section */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2 pb-2 border-b">
+                                    <Briefcase className="h-5 w-5 text-primary" />
+                                    <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+                                        Transaction Information
+                                    </h3>
+                                </div>
+                                <div className="space-y-3.5">
+                                    {name && (
+                                        <div className="flex items-start gap-3">
+                                            <User className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-xs text-muted-foreground mb-0.5">{partnerType}</p>
+                                                <p className="text-sm font-medium">{name}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="flex items-start gap-3">
+                                        <CreditCard className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-xs text-muted-foreground mb-0.5">Payment Type</p>
+                                            <p className="text-sm font-medium">{paymentType}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        {isPaid ? (
+                                            <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
+                                        ) : (
+                                            <Clock className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+                                        )}
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-xs text-muted-foreground mb-0.5">Status</p>
+                                            <Badge 
+                                                variant={isPaid ? "default" : "secondary"}
+                                                className="text-xs"
+                                            >
+                                                {status}
+                                            </Badge>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <div className="space-y-2">
-                            <p><strong>Payment Type:</strong> {(transaction.paymentType ?? "N/A").replace("_", " ")}</p>
-                            <p><strong>Status:</strong> {transaction.transactionStatus ?? "Pending"}</p>
-                            {/* <p><strong>Partner Type:</strong> {transaction.partnerType}</p> */}
-                            <p><strong>Created At:</strong> {new Date(transaction.createdAt).toLocaleString()}</p>
-                            <p><strong>Updated At:</strong> {new Date(transaction.updatedAt).toLocaleString()}</p>
-                            <div className="flex items-center gap-2">
-                                <strong>Remarks:</strong>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <span className="truncate max-w-50 block">
-                                            {transaction.remarks || "N/A"}
-                                        </span>
-                                    </TooltipTrigger>
-                                    <TooltipContent className="max-w-xs wrap-break-word">
-                                        {transaction.remarks || "N/A"}
-                                    </TooltipContent>
-                                </Tooltip>
+                            {/* Financial Details Section */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2 pb-2 border-b">
+                                    <DollarSign className="h-5 w-5 text-primary" />
+                                    <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+                                        Financial Details
+                                    </h3>
+                                </div>
+                                <div className="space-y-3.5">
+                                    <div>
+                                        <p className="text-xs text-muted-foreground mb-0.5">Total Amount</p>
+                                        <p className="text-sm font-medium">{transaction.totalAmount.toLocaleString()}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-muted-foreground mb-0.5">Paid</p>
+                                        <p className="text-sm font-medium text-green-600">{transaction.paid.toLocaleString()}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-muted-foreground mb-0.5">Pending</p>
+                                        <p className="text-sm font-medium text-amber-600">{transaction.pending.toLocaleString()}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {
-                        showDetailsTable ? <Separator /> : ""
-                    }
+                        {/* Additional Information Section */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4 border-t">
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2 pb-2 border-b">
+                                    <Calendar className="h-5 w-5 text-primary" />
+                                    <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+                                        Timeline
+                                    </h3>
+                                </div>
+                                <div className="space-y-3.5">
+                                    <div>
+                                        <p className="text-xs text-muted-foreground mb-0.5">Created At</p>
+                                        <p className="text-sm font-medium">
+                                            {new Date(transaction.createdAt).toLocaleString()}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-muted-foreground mb-0.5">Updated At</p>
+                                        <p className="text-sm font-medium">
+                                            {new Date(transaction.updatedAt).toLocaleString()}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
 
-                    {/* Details */}
-                    {showDetailsTable && (
-                        <div>
-                            <h3 className="text-lg font-semibold mb-2">Transaction Details</h3>
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2 pb-2 border-b">
+                                    <FileText className="h-5 w-5 text-primary" />
+                                    <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+                                        Additional Information
+                                    </h3>
+                                </div>
+                                <div className="space-y-3.5">
+                                    <div>
+                                        <p className="text-xs text-muted-foreground mb-0.5">Remarks</p>
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <p className="text-sm font-medium truncate cursor-help">
+                                                        {transaction.remarks || "N/A"}
+                                                    </p>
+                                                </TooltipTrigger>
+                                                {transaction.remarks && (
+                                                    <TooltipContent className="max-w-xs">
+                                                        <p className="break-words">{transaction.remarks}</p>
+                                                    </TooltipContent>
+                                                )}
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Transaction Details Table */}
+                {showDetailsTable && (
+                    <Card className="rounded-2xl shadow-sm border bg-card">
+                        <CardHeader>
+                            <CardTitle>Transaction Details</CardTitle>
+                        </CardHeader>
+                        <CardContent>
                             {transaction.details?.length ? (
                                 <TransactionDetailsTable data={transaction.details} />
                             ) : (
-                                <p>No details found.</p>
+                                <p className="text-muted-foreground">No details found.</p>
                             )}
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+                        </CardContent>
+                    </Card>
+                )}
+            </div>
         </Main>
     )
 }

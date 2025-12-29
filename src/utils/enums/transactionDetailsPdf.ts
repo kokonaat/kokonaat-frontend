@@ -171,8 +171,8 @@ export const generateTransactionDetailsPDF = (
         // Prepare table data
         const tableRows = transaction.details.map((detail) => [
             detail.inventory?.name ?? "N/A",
-            formatNumber(detail.quantity || 0),
             detail.unitOfMeasurement?.name ?? "N/A",
+            formatNumber(detail.quantity || 0),
             formatNumber(detail.price || 0),
             formatNumber(detail.total || 0),
         ]);
@@ -184,7 +184,7 @@ export const generateTransactionDetailsPDF = (
 
         autoTable(doc, {
             startY: startY,
-            head: [["Inventory", "Quantity", "UOM", "Price", "Total"]],
+            head: [["Item", "UOM", "Qty", "Price", "Total"]],
             body: tableRows,
             theme: "plain",
             headStyles: {
@@ -197,8 +197,8 @@ export const generateTransactionDetailsPDF = (
             },
             columnStyles: {
                 0: { cellWidth: 60, halign: "left" },
-                1: { cellWidth: 30, halign: "right" },
-                2: { cellWidth: 25, halign: "center" },
+                1: { cellWidth: 25, halign: "center" },
+                2: { cellWidth: 30, halign: "right" },
                 3: { cellWidth: 30, halign: "right" },
                 4: { cellWidth: 35, halign: "right" },
             },

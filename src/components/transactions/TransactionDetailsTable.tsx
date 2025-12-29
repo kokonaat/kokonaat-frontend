@@ -38,12 +38,12 @@ export const TransactionDetailsTable = ({ data }: TransactionDetailsTableProps) 
 
     const columns: ColumnDef<TransactionDetail>[] = [
         {
-            header: "Inventory",
+            header: "Item",
             accessorKey: "inventory.name",
             cell: (info) => info.row.original.inventory?.name ?? "N/A",
         },
-        { header: "Quantity", accessorKey: "quantity" },
         { header: "UOM", accessorKey: "unitOfMeasurement.name", cell: (info) => info.row.original.unitOfMeasurement?.name ?? "N/A" },
+        { header: "Qty", accessorKey: "quantity" },
         { header: "Price", accessorKey: "price", cell: (info) => `${info.getValue<number>()}` },
         { header: "Total", accessorKey: "total", cell: (info) => `${info.getValue<number>()}` },
     ]

@@ -10,7 +10,7 @@ import {
 import type { InventoryFormInterface, InventoryItemInterface } from "@/interface/inventoryInterface"
 
 // query keys
-const INVENTORY_KEYS = {
+export const INVENTORY_KEYS = {
   all: ["inventories"] as const,
   detail: (id: string) => [...INVENTORY_KEYS.all, id] as const,
   tracking: (inventoryId: string, shopId: string) => [...INVENTORY_KEYS.all, 'tracking', inventoryId, shopId] as const,

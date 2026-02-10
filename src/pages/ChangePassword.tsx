@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { ArrowRight, Loader2 } from "lucide-react"
 import { useForm } from "react-hook-form"
@@ -22,10 +21,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useUser } from "@/hooks/useUser"
 import type { ChangePasswordFormValues } from "@/schema/changePasswordSchema"
 import { changePasswordSchema } from "@/schema/changePasswordSchema"
-import { signInUser } from "@/api/userAuthApi"
 import { useChangePassword } from "@/hooks/useAuth"
 
 const ChangePassword = () => {
@@ -34,52 +31,24 @@ const ChangePassword = () => {
     defaultValues: {
       oldPassword: "",
       newPassword: "",
+      confirmNewPassword: "",
     },
   })
 
   const { mutate: handleChangePassword, isPending } = useChangePassword()
-  const { data: currentUser } = useUser() // fetch current user
   const navigate = useNavigate()
-  const [userPhone, setUserPhone] = useState<string>("")
-
-  // set the phone from current user once loaded
-  useEffect(() => {
-    if (currentUser?.phone) {
-      setUserPhone(currentUser.phone)
-    }
-  }, [currentUser])
 
   const onSubmit = (data: ChangePasswordFormValues) => {
-    if (!userPhone) {
-      toast.error("Unable to retrieve user phone for auto login.")
-      return
-    }
-
-    // prevent using the old password as the new one
     if (data.oldPassword === data.newPassword) {
       toast.error("New password cannot be the same as the old password.")
       return
     }
 
     handleChangePassword(data, {
-      onSuccess: async () => {
-        try {
-          // auto sign in using phone and new password
-          await signInUser({
-            phone: userPhone,
-            password: data.newPassword,
-          })
-
-          toast.success("Password changed successfully!")
-          form.reset()
-          navigate("/dashboard")
-        } catch (err: unknown) {
-          const errorMessage =
-            err instanceof Error
-              ? err.message
-              : "Failed to sign in. Please try again."
-          toast.error(errorMessage)
-        }
+      onSuccess: () => {
+        toast.success("Password changed successfully!")
+        form.reset()
+        navigate("/")
       },
       onError: (error: unknown) => {
         const errorMessage =
@@ -134,6 +103,24 @@ const ChangePassword = () => {
                       <Input
                         type="password"
                         placeholder="Enter new password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="confirmNewPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm New Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Confirm new password"
                         {...field}
                       />
                     </FormControl>

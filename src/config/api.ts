@@ -7,6 +7,10 @@ export const apiEndpoints: ApiEndpoints = {
     signUp: '/auth/signup',
     signIn: '/auth/signin',
     refresh: '/auth/refresh',
+    logout: '/auth/logout',
+    forgetPassword: '/auth/forget-password',
+    resetPassword: '/auth/reset-password',
+    changePassword: '/auth/change-password',
   },
   dashbaord: {
     dashboardReport: '/report/dashboard',

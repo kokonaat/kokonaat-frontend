@@ -18,7 +18,7 @@ const SignUpForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
 
   const form = useForm<FormValues>({
     resolver: zodResolver(signUpFormSchema),
-    defaultValues: { name: "", phone: "", password: "", confirmPassword: "" },
+    defaultValues: { name: "", email: "", phone: "", password: "", confirmPassword: "" },
   })
 
   const onSubmit = (data: FormValues) => {
@@ -26,12 +26,13 @@ const SignUpForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
     signUpMutation.mutate(
       {
         name: data.name,
-        phone: data.phone,
+        email: data.email,
+        ...(data.phone ? { phone: data.phone } : {}),
         password: data.password,
         confirmPassword: data.confirmPassword,
       },
       {
-        onSettled: () => setIsLoading(false)
+        onSettled: () => setIsLoading(false),
       }
     )
   }
@@ -49,9 +50,19 @@ const SignUpForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
           </FormItem>
         )} />
 
+        <FormField control={form.control} name="email" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Email</FormLabel>
+            <FormControl>
+              <Input type="email" placeholder="user@example.com" {...field} />
+            </FormControl>
+            <FormMessage>{form.formState.errors.email?.message}</FormMessage>
+          </FormItem>
+        )} />
+
         <FormField control={form.control} name="phone" render={({ field }) => (
           <FormItem>
-            <FormLabel>Phone</FormLabel>
+            <FormLabel>Phone (optional)</FormLabel>
             <FormControl>
               <Input placeholder="01711111111" {...field} />
             </FormControl>

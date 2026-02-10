@@ -3,6 +3,10 @@ export interface ApiEndpoints {
     signUp: string
     signIn: string
     refresh: string
+    logout: string
+    forgetPassword: string
+    resetPassword: string
+    changePassword: string
   }
   shop: {
     createShop: string

@@ -1,6 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createTransaction, getTransactionById, getTransactions, transactionLedger } from "@/api/transactionApi"
 import type { CreateTransactionDto, TransactionListResponse } from "@/interface/transactionInterface"
+import { INVENTORY_KEYS } from "./useInventory"
 
 const TRANSACTIONS_KEYS = {
     all: ["transactions"] as const,
@@ -34,7 +35,19 @@ export const useCreateTransaction = (shopId: string) => {
         mutationFn: (data: Omit<CreateTransactionDto, "shopId">) =>
             createTransaction({ ...data, shopId }),
         onSuccess: () => {
+            // Invalidate transaction queries
             queryClient.invalidateQueries({ queryKey: [...TRANSACTIONS_KEYS.all, shopId] })
+            // Invalidate inventory tracking queries to refresh inventory history
+            // This ensures inventory tracking table updates after purchase/sale
+            queryClient.invalidateQueries({ 
+                queryKey: [INVENTORY_KEYS.all[0], 'tracking'],
+                exact: false 
+            })
+            // Also invalidate inventory list to update stock quantities
+            queryClient.invalidateQueries({ 
+                queryKey: INVENTORY_KEYS.all,
+                exact: false 
+            })
         },
     })
 }

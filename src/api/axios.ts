@@ -18,14 +18,13 @@ axiosInstance.interceptors.request.use((config) => {
   return config
 })
 
-// handle token refresh on 401
+// handle token refresh on 401; 403 on refresh = invalid/expired refresh token
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
-    console.log(error.response?.status)
 
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
 
       const refreshToken = localStorage.getItem('refresh_token')
@@ -38,9 +37,8 @@ axiosInstance.interceptors.response.use(
       }
 
       try {
-        console.log('moved into try')
         const res = await axiosInstance.post(apiEndpoints.auth.refresh, {
-          refreshToken: refreshToken,
+          refreshToken,
         })
         const { access_token, refresh_token } = res.data
 
@@ -49,9 +47,12 @@ axiosInstance.interceptors.response.use(
 
         originalRequest.headers['Authorization'] = `Bearer ${access_token}`
         return axiosInstance(originalRequest)
-      } catch (err) {
+      } catch (err: unknown) {
+        // 403 or any refresh failure: invalid/expired refresh or user inactive
         localStorage.clear()
-        window.location.href = '/sign-in'
+        if (window.location.pathname !== '/sign-in') {
+          window.location.href = '/sign-in'
+        }
         return Promise.reject(err)
       }
     }

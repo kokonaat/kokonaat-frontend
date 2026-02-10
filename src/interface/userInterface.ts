@@ -1,14 +1,31 @@
 // Auth-related interfaces
 export interface UserSignUpInterface {
     name: string
-    phone: string
+    email: string
+    phone?: string
     password: string
     confirmPassword: string
 }
 
 export interface UserSignInInterface {
-    phone: string
+    email: string
     password: string
+}
+
+export interface ForgetPasswordRequest {
+    email: string
+}
+
+export interface ResetPasswordRequest {
+    token: string
+    newPassword: string
+    confirmPassword: string
+}
+
+export interface ChangePasswordRequest {
+    oldPassword: string
+    newPassword: string
+    confirmNewPassword: string
 }
 
 export interface AuthResponseInterface {

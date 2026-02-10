@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
   BadgeCheck,
   Bell,
@@ -23,8 +23,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { useAuthStore } from '@/stores/authStore'
-import { useShopStore } from '@/stores/shopStore'
+import { useAuth } from '@/hooks/useAuth'
 
 type NavUserProps = {
   user: {
@@ -36,14 +35,10 @@ type NavUserProps = {
 
 export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar()
-  const { clearTokens } = useAuthStore()
-  const { clearCurrentShop } = useShopStore()
-  const navigate = useNavigate()
+  const { logout } = useAuth()
 
   const handleLogOut = () => {
-    clearTokens()
-    clearCurrentShop()
-    navigate('/sign-in')
+    void logout()
   }
 
   return (

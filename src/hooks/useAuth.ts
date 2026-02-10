@@ -5,9 +5,19 @@ import { toast } from "sonner"
 import type {
     UserSignUpInterface,
     UserSignInInterface,
-    AuthResponseInterface
+    AuthResponseInterface,
+    ForgetPasswordRequest,
+    ResetPasswordRequest,
+    ChangePasswordRequest,
 } from "@/interface/userInterface"
-import { signUpUser, signInUser, changePassword } from "@/api/userAuthApi"
+import {
+    signUpUser,
+    signInUser,
+    logoutUser,
+    forgetPassword as forgetPasswordApi,
+    resetPassword as resetPasswordApi,
+    changePassword,
+} from "@/api/userAuthApi"
 import { useAuthStore } from "@/stores/authStore"
 import type { AxiosError } from "axios"
 import type { ShopListInterface } from "@/interface/shopInterface"
@@ -16,9 +26,9 @@ import { useShopStore } from "@/stores/shopStore"
 import { useUser } from "./useUser"
 
 export const useAuth = () => {
-    const { setTokens } = useAuthStore()
+    const { setTokens, clearTokens } = useAuthStore()
+    const clearCurrentShop = useShopStore((s) => s.clearCurrentShop)
     const navigate = useNavigate()
-    // user hook
     const { refetch: refetchUser } = useUser()
 
     // sign up
@@ -30,8 +40,8 @@ export const useAuth = () => {
     > = useMutation({
         mutationFn: async (data: UserSignUpInterface) => {
             await signUpUser(data)
-            // auto sign in
-            return signInUser({ phone: data.phone, password: data.password })
+            // auto sign in with email + password
+            return signInUser({ email: data.email, password: data.password })
         },
         onSuccess: async (data) => {
             if (data.access_token && data.refresh_token) {
@@ -106,12 +116,52 @@ export const useAuth = () => {
         },
     })
 
-    return { signUpMutation, signInMutation }
+    const logout = async () => {
+        try {
+            await logoutUser()
+        } finally {
+            clearTokens()
+            clearCurrentShop()
+            navigate("/sign-in")
+        }
+    }
+
+    return { signUpMutation, signInMutation, logout }
 }
 
-// change password
+// change password (authenticated)
 export const useChangePassword = () => {
     return useMutation({
-        mutationFn: changePassword,
+        mutationFn: (data: ChangePasswordRequest) => changePassword(data),
+    })
+}
+
+// forget password
+export const useForgetPassword = () => {
+    const navigate = useNavigate()
+    return useMutation({
+        mutationFn: (data: ForgetPasswordRequest) => forgetPasswordApi(data),
+        onSuccess: () => {
+            toast.success("If an account exists, you will receive an email")
+            navigate("/sign-in")
+        },
+        onError: (err: AxiosError<{ message: string }>) => {
+            toast.error(err?.response?.data?.message || "Failed to send reset email")
+        },
+    })
+}
+
+// reset password (from email link token)
+export const useResetPassword = () => {
+    const navigate = useNavigate()
+    return useMutation({
+        mutationFn: (data: ResetPasswordRequest) => resetPasswordApi(data),
+        onSuccess: () => {
+            toast.success("Password has been reset successfully")
+            navigate("/sign-in")
+        },
+        onError: (err: AxiosError<{ message: string }>) => {
+            toast.error(err?.response?.data?.message || "Failed to reset password")
+        },
     })
 }

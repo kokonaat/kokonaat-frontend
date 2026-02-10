@@ -1,12 +1,12 @@
 import z from "zod"
 
 export const signInFormSchema = z.object({
-  phone: z
+  email: z
     .string()
-    .min(1, "Please enter your phone number")
-    .regex(/^\d{10,15}$/, "Phone number must be between 10–15 digits"),
+    .min(1, "Please enter your email")
+    .email("Please enter a valid email address"),
   password: z
     .string()
-    .min(1, 'Please enter your password')
-    .min(6, 'Password must be at least 6 characters long'),
+    .min(1, "Please enter your password")
+    .min(6, "Password must be at least 6 characters long"),
 })

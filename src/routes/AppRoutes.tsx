@@ -29,6 +29,8 @@ const UserProfile = lazy(() => import("@/components/users/UserProfile"))
 const Settings = lazy(() => import("@/features/settings"))
 const ComingSoon = lazy(() => import("@/components/coming-soon"))
 const ChangePassword = lazy(() => import("@/pages/ChangePassword"))
+const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"))
+const ResetPassword = lazy(() => import("@/pages/ResetPassword"))
 
 const AppRoutes = () => {
     // calling user api to avoid to get null where user's data needed
@@ -41,6 +43,8 @@ const AppRoutes = () => {
                 <Routes>
                     <Route path="/sign-in" element={<SignIn />} />
                     <Route path="/sign-up" element={<SignUp />} />
+                    <Route path="/forget-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
 
                     <Route element={<ProtectedRoute />}>
                         <Route path="/create-shop" element={<CreateShop />} />

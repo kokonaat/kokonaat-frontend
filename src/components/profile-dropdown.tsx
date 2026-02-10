@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,20 +11,15 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useAuthStore } from '@/stores/authStore'
-import { useShopStore } from '@/stores/shopStore'
+import { useAuth } from '@/hooks/useAuth'
 import { useUserStore } from '@/stores/userStore'
 
 export function ProfileDropdown() {
-  const { clearTokens } = useAuthStore()
-  const { clearCurrentShop } = useShopStore()
+  const { logout } = useAuth()
   const user = useUserStore((s) => s.user)
-  const navigate = useNavigate()
 
   const handleLogOut = () => {
-    clearTokens()
-    clearCurrentShop()
-    navigate('/sign-in')
+    void logout()
   }
 
   return (

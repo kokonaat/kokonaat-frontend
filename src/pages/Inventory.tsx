@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react"
+import { useCallback, useState, useMemo } from "react"
+import { subDays } from "date-fns"
 import { Main } from "@/components/layout/main"
 import { useShopStore } from "@/stores/shopStore"
 import { useInventoryList } from "@/hooks/useInventory"
@@ -11,8 +12,19 @@ const Inventory = () => {
     const shopId = useShopStore(s => s.currentShopId)
     const [pageIndex, setPageIndex] = useState(0)
     const [searchBy, setSearchBy] = useState('')
-    const [startDate, setStartDate] = useState<Date | undefined>()
-    const [endDate, setEndDate] = useState<Date | undefined>()
+    
+    // Default date range: last 30 days
+    const defaultDateRange = useMemo(() => {
+        const today = new Date()
+        const thirtyDaysAgo = subDays(today, 30)
+        return {
+            from: thirtyDaysAgo,
+            to: today
+        }
+    }, [])
+    
+    const [startDate, setStartDate] = useState<Date | undefined>(defaultDateRange.from)
+    const [endDate, setEndDate] = useState<Date | undefined>(defaultDateRange.to)
     const pageSize = 10
 
     const handlePageChange = useCallback((index: number) => {

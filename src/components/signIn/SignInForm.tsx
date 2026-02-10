@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import type { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -25,15 +26,15 @@ const SignInForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
 
   const form = useForm<FormValues>({
     resolver: zodResolver(signInFormSchema),
-    defaultValues: { phone: '', password: '' },
+    defaultValues: { email: '', password: '' },
   })
 
   const onSubmit = (data: FormValues) => {
     setIsLoading(true)
     signInMutation.mutate(
       {
-        phone: data.phone,
-        password: data.password
+        email: data.email,
+        password: data.password,
       },
       {
         onSuccess: () => {
@@ -46,19 +47,20 @@ const SignInForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
 
   return (
     <Form {...form}>
-      <form 
-        onSubmit={form.handleSubmit(onSubmit)} 
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
         noValidate
-        className={cn('grid gap-3', className)} 
-        {...props}>
+        className={cn('grid gap-3', className)}
+        {...props}
+      >
         <FormField
           control={form.control}
-          name='phone'
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder='01711111111' {...field} />
+                <Input type="email" placeholder="user@example.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -67,25 +69,25 @@ const SignInForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
 
         <FormField
           control={form.control}
-          name='password'
+          name="password"
           render={({ field }) => (
-            <FormItem className='relative'>
+            <FormItem className="relative">
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <PasswordInput placeholder='********' {...field} />
+                <PasswordInput placeholder="********" {...field} />
               </FormControl>
               <FormMessage />
-              {/* <Link
-                to='#'
-                className='text-muted-foreground absolute end-0 -top-0.5 text-sm font-medium hover:opacity-75'
+              <Link
+                to="/forget-password"
+                className="text-muted-foreground absolute end-0 -top-0.5 text-sm font-medium hover:opacity-75"
               >
                 Forgot password?
-              </Link> */}
+              </Link>
             </FormItem>
           )}
         />
 
-        <Button type='submit' className='mt-2' disabled={isLoading}>
+        <Button type="submit" className="mt-2" disabled={isLoading}>
           {isLoading ? 'Logging in...' : 'Login'}
         </Button>
       </form>

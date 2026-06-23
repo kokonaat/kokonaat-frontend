@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import type { VendorMultiDeleteDialogProps } from '@/interface/vendorInterface'
 import { useDeleteInventory } from '@/hooks/useInventory'
+import { useTranslation } from '@/hooks/useTranslation'
 
 const CONFIRM_WORD = 'DELETE'
 
@@ -15,15 +16,18 @@ export function InventoryMultiDeleteDialog<TData extends { id: string }>({
   onOpenChange,
   table,
 }: VendorMultiDeleteDialogProps<TData>) {
+  const { t } = useTranslation('inventory')
+  const { t: tCommon } = useTranslation('common')
+  const { t: tToast } = useTranslation('toast')
   const [value, setValue] = useState('')
 
   const selectedRows = table.getFilteredSelectedRowModel().rows
-
   const deleteMutation = useDeleteInventory()
+  const entityLabel = t('page.title')
 
   const handleDelete = async () => {
     if (value.trim() !== CONFIRM_WORD) {
-      toast.error(`Please type "${CONFIRM_WORD}" to confirm.`)
+      toast.error(tToast('common.typeDeleteToConfirm'))
       return
     }
 
@@ -36,13 +40,15 @@ export function InventoryMultiDeleteDialog<TData extends { id: string }>({
         )
       ),
       {
-        loading: 'Deleting Inventories...',
+        loading: tToast('common.bulkDeleteLoading', { entity: entityLabel }),
         success: () => {
           table.resetRowSelection()
-          return `Deleted ${selectedRows.length} ${selectedRows.length > 1 ? 'Inventories' : 'Inventory'
-            }`
+          return tToast('common.bulkDeleteSuccess', {
+            count: selectedRows.length,
+            entity: entityLabel,
+          })
         },
-        error: 'Error deleting Inventory',
+        error: tToast('common.bulkDeleteError', { entity: entityLabel }),
       }
     )
   }
@@ -59,35 +65,31 @@ export function InventoryMultiDeleteDialog<TData extends { id: string }>({
             className='stroke-destructive me-1 inline-block'
             size={18}
           />{' '}
-          Delete {selectedRows.length}{' '}
-          {selectedRows.length > 1 ? 'Inventories' : 'Inventory'}
+          {t('bulkDelete.title', { count: selectedRows.length })}
         </span>
       }
       desc={
         <div className='space-y-4'>
-          <p className='mb-2'>
-            Are you sure you want to delete the selected Inventories? <br />
-            This action cannot be undone.
-          </p>
+          <p className='mb-2'>{t('bulkDelete.description', { count: selectedRows.length })}</p>
 
           <Label className='my-4 flex flex-col items-start gap-1.5'>
-            <span className=''>Confirm by typing "{CONFIRM_WORD}":</span>
+            <span>{tCommon('dialog.confirmByTyping', { word: CONFIRM_WORD })}</span>
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder={`Type "${CONFIRM_WORD}" to confirm.`}
+              placeholder={tCommon('dialog.typeToConfirm')}
             />
           </Label>
 
           <Alert variant='destructive'>
-            <AlertTitle>Warning!</AlertTitle>
+            <AlertTitle>{tCommon('dialog.warningTitle')}</AlertTitle>
             <AlertDescription>
-              Please be careful, this operation can not be rolled back.
+              {tCommon('dialog.warningDesc')}
             </AlertDescription>
           </Alert>
         </div>
       }
-      confirmText='Delete'
+      confirmText={t('buttons.delete')}
       destructive
     />
   )

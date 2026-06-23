@@ -1,0 +1,111 @@
+{
+  "page": {
+    "title": "Users",
+    "subtitle": "Manage your users and their roles here.",
+    "errorLoading": "Error loading users.",
+    "loading": "Loading users..."
+  },
+  "buttons": {
+    "addUser": "Add User",
+    "saveChanges": "Save changes",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "invite": "Invite",
+    "delete": "Delete"
+  },
+  "table": {
+    "filterPlaceholder": "Filter by id, name, phone...",
+    "toolbarFilter": "Filter users...",
+    "emptyMessage": "No User found!",
+    "emptyDetails": "Create a user first.",
+    "columns": {
+      "name": "Name",
+      "phone": "Phone",
+      "role": "Role",
+      "createdAt": "Created At",
+      "selectAll": "Select all",
+      "selectRow": "Select row"
+    },
+    "filters": {
+      "status": "Status",
+      "role": "Role",
+      "active": "Active",
+      "inactive": "Inactive",
+      "invited": "Invited",
+      "suspended": "Suspended"
+    }
+  },
+  "addEditDialog": {
+    "titleAdd": "Add New User",
+    "titleEdit": "Edit User",
+    "descriptionAdd": "Create new user here. Click save when you're done.",
+    "descriptionEdit": "Update the user here. Click save when you're done.",
+    "username": "Username",
+    "phoneNumber": "Phone Number",
+    "role": "Role",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "loadingRoles": "Loading roles...",
+    "rolePlaceholder": "Select a role",
+    "placeholders": {
+      "username": "john_doe",
+      "phone": "+123456789",
+      "password": "e.g., S3cur3P@ssw0rd"
+    }
+  },
+  "inviteDialog": {
+    "title": "Invite User",
+    "description": "Invite new user to join your team by sending them an email invitation. Assign a role to define their access level.",
+    "email": "Email",
+    "role": "Role",
+    "descriptionOptional": "Description (optional)",
+    "emailPlaceholder": "eg: john.doe@gmail.com",
+    "rolePlaceholder": "Select a role",
+    "notePlaceholder": "Add a personal note to your invitation (optional)"
+  },
+  "deleteDialog": {
+    "title": "Delete User",
+    "description": "Are you sure you want to delete {{name}}? This action will permanently remove the user from the system. This cannot be undone.",
+    "usernameLabel": "Username:",
+    "usernamePlaceholder": "Enter username to confirm deletion.",
+    "warningTitle": "Warning!",
+    "warningDescription": "Please be careful, this operation can not be rolled back.",
+    "confirm": "Delete",
+    "successMessage": "The following user has been deleted:"
+  },
+  "bulkActions": {
+    "inviteSelected": "Invite selected users",
+    "activateSelected": "Activate selected users",
+    "deactivateSelected": "Deactivate selected users",
+    "deleteSelected": "Delete selected users",
+    "activating": "Activating users...",
+    "deactivating": "Deactivating users...",
+    "activated": "Activated {{count}} user(s)",
+    "deactivated": "Deactivated {{count}} user(s)",
+    "activatingError": "Error activating users",
+    "deactivatingError": "Error deactivating users",
+    "inviting": "Inviting users...",
+    "invited": "Invited {{count}} user(s)",
+    "invitingError": "Error inviting users"
+  },
+  "multiDelete": {
+    "title": "Delete {{count}} {{entity}}",
+    "entityPlural": "users",
+    "entitySingular": "user",
+    "description": "Are you sure you want to delete the selected users? This action cannot be undone.",
+    "confirmTyping": "Confirm by typing \"DELETE\":",
+    "confirmPlaceholder": "Type \"DELETE\" to confirm.",
+    "loading": "Deleting users...",
+    "success": "Deleted {{count}} {{entity}}",
+    "error": "Error"
+  },
+  "roles": {
+    "superadmin": "Superadmin",
+    "admin": "Admin",
+    "manager": "Manager",
+    "cashier": "Cashier"
+  },
+  "profile": {
+    "title": "User Profile"
+  }
+}

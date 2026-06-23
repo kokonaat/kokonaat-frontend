@@ -1,0 +1,405 @@
+{
+  "common": {
+    "fallbacks": {
+      "companyName": "কোম্পানির নাম",
+      "shopName": "দোকানের নাম",
+      "notAvailable": "N/A",
+      "allTime": "সব সময়",
+      "allTypes": "সব ধরন",
+      "defaultStatusPending": "বকেয়া"
+    },
+    "labels": {
+      "reportPeriod": "রিপোর্ট সময়কাল:",
+      "generatedOn": "তৈরির তারিখ:",
+      "phone": "ফোন:",
+      "summary": "সারসংক্ষেপ",
+      "subtotal": "উপমোট",
+      "subtotalUppercase": "উপমোট",
+      "total": "মোট",
+      "totalUppercase": "মোট"
+    },
+    "accountLabels": {
+      "accountHolder": "হিসাবধারী:",
+      "customer": "গ্রাহক:",
+      "vendor": "সরবরাহকারী"
+    },
+    "partnerTypes": {
+      "customer": "গ্রাহক",
+      "vendor": "সরবরাহকারী"
+    },
+    "transactionTypes": {
+      "purchase": "ক্রয়",
+      "sale": "বিক্রয়",
+      "purchaseTitleCase": "ক্রয়",
+      "saleTitleCase": "বিক্রয়"
+    },
+    "financial": {
+      "totalAmount": "মোট পরিমাণ:",
+      "totalPaid": "মোট পরিশোধ:",
+      "balanceDue": "বকেয়া ব্যালেন্স:",
+      "paid": "পরিশোধ",
+      "pending": "বকেয়া",
+      "paidWithAmount": "পরিশোধ: {{amount}}",
+      "paidAndPending": "পরিশোধ: {{paid}} | বকেয়া: {{pending}}",
+      "currencyTaka": "টাকা",
+      "currencyTakaFormatted": "{{amount}} টাকা"
+    },
+    "footer": {
+      "poweredBy": "{{companyName}} দ্বারা পরিচালিত",
+      "pageOf": "পৃষ্ঠা {{current}} / {{total}}"
+    },
+    "tableColumns": {
+      "date": "তারিখ",
+      "time": "সময়",
+      "trxNo": "লেনদেন নং",
+      "transactionId": "লেনদেন আইডি",
+      "transactionNo": "লেনদেন নং",
+      "description": "বিবরণ",
+      "payment": "পেমেন্ট",
+      "paymentMethod": "পেমেন্ট পদ্ধতি",
+      "paymentType": "পেমেন্ট ধরন",
+      "qty": "পরিমাণ",
+      "quantity": "পরিমাণ",
+      "price": "মূল্য",
+      "amount": "পরিমাণ",
+      "total": "মোট",
+      "item": "আইটেম",
+      "uom": "পরিমাপ একক",
+      "type": "ধরন",
+      "name": "নাম",
+      "refNo": "রেফ নং",
+      "lastPrice": "সর্বশেষ মূল্য",
+      "totalValue": "মোট মূল্য",
+      "party": "পক্ষ",
+      "items": "আইটেম",
+      "method": "পদ্ধতি",
+      "due": "দেনা",
+      "customerVendor": "গ্রাহক/সরবরাহকারী",
+      "billAmount": "বিল পরিমাণ",
+      "title": "শিরোনাম",
+      "remarks": "মন্তব্য",
+      "stock": "মজুদ",
+      "purchased": "ক্রয়",
+      "sold": "বিক্রয়",
+      "stockInHand": "হাতে মজুদ",
+      "numberSign": "#"
+    },
+    "dateRange": {
+      "to": "থেকে",
+      "reportPeriodFormatted": "রিপোর্ট সময়কাল: {{from}} থেকে {{to}}",
+      "transactionTypeFormatted": "লেনদেন ধরন: {{type}}"
+    }
+  },
+  "reportTypes": {
+    "customerLedger": "গ্রাহক খাতা",
+    "vendorLedger": "সরবরাহকারী খাতা",
+    "transactionReport": "লেনদেন রিপোর্ট",
+    "stockReport": "মজুদ রিপোর্ট",
+    "stockTrackReport": "মজুদ ট্র্যাক রিপোর্ট",
+    "expenseReport": "খরচ রিপোর্ট",
+    "balanceSheet": "ব্যালেন্স শিট"
+  },
+  "transactionReportWithDetailsPdf": {
+    "title": "বিস্তারিত সহ লেনদেন রিপোর্ট",
+    "tableHeaders": {
+      "date": "তারিখ",
+      "trxNo": "লেনদেন নং",
+      "description": "বিবরণ",
+      "payment": "পেমেন্ট",
+      "qty": "পরিমাণ",
+      "price": "মূল্য",
+      "amount": "পরিমাণ"
+    },
+    "summary": {
+      "totalAmount": "মোট পরিমাণ:",
+      "totalPaid": "মোট পরিশোধ:",
+      "balanceDue": "বকেয়া ব্যালেন্স:"
+    }
+  },
+  "transactionDetailsPdf": {
+    "title": "লেনদেন বিবরণ",
+    "transactionNumber": "লেনদেন #{{no}}",
+    "typeLabel": "ধরন: {{type}}",
+    "sections": {
+      "transactionInformation": "লেনদেন তথ্য",
+      "financialDetails": "আর্থিক বিবরণ",
+      "timeline": "সময়রেখা",
+      "additionalInformation": "অতিরিক্ত তথ্য",
+      "transactionDetailsTable": "লেনদেন বিবরণ"
+    },
+    "fields": {
+      "paymentType": "পেমেন্ট ধরন",
+      "status": "অবস্থা",
+      "totalAmount": "মোট পরিমাণ",
+      "paid": "পরিশোধ",
+      "pending": "বকেয়া",
+      "createdAt": "তৈরির সময়",
+      "updatedAt": "আপডেটের সময়",
+      "remarks": "মন্তব্য"
+    },
+    "tableHeaders": {
+      "item": "আইটেম",
+      "uom": "পরিমাপ একক",
+      "qty": "পরিমাণ",
+      "price": "মূল্য",
+      "total": "মোট"
+    },
+    "summary": {
+      "subTotal": "উপমোট:",
+      "total": "মোট:",
+      "pending": "বকেয়া:"
+    }
+  },
+  "inventoryTrackingReportPdf": {
+    "title": "মজুদ ট্র্যাকিং রিপোর্ট",
+    "labels": {
+      "inventory": "মজুদ:",
+      "itemNo": "আইটেম নং:",
+      "currentStock": "বর্তমান মজুদ:",
+      "lastPrice": "সর্বশেষ মূল্য:",
+      "generatedOn": "তৈরির তারিখ:"
+    },
+    "tableHeaders": {
+      "number": "#",
+      "date": "তারিখ",
+      "time": "সময়",
+      "type": "ধরন",
+      "purchased": "ক্রয়",
+      "sold": "বিক্রয়",
+      "price": "মূল্য",
+      "amount": "পরিমাণ",
+      "stockInHand": "হাতে মজুদ"
+    },
+    "summary": {
+      "totalPurchased": "মোট ক্রয়:",
+      "totalSold": "মোট বিক্রয়:",
+      "currentStock": "বর্তমান মজুদ:"
+    }
+  },
+  "transactionReportPdf": {
+    "title": "লেনদেন রিপোর্ট",
+    "labels": {
+      "transactionType": "লেনদেন ধরন:",
+      "reportPeriod": "রিপোর্ট সময়কাল:",
+      "generatedOn": "তৈরির তারিখ:"
+    },
+    "tableHeaders": {
+      "date": "তারিখ",
+      "party": "পক্ষ",
+      "items": "আইটেম",
+      "method": "পদ্ধতি",
+      "amount": "পরিমাণ",
+      "paid": "পরিশোধ",
+      "due": "দেনা"
+    },
+    "totals": {
+      "totalRow": "মোট"
+    },
+    "summary": {
+      "totalTransactions": "মোট লেনদেন:",
+      "totalBillAmount": "মোট বিল পরিমাণ:",
+      "totalPaid": "মোট পরিশোধ:",
+      "totalDue": "মোট দেনা:"
+    }
+  },
+  "transactionReportExcel": {
+    "title": "লেনদেন রিপোর্ট",
+    "labels": {
+      "transactionType": "লেনদেন ধরন: {{type}}",
+      "reportPeriod": "রিপোর্ট সময়কাল: {{from}} থেকে {{to}}",
+      "generatedOn": "তৈরির তারিখ: {{date}}"
+    },
+    "tableHeaders": {
+      "date": "তারিখ",
+      "transactionId": "লেনদেন আইডি",
+      "type": "ধরন",
+      "customerVendor": "গ্রাহক/সরবরাহকারী",
+      "items": "আইটেম",
+      "billAmount": "বিল পরিমাণ",
+      "paid": "পরিশোধ",
+      "due": "দেনা",
+      "paymentMethod": "পেমেন্ট পদ্ধতি"
+    },
+    "summary": {
+      "title": "সারসংক্ষেপ",
+      "totalTransactions": "মোট লেনদেন",
+      "totalBillAmount": "মোট বিল পরিমাণ",
+      "totalPaid": "মোট পরিশোধ",
+      "totalDue": "মোট দেনা"
+    },
+    "sheetName": "লেনদেন রিপোর্ট"
+  },
+  "stockTrackReportPdf": {
+    "title": "মজুদ ট্র্যাক রিপোর্ট",
+    "labels": {
+      "reportPeriod": "রিপোর্ট সময়কাল:",
+      "generatedOn": "তৈরির তারিখ:",
+      "inventory": "মজুদ: {{name}}"
+    },
+    "tableHeaders": {
+      "date": "তারিখ",
+      "type": "ধরন",
+      "name": "নাম",
+      "stock": "মজুদ",
+      "price": "মূল্য"
+    },
+    "summary": {
+      "grandTotalStock": "সর্বমোট মজুদ:",
+      "grandTotalAmount": "সর্বমোট পরিমাণ:"
+    }
+  },
+  "stockTrackReportExcel": {
+    "title": "মজুদ ট্র্যাক রিপোর্ট",
+    "labels": {
+      "reportPeriod": "রিপোর্ট সময়কাল:",
+      "generatedOn": "তৈরির তারিখ:"
+    },
+    "tableHeaders": {
+      "date": "তারিখ",
+      "name": "নাম",
+      "price": "মূল্য",
+      "total": "মোট"
+    },
+    "sheetName": "মজুদ ট্র্যাক"
+  },
+  "stockReportPdf": {
+    "title": "মজুদ রিপোর্ট",
+    "labels": {
+      "reportPeriod": "রিপোর্ট সময়কাল:",
+      "generatedOn": "তৈরির তারিখ:"
+    },
+    "tableHeaders": {
+      "refNo": "রেফ নং",
+      "name": "নাম",
+      "description": "বিবরণ",
+      "quantity": "পরিমাণ",
+      "uom": "পরিমাপ একক",
+      "lastPrice": "সর্বশেষ মূল্য"
+    },
+    "totals": {
+      "totalRow": "মোট"
+    },
+    "summary": {
+      "totalItems": "মোট আইটেম:",
+      "totalQuantity": "মোট পরিমাণ:",
+      "totalValue": "মোট মূল্য:"
+    }
+  },
+  "stockReportExcel": {
+    "title": "মজুদ রিপোর্ট",
+    "labels": {
+      "reportPeriod": "রিপোর্ট সময়কাল:",
+      "generatedOn": "তৈরির তারিখ:"
+    },
+    "tableHeaders": {
+      "refNo": "রেফ নং",
+      "name": "নাম",
+      "description": "বিবরণ",
+      "quantity": "পরিমাণ",
+      "uom": "পরিমাপ একক",
+      "lastPrice": "সর্বশেষ মূল্য",
+      "totalValue": "মোট মূল্য"
+    },
+    "totals": {
+      "totalRow": "মোট"
+    },
+    "summary": {
+      "title": "সারসংক্ষেপ",
+      "totalItems": "মোট আইটেম:",
+      "totalQuantity": "মোট পরিমাণ:",
+      "totalValue": "মোট মূল্য:"
+    },
+    "sheetName": "মজুদ রিপোর্ট"
+  },
+  "expenseReportPdf": {
+    "title": "খরচ রিপোর্ট",
+    "labels": {
+      "reportPeriod": "রিপোর্ট সময়কাল:",
+      "generatedOn": "তৈরির তারিখ:"
+    },
+    "tableHeaders": {
+      "date": "তারিখ",
+      "title": "শিরোনাম",
+      "remarks": "মন্তব্য",
+      "type": "ধরন",
+      "amount": "পরিমাণ"
+    },
+    "totals": {
+      "totalExpensesRow": "মোট খরচ"
+    },
+    "summary": {
+      "totalExpenses": "মোট খরচ:"
+    }
+  },
+  "expenseReportExcel": {
+    "title": "খরচ রিপোর্ট",
+    "labels": {
+      "reportPeriod": "রিপোর্ট সময়কাল:",
+      "generatedOn": "তৈরির তারিখ:"
+    },
+    "tableHeaders": {
+      "date": "তারিখ",
+      "title": "শিরোনাম",
+      "type": "ধরন",
+      "amount": "পরিমাণ",
+      "remarks": "মন্তব্য"
+    },
+    "totals": {
+      "totalExpensesRow": "মোট খরচ"
+    },
+    "sheetName": "খরচ"
+  },
+  "customerOrVendorLedgerPdf": {
+    "title": "খাতা লেনদেন রিপোর্ট",
+    "labels": {
+      "customer": "গ্রাহক:",
+      "vendor": "সরবরাহকারী:",
+      "reportPeriod": "রিপোর্ট সময়কাল:",
+      "generatedOn": "তৈরির তারিখ:"
+    },
+    "tableHeaders": {
+      "date": "তারিখ",
+      "trxNo": "লেনদেন নং",
+      "item": "আইটেম",
+      "uom": "পরিমাপ একক",
+      "type": "ধরন",
+      "qty": "পরিমাণ",
+      "price": "মূল্য",
+      "total": "মোট"
+    },
+    "totals": {
+      "subtotalRow": "উপমোট"
+    },
+    "summary": {
+      "totalAmount": "মোট পরিমাণ:",
+      "totalPaid": "মোট পরিশোধ:",
+      "balanceDue": "বকেয়া ব্যালেন্স:"
+    }
+  },
+  "customerOrVendorLedgerExcel": {
+    "title": "খাতা রিপোর্ট",
+    "labels": {
+      "reportPeriod": "রিপোর্ট সময়কাল:",
+      "generatedOn": "তৈরির তারিখ:"
+    },
+    "tableHeaders": {
+      "date": "তারিখ",
+      "transactionNo": "লেনদেন নং",
+      "item": "আইটেম",
+      "uom": "পরিমাপ একক",
+      "type": "ধরন",
+      "quantity": "পরিমাণ",
+      "price": "মূল্য",
+      "total": "মোট",
+      "paymentType": "পেমেন্ট ধরন",
+      "customer": "গ্রাহক"
+    },
+    "summary": {
+      "title": "সারসংক্ষেপ",
+      "totalTransactions": "মোট লেনদেন:",
+      "totalQuantity": "মোট পরিমাণ:",
+      "totalAmount": "মোট পরিমাণ:"
+    },
+    "sheetName": "খাতা"
+  }
+}

@@ -1,6 +1,5 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import type { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@/lib/utils'
@@ -15,21 +14,26 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/hooks/useAuth'
-import { signInFormSchema } from '@/schema/signInFormSchema'
+import { useTranslation } from '@/hooks/useTranslation'
+import {
+  createSignInFormSchema,
+  type SignInFormValues,
+} from '@/schema/signInFormSchema'
 import PasswordInput from '@/components/password-input'
-
-type FormValues = z.infer<typeof signInFormSchema>
 
 const SignInForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElement>) => {
   const [isLoading, setIsLoading] = useState(false)
   const { signInMutation } = useAuth()
+  const { t: tAuth } = useTranslation('auth')
+  const { t: tValidation } = useTranslation('validation')
+  const schema = useMemo(() => createSignInFormSchema(tValidation), [tValidation])
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(signInFormSchema),
+  const form = useForm<SignInFormValues>({
+    resolver: zodResolver(schema),
     defaultValues: { email: '', password: '' },
   })
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: SignInFormValues) => {
     setIsLoading(true)
     signInMutation.mutate(
       {
@@ -58,9 +62,9 @@ const SignInForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{tAuth('signIn.email')}</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="user@example.com" {...field} />
+                <Input type="email" placeholder={tAuth('signIn.emailPlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -72,23 +76,23 @@ const SignInForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
           name="password"
           render={({ field }) => (
             <FormItem className="relative">
-              <FormLabel>Password</FormLabel>
+              <FormLabel>{tAuth('signIn.password')}</FormLabel>
               <FormControl>
-                <PasswordInput placeholder="********" {...field} />
+                <PasswordInput placeholder={tAuth('signIn.passwordPlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
               <Link
                 to="/forget-password"
                 className="text-muted-foreground absolute end-0 -top-0.5 text-sm font-medium hover:opacity-75"
               >
-                Forgot password?
+                {tAuth('signIn.forgotPassword')}
               </Link>
             </FormItem>
           )}
         />
 
         <Button type="submit" className="mt-2" disabled={isLoading}>
-          {isLoading ? 'Logging in...' : 'Login'}
+          {isLoading ? tAuth('signIn.submitting') : tAuth('signIn.submit')}
         </Button>
       </form>
     </Form>

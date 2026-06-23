@@ -1,0 +1,41 @@
+{
+  "transactionType": {
+    "SALE": "Sale",
+    "PURCHASE": "Purchase",
+    "PAYMENT": "Payment",
+    "RECEIVABLE": "Receivable",
+    "COMMISSION": "Commission"
+  },
+  "paymentType": {
+    "CASH": "Cash",
+    "BANK_TRANSFER": "Bank Transfer",
+    "MOBILE_PAYMENT": "Mobile Payment",
+    "CREDIT_CARD": "Credit Card",
+    "DEBIT_CARD": "Debit Card"
+  },
+  "expenseType": {
+    "DAILY_EXPENSE": "Daily Expense",
+    "MONTHLY_SALARY": "Monthly Salary",
+    "MONTHLY_RENT": "Monthly Rent",
+    "MONTHLY_UTILITIES": "Monthly Utilities",
+    "MONTHLY_OTHER": "Monthly Other",
+    "OTHER": "Other"
+  },
+  "reportType": {
+    "CUSTOMER_LEDGER": "Customer Ledger",
+    "VENDOR_LEDGER": "Vendor Ledger",
+    "TRANSACTION_REPORT": "Transaction Report",
+    "STOCK_REPORT": "Stock Report",
+    "STOCK_TRACK_REPORT": "Stock Track Report",
+    "EXPENSE_REPORT": "Expense Report",
+    "BALANCE_SHEET": "Balance Sheet"
+  },
+  "partnerType": {
+    "VENDOR": "Vendor",
+    "CUSTOMER": "Customer"
+  },
+  "stockTrackType": {
+    "PURCHASE": "Purchase",
+    "SALE": "Sale"
+  }
+}

@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { ArrowRight, Loader2 } from "lucide-react"
 import { useForm } from "react-hook-form"
@@ -21,13 +22,20 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import type { ChangePasswordFormValues } from "@/schema/changePasswordSchema"
-import { changePasswordSchema } from "@/schema/changePasswordSchema"
+import {
+  createChangePasswordSchema,
+  type ChangePasswordFormValues,
+} from "@/schema/changePasswordSchema"
 import { useChangePassword } from "@/hooks/useAuth"
+import { useTranslation } from "@/hooks/useTranslation"
 
 const ChangePassword = () => {
+  const { t: tAuth } = useTranslation('auth')
+  const { t: tValidation } = useTranslation('validation')
+  const schema = useMemo(() => createChangePasswordSchema(tValidation), [tValidation])
+
   const form = useForm<ChangePasswordFormValues>({
-    resolver: zodResolver(changePasswordSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       oldPassword: "",
       newPassword: "",
@@ -40,13 +48,13 @@ const ChangePassword = () => {
 
   const onSubmit = (data: ChangePasswordFormValues) => {
     if (data.oldPassword === data.newPassword) {
-      toast.error("New password cannot be the same as the old password.")
+      toast.error(tAuth('changePassword.samePasswordError'))
       return
     }
 
     handleChangePassword(data, {
       onSuccess: () => {
-        toast.success("Password changed successfully!")
+        toast.success(tAuth('changePassword.success'))
         form.reset()
         navigate("/")
       },
@@ -54,7 +62,7 @@ const ChangePassword = () => {
         const errorMessage =
           error instanceof Error
             ? error.message
-            : "Failed to update password. Please try again."
+            : tAuth('changePassword.updateFailed')
         toast.error(errorMessage)
       },
     })
@@ -65,10 +73,10 @@ const ChangePassword = () => {
       <Card className="w-full max-w-md shadow-lg border rounded-2xl">
         <CardHeader>
           <CardTitle className="text-lg tracking-tight">
-            Change Password
+            {tAuth('changePassword.title')}
           </CardTitle>
           <CardDescription>
-            Enter your current password and set a new one.
+            {tAuth('changePassword.description')}
           </CardDescription>
         </CardHeader>
 
@@ -80,11 +88,11 @@ const ChangePassword = () => {
                 name="oldPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Old Password</FormLabel>
+                    <FormLabel>{tAuth('changePassword.oldPassword')}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="Enter old password"
+                        placeholder={tAuth('changePassword.oldPasswordPlaceholder')}
                         {...field}
                       />
                     </FormControl>
@@ -98,11 +106,11 @@ const ChangePassword = () => {
                 name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New Password</FormLabel>
+                    <FormLabel>{tAuth('changePassword.newPassword')}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="Enter new password"
+                        placeholder={tAuth('changePassword.newPasswordPlaceholder')}
                         {...field}
                       />
                     </FormControl>
@@ -116,11 +124,11 @@ const ChangePassword = () => {
                 name="confirmNewPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm New Password</FormLabel>
+                    <FormLabel>{tAuth('changePassword.confirmNewPassword')}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="Confirm new password"
+                        placeholder={tAuth('changePassword.confirmNewPasswordPlaceholder')}
                         {...field}
                       />
                     </FormControl>
@@ -133,11 +141,11 @@ const ChangePassword = () => {
                 {isPending ? (
                   <>
                     <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                    Updating...
+                    {tAuth('changePassword.submitting')}
                   </>
                 ) : (
                   <>
-                    Update Password
+                    {tAuth('changePassword.submit')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </>
                 )}
@@ -152,7 +160,7 @@ const ChangePassword = () => {
               to="/sign-in"
               className="hover:text-primary underline underline-offset-4"
             >
-              Back to Login
+              {tAuth('changePassword.backToLogin')}
             </Link>
           </p>
         </CardFooter>

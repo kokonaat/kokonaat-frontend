@@ -7,6 +7,7 @@ import { BulkActionsToolbar } from '@/components/bulk-actions-toolbar'
 import { ConfirmDialog } from '../confirm-dialog'
 import { useDeleteUom } from '@/hooks/useUom'
 import { useShopStore } from '@/stores/shopStore'
+import { useTranslation } from '@/hooks/useTranslation'
 
 export interface DataTableBulkActionsProps<TData extends { id: string }> {
   table: Table<TData>
@@ -15,6 +16,7 @@ export interface DataTableBulkActionsProps<TData extends { id: string }> {
 export function UomTableBulkActions<TData extends { id: string }>({
   table,
 }: DataTableBulkActionsProps<TData>) {
+  const { t } = useTranslation('uom')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [rowsToDelete, setRowsToDelete] = useState<string[]>([])
 
@@ -23,17 +25,15 @@ export function UomTableBulkActions<TData extends { id: string }>({
 
   const selectedRows = table.getSelectedRowModel().rows
 
-  // Triggered when user clicks bulk delete button
   const handleBulkDeleteClick = () => {
     if (!selectedRows.length) return
     setRowsToDelete(selectedRows.map((r) => r.original.id))
     setShowDeleteConfirm(true)
   }
 
-  // Triggered when user confirms delete (single or multi)
   const handleConfirmDelete = () => {
     rowsToDelete.forEach((id) => {
-      deleteMutation.mutate({ id }, {   // pass object { id }!
+      deleteMutation.mutate({ id }, {
         onSuccess: () => {
           table.resetRowSelection()
         },
@@ -44,7 +44,6 @@ export function UomTableBulkActions<TData extends { id: string }>({
 
   return (
     <>
-      {/* Bulk Actions Toolbar */}
       <BulkActionsToolbar table={table} entityName='uom'>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -53,32 +52,26 @@ export function UomTableBulkActions<TData extends { id: string }>({
               size='icon'
               onClick={handleBulkDeleteClick}
               className='size-8'
-              aria-label='Delete selected Uom'
-              title='Delete selected Uom'
+              aria-label={t('bulkDelete.deleteSelected')}
+              title={t('bulkDelete.deleteSelected')}
             >
               <Trash2 />
-              <span className='sr-only'>Delete selected Uom</span>
+              <span className='sr-only'>{t('bulkDelete.deleteSelected')}</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Delete selected Uom</p>
+            <p>{t('bulkDelete.deleteSelected')}</p>
           </TooltipContent>
         </Tooltip>
       </BulkActionsToolbar>
 
-      {/* Confirm Dialog */}
       <ConfirmDialog
         open={showDeleteConfirm}
         onOpenChange={setShowDeleteConfirm}
         destructive
-        title={`Delete ${rowsToDelete.length} uom(s)?`}
-        desc={
-          <>
-            You are about to delete <strong>{rowsToDelete.length} uom(s)</strong>. <br />
-            This action cannot be undone.
-          </>
-        }
-        confirmText='Delete'
+        title={t('bulkDelete.title', { count: rowsToDelete.length })}
+        desc={t('bulkDelete.description', { count: rowsToDelete.length })}
+        confirmText={t('buttons.delete')}
         handleConfirm={handleConfirmDelete}
       />
     </>

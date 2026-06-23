@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useUsers } from './UserProvider'
 import type { UserListItem } from '@/interface/userInterface'
+import { useTranslation } from '@/hooks/useTranslation'
 
 // Make sure TData extends UserListItem
 interface DataTableRowActionsProps<TData extends UserListItem> {
@@ -21,6 +22,7 @@ interface DataTableRowActionsProps<TData extends UserListItem> {
 export function DataTableRowActions<TData extends UserListItem>({
     row,
 }: DataTableRowActionsProps<TData>) {
+    const { t } = useTranslation('common')
     const { setOpen, setCurrentRow } = useUsers()
 
     return (
@@ -42,7 +44,7 @@ export function DataTableRowActions<TData extends UserListItem>({
                         setOpen('edit')
                     }}
                 >
-                    Edit
+                    {t('actions.edit')}
                     <DropdownMenuShortcut>
                         <UserPen size={16} />
                     </DropdownMenuShortcut>
@@ -57,7 +59,7 @@ export function DataTableRowActions<TData extends UserListItem>({
                     }}
                     className='text-red-500'
                 >
-                    Delete
+                    {t('actions.delete')}
                     <DropdownMenuShortcut>
                         <Trash2 size={16} />
                     </DropdownMenuShortcut>

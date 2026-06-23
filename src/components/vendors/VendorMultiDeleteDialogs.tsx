@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteVendor } from '@/hooks/useVendor'
 import type { VendorMultiDeleteDialogProps } from '@/interface/vendorInterface'
+import { useTranslation } from '@/hooks/useTranslation'
 
 const CONFIRM_WORD = 'DELETE'
 
@@ -15,6 +16,8 @@ export function VendorMultiDeleteDialog<TData extends { id: string }>({
   onOpenChange,
   table,
 }: VendorMultiDeleteDialogProps<TData>) {
+  const { t } = useTranslation('vendors')
+  const { t: tToast } = useTranslation('toast')
   const [value, setValue] = useState('')
 
   const shopId = localStorage.getItem('shop-storage')
@@ -22,13 +25,16 @@ export function VendorMultiDeleteDialog<TData extends { id: string }>({
     : null
 
   const selectedRows = table.getFilteredSelectedRowModel().rows
-
-  // passing shopId dynamically
   const deleteMutation = useDeleteVendor(shopId)
+
+  const entityLabel =
+    selectedRows.length > 1
+      ? t('bulkDelete.multiEntityPlural')
+      : t('bulkDelete.multiEntitySingular')
 
   const handleDelete = async () => {
     if (value.trim() !== CONFIRM_WORD) {
-      toast.error(`Please type "${CONFIRM_WORD}" to confirm.`)
+      toast.error(tToast('common.typeDeleteToConfirm'))
       return
     }
 
@@ -41,13 +47,12 @@ export function VendorMultiDeleteDialog<TData extends { id: string }>({
         )
       ),
       {
-        loading: 'Deleting Vendors...',
+        loading: t('bulkDelete.loading'),
         success: () => {
           table.resetRowSelection()
-          return `Deleted ${selectedRows.length} ${selectedRows.length > 1 ? 'Vendors' : 'Vendor'
-            }`
+          return t('bulkDelete.success', { count: selectedRows.length, entity: entityLabel })
         },
-        error: 'Error deleting Vendor',
+        error: t('bulkDelete.error'),
       }
     )
   }
@@ -64,35 +69,31 @@ export function VendorMultiDeleteDialog<TData extends { id: string }>({
             className='stroke-destructive me-1 inline-block'
             size={18}
           />{' '}
-          Delete {selectedRows.length}{' '}
-          {selectedRows.length > 1 ? 'Vendors' : 'Vendor'}
+          {t('bulkDelete.multiTitle', { count: selectedRows.length, entity: entityLabel })}
         </span>
       }
       desc={
         <div className='space-y-4'>
-          <p className='mb-2'>
-            Are you sure you want to delete the selected Vendors? <br />
-            This action cannot be undone.
-          </p>
+          <p className='mb-2'>{t('bulkDelete.multiDescription')}</p>
 
           <Label className='my-4 flex flex-col items-start gap-1.5'>
-            <span className=''>Confirm by typing "{CONFIRM_WORD}":</span>
+            <span>{t('bulkDelete.confirmTyping')}</span>
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder={`Type "${CONFIRM_WORD}" to confirm.`}
+              placeholder={t('bulkDelete.confirmPlaceholder')}
             />
           </Label>
 
           <Alert variant='destructive'>
-            <AlertTitle>Warning!</AlertTitle>
+            <AlertTitle>{t('bulkDelete.warningTitle')}</AlertTitle>
             <AlertDescription>
-              Please be careful, this operation can not be rolled back.
+              {t('bulkDelete.warningDescription')}
             </AlertDescription>
           </Alert>
         </div>
       }
-      confirmText='Delete'
+      confirmText={t('buttons.delete')}
       destructive
     />
   )

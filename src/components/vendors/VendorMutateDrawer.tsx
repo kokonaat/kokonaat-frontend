@@ -1,5 +1,4 @@
-import { useEffect } from "react"
-import type { z } from "zod"
+import { useEffect, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -26,11 +25,25 @@ import { toast } from "sonner"
 import type { AxiosError } from "axios"
 import type { CustomerMutateDrawerProps } from "@/interface/customerInterface"
 import { Checkbox } from "../ui/checkbox"
-import { vendorFormSchema } from "@/schema/vendorFormSchema"
+import {
+  createVendorFormSchema,
+  type VendorFormValues,
+} from "@/schema/vendorFormSchema"
 import { useCreateVendor, useUpdateVendor } from "@/hooks/useVendor"
 import { useShopStore } from "@/stores/shopStore"
+import { useTranslation } from "@/hooks/useTranslation"
 
-type CustomerFormSchema = z.infer<typeof vendorFormSchema>
+const emptyDefaults: VendorFormValues = {
+  name: "",
+  email: "",
+  phone: "",
+  address: "",
+  city: "",
+  country: "",
+  isB2B: false,
+  contactPerson: "",
+  contactPersonPhone: "",
+}
 
 const VendorMutateDrawer = ({
   open,
@@ -38,57 +51,40 @@ const VendorMutateDrawer = ({
   currentRow,
   onSave,
 }: CustomerMutateDrawerProps) => {
+  const { t } = useTranslation('vendors')
+  const { t: tValidation } = useTranslation('validation')
+  const { t: tToast } = useTranslation('toast')
   const shopId = useShopStore((s) => s.currentShopId)
   const isUpdate = !!currentRow
+
+  const schema = useMemo(
+    () => createVendorFormSchema(tValidation),
+    [tValidation]
+  )
 
   const createMutation = useCreateVendor(shopId || "")
   const updateMutation = useUpdateVendor(shopId || "")
 
-  const form = useForm<CustomerFormSchema>({
-    resolver: zodResolver(vendorFormSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-      city: "",
-      country: "",
-      isB2B: false,
-      contactPerson: "",
-      contactPersonPhone: "",
-    },
+  const form = useForm<VendorFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: emptyDefaults,
   })
 
-  // form reset
   useEffect(() => {
-    form.reset(currentRow ?? {
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-      city: "",
-      country: "",
-      isB2B: false,
-      contactPerson: "",
-      contactPersonPhone: "",
-    })
+    form.reset(currentRow ?? emptyDefaults)
   }, [currentRow, form])
 
-  // track isB2B field
   const isB2BChecked = form.watch("isB2B")
 
-  // isDirty is to check any field change or not
   const {
     formState: { isDirty },
   } = form
 
-  //  submit data
-  const onSubmit: SubmitHandler<CustomerFormSchema> = (data) => {
-    if (!shopId) return toast.error("Shop ID not found!")
+  const onSubmit: SubmitHandler<VendorFormValues> = (data) => {
+    if (!shopId) return toast.error(tToast('vendor.shopIdNotFound'))
 
-    // prevent api call if no input field changed
     if (isUpdate && !isDirty) {
-      toast.info("No changes detected. Please modify something before saving.")
+      toast.info(tToast('vendor.noChanges'))
       return
     }
 
@@ -106,18 +102,17 @@ const VendorMutateDrawer = ({
 
     if (isUpdate && currentRow?.id) {
       updateMutation.mutate(
-        // submitting with shopId
         { id: currentRow.id, data: normalizedData },
         {
           onSuccess: () => {
             onOpenChange(false)
             onSave?.(normalizedData)
             form.reset()
-            toast.success("Vendor updated successfully.")
+            toast.success(tToast('vendor.updated'))
           },
           onError: (err: unknown) => {
             const error = err as AxiosError<{ message: string }>
-            toast.error(error?.response?.data?.message || "Update failed")
+            toast.error(error?.response?.data?.message || tToast('vendor.updateFailed'))
           },
         }
       )
@@ -127,11 +122,11 @@ const VendorMutateDrawer = ({
           onOpenChange(false)
           onSave?.(normalizedData)
           form.reset()
-          toast.success("Vendor created successfully.")
+          toast.success(tToast('vendor.created'))
         },
         onError: (err: unknown) => {
           const error = err as AxiosError<{ message: string }>
-          toast.error(error?.response?.data?.message || "Creation failed")
+          toast.error(error?.response?.data?.message || tToast('vendor.creationFailed'))
         },
       })
     }
@@ -142,27 +137,16 @@ const VendorMutateDrawer = ({
       open={open}
       onOpenChange={(v) => {
         onOpenChange(v)
-        form.reset(currentRow ?? {
-          name: "",
-          email: "",
-          phone: "",
-          address: "",
-          city: "",
-          country: "",
-          isB2B: false,
-          contactPerson: "",
-          contactPersonPhone: "",
-        })
+        form.reset(currentRow ?? emptyDefaults)
       }}
     >
       <SheetContent className="flex flex-col">
         <SheetHeader className="text-start">
-          <SheetTitle>{isUpdate ? "Update" : "Create"} Vendor</SheetTitle>
+          <SheetTitle>
+            {isUpdate ? t('drawer.titleUpdate') : t('drawer.titleCreate')}
+          </SheetTitle>
           <SheetDescription>
-            {isUpdate
-              ? "Update the vendor by providing necessary info."
-              : "Add a new vendor by providing necessary info."}{" "}
-            Click save when you're done.
+            {isUpdate ? t('drawer.descriptionUpdate') : t('drawer.descriptionCreate')}
           </SheetDescription>
         </SheetHeader>
 
@@ -177,9 +161,9 @@ const VendorMutateDrawer = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t('drawer.fields.name')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Rahul Roy" />
+                    <Input {...field} placeholder={t('drawer.placeholders.name')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -191,9 +175,9 @@ const VendorMutateDrawer = ({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t('drawer.fields.email')}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value ?? ""} placeholder="rahul@gmail.com" />
+                    <Input {...field} value={field.value ?? ""} placeholder={t('drawer.placeholders.email')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -205,9 +189,9 @@ const VendorMutateDrawer = ({
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel>{t('drawer.fields.phone')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="01711111111" />
+                    <Input {...field} placeholder={t('drawer.placeholders.phone')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -219,9 +203,9 @@ const VendorMutateDrawer = ({
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Address</FormLabel>
+                  <FormLabel>{t('table.columns.address')}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value ?? ""} placeholder="Shyamoli,Dhaka" />
+                    <Input {...field} value={field.value ?? ""} placeholder={t('drawer.placeholders.address')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -233,9 +217,9 @@ const VendorMutateDrawer = ({
               name="city"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>City</FormLabel>
+                  <FormLabel>{t('drawer.fields.city')}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value ?? ""} placeholder="Dhaka" />
+                    <Input {...field} value={field.value ?? ""} placeholder={t('drawer.placeholders.city')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -247,9 +231,9 @@ const VendorMutateDrawer = ({
               name="country"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Country</FormLabel>
+                  <FormLabel>{t('drawer.fields.country')}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value ?? ""} placeholder="Bangladesh" />
+                    <Input {...field} value={field.value ?? ""} placeholder={t('drawer.placeholders.country')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -267,54 +251,51 @@ const VendorMutateDrawer = ({
                       onCheckedChange={(checked) => field.onChange(checked)}
                     />
                   </FormControl>
-                  <FormLabel className="m-0">B2B</FormLabel>
+                  <FormLabel className="m-0">{t('table.columns.isB2B')}</FormLabel>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {
-              isB2BChecked && (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="contactPerson"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contact Person</FormLabel>
-                        <FormControl>
-                          <Input {...field} value={field.value ?? ""} placeholder="Ramesh Roy" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="contactPersonPhone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contact Person Phone</FormLabel>
-                        <FormControl>
-                          <Input {...field} value={field.value ?? ""} placeholder="01711111111" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </>
-
-              )
-            }
+            {isB2BChecked && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="contactPerson"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('drawer.fields.contactPerson')}</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ""} placeholder={t('drawer.placeholders.contactPerson')} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="contactPersonPhone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('drawer.fields.contactPersonPhone', { defaultValue: t('drawer.fields.contactPhone') })}</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ""} placeholder={t('drawer.placeholders.contactPersonPhone')} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
           </form>
         </Form>
 
         <SheetFooter className="gap-2">
           <SheetClose asChild>
-            <Button variant="outline">Close</Button>
+            <Button variant="outline">{t('buttons.close')}</Button>
           </SheetClose>
           <Button form="vendor-form" type="submit">
-            Save changes
+            {t('buttons.saveChanges')}
           </Button>
         </SheetFooter>
       </SheetContent>

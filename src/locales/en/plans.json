@@ -1,0 +1,15 @@
+{
+  "page": {
+    "title": "Subscription Plans",
+    "subtitle": "Choose a plan that fits your business"
+  },
+  "comingSoon": {
+    "badge": "Coming Soon",
+    "title": "Plans & pricing are on the way",
+    "description": "We're working on subscription plans and pricing. Check back soon for updates."
+  },
+  "disabled": {
+    "loading": "Loading plans...",
+    "empty": "No subscription plans found."
+  }
+}

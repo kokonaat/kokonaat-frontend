@@ -6,8 +6,10 @@ import ExpenseTable from "@/components/expense/ExpenseTable"
 import { ExpenseProvider } from "@/components/expense/expense-provider"
 import ExpenseCreateButton from "@/components/expense/ExpenseCreateButton"
 import ExpenseDialogs from "@/components/expense/ExpenseDialogs"
+import { useTranslation } from "@/hooks/useTranslation"
 
 const Expense = () => {
+  const { t } = useTranslation('expense')
   const shopId = useShopStore((s) => s.currentShopId)
 
   const [pageIndex, setPageIndex] = useState(0)
@@ -41,7 +43,7 @@ const Expense = () => {
     endDate
   )
 
-  if (isError) return <p>Error loading expenses.</p>
+  if (isError) return <p>{t('page.errorLoading')}</p>
 
   const expenses = data?.items || []
   const total = data?.total || 0
@@ -51,9 +53,9 @@ const Expense = () => {
       <Main>
         <div className="mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Expense</h2>
+            <h2 className="text-2xl font-bold tracking-tight">{t('page.title')}</h2>
             <p className="text-muted-foreground">
-              Here is a list of your all expenses
+              {t('page.subtitle')}
             </p>
           </div>
           <ExpenseCreateButton />
@@ -61,7 +63,7 @@ const Expense = () => {
 
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
           {isLoading ? (
-            <p>Loading expense data...</p>
+            <p>{t('page.loading')}</p>
           ) : (
             <ExpenseTable
               data={expenses}

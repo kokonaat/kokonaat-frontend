@@ -1,5 +1,4 @@
-import { useEffect } from "react"
-import type { z } from "zod"
+import { useEffect, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -26,23 +25,40 @@ import { toast } from "sonner"
 import type { AxiosError } from "axios"
 import { useCreateInventory, useUpdateInventory } from "@/hooks/useInventory"
 import { useShopStore } from "@/stores/shopStore"
-import { inventoryFormSchema } from "@/schema/inventoryFormSchema"
+import {
+  createInventoryFormSchema,
+  type InventoryFormValues,
+} from "@/schema/inventoryFormSchema"
 import type { InventoryMutateDrawerProps } from "@/interface/inventoryInterface"
 import { useUomList } from "@/hooks/useUom"
 import { Combobox } from "@/components/ui/combobox"
 import type { ComboboxOption } from "@/components/ui/combobox"
+import { useTranslation } from "@/hooks/useTranslation"
 
-// Combine the Zod schema type with the required unitOfMeasurementId
-type InventoryFormType = z.infer<typeof inventoryFormSchema>
+const emptyDefaults: InventoryFormValues = {
+  name: "",
+  description: "",
+  quantity: 0,
+  lastPrice: 0,
+  unitOfMeasurementId: "",
+}
 
 const InventoryMutateDrawer = ({
   open,
   onOpenChange,
-  currentRow, // currentRow is now typed as InventoryItemInterface
+  currentRow,
   onSave,
 }: InventoryMutateDrawerProps) => {
+  const { t } = useTranslation('inventory')
+  const { t: tValidation } = useTranslation('validation')
+  const { t: tToast } = useTranslation('toast')
   const shopId = useShopStore((s) => s.currentShopId)
   const isUpdate = !!currentRow?.id
+
+  const schema = useMemo(
+    () => createInventoryFormSchema(tValidation),
+    [tValidation]
+  )
 
   const createMutation = useCreateInventory(shopId || "")
   const updateMutation = useUpdateInventory(shopId || "")
@@ -51,9 +67,7 @@ const InventoryMutateDrawer = ({
     shopId || "",
     1,
     10,
-    // useUom expects search params, start and end date params
     undefined,
-    // only fetch when drawer is open
     { enabled: open && !!shopId }
   )
 
@@ -64,54 +78,36 @@ const InventoryMutateDrawer = ({
     label: uom.name,
   }))
 
-  const form = useForm<InventoryFormType>({
-    resolver: zodResolver(inventoryFormSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      quantity: 0,
-      lastPrice: 0,
-      unitOfMeasurementId: "",
-    },
+  const form = useForm<InventoryFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: emptyDefaults,
   })
 
   useEffect(() => {
     if (open) {
-      const emptyState: InventoryFormType = {
-        name: "",
-        description: "",
-        quantity: 0,
-        lastPrice: 0,
-        unitOfMeasurementId: "",
-      }
-
-      let defaults = emptyState
-
       if (currentRow) {
-        defaults = {
+        form.reset({
           name: currentRow.name,
           description: currentRow.description ?? '',
           quantity: currentRow.quantity ?? 0,
           lastPrice: currentRow.lastPrice ?? 0,
           unitOfMeasurementId: currentRow.unitOfMeasurement?.id ?? "",
-        }
+        })
+      } else {
+        form.reset(emptyDefaults)
       }
-
-      form.reset(defaults)
     }
   }, [currentRow, open, form])
 
-  // isDirty is to check any field change or not
   const {
     formState: { isDirty },
   } = form
 
-  const onSubmit: SubmitHandler<InventoryFormType> = (data) => {
-    if (!shopId) return toast.error("Shop ID not found!")
+  const onSubmit: SubmitHandler<InventoryFormValues> = (data) => {
+    if (!shopId) return toast.error(tToast('inventory.shopIdNotFound'))
 
-    // prevent api call if no input field changed
     if (isUpdate && !isDirty) {
-      toast.info("No changes detected. Please modify something before saving.")
+      toast.info(tToast('inventory.noChanges'))
       return
     }
 
@@ -129,32 +125,26 @@ const InventoryMutateDrawer = ({
         { id: currentRow.id, data: payload },
         {
           onSuccess: () => {
-            toast.success("Inventory updated successfully.")
+            toast.success(tToast('inventory.updated'))
             onOpenChange(false)
             onSave?.(payload)
           },
           onError: (err: unknown) => {
             const error = err as AxiosError<{ message: string }>
-            toast.error(error?.response?.data?.message || "Update failed")
+            toast.error(error?.response?.data?.message || tToast('inventory.updateFailed'))
           },
         }
       )
     } else {
       createMutation.mutate(payload, {
         onSuccess: () => {
-          toast.success("Inventory created successfully.")
+          toast.success(tToast('inventory.created'))
           onSave?.(payload)
-          form.reset({
-            name: "",
-            description: "",
-            quantity: 0,
-            lastPrice: 0,
-            unitOfMeasurementId: "",
-          })
+          form.reset(emptyDefaults)
         },
         onError: (err: unknown) => {
           const error = err as AxiosError<{ message: string }>
-          toast.error(error?.response?.data?.message || "Creation failed")
+          toast.error(error?.response?.data?.message || tToast('inventory.creationFailed'))
         },
       })
     }
@@ -166,25 +156,17 @@ const InventoryMutateDrawer = ({
       onOpenChange={(v) => {
         onOpenChange(v)
         if (!v) {
-          // Reset on close
-          form.reset({
-            name: "",
-            description: "",
-            quantity: 0,
-            lastPrice: 0,
-            unitOfMeasurementId: "",
-          })
+          form.reset(emptyDefaults)
         }
       }}
     >
       <SheetContent className="flex flex-col">
         <SheetHeader className="text-start">
-          <SheetTitle>{isUpdate ? "Update" : "Create"} Inventory</SheetTitle>
+          <SheetTitle>
+            {isUpdate ? t('drawer.titleUpdate') : t('drawer.titleCreate')}
+          </SheetTitle>
           <SheetDescription>
-            {isUpdate
-              ? "Update the inventory by providing necessary info."
-              : "Add a new inventory by providing necessary info."}{" "}
-            Click save when you're done.
+            {isUpdate ? t('drawer.descriptionUpdate') : t('drawer.descriptionCreate')}
           </SheetDescription>
         </SheetHeader>
 
@@ -199,9 +181,9 @@ const InventoryMutateDrawer = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t('drawer.fields.name')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Inventory name" />
+                    <Input {...field} placeholder={t('drawer.placeholders.name')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -213,9 +195,9 @@ const InventoryMutateDrawer = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{t('drawer.fields.description')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Inventory description" />
+                    <Input {...field} placeholder={t('drawer.placeholders.description')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -228,12 +210,12 @@ const InventoryMutateDrawer = ({
                 name="quantity"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Quantity</FormLabel>
+                    <FormLabel>{t('drawer.fields.quantity')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="number"
-                        placeholder="0"
+                        placeholder={t('drawer.placeholders.quantity')}
                         min={0}
                         value={field.value ?? ''}
                         onChange={(e) =>
@@ -251,14 +233,18 @@ const InventoryMutateDrawer = ({
                 name="unitOfMeasurementId"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Uom</FormLabel>
+                    <FormLabel>{t('drawer.fields.uom')}</FormLabel>
                     <FormControl>
                       <Combobox
                         options={uomOptions}
                         value={field.value}
                         onSelect={field.onChange}
                         disabled={isUomLoading || uomOptions.length === 0}
-                        placeholder={isUomLoading ? "Loading UOMs..." : "Select UOM"}
+                        placeholder={
+                          isUomLoading
+                            ? t('drawer.placeholders.uomLoading')
+                            : t('drawer.placeholders.uomSelect')
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -271,20 +257,19 @@ const InventoryMutateDrawer = ({
                 name="lastPrice"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Last Price</FormLabel>
+                    <FormLabel>{t('drawer.fields.lastPrice')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="number"
-                        placeholder="0.00"
+                        placeholder={t('drawer.placeholders.lastPrice')}
                         min={0}
                         step="0.01"
                         value={field.value ?? ''}
                         onChange={(e) => {
                           const value = e.target.value
                           field.onChange(value === '' ? null : parseFloat(value))
-                        }
-                        }
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -297,14 +282,16 @@ const InventoryMutateDrawer = ({
 
         <SheetFooter className="gap-2">
           <SheetClose asChild>
-            <Button variant="outline">Close</Button>
+            <Button variant="outline">{t('buttons.close')}</Button>
           </SheetClose>
           <Button
             form="inventory-form"
             type="submit"
             disabled={createMutation.isPending || updateMutation.isPending}
           >
-            {createMutation.isPending || updateMutation.isPending ? 'Saving...' : 'Save changes'}
+            {createMutation.isPending || updateMutation.isPending
+              ? t('buttons.saving')
+              : t('buttons.saveChanges')}
           </Button>
         </SheetFooter>
       </SheetContent>

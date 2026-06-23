@@ -14,7 +14,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { VendorColumns as columns } from './VendorColumns'
+import { useVendorColumns } from './VendorColumns'
+import { useTranslation } from '@/hooks/useTranslation'
 import { Input } from '@/components/ui/input'
 import { DataTablePagination } from '../data-table-pagination'
 import { VendorTableBulkActions } from './VendorTableBulkActions'
@@ -38,6 +39,9 @@ const VendorTable = ({
   onSearchChange,
   initialDateRange
 }: VendorTableProps) => {
+  const { t } = useTranslation('vendors')
+  const columns = useVendorColumns()
+
   // table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -170,7 +174,7 @@ const VendorTable = ({
               value={isDateRangeActive && dateRange.from && dateRange.to ? { from: dateRange.from, to: dateRange.to } : undefined}
             />
             <Input
-              placeholder="Filter by id, name, phone or address..."
+              placeholder={t('table.filterPlaceholder')}
               value={searchInput}
               onChange={handleSearchInputChange}
               className="h-8 w-37.5 lg:w-62.5"
@@ -200,7 +204,7 @@ const VendorTable = ({
               table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
-                  title="Click to view vendor ledger"
+                  title={t('table.rowTitle')}
                   data-state={row.getIsSelected() && 'selected'}
                   onClick={() => handleClick(row.original.id)}
                   className="cursor-pointer"
@@ -218,8 +222,8 @@ const VendorTable = ({
                   <Card className='m-4'>
                     <CardContent>
                       <NoDataFound
-                        message='No Vendor found!'
-                        details="Create a vendor first."
+                        message={t('table.emptyMessage')}
+                        details={t('table.emptyDetails')}
                       />
                     </CardContent>
                   </Card>

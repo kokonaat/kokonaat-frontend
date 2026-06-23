@@ -1,14 +1,14 @@
-import { apiEndpoints } from "@/config/api"
-import { axiosInstance } from "./axios"
+import { apiEndpoints } from '@/config/api'
+import { axiosInstance } from './axios'
+import type { DashboardData, DashboardParams } from '@/interface/dashboardInterface'
 
-export interface DashboardParams {
-    shopId: string
-    startDate?: string
-    endDate?: string
-}
+export type { DashboardData, DashboardParams }
 
-// dashboard api
-export const fetchDashboardData = async (params: DashboardParams) => {
-    const res = await axiosInstance.get(apiEndpoints.dashbaord.dashboardReport, { params })
-    return res.data
+export const fetchDashboardData = async (
+  params: DashboardParams,
+): Promise<DashboardData> => {
+  const res = await axiosInstance.get(apiEndpoints.dashbaord.dashboardReport, {
+    params,
+  })
+  return res.data
 }

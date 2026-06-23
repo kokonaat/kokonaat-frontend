@@ -1,0 +1,15 @@
+{
+  "dashboard": "ড্যাশবোর্ড",
+  "shops": "দোকান",
+  "customer": "গ্রাহক",
+  "vendor": "সরবরাহকারী",
+  "uom": "পরিমাপ একক",
+  "inventory": "মজুদ",
+  "transactionBoard": "লেনদেন বোর্ড",
+  "expense": "খরচ",
+  "reports": "রিপোর্ট",
+  "userManagement": "ব্যবহারকারী ব্যবস্থাপনা",
+  "users": "ব্যবহারকারী",
+  "userProfile": "ব্যবহারকারী প্রোফাইল",
+  "plans": "প্ল্যান"
+}

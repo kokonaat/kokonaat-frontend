@@ -1,0 +1,130 @@
+{
+  "page": {
+    "title": "গ্রাহক",
+    "subtitle": "এখানে আপনার সব গ্রাহকের তালিকা",
+    "errorLoading": "গ্রাহক লোড করতে ত্রুটি।",
+    "loading": "গ্রাহক তথ্য লোড হচ্ছে..."
+  },
+  "buttons": {
+    "create": "তৈরি করুন",
+    "saveChanges": "পরিবর্তন সংরক্ষণ",
+    "close": "বন্ধ",
+    "delete": "মুছুন",
+    "view": "দেখুন",
+    "edit": "সম্পাদনা",
+    "downloadPdf": "PDF ডাউনলোড"
+  },
+  "table": {
+    "filterPlaceholder": "আইডি, নাম, ফোন বা ঠিকানা দিয়ে ফিল্টার...",
+    "rowTitle": "গ্রাহক খাতা দেখতে ক্লিক করুন",
+    "emptyMessage": "কোনো গ্রাহক পাওয়া যায়নি!",
+    "emptyDetails": "প্রথমে একটি গ্রাহক তৈরি করুন।",
+    "columns": {
+      "selectAll": "সব নির্বাচন",
+      "selectRow": "সারি নির্বাচন",
+      "id": "আইডি",
+      "name": "নাম",
+      "email": "ইমেইল",
+      "phone": "ফোন",
+      "address": "ঠিকানা",
+      "city": "শহর",
+      "country": "দেশ",
+      "isB2B": "B2B",
+      "contactPerson": "যোগাযোগকারী",
+      "contactPersonPhone": "যোগাযোগকারীর ফোন"
+    }
+  },
+  "drawer": {
+    "titleCreate": "গ্রাহক তৈরি",
+    "titleUpdate": "গ্রাহক আপডেট",
+    "descriptionCreate": "প্রয়োজনীয় তথ্য দিয়ে নতুন গ্রাহক যোগ করুন। শেষে সংরক্ষণ ক্লিক করুন।",
+    "descriptionUpdate": "প্রয়োজনীয় তথ্য দিয়ে গ্রাহক আপডেট করুন। শেষে সংরক্ষণ ক্লিক করুন।",
+    "viewTitle": "গ্রাহক বিবরণ",
+    "viewDescription": "{{name}}-এর তথ্য দেখুন",
+    "fields": {
+      "name": "নাম",
+      "email": "ইমেইল",
+      "phone": "ফোন",
+      "address": "ঠিকানা",
+      "city": "শহর",
+      "country": "দেশ",
+      "b2b": "B2B",
+      "contactPerson": "যোগাযোগকারী",
+      "contactPersonPhone": "যোগাযোগকারীর ফোন",
+      "emptyValue": "—"
+    },
+    "placeholders": {
+      "name": "রাহুল রায়",
+      "email": "rahul@gmail.com",
+      "phone": "01711111111",
+      "address": "শ্যামলী, ঢাকা",
+      "city": "ঢাকা",
+      "country": "বাংলাদেশ",
+      "contactPerson": "রমেশ রায়",
+      "contactPersonPhone": "01711111111"
+    }
+  },
+  "deleteDialog": {
+    "title": "এই গ্রাহক মুছবেন: {{name}} ?",
+    "description": "আপনি {{name}} নামের গ্রাহক মুছতে যাচ্ছেন। এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "confirm": "মুছুন"
+  },
+  "bulkDelete": {
+    "title": "নির্বাচিত {{count}}টি গ্রাহক মুছবেন?",
+    "description": "আপনি {{count}}টি গ্রাহক মুছতে যাচ্ছেন। এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "deleteSelected": "নির্বাচিত গ্রাহক মুছুন",
+    "multiTitle": "{{count}}টি {{entity}} মুছুন",
+    "multiEntityPlural": "গ্রাহক",
+    "multiEntitySingular": "গ্রাহক",
+    "multiDescription": "আপনি কি নির্বাচিত গ্রাহক মুছতে চান? এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "confirmTyping": "\"DELETE\" টাইপ করে নিশ্চিত করুন:",
+    "confirmPlaceholder": "নিশ্চিত করতে \"DELETE\" টাইপ করুন।",
+    "warningTitle": "সতর্কতা!",
+    "warningDescription": "সাবধান থাকুন, এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "loading": "গ্রাহক মুছে ফেলা হচ্ছে...",
+    "success": "{{count}}টি {{entity}} মুছে ফেলা হয়েছে",
+    "error": "গ্রাহক মুছতে ত্রুটি"
+  },
+  "profile": {
+    "failedToLoad": "গ্রাহক লোড করতে ব্যর্থ",
+    "contactInformation": "যোগাযোগ তথ্য",
+    "businessDetails": "ব্যবসায়িক বিবরণ",
+    "email": "ইমেইল",
+    "phone": "ফোন",
+    "address": "ঠিকানা",
+    "shop": "দোকান",
+    "businessType": "ব্যবসার ধরন",
+    "b2b": "B2B",
+    "individual": "ব্যক্তিগত",
+    "contactPerson": "যোগাযোগকারী",
+    "transactions": "লেনদেন",
+    "failedTransactions": "লেনদেন লোড করতে ব্যর্থ"
+  },
+  "ledger": {
+    "loadingDetails": "বিবরণ লোড হচ্ছে...",
+    "entityNotFound": "কোনো {{type}} পাওয়া যায়নি।",
+    "noLabel": "নং:",
+    "contactInformation": "যোগাযোগ তথ্য",
+    "businessDetails": "ব্যবসায়িক বিবরণ",
+    "customerLedger": "গ্রাহক খাতা",
+    "vendorLedger": "সরবরাহকারী খাতা",
+    "total": "মোট",
+    "paid": "পরিশোধ",
+    "balance": "ব্যালেন্স",
+    "loadingTransactions": "লেনদেন লোড হচ্ছে...",
+    "failedTransactions": "লেনদেন লোড করতে ব্যর্থ",
+    "filterPlaceholder": "আইডি, নাম, ফোন বা ঠিকানা দিয়ে ফিল্টার...",
+    "columns": {
+      "id": "আইডি",
+      "type": "ধরন",
+      "remarks": "মন্তব্য",
+      "amount": "পরিমাণ",
+      "paid": "পরিশোধ",
+      "pending": "বকেয়া",
+      "date": "তারিখ"
+    },
+    "emptyMessage": "এখনও কোনো লেনদেন নেই",
+    "emptyDetails": "আপনি কোনো লেনদেন রেকর্ড করেননি। শুরু করতে একটি লেনদেন তৈরি করুন।",
+    "downloadAriaLabel": "লেনদেন রিপোর্ট ডাউনলোড"
+  }
+}

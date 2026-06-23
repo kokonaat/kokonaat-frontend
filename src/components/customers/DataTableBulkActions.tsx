@@ -11,6 +11,7 @@ import { BulkActionsToolbar } from '@/components/bulk-actions-toolbar'
 import { ConfirmDialog } from '../confirm-dialog'
 import { useShopStore } from '@/stores/shopStore'
 import { useDeleteCustomer } from '@/hooks/useCustomer'
+import { useTranslation } from '@/hooks/useTranslation'
 
 export interface DataTableBulkActionsProps<TData extends { id: string }> {
     table: Table<TData>
@@ -19,6 +20,7 @@ export interface DataTableBulkActionsProps<TData extends { id: string }> {
 export function DataTableBulkActions<TData extends { id: string }>({
     table,
 }: DataTableBulkActionsProps<TData>) {
+    const { t } = useTranslation('customers')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const shopId = useShopStore((s) => s.currentShopId)
     const deleteMutation = useDeleteCustomer(shopId || '')
@@ -51,15 +53,15 @@ export function DataTableBulkActions<TData extends { id: string }>({
                             size='icon'
                             onClick={() => setShowDeleteConfirm(true)}
                             className='size-8'
-                            aria-label='Delete selected Customers'
-                            title='Delete selected Customers'
+                            aria-label={t('bulkDelete.deleteSelected')}
+                            title={t('bulkDelete.deleteSelected')}
                         >
                             <Trash2 />
-                            <span className='sr-only'>Delete selected Customers</span>
+                            <span className='sr-only'>{t('bulkDelete.deleteSelected')}</span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Delete selected Customers</p>
+                        <p>{t('bulkDelete.deleteSelected')}</p>
                     </TooltipContent>
                 </Tooltip>
             </BulkActionsToolbar>
@@ -68,15 +70,9 @@ export function DataTableBulkActions<TData extends { id: string }>({
                 open={showDeleteConfirm}
                 onOpenChange={setShowDeleteConfirm}
                 destructive
-                title={`Delete ${selectedRows.length} selected customer(s)?`}
-                desc={
-                    <>
-                        You are about to delete{' '}
-                        <strong>{selectedRows.length} customer(s)</strong>. <br />
-                        This action cannot be undone.
-                    </>
-                }
-                confirmText='Delete'
+                title={t('bulkDelete.title', { count: selectedRows.length })}
+                desc={t('bulkDelete.description', { count: selectedRows.length })}
+                confirmText={t('buttons.delete')}
                 handleConfirm={handleDelete}
             />
         </>

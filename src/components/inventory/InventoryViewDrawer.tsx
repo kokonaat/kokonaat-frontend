@@ -16,6 +16,7 @@ import { NoDataFound } from '../NoDataFound'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import { toast } from 'sonner'
 import { generateInventoryTrackingPDF } from '@/utils/enums/inventoryTrackingReportPdf'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type InventoryViewDrawerProps = {
   open: boolean
@@ -28,7 +29,9 @@ const InventoryViewDrawer = ({
   onOpenChange,
   currentRow,
 }: InventoryViewDrawerProps) => {
-  // Hooks MUST run unconditionally
+  const { t } = useTranslation('inventory')
+  const { t: tExport } = useTranslation('export')
+  const { t: tToast } = useTranslation('toast')
   const shopId = useShopStore((s) => s.currentShopId)
   const shopName = useShopStore((s) => s.currentShopName)
 
@@ -42,20 +45,20 @@ const InventoryViewDrawer = ({
     shopId,
     pageIndex + 1,
     pageSize,
-    // only fetch when drawer is open
     { enabled: open && !!inventoryId && !!shopId }
   )
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (!currentRow || !data || data.items.length === 0) {
-      toast.error('No tracking data available to download')
+      toast.error(tToast('inventory.noTrackingData'))
       return
     }
 
     try {
-      generateInventoryTrackingPDF(
+      await generateInventoryTrackingPDF(
+        tExport,
         {
-          no: currentRow.no || 'N/A',
+          no: currentRow.no || t('viewDrawer.notAvailable'),
           name: currentRow.name,
           description: currentRow.description,
           quantity: currentRow.quantity,
@@ -63,16 +66,15 @@ const InventoryViewDrawer = ({
           unitOfMeasurement: currentRow.unitOfMeasurement,
         },
         data.items,
-        shopName || 'Shop Name'
+        shopName || tExport('common.fallbacks.shopName'),
       )
-      toast.success('PDF downloaded successfully')
+      toast.success(tToast('inventory.pdfDownloaded'))
     } catch (error) {
       console.error('Error generating PDF:', error)
-      toast.error('Failed to generate PDF')
+      toast.error(tToast('inventory.pdfFailed'))
     }
   }
 
-  // safely stop ui rendering
   if (!currentRow) return null
 
   return (
@@ -82,15 +84,13 @@ const InventoryViewDrawer = ({
           <div className="flex items-center justify-between">
             <div>
               <DrawerTitle className="text-lg font-semibold">
-                Inventory history
+                {t('viewDrawer.title')}
               </DrawerTitle>
               <DrawerDescription className="text-sm text-muted-foreground">
-                View information for{' '}
-                <span className="font-medium">{currentRow.name}</span>
+                {t('viewDrawer.description', { name: currentRow.name })}
               </DrawerDescription>
             </div>
-            
-            {/* Download PDF Button */}
+
             {data && data.items.length > 0 && (
               <Button
                 onClick={handleDownloadPDF}
@@ -100,60 +100,60 @@ const InventoryViewDrawer = ({
                 disabled={isLoading}
               >
                 <Download className="h-4 w-4" />
-                Download PDF
+                {t('buttons.downloadPdf')}
               </Button>
             )}
           </div>
         </DrawerHeader>
 
-        {/* Inventory Info */}
         <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
           <div>
-            <span className="font-medium text-foreground">Name:</span>{' '}
+            <span className="font-medium text-foreground">{t('viewDrawer.name')}</span>{' '}
             {currentRow.name}
           </div>
           <div>
-            <span className="font-medium text-foreground">Stock In Hand:</span>{' '}
+            <span className="font-medium text-foreground">{t('viewDrawer.stockInHand')}</span>{' '}
             {currentRow.quantity} {currentRow.unitOfMeasurement?.name || ' '}
           </div>
           <div className='flex gap-1'>
-            <span className="font-medium text-foreground">Description:</span>{' '}
+            <span className="font-medium text-foreground">{t('viewDrawer.descriptionLabel')}</span>{' '}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="max-w-50 truncate cursor-help">
-                    {currentRow.description || 'N/A'}
+                    {currentRow.description || t('viewDrawer.notAvailable')}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs wrap-break-word">
-                    {currentRow.description || 'N/A'}
+                    {currentRow.description || t('viewDrawer.notAvailable')}
                   </p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
           <div>
-            <span className="font-medium text-foreground">Last Price:</span> {currentRow.lastPrice}
+            <span className="font-medium text-foreground">{t('viewDrawer.lastPrice')}</span>{' '}
+            {currentRow.lastPrice}
           </div>
         </div>
 
         <hr className="my-4 border-gray-200" />
 
-        <h3 className="text-md font-semibold mb-2">Tracking</h3>
+        <h3 className="text-md font-semibold mb-2">{t('viewDrawer.tracking')}</h3>
 
         {isLoading && (
           <p className="text-sm text-muted-foreground">
-            Loading tracking data...
+            {t('viewDrawer.loadingTracking')}
           </p>
         )}
 
         {isError && (
-          <p className="text-sm text-red-500">Error loading tracking data</p>
+          <p className="text-sm text-red-500">{t('viewDrawer.errorTracking')}</p>
         )}
 
         {!isLoading && data && data.items.length === 0 && (
-          <NoDataFound message="No tracking records found!" />
+          <NoDataFound message={t('viewDrawer.emptyTracking')} />
         )}
 
         {!isLoading && data && data.items.length > 0 && (

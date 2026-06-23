@@ -9,8 +9,10 @@ import type { ShopInterface, UserRoleWiseShopInterface } from "@/interface/shopI
 import ShopCard from "@/components/shop/ShopCard"
 import ShopDrawer from "@/components/shop/ShopDrawer"
 import { useShopStore } from "@/stores/shopStore"
+import { useTranslation } from "@/hooks/useTranslation"
 
 const Shops = () => {
+    const { t } = useTranslation('shops')
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [currentShop, setCurrentShop] = useState<ShopInterface | undefined>(undefined)
     const { data, isLoading } = useShopList() as { data?: UserRoleWiseShopInterface[]; isLoading: boolean }
@@ -24,9 +26,7 @@ const Shops = () => {
                 shopName: data[0].shopName,
                 shopAddress: data[0].shopAddress,
             }
-            // local state
             setCurrentShop(shop)
-            // zustand
             setGlobalShop(shop.shopId, shop.shopName)
         }
     }, [data, setGlobalShop])
@@ -37,12 +37,10 @@ const Shops = () => {
                 <div className="flex justify-between items-center mb-4">
                     <div>
                         <div className="mb-4">
-                            <h1 className="text-2xl font-bold tracking-tight">Your Shop's</h1>
-                            <p className="text-muted-foreground">
-                                Here's a list of your shops!
-                            </p>
+                            <h1 className="text-2xl font-bold tracking-tight">{t('page.title')}</h1>
+                            <p className="text-muted-foreground">{t('page.subtitle')}</p>
                         </div>
-                        <Input placeholder="Search your shop" className="h-9 w-40 lg:w-[250px]" />
+                        <Input placeholder={t('page.searchPlaceholder')} className="h-9 w-40 lg:w-[250px]" />
                     </div>
                     <div className="flex items-center space-x-2">
                         <Button
@@ -52,7 +50,7 @@ const Shops = () => {
                                 setDrawerOpen(true)
                             }}
                         >
-                            <span>Create</span>
+                            <span>{t('buttons.create')}</span>
                             <Plus size={18} />
                         </Button>
                     </div>
@@ -62,7 +60,7 @@ const Shops = () => {
 
                 <div className="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {isLoading ? (
-                        <p>Loading shops...</p>
+                        <p>{t('page.loading')}</p>
                     ) : (
                         data?.map((item) => (
                             <ShopCard

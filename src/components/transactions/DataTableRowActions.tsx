@@ -9,6 +9,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useTranslation } from '@/hooks/useTranslation'
 import { useTransactions } from './transaction-provider'
 import type { Transaction } from '@/interface/transactionInterface'
 
@@ -19,6 +20,8 @@ type DataTableRowActionsProps<TData extends Transaction> = {
 export function DataTableRowActions<TData extends Transaction>({
   row,
 }: DataTableRowActionsProps<TData>) {
+  const { t } = useTranslation('transactions')
+  const { t: tCommon } = useTranslation('common')
   const { setOpen, setCurrentRow } = useTransactions()
 
   const data = row.original
@@ -32,7 +35,7 @@ export function DataTableRowActions<TData extends Transaction>({
           className='data-[state=open]:bg-muted flex h-8 w-8 p-0'
         >
           <DotsHorizontalIcon className='h-4 w-4' />
-          <span className='sr-only'>Open menu</span>
+          <span className='sr-only'>{t('rowActions.openMenu')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-40'>
@@ -43,7 +46,7 @@ export function DataTableRowActions<TData extends Transaction>({
             setOpen('update')
           }}
         >
-          Edit
+          {tCommon('actions.edit')}
         </DropdownMenuItem>
         <DropdownMenuItem
           className='cursor-pointer'
@@ -52,7 +55,7 @@ export function DataTableRowActions<TData extends Transaction>({
             setOpen('delete')
           }}
         >
-          Delete
+          {tCommon('actions.delete')}
           <DropdownMenuShortcut>
             <Trash2 size={16} />
           </DropdownMenuShortcut>

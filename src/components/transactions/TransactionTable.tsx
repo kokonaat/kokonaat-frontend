@@ -18,14 +18,15 @@ import { Card, CardContent } from "../ui/card"
 import { Badge } from "../ui/badge"
 import { DataTableViewOptions } from "./DataTableViewOption"
 import { DataTablePagination } from "./DataTablePagination"
-import { TransactionColumns as columns } from "./TransactionColumns"
+import { useTransactionColumns } from "./TransactionColumns"
 import type { Transaction } from "@/interface/transactionInterface"
 import { DataTableBulkActions } from "../customers/DataTableBulkActions"
 import DateRangeSearch from "../DateRangeSearch"
 import { useDebounce } from "@/hooks/useDebounce"
 import { NoDataFound } from "../NoDataFound"
 import { Combobox } from "../ui/combobox"
-import { TRANSACTION_TYPES } from "@/constance/transactionConstances"
+import { useTranslation } from "@/hooks/useTranslation"
+import { useTransactionTypeOptions } from "@/hooks/useTranslatedOptions"
 import { useVendorList } from "@/hooks/useVendor"
 import { useCustomerList } from "@/hooks/useCustomer"
 import { useShopStore } from "@/stores/shopStore"
@@ -53,8 +54,11 @@ const TransactionTable = ({
   onFiltersChange,
   initialDateRange
 }: TransactionTableProps) => {
+  const { t } = useTranslation('transactions')
   const navigate = useNavigate()
   const shopId = useShopStore((s) => s.currentShopId) ?? ""
+  const columns = useTransactionColumns()
+  const allTransactionTypeOptions = useTransactionTypeOptions()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [globalFilter, setGlobalFilter] = useState("")
@@ -83,10 +87,10 @@ const TransactionTable = ({
 
   // Memoized options for comboboxes - filter out already selected items
   const transactionTypeOptions = useMemo(() => 
-    TRANSACTION_TYPES
-      .filter(t => !selectedTransactionTypes.includes(t.value))
-      .map(t => ({ value: t.value, label: t.label })),
-    [selectedTransactionTypes]
+    allTransactionTypeOptions.filter(
+      (option) => !selectedTransactionTypes.includes(option.value)
+    ),
+    [allTransactionTypeOptions, selectedTransactionTypes]
   )
 
   const vendorOptions = useMemo(() => {
@@ -272,7 +276,7 @@ const TransactionTable = ({
             />
             {/* Use custom handler instead of direct onChange */}
             <Input
-              placeholder="Filter transactions..."
+              placeholder={t('table.filterPlaceholder')}
               value={searchInput}
               onChange={handleSearchInputChange}
               className="h-8 w-37.5 lg:w-62.5"
@@ -288,8 +292,8 @@ const TransactionTable = ({
         <div className="flex flex-wrap gap-2 items-center">
           <Combobox
             options={transactionTypeOptions}
-            placeholder="Transaction Type"
-            emptyMessage="No more types"
+            placeholder={t('table.filterTransactionType')}
+            emptyMessage={t('table.emptyTypes')}
             value={transactionTypeSearch}
             onSelect={handleTransactionTypeSelect}
             onSearch={setTransactionTypeSearch}
@@ -298,8 +302,8 @@ const TransactionTable = ({
           />
           <Combobox
             options={vendorOptions}
-            placeholder="Vendor"
-            emptyMessage="No vendors found"
+            placeholder={t('table.filterVendor')}
+            emptyMessage={t('table.emptyVendors')}
             value={vendorSearch}
             onSelect={handleVendorSelect}
             onSearch={setVendorSearch}
@@ -308,8 +312,8 @@ const TransactionTable = ({
           />
           <Combobox
             options={customerOptions}
-            placeholder="Customer"
-            emptyMessage="No customers found"
+            placeholder={t('table.filterCustomer')}
+            emptyMessage={t('table.emptyCustomers')}
             value={customerSearch}
             onSelect={handleCustomerSelect}
             onSearch={setCustomerSearch}
@@ -324,7 +328,7 @@ const TransactionTable = ({
           selectedCustomerIds.length > 0) && (
           <div className="flex flex-wrap gap-2 items-center">
             {selectedTransactionTypes.map((type) => {
-              const label = TRANSACTION_TYPES.find((t) => t.value === type)?.label || type
+              const label = allTransactionTypeOptions.find((opt) => opt.value === type)?.label || type
               return (
                 <Badge
                   key={type}
@@ -354,7 +358,7 @@ const TransactionTable = ({
                   className="flex items-center gap-1 px-2 py-1"
                 >
                   <span className="text-xs text-blue-600 dark:text-blue-400">
-                    V: {vendor?.name || id}
+                    {t('table.vendorBadgePrefix')} {vendor?.name || id}
                   </span>
                   <button
                     type="button"
@@ -378,7 +382,7 @@ const TransactionTable = ({
                   className="flex items-center gap-1 px-2 py-1"
                 >
                   <span className="text-xs text-green-600 dark:text-green-400">
-                    C: {customer?.name || id}
+                    {t('table.customerBadgePrefix')} {customer?.name || id}
                   </span>
                   <button
                     type="button"
@@ -418,7 +422,7 @@ const TransactionTable = ({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  title="Click to view transaction ledger"
+                  title={t('table.rowTitle')}
                   data-state={row.getIsSelected() && "selected"}
                   onClick={() => handleClick(row.original.id)}
                   className="cursor-pointer"
@@ -439,8 +443,8 @@ const TransactionTable = ({
                   <Card className="m-4">
                     <CardContent>
                       <NoDataFound
-                        message="No Transaction found!"
-                        details="Create a Transaction first."
+                        message={t('table.emptyMessage')}
+                        details={t('table.emptyDetails')}
                       />
                     </CardContent>
                   </Card>

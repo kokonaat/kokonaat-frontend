@@ -1,0 +1,134 @@
+{
+  "page": {
+    "title": "রিপোর্ট",
+    "subtitle": "সম্পূর্ণ ব্যবসায়িক রিপোর্ট"
+  },
+  "filters": {
+    "dateRange": "তারিখের পরিসীমা",
+    "reportType": "রিপোর্ট ধরন",
+    "reportTypePlaceholder": "রিপোর্ট ধরন অনুসন্ধান ও নির্বাচন",
+    "reportTypeEmpty": "কোনো রিপোর্ট ধরন পাওয়া যায়নি",
+    "transactionTypes": "লেনদেন ধরন (প্রয়োজন)",
+    "transactionTypesPlaceholder": "ধরন অনুসন্ধান ও নির্বাচন",
+    "transactionTypesEmpty": "কোনো লেনদেন ধরন পাওয়া যায়নি",
+    "selectCustomers": "গ্রাহক নির্বাচন (প্রয়োজন)",
+    "selectVendors": "সরবরাহকারী নির্বাচন (প্রয়োজন)",
+    "entityPlaceholderCustomers": "গ্রাহক অনুসন্ধান ও নির্বাচন",
+    "entityPlaceholderVendors": "সরবরাহকারী অনুসন্ধান ও নির্বাচন",
+    "entityEmptyCustomers": "কোনো গ্রাহক পাওয়া যায়নি",
+    "entityEmptyVendors": "কোনো সরবরাহকারী পাওয়া যায়নি",
+    "selectInventoriesOptional": "মজুদ নির্বাচন (ঐচ্ছিক)",
+    "selectInventoriesRequired": "মজুদ নির্বাচন (প্রয়োজন)",
+    "inventoriesPlaceholder": "মজুদ অনুসন্ধান ও নির্বাচন",
+    "inventoriesEmpty": "কোনো মজুদ পাওয়া যায়নি",
+    "search": "অনুসন্ধান",
+    "clearAll": "সব মুছুন",
+    "selectedTransactionTypes": "নির্বাচিত লেনদেন ধরন:",
+    "selectedCustomers": "নির্বাচিত গ্রাহক:",
+    "selectedVendors": "নির্বাচিত সরবরাহকারী:",
+    "selectedInventories": "নির্বাচিত মজুদ:"
+  },
+  "summaryCards": {
+    "totalAmount": "মোট পরিমাণ",
+    "totalPaid": "মোট পরিশোধ",
+    "totalPending": "মোট বকেয়া",
+    "totalDue": "মোট দেনা",
+    "totalExpenses": "মোট খরচ",
+    "openingBalance": "প্রারম্ভিক ব্যালেন্স",
+    "totalIn": "মোট আগমন",
+    "totalOut": "মোট বহির্গমন",
+    "closingBalance": "সমাপনী ব্যালেন্স"
+  },
+  "tables": {
+    "transactionReport": "লেনদেন রিপোর্ট",
+    "ledgerDetails": "খাতা বিবরণ",
+    "expensesReport": "খরচ রিপোর্ট",
+    "stockReport": "মজুদ রিপোর্ট",
+    "stockTrackReport": "মজুদ ট্র্যাক রিপোর্ট",
+    "balanceSheetReport": "ব্যালেন্স শিট রিপোর্ট",
+    "downloadExcel": "Excel হিসেবে ডাউনলোড",
+    "downloadPdf": "PDF ডাউনলোড",
+    "emptyMessage": "কোনো লেনদেন বিবরণ পাওয়া যায়নি!",
+    "emptyDetails": "একজন গ্রাহক বা সরবরাহকারী নির্বাচন করে দেখুন।",
+    "fallbackCustomer": "গ্রাহক",
+    "fallbackVendor": "সরবরাহকারী",
+    "fallbackUnknown": "অজানা",
+    "fallbackShopName": "দোকানের নাম"
+  },
+  "ledgerColumns": {
+    "refNo": "রেফ নং",
+    "date": "তারিখ",
+    "type": "ধরন",
+    "partyName": "পক্ষের নাম",
+    "item": "আইটেম",
+    "qty": "পরিমাণ",
+    "uom": "পরিমাপ একক",
+    "price": "মূল্য",
+    "total": "মোট",
+    "payment": "পেমেন্ট"
+  },
+  "transactionReportColumns": {
+    "transactionId": "লেনদেন আইডি",
+    "date": "তারিখ",
+    "type": "ধরন",
+    "customerVendor": "গ্রাহক/সরবরাহকারী",
+    "items": "আইটেম",
+    "amount": "পরিমাণ",
+    "paid": "পরিশোধ",
+    "due": "দেনা",
+    "method": "পদ্ধতি"
+  },
+  "expenseReportColumns": {
+    "title": "শিরোনাম",
+    "type": "ধরন",
+    "amount": "পরিমাণ",
+    "remarks": "মন্তব্য",
+    "date": "তারিখ"
+  },
+  "stockReportColumns": {
+    "refNo": "রেফ নং",
+    "name": "নাম",
+    "description": "বিবরণ",
+    "quantity": "পরিমাণ",
+    "uom": "পরিমাপ একক",
+    "lastPrice": "সর্বশেষ মূল্য"
+  },
+  "stockTrackColumns": {
+    "date": "তারিখ",
+    "type": "ধরন",
+    "itemName": "আইটেমের নাম",
+    "stock": "মজুদ",
+    "price": "মূল্য",
+    "purchase": "ক্রয়",
+    "sale": "বিক্রয়"
+  },
+  "balanceSheet": {
+    "columns": {
+      "refNo": "রেফ নং",
+      "type": "ধরন",
+      "description": "বিবরণ",
+      "amount": "পরিমাণ",
+      "paid": "পরিশোধ",
+      "pending": "বকেয়া",
+      "paymentMethod": "পেমেন্ট পদ্ধতি",
+      "createdAt": "তৈরির সময়",
+      "date": "তারিখ",
+      "itemType": "আইটেম ধরন"
+    },
+    "expenseBadge": "খরচ",
+    "noItemsForDate": "এই তারিখে কোনো আইটেম নেই",
+    "emptyMessage": "কোনো ব্যালেন্স শিট তথ্য পাওয়া যায়নি!",
+    "emptyDetails": "ভিন্ন তারিখের পরিসীমা নির্বাচন করে দেখুন।",
+    "openingBalance": "প্রারম্ভিক ব্যালেন্স:",
+    "totalIn": "মোট আগমন:",
+    "totalOut": "মোট বহির্গমন:",
+    "closingBalance": "সমাপনী ব্যালেন্স:",
+    "paginationShowing": "{{total}}টি তারিখের মধ্যে {{from}} থেকে {{to}} দেখানো হচ্ছে",
+    "previous": "পূর্ববর্তী",
+    "next": "পরবর্তী",
+    "pageOf": "পৃষ্ঠা {{current}} / {{total}}"
+  },
+  "common": {
+    "notAvailable": "N/A"
+  }
+}

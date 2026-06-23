@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -23,27 +23,27 @@ import {
 } from "@/components/ui/sheet"
 import type { ShopDrawerProps } from "@/interface/shopInterface"
 import { useCreateShop, useUpdateShop } from "@/hooks/useShop"
+import { createShopFormSchema } from "@/schema/createShopFormSchema"
+import { useTranslation } from "@/hooks/useTranslation"
 
-const formSchema = z.object({
-    name: z.string().min(1, "Shop name is required."),
-    address: z.string().optional(),
-})
-
-type ShopForm = z.infer<typeof formSchema>
+type ShopForm = z.infer<ReturnType<typeof createShopFormSchema>>
 
 const ShopDrawer = ({ open, onOpenChange, currentShop }: ShopDrawerProps) => {
+    const { t } = useTranslation('shops')
+    const { t: tValidation } = useTranslation('validation')
     const isEdit = !!currentShop
     const [loading, setLoading] = useState(false)
 
+    const schema = useMemo(() => createShopFormSchema(tValidation), [tValidation])
+
     const form = useForm<ShopForm>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(schema),
         defaultValues: { name: "", address: "" },
     })
 
     const { mutate: createMutate } = useCreateShop()
     const { mutate: updateMutate } = useUpdateShop()
 
-    // reset form whenever currentShop changes
     useEffect(() => {
         form.reset({
             name: currentShop?.shopName || "",
@@ -53,7 +53,6 @@ const ShopDrawer = ({ open, onOpenChange, currentShop }: ShopDrawerProps) => {
 
     const onSubmit = (data: ShopForm) => {
         if (isEdit && currentShop?.shopId) {
-            // update address on edit
             updateMutate({ id: currentShop.shopId, address: data.address }, {
                 onSuccess: () => {
                     setLoading(false)
@@ -62,7 +61,6 @@ const ShopDrawer = ({ open, onOpenChange, currentShop }: ShopDrawerProps) => {
                 }
             })
         } else {
-            // create shop
             createMutate(data, {
                 onSuccess: () => {
                     setLoading(false)
@@ -77,12 +75,9 @@ const ShopDrawer = ({ open, onOpenChange, currentShop }: ShopDrawerProps) => {
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent className="flex flex-col">
                 <SheetHeader className="text-start">
-                    <SheetTitle>{isEdit ? "Edit Shop" : "Create Shop"}</SheetTitle>
+                    <SheetTitle>{isEdit ? t('drawer.titleEdit') : t('drawer.titleCreate')}</SheetTitle>
                     <SheetDescription>
-                        {isEdit
-                            ? "Update the shop address below."
-                            : "Add a new shop by providing the necessary details."}
-                        Click save when you're done.
+                        {isEdit ? t('drawer.descriptionEdit') : t('drawer.descriptionCreate')}
                     </SheetDescription>
                 </SheetHeader>
 
@@ -92,17 +87,16 @@ const ShopDrawer = ({ open, onOpenChange, currentShop }: ShopDrawerProps) => {
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="flex-1 space-y-6 overflow-y-auto px-4"
                     >
-                        {/* Shop Name Field */}
                         <FormField
                             control={form.control}
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Shop Name</FormLabel>
+                                    <FormLabel>{t('drawer.shopName')}</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            placeholder="Barnick Pracharani"
+                                            placeholder={t('drawer.placeholders.shopName')}
                                             disabled={isEdit}
                                         />
                                     </FormControl>
@@ -111,39 +105,36 @@ const ShopDrawer = ({ open, onOpenChange, currentShop }: ShopDrawerProps) => {
                             )}
                         />
 
-                        {/* Address Field */}
                         <FormField
                             control={form.control}
                             name="address"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Address</FormLabel>
+                                    <FormLabel>{t('drawer.address')}</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            placeholder="2/ka pc culture housing, shalymoli, dhaka"
+                                            placeholder={t('drawer.placeholders.address')}
                                         />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-
                     </form>
                 </Form>
                 <SheetFooter className="gap-2">
                     <SheetClose asChild>
-                        <Button variant="outline">Close</Button>
+                        <Button variant="outline">{t('buttons.close')}</Button>
                     </SheetClose>
                     <Button
                         type="submit"
                         form="shop-form"
                         disabled={loading}
                     >
-                        {
-                            loading ? (isEdit ? "Updating..." : "Creating...")
-                                : isEdit ? "Update Address" : "Create Shop"
-                        }
+                        {loading
+                            ? isEdit ? t('buttons.updating') : t('buttons.creating')
+                            : isEdit ? t('buttons.updateAddress') : t('buttons.createShop')}
                     </Button>
                 </SheetFooter>
             </SheetContent>

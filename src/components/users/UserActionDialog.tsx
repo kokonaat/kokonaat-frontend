@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
@@ -24,8 +25,9 @@ import { AxiosError } from 'axios'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { useCreateUser, useUserRoles } from '@/hooks/useUser'
 import { useShopStore } from '@/stores/shopStore'
-import { userFormSchema, type UserForm } from '@/schema/userFormSchema'
-import  type{ UserListItem } from '@/interface/userInterface'
+import { createUserFormSchema, type UserForm } from '@/schema/userFormSchema'
+import type { UserListItem } from '@/interface/userInterface'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type UserActionDialogProps = {
     currentRow?: UserListItem
@@ -38,15 +40,18 @@ export function UsersActionDialog({
     open,
     onOpenChange,
 }: UserActionDialogProps) {
-
+    const { t } = useTranslation('users')
+    const { t: tValidation } = useTranslation('validation')
+    const { t: tToast } = useTranslation('toast')
     const isEdit = !!currentRow
     const shopId = useShopStore((s) => s.currentShopId)
     const { data: roles, isLoading: isRolesLoading } = useUserRoles()
     const { mutate: createUser, isPending } = useCreateUser()
 
+    const schema = useMemo(() => createUserFormSchema(tValidation), [tValidation])
 
     const form = useForm<UserForm>({
-        resolver: zodResolver(userFormSchema),
+        resolver: zodResolver(schema),
         defaultValues: isEdit
             ? {
                 ...currentRow,
@@ -78,10 +83,10 @@ export function UsersActionDialog({
             onSuccess: () => {
                 form.reset()
                 onOpenChange(false)
-                toast.success("User create successfully")
+                toast.success(tToast('user.created'))
             },
             onError: (err: unknown) => {
-                let message = "Failed to create user"
+                let message = tToast('user.createFailed')
 
                 if (err instanceof AxiosError) {
                     message = err.response?.data?.message || message
@@ -106,10 +111,9 @@ export function UsersActionDialog({
         >
             <DialogContent className='sm:max-w-lg'>
                 <DialogHeader className='text-start'>
-                    <DialogTitle>{isEdit ? 'Edit User' : 'Add New User'}</DialogTitle>
+                    <DialogTitle>{isEdit ? t('addEditDialog.titleEdit') : t('addEditDialog.titleAdd')}</DialogTitle>
                     <DialogDescription>
-                        {isEdit ? 'Update the user here. ' : 'Create new user here. '}
-                        Click save when you&apos;re done.
+                        {isEdit ? t('addEditDialog.descriptionEdit') : t('addEditDialog.descriptionAdd')}
                     </DialogDescription>
                 </DialogHeader>
                 <div className='h-105 w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3'>
@@ -125,11 +129,11 @@ export function UsersActionDialog({
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Username
+                                            {t('addEditDialog.username')}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='john_doe'
+                                                placeholder={t('addEditDialog.placeholders.username')}
                                                 className='col-span-4'
                                                 {...field}
                                             />
@@ -144,11 +148,11 @@ export function UsersActionDialog({
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Phone Number
+                                            {t('addEditDialog.phoneNumber')}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='+123456789'
+                                                placeholder={t('addEditDialog.placeholders.phone')}
                                                 className='col-span-4'
                                                 {...field}
                                             />
@@ -162,17 +166,17 @@ export function UsersActionDialog({
                                 name='role'
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>Role</FormLabel>
+                                        <FormLabel className='col-span-2 text-end'>{t('addEditDialog.role')}</FormLabel>
                                         <FormControl>
                                             {isRolesLoading ? (
                                                 <p className="col-span-4 text-sm text-muted-foreground">
-                                                    Loading roles...
+                                                    {t('addEditDialog.loadingRoles')}
                                                 </p>
                                             ) : (
                                                 <SelectDropdown
                                                     defaultValue={field.value}
                                                     onValueChange={field.onChange}
-                                                    placeholder="Select a role"
+                                                    placeholder={t('addEditDialog.rolePlaceholder')}
                                                     className="col-span-4"
                                                     items={
                                                         roles?.map((r: { name: string; id: string }) => ({
@@ -193,11 +197,11 @@ export function UsersActionDialog({
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Password
+                                            {t('addEditDialog.password')}
                                         </FormLabel>
                                         <FormControl>
                                             <PasswordInput
-                                                placeholder='e.g., S3cur3P@ssw0rd'
+                                                placeholder={t('addEditDialog.placeholders.password')}
                                                 className='col-span-4'
                                                 {...field}
                                             />
@@ -212,12 +216,12 @@ export function UsersActionDialog({
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Confirm Password
+                                            {t('addEditDialog.confirmPassword')}
                                         </FormLabel>
                                         <FormControl>
                                             <PasswordInput
                                                 disabled={!isPasswordTouched}
-                                                placeholder='e.g., S3cur3P@ssw0rd'
+                                                placeholder={t('addEditDialog.placeholders.password')}
                                                 className='col-span-4'
                                                 {...field}
                                             />
@@ -231,7 +235,7 @@ export function UsersActionDialog({
                 </div>
                 <DialogFooter>
                     <Button type="submit" form="user-form" disabled={isPending}>
-                        {isPending ? "Saving..." : "Save changes"}
+                        {isPending ? t('buttons.saving') : t('buttons.saveChanges')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

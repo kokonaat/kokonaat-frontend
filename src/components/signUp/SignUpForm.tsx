@@ -1,27 +1,31 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
-import type { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/hooks/useAuth"
-import { signUpFormSchema } from "@/schema/signUpFormSchema"
+import { useTranslation } from "@/hooks/useTranslation"
+import {
+  createSignUpFormSchema,
+  type SignUpFormValues,
+} from "@/schema/signUpFormSchema"
 import PasswordInput from "@/components/password-input"
-
-type FormValues = z.infer<typeof signUpFormSchema>
 
 const SignUpForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElement>) => {
   const [isLoading, setIsLoading] = useState(false)
   const { signUpMutation } = useAuth()
+  const { t: tAuth } = useTranslation('auth')
+  const { t: tValidation } = useTranslation('validation')
+  const schema = useMemo(() => createSignUpFormSchema(tValidation), [tValidation])
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(signUpFormSchema),
+  const form = useForm<SignUpFormValues>({
+    resolver: zodResolver(schema),
     defaultValues: { name: "", email: "", phone: "", password: "", confirmPassword: "" },
   })
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: SignUpFormValues) => {
     setIsLoading(true)
     signUpMutation.mutate(
       {
@@ -42,9 +46,9 @@ const SignUpForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
       <form onSubmit={form.handleSubmit(onSubmit)} className={cn("grid gap-3", className)} {...props}>
         <FormField control={form.control} name="name" render={({ field }) => (
           <FormItem>
-            <FormLabel>Name</FormLabel>
+            <FormLabel>{tAuth('signUp.name')}</FormLabel>
             <FormControl>
-              <Input placeholder="Rahul Roy" {...field} />
+              <Input placeholder={tAuth('signUp.namePlaceholder')} {...field} />
             </FormControl>
             <FormMessage>{form.formState.errors.name?.message}</FormMessage>
           </FormItem>
@@ -52,9 +56,9 @@ const SignUpForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
 
         <FormField control={form.control} name="email" render={({ field }) => (
           <FormItem>
-            <FormLabel>Email</FormLabel>
+            <FormLabel>{tAuth('signUp.email')}</FormLabel>
             <FormControl>
-              <Input type="email" placeholder="user@example.com" {...field} />
+              <Input type="email" placeholder={tAuth('signUp.emailPlaceholder')} {...field} />
             </FormControl>
             <FormMessage>{form.formState.errors.email?.message}</FormMessage>
           </FormItem>
@@ -62,9 +66,9 @@ const SignUpForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
 
         <FormField control={form.control} name="phone" render={({ field }) => (
           <FormItem>
-            <FormLabel>Phone (optional)</FormLabel>
+            <FormLabel>{tAuth('signUp.phone')}</FormLabel>
             <FormControl>
-              <Input placeholder="01711111111" {...field} />
+              <Input placeholder={tAuth('signUp.phonePlaceholder')} {...field} />
             </FormControl>
             <FormMessage>{form.formState.errors.phone?.message}</FormMessage>
           </FormItem>
@@ -72,9 +76,9 @@ const SignUpForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
 
         <FormField control={form.control} name="password" render={({ field }) => (
           <FormItem>
-            <FormLabel>Password</FormLabel>
+            <FormLabel>{tAuth('signUp.password')}</FormLabel>
             <FormControl>
-              <PasswordInput placeholder="********" {...field} />
+              <PasswordInput placeholder={tAuth('signUp.passwordPlaceholder')} {...field} />
             </FormControl>
             <FormMessage>{form.formState.errors.password?.message}</FormMessage>
           </FormItem>
@@ -82,16 +86,16 @@ const SignUpForm = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
 
         <FormField control={form.control} name="confirmPassword" render={({ field }) => (
           <FormItem>
-            <FormLabel>Confirm Password</FormLabel>
+            <FormLabel>{tAuth('signUp.confirmPassword')}</FormLabel>
             <FormControl>
-              <PasswordInput placeholder="********" {...field} />
+              <PasswordInput placeholder={tAuth('signUp.confirmPasswordPlaceholder')} {...field} />
             </FormControl>
             <FormMessage>{form.formState.errors.confirmPassword?.message}</FormMessage>
           </FormItem>
         )} />
 
         <Button type="submit" className="mt-2" disabled={isLoading}>
-          {isLoading ? "Creating Account..." : "Create Account"}
+          {isLoading ? tAuth('signUp.submitting') : tAuth('signUp.submit')}
         </Button>
       </form>
     </Form>

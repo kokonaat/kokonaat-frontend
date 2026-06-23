@@ -24,12 +24,14 @@ import type { ShopListInterface } from "@/interface/shopInterface"
 import { shopList } from "@/api/shopApi"
 import { useShopStore } from "@/stores/shopStore"
 import { useUser } from "./useUser"
+import { useTranslation } from "@/hooks/useTranslation"
 
 export const useAuth = () => {
     const { setTokens, clearTokens } = useAuthStore()
     const clearCurrentShop = useShopStore((s) => s.clearCurrentShop)
     const navigate = useNavigate()
     const { refetch: refetchUser } = useUser()
+    const { t } = useTranslation('toast')
 
     // sign up
     const signUpMutation: UseMutationResult<
@@ -47,12 +49,12 @@ export const useAuth = () => {
             if (data.access_token && data.refresh_token) {
                 setTokens(data.access_token, data.refresh_token)
                 refetchUser()
-                toast.success("Account created and logged in!")
+                toast.success(t('auth.signUpSuccess'))
                 navigate("/create-shop")
             }
         },
         onError: (err: AxiosError<{ message: string }>) => {
-            toast.error(err?.response?.data?.message || "Failed to sign up")
+            toast.error(err?.response?.data?.message || t('auth.signUpFailed'))
         },
     })
 
@@ -75,25 +77,25 @@ export const useAuth = () => {
         },
         onSuccess: async ({ shopsRes }) => {
             try {
-                toast.success("Logged in successfully!")
+                toast.success(t('auth.signInSuccess'))
                 await refetchUser()
 
                 // validation shop res
                 if (!Array.isArray(shopsRes)) {
-                    toast.error("Unexpected server response.")
+                    toast.error(t('auth.unexpectedResponse'))
                     return
                 }
 
                 const shopCount = shopsRes.length
 
-                if (shopCount === 0) return toast.info("No shops found")
+                if (shopCount === 0) return toast.info(t('auth.noShopsFound'))
                     
                 // one shop
                 if (shopCount === 1) {
                     const shop = shopsRes[0]
 
                     if (!shop?.shopId) {
-                        toast.error("Invalid shop data received.")
+                        toast.error(t('auth.invalidShopData'))
                         navigate("/shops")
                         return
                     }
@@ -108,11 +110,11 @@ export const useAuth = () => {
 
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
-                toast.error("Something went wrong.")
+                toast.error(t('auth.somethingWrong'))
             }
         },
         onError: (err: AxiosError<{ message: string }>) => {
-            toast.error(err?.response?.data?.message || "Failed to log in")
+            toast.error(err?.response?.data?.message || t('auth.signInFailed'))
         },
     })
 
@@ -139,14 +141,15 @@ export const useChangePassword = () => {
 // forget password
 export const useForgetPassword = () => {
     const navigate = useNavigate()
+    const { t } = useTranslation('toast')
     return useMutation({
         mutationFn: (data: ForgetPasswordRequest) => forgetPasswordApi(data),
         onSuccess: () => {
-            toast.success("If an account exists, you will receive an email")
+            toast.success(t('auth.forgetPasswordSuccess'))
             navigate("/sign-in")
         },
         onError: (err: AxiosError<{ message: string }>) => {
-            toast.error(err?.response?.data?.message || "Failed to send reset email")
+            toast.error(err?.response?.data?.message || t('auth.forgetPasswordFailed'))
         },
     })
 }
@@ -154,14 +157,15 @@ export const useForgetPassword = () => {
 // reset password (from email link token)
 export const useResetPassword = () => {
     const navigate = useNavigate()
+    const { t } = useTranslation('toast')
     return useMutation({
         mutationFn: (data: ResetPasswordRequest) => resetPasswordApi(data),
         onSuccess: () => {
-            toast.success("Password has been reset successfully")
+            toast.success(t('auth.resetPasswordSuccess'))
             navigate("/sign-in")
         },
         onError: (err: AxiosError<{ message: string }>) => {
-            toast.error(err?.response?.data?.message || "Failed to reset password")
+            toast.error(err?.response?.data?.message || t('auth.resetPasswordFailed'))
         },
     })
 }

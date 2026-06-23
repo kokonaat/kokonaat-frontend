@@ -1,5 +1,6 @@
 import { Download, Loader2 } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from '@/hooks/useTranslation'
 import { useShopStore } from '@/stores/shopStore'
 import { generateTransactionDetailsPDF } from '@/utils/enums/transactionDetailsPdf'
 import type { Transaction } from '@/interface/transactionInterface'
@@ -11,6 +12,9 @@ interface Props {
 }
 
 export const TransactionDetailsDownload = ({ transaction }: Props) => {
+    const { t } = useTranslation('transactions')
+    const { t: tExport } = useTranslation('export')
+    const { t: tToast } = useTranslation('toast')
     const { currentShopName } = useShopStore()
     const [isDownloading, setIsDownloading] = useState(false)
 
@@ -18,17 +22,17 @@ export const TransactionDetailsDownload = ({ transaction }: Props) => {
         e.stopPropagation()
 
         if (!currentShopName) {
-            toast.error('Shop name is missing')
+            toast.error(tToast('transaction.shopNameMissing'))
             return
         }
 
         try {
             setIsDownloading(true)
-            generateTransactionDetailsPDF(transaction, currentShopName)
-            toast.success('Transaction report downloaded successfully')
+            await generateTransactionDetailsPDF(tExport, transaction, currentShopName)
+            toast.success(tToast('transaction.transactionReportDownloaded'))
         } catch (error) {
             console.error('Download error:', error)
-            toast.error('Failed to download transaction report. Please try again.')
+            toast.error(tToast('transaction.transactionReportFailed'))
         } finally {
             setIsDownloading(false)
         }
@@ -46,7 +50,7 @@ export const TransactionDetailsDownload = ({ transaction }: Props) => {
             ) : (
                 <Download className="h-4 w-4" />
             )}
-            Download PDF
+            {t('buttons.downloadPdf')}
         </Button>
     )
 }

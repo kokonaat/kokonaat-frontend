@@ -24,6 +24,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type NavUserProps = {
   user: {
@@ -36,6 +37,8 @@ type NavUserProps = {
 export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar()
   const { logout } = useAuth()
+  const { t: tCommon } = useTranslation('common')
+  const { t: tNav } = useTranslation('nav')
 
   const handleLogOut = () => {
     void logout()
@@ -105,7 +108,7 @@ export function NavUser({ user }: NavUserProps) {
               <DropdownMenuItem asChild>
                 <Link to='#' className='cursor-pointer'>
                   <BadgeCheck />
-                  Account
+                  {tNav('userProfile')}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -124,7 +127,7 @@ export function NavUser({ user }: NavUserProps) {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogOut} className='cursor-pointer'>
               <LogOut />
-              Log out
+              {tCommon('actions.logout')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

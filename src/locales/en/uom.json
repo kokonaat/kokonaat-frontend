@@ -1,0 +1,50 @@
+{
+  "page": {
+    "title": "Unit of Measurement",
+    "subtitle": "Here is a list of your all Unit of Measurement",
+    "errorLoading": "Error loading uoms.",
+    "loading": "Loading uom data..."
+  },
+  "buttons": {
+    "create": "Create",
+    "saveChanges": "Save changes",
+    "close": "Close",
+    "delete": "Delete",
+    "edit": "Edit"
+  },
+  "table": {
+    "searchPlaceholder": "Search uom...",
+    "emptyMessage": "No Uom found!",
+    "emptyDetails": "Create a Uom first.",
+    "columns": {
+      "name": "Name",
+      "description": "Description",
+      "selectAll": "Select all",
+      "selectRow": "Select row"
+    }
+  },
+  "drawer": {
+    "titleCreate": "Create Uom",
+    "titleUpdate": "Update Uom",
+    "descriptionCreate": "Add a new uom by providing necessary info. Click save when you're done.",
+    "descriptionUpdate": "Update the uom by providing necessary info. Click save when you're done.",
+    "fields": {
+      "name": "Name",
+      "description": "Description"
+    },
+    "placeholders": {
+      "name": "Uom name",
+      "description": "Uom description"
+    }
+  },
+  "deleteDialog": {
+    "title": "Delete this UOM: {{name}}?",
+    "description": "You are about to delete {{name}}. This action cannot be undone.",
+    "confirm": "Delete"
+  },
+  "bulkDelete": {
+    "title": "Delete {{count}} uom(s)?",
+    "description": "You are about to delete {{count}} uom(s). This action cannot be undone.",
+    "deleteSelected": "Delete selected Uom"
+  }
+}

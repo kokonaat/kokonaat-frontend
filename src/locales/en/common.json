@@ -1,0 +1,106 @@
+{
+  "language": {
+    "toggle": "Toggle language",
+    "english": "English",
+    "bengali": "বাংলা"
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "delete": "Delete",
+    "discard": "Discard",
+    "save": "Save",
+    "edit": "Edit",
+    "view": "View",
+    "download": "Download",
+    "search": "Search",
+    "filter": "Filter",
+    "reset": "Reset",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "close": "Close",
+    "add": "Add",
+    "create": "Create",
+    "update": "Update",
+    "back": "Back",
+    "logout": "Log out",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "loading": {
+    "shops": "Loading shops...",
+    "default": "Loading..."
+  },
+  "errors": {
+    "loadShops": "Failed to load shops"
+  },
+  "pagination": {
+    "rowsSelected": "{{selected}} of {{total}} row(s) selected.",
+    "rowsPerPage": "Rows per page",
+    "pageOf": "Page {{current}} of {{total}}",
+    "firstPage": "Go to first page",
+    "previousPage": "Go to previous page",
+    "nextPage": "Go to next page",
+    "lastPage": "Go to last page"
+  },
+  "dialog": {
+    "discardTitle": "Discard Changes?",
+    "discardDesc": "You have unsaved changes. Are you sure you want to close? All entered data will be lost.",
+    "warningTitle": "Warning!",
+    "warningDesc": "Please be careful, this operation can not be rolled back.",
+    "confirmByTyping": "Confirm by typing \"{{word}}\":",
+    "typeToConfirm": "Type \"DELETE\" to confirm."
+  },
+  "empty": {
+    "noData": "No data found",
+    "noTransaction": "No Transaction found!",
+    "noTransactionsYet": "No Transactions Yet",
+    "noVendor": "No Vendor found!",
+    "noCustomer": "No Customer found!",
+    "noUser": "No User found!",
+    "noUom": "No Uom found!",
+    "noInventory": "No Inventory found!",
+    "noExpense": "No expense found!",
+    "noTrackingRecords": "No tracking records found!",
+    "noBalanceSheet": "No balance sheet data found!",
+    "noTransactionDetails": "No transaction details found!",
+    "noProductSales": "No product sales yet",
+    "noExpenses": "No expenses in this period",
+    "noSales": "No sales in this period",
+    "noCashFlow": "No cash flow in this period",
+    "noPartnerActivity": "No partner activity",
+    "noTransactionsPeriod": "No transactions in this period",
+    "noReportSelected": "No report selected",
+    "noReportSelectedDetails": "Select a date range and report type to generate your report.",
+    "noExpensesFound": "No Expenses Found",
+    "noStockData": "No Stock Data Found",
+    "noStockTrackData": "No Stock Track Data Found",
+    "noBalanceSheetData": "No Balance Sheet Data Found",
+    "noTransactionsFound": "No Transactions Found",
+    "noExpensesDetails": "There are no recorded expenses for the selected date range.",
+    "noStockDetails": "No stock data matches your selected filters and date range.",
+    "noStockTrackDetails": "No stock tracking data matches your selected filters and date range.",
+    "noBalanceSheetDetails": "No balance sheet data matches your selected date range.",
+    "noDataDetails": "No data matches your selected filters and date range."
+  },
+  "search": {
+    "placeholder": "Search...",
+    "noResults": "No results found."
+  },
+  "datePicker": {
+    "placeholder": "Pick a date"
+  },
+  "dateRange": {
+    "placeholder": "Select date range",
+    "ok": "OK",
+    "clear": "Clear date range"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "guest": "Guest",
+  "appName": "Kokonaat"
+}

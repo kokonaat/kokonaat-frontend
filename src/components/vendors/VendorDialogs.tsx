@@ -5,21 +5,21 @@ import { useDeleteVendor } from '@/hooks/useVendor'
 import VendorMutateDrawer from './VendorMutateDrawer'
 import VendorViewDrawer from './VendorViewDrawer'
 import { useDrawerStore } from '@/stores/drawerStore'
+import { useTranslation } from '@/hooks/useTranslation'
 
 const VendorDialogs = () => {
+  const { t } = useTranslation('vendors')
+  const { t: tToast } = useTranslation('toast')
   const { open, setOpen, currentRow, setCurrentRow } = useCustomers()
   const shopId = localStorage.getItem('shop-storage')
     ? JSON.parse(localStorage.getItem('shop-storage')!).state?.currentShopId
     : null
 
   const deleteMutation = useDeleteVendor(shopId || '')
-
-  // global drawer state to blur bg
   const setDrawerOpen = useDrawerStore((s) => s.setDrawerOpen)
 
   return (
     <>
-      {/* Create modal */}
       <VendorMutateDrawer
         key='vendor-create'
         open={open === 'create'}
@@ -27,22 +27,18 @@ const VendorDialogs = () => {
         onSave={() => setOpen(null)}
       />
 
-      {/* Update & Delete modals */}
       {currentRow && (
         <>
-          {/* view drawer */}
           <VendorViewDrawer
             key={`vendor-view-${currentRow.id}`}
             open={open === 'view'}
             onOpenChange={(val: boolean) => {
               setOpen(val ? 'view' : null)
-              // blur global state
               setDrawerOpen(val)
             }}
             currentRow={currentRow}
           />
 
-          {/* update modal */}
           <VendorMutateDrawer
             key={`vendor-update-${currentRow.id}`}
             open={open === 'update'}
@@ -51,7 +47,6 @@ const VendorDialogs = () => {
             onSave={() => setOpen(null)}
           />
 
-          {/* delete modal */}
           <ConfirmDialog
             key='vendor-delete'
             destructive
@@ -65,21 +60,15 @@ const VendorDialogs = () => {
                   onSuccess: () => {
                     setOpen(null)
                     setCurrentRow(null)
-                    toast.success("The following vendor has been deleted")
+                    toast.success(tToast('vendor.deleted'))
                   },
                 }
               )
             }}
             className='max-w-md'
-            title={`Delete this vendor: ${currentRow.name} ?`}
-            desc={
-              <>
-                You are about to delete a vendor with the name{' '}
-                <strong>{currentRow.name}</strong>. <br />
-                This action cannot be undone.
-              </>
-            }
-            confirmText='Delete'
+            title={t('deleteDialog.title', { name: currentRow.name })}
+            desc={t('deleteDialog.description', { name: currentRow.name })}
+            confirmText={t('deleteDialog.confirm')}
           />
         </>
       )}

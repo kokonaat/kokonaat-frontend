@@ -1,5 +1,4 @@
-import { useEffect } from "react"
-import type z from "zod"
+import { useEffect, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -26,11 +25,25 @@ import { toast } from "sonner"
 import { Checkbox } from "../ui/checkbox"
 import type { AxiosError } from "axios"
 import type { CustomerMutateDrawerProps } from "@/interface/customerInterface"
-import { customerFormSchema } from "@/schema/customerFormSchema"
+import {
+  createCustomerFormSchema,
+  type CustomerFormValues,
+} from "@/schema/customerFormSchema"
 import { useCreateCustomer, useUpdateCustomer } from "@/hooks/useCustomer"
 import { useShopStore } from "@/stores/shopStore"
+import { useTranslation } from "@/hooks/useTranslation"
 
-type CustomerFormSchema = z.infer<typeof customerFormSchema>
+const emptyDefaults: CustomerFormValues = {
+  name: "",
+  email: "",
+  phone: "",
+  address: "",
+  city: "",
+  country: "",
+  isB2B: false,
+  contactPerson: "",
+  contactPersonPhone: "",
+}
 
 const CustomersMutateDrawer = ({
   open,
@@ -38,57 +51,40 @@ const CustomersMutateDrawer = ({
   currentRow,
   onSave,
 }: CustomerMutateDrawerProps) => {
+  const { t } = useTranslation('customers')
+  const { t: tValidation } = useTranslation('validation')
+  const { t: tToast } = useTranslation('toast')
   const shopId = useShopStore((s) => s.currentShopId)
   const isUpdate = !!currentRow
+
+  const schema = useMemo(
+    () => createCustomerFormSchema(tValidation),
+    [tValidation]
+  )
 
   const createMutation = useCreateCustomer(shopId || "")
   const updateMutation = useUpdateCustomer(shopId || "")
 
-  const form = useForm<CustomerFormSchema>({
-    resolver: zodResolver(customerFormSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-      city: "",
-      country: "",
-      isB2B: false,
-      contactPerson: "",
-      contactPersonPhone: "",
-    },
+  const form = useForm<CustomerFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: emptyDefaults,
   })
 
-  // form reset
   useEffect(() => {
-    form.reset(currentRow ?? {
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-      city: "",
-      country: "",
-      isB2B: false,
-      contactPerson: "",
-      contactPersonPhone: "",
-    })
+    form.reset(currentRow ?? emptyDefaults)
   }, [currentRow, form])
 
-  // tract inB2B
   const isCheckedIsB2B = form.watch("isB2B")
 
-  // isDirty is to check any field change or not
   const {
     formState: { isDirty },
   } = form
 
-  //  submit data
-  const onSubmit: SubmitHandler<CustomerFormSchema> = (data) => {
-    if (!shopId) return toast.error("Shop ID not found!")
+  const onSubmit: SubmitHandler<CustomerFormValues> = (data) => {
+    if (!shopId) return toast.error(tToast('customer.shopIdNotFound'))
 
-    // prevent api call if no input field changed
     if (isUpdate && !isDirty) {
-      toast.info("No changes detected. Please modify something before saving.")
+      toast.info(tToast('customer.noChanges'))
       return
     }
 
@@ -105,18 +101,17 @@ const CustomersMutateDrawer = ({
 
     if (isUpdate && currentRow?.id) {
       updateMutation.mutate(
-        // submitting with shopId
         { id: currentRow.id, data: normalizedData },
         {
           onSuccess: () => {
             onOpenChange(false)
             onSave?.(normalizedData)
             form.reset()
-            toast.success("Customer updated successfully.")
+            toast.success(tToast('customer.updated'))
           },
           onError: (err: unknown) => {
             const error = err as AxiosError<{ message: string }>
-            toast.error(error?.response?.data?.message || "Update failed")
+            toast.error(error?.response?.data?.message || tToast('customer.updateFailed'))
           },
         }
       )
@@ -126,11 +121,11 @@ const CustomersMutateDrawer = ({
           onOpenChange(false)
           onSave?.(normalizedData)
           form.reset()
-          toast.success("Customer created successfully.")
+          toast.success(tToast('customer.created'))
         },
         onError: (err: unknown) => {
           const error = err as AxiosError<{ message: string }>
-          toast.error(error?.response?.data?.message || "Creation failed")
+          toast.error(error?.response?.data?.message || tToast('customer.creationFailed'))
         },
       })
     }
@@ -141,27 +136,16 @@ const CustomersMutateDrawer = ({
       open={open}
       onOpenChange={(v) => {
         onOpenChange(v)
-        form.reset(currentRow ?? {
-          name: "",
-          email: "",
-          phone: "",
-          address: "",
-          city: "",
-          country: "",
-          isB2B: false,
-          contactPerson: "",
-          contactPersonPhone: "",
-        })
+        form.reset(currentRow ?? emptyDefaults)
       }}
     >
       <SheetContent className="flex flex-col">
         <SheetHeader className="text-start">
-          <SheetTitle>{isUpdate ? "Update" : "Create"} Customer</SheetTitle>
+          <SheetTitle>
+            {isUpdate ? t('drawer.titleUpdate') : t('drawer.titleCreate')}
+          </SheetTitle>
           <SheetDescription>
-            {isUpdate
-              ? "Update the customer by providing necessary info."
-              : "Add a new customer by providing necessary info."}{" "}
-            Click save when you're done.
+            {isUpdate ? t('drawer.descriptionUpdate') : t('drawer.descriptionCreate')}
           </SheetDescription>
         </SheetHeader>
 
@@ -176,9 +160,9 @@ const CustomersMutateDrawer = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t('drawer.fields.name')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Rahul Roy" />
+                    <Input {...field} placeholder={t('drawer.placeholders.name')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -190,9 +174,9 @@ const CustomersMutateDrawer = ({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t('drawer.fields.email')}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value ?? ""} placeholder="rahul@gmail.com" />
+                    <Input {...field} value={field.value ?? ""} placeholder={t('drawer.placeholders.email')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -204,9 +188,9 @@ const CustomersMutateDrawer = ({
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel>{t('drawer.fields.phone')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="01711111111" />
+                    <Input {...field} placeholder={t('drawer.placeholders.phone')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -218,9 +202,9 @@ const CustomersMutateDrawer = ({
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Address</FormLabel>
+                  <FormLabel>{t('drawer.fields.address')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Shyamoli,Dhaka" />
+                    <Input {...field} placeholder={t('drawer.placeholders.address')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -232,9 +216,9 @@ const CustomersMutateDrawer = ({
               name="city"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>City</FormLabel>
+                  <FormLabel>{t('drawer.fields.city')}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value ?? ""} placeholder="Dhaka" />
+                    <Input {...field} value={field.value ?? ""} placeholder={t('drawer.placeholders.city')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -246,9 +230,9 @@ const CustomersMutateDrawer = ({
               name="country"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Country</FormLabel>
+                  <FormLabel>{t('drawer.fields.country')}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value ?? ""} placeholder="Bangladesh" />
+                    <Input {...field} value={field.value ?? ""} placeholder={t('drawer.placeholders.country')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -266,54 +250,52 @@ const CustomersMutateDrawer = ({
                       onCheckedChange={(checked) => field.onChange(checked)}
                     />
                   </FormControl>
-                  <FormLabel className="m-0">B2B</FormLabel>
+                  <FormLabel className="m-0">{t('drawer.fields.b2b')}</FormLabel>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {
-              isCheckedIsB2B && (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="contactPerson"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contact Person</FormLabel>
-                        <FormControl>
-                          <Input {...field} value={field.value ?? ""} placeholder="Ramesh Roy" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+            {isCheckedIsB2B && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="contactPerson"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('drawer.fields.contactPerson')}</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ""} placeholder={t('drawer.placeholders.contactPerson')} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                  <FormField
-                    control={form.control}
-                    name="contactPersonPhone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contact Person Phone</FormLabel>
-                        <FormControl>
-                          <Input {...field} value={field.value ?? ""} placeholder="01711111111" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </>
-              )
-            }
+                <FormField
+                  control={form.control}
+                  name="contactPersonPhone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('drawer.fields.contactPersonPhone')}</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ""} placeholder={t('drawer.placeholders.contactPersonPhone')} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
           </form>
         </Form>
 
         <SheetFooter className="gap-2">
           <SheetClose asChild>
-            <Button variant="outline">Close</Button>
+            <Button variant="outline">{t('buttons.close')}</Button>
           </SheetClose>
           <Button form="customer-form" type="submit">
-            Save changes
+            {t('buttons.saveChanges')}
           </Button>
         </SheetFooter>
       </SheetContent>

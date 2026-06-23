@@ -1,274 +1,306 @@
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import type { Transaction } from "@/interface/transactionInterface";
+import type { TFunction } from 'i18next'
+import autoTable from 'jspdf-autotable'
+import type { Transaction } from '@/interface/transactionInterface'
+import {
+  drawPdfFooter,
+  getAutoTableFont,
+  type ExportTFunction,
+} from '@/utils/exportPdfHelpers'
+import { createPdfDocument, setPdfFont } from '@/utils/pdfFont'
 
-const COMPANY_NAME = import.meta.env.VITE_COMPANY_NAME || "Company Name";
-
-// Format date as DD/MM/YYYY, HH:MM:SS
 const formatDateTime = (dateString: string): string => {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
-};
+  const date = new Date(dateString)
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getFullYear()
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`
+}
 
-export const generateTransactionDetailsPDF = (
-    transaction: Transaction,
-    shopName: string
+export const generateTransactionDetailsPDF = async (
+  t: TFunction<'export'>,
+  transaction: Transaction,
+  shopName: string,
 ) => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    let startY = 20;
+  const doc = await createPdfDocument()
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const na = t('common.fallbacks.notAvailable')
+  const tableFont = getAutoTableFont()
+  let startY = 20
 
-    // --- Header Section ---
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
-    doc.text(shopName.toUpperCase(), pageWidth / 2, 18, { align: "center" });
+  setPdfFont(doc, 'bold')
+  doc.setFontSize(22)
+  doc.text(shopName.toUpperCase(), pageWidth / 2, 18, { align: 'center' })
 
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
-    doc.text("Transaction Details", pageWidth / 2, 25, { align: "center" });
+  doc.setFontSize(11)
+  setPdfFont(doc, 'normal')
+  doc.text(t('transactionDetailsPdf.title'), pageWidth / 2, 25, { align: 'center' })
 
-    // --- Divider Line ---
-    doc.setLineWidth(0.5);
-    doc.setDrawColor(0, 0, 0);
-    doc.line(14, 30, pageWidth - 14, 30);
-    
-    // Transaction Number and Type
-    startY = 38;
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.text(`Transaction #${transaction.no}`, 14, startY);
-    
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.setTextColor(107, 114, 128);
-    doc.text(`Type: ${transaction.transactionType}`, 14, startY + 6);
-    doc.setTextColor(0, 0, 0);
-    
-    startY += 15;
+  doc.setLineWidth(0.5)
+  doc.setDrawColor(0, 0, 0)
+  doc.line(14, 30, pageWidth - 14, 30)
 
-    // --- Transaction Information Sections (matching the new design) ---
-    const name = transaction.vendor?.name ?? transaction.customer?.name ?? "N/A";
-    const partnerType = transaction.vendor ? "Vendor" : transaction.customer ? "Customer" : "N/A";
-    const paymentType = (transaction.paymentType ?? "N/A").replace("_", " ");
-    const status = transaction.transactionStatus ?? "Pending";
+  startY = 38
+  setPdfFont(doc, 'bold')
+  doc.setFontSize(12)
+  doc.text(t('transactionDetailsPdf.transactionNumber', { no: transaction.no }), 14, startY)
 
-    // Helper function to draw section header
-    const drawSectionHeader = (title: string, y: number, x: number, lineStartX: number, lineEndX: number) => {
-        // Draw the title text first
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(9);
-        doc.setTextColor(107, 114, 128); // muted-foreground color
-        doc.text(title.toUpperCase(), x, y);
-        doc.setTextColor(0, 0, 0);
-        
-        // Draw the divider line below the text with spacing
-        doc.setDrawColor(229, 231, 235);
-        doc.setLineWidth(0.5);
-        const lineY = y + 3;
-        doc.line(lineStartX, lineY, lineEndX, lineY);
-        
-        // Return Y position after header (with proper spacing)
-        return y + 9;
-    };
+  setPdfFont(doc, 'normal')
+  doc.setFontSize(10)
+  doc.setTextColor(107, 114, 128)
+  doc.text(
+    t('transactionDetailsPdf.typeLabel', { type: transaction.transactionType }),
+    14,
+    startY + 6,
+  )
+  doc.setTextColor(0, 0, 0)
+  startY += 15
 
-    // Helper function to draw field with label and value
-    const drawField = (label: string, value: string, x: number, y: number, isRightAlign = false) => {
-        // Draw label
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(8);
-        doc.setTextColor(107, 114, 128);
-        doc.text(label, x, y, { align: isRightAlign ? "right" : "left" });
-        
-        // Draw value below label
-        doc.setFontSize(9);
-        doc.setTextColor(0, 0, 0);
-        doc.setFont("helvetica", "normal");
-        const valueY = y + 5;
-        if (isRightAlign) {
-            doc.text(value, x, valueY, { align: "right" });
-        } else {
-            doc.text(value, x, valueY);
-        }
-        // Return Y position for next field with proper spacing
-        return valueY + 8;
-    };
+  const name = transaction.vendor?.name ?? transaction.customer?.name ?? na
+  const partnerType = transaction.vendor
+    ? t('common.partnerTypes.vendor')
+    : transaction.customer
+      ? t('common.partnerTypes.customer')
+      : na
+  const paymentType = (transaction.paymentType ?? na).replace('_', ' ')
+  const status =
+    transaction.transactionStatus ?? t('common.fallbacks.defaultStatusPending')
 
-    // Two-column layout
-    const leftX = 14;
-    const rightX = pageWidth - 14;
-    const columnWidth = (pageWidth - 28 - 16) / 2; // page width - margins - gap
-    const columnCenter = pageWidth / 2;
-    let currentY = startY;
+  const drawSectionHeader = (
+    title: string,
+    y: number,
+    x: number,
+    lineStartX: number,
+    lineEndX: number,
+  ) => {
+    setPdfFont(doc, 'bold')
+    doc.setFontSize(9)
+    doc.setTextColor(107, 114, 128)
+    doc.text(title.toUpperCase(), x, y)
+    doc.setTextColor(0, 0, 0)
+    doc.setDrawColor(229, 231, 235)
+    doc.setLineWidth(0.5)
+    doc.line(lineStartX, y + 3, lineEndX, y + 3)
+    return y + 9
+  }
 
-    // Left Column - Transaction Information Section
-    currentY = drawSectionHeader("Transaction Information", currentY, leftX, leftX, columnCenter - 8);
-    let leftY = currentY;
-    leftY = drawField(partnerType, name, leftX, leftY);
-    leftY = drawField("Payment Type", paymentType, leftX, leftY);
-    leftY = drawField("Status", status, leftX, leftY);
+  const drawField = (
+    label: string,
+    value: string,
+    x: number,
+    y: number,
+    isRightAlign = false,
+  ) => {
+    setPdfFont(doc, 'normal')
+    doc.setFontSize(8)
+    doc.setTextColor(107, 114, 128)
+    doc.text(label, x, y, { align: isRightAlign ? 'right' : 'left' })
+    doc.setFontSize(9)
+    doc.setTextColor(0, 0, 0)
+    const valueY = y + 5
+    doc.text(value, x, valueY, { align: isRightAlign ? 'right' : 'left' })
+    return valueY + 8
+  }
 
-    // Right Column - Financial Details Section
-    let rightY = startY; // Start at the same Y as left column
-    rightY = drawSectionHeader("Financial Details", rightY, columnCenter + 8, columnCenter + 8, rightX);
-    rightY = currentY; // Use the same starting Y for fields
-    rightY = drawField("Total Amount", transaction.totalAmount.toLocaleString(), rightX, rightY, true);
-    rightY = drawField("Paid", transaction.paid.toLocaleString(), rightX, rightY, true);
-    rightY = drawField("Pending", transaction.pending.toLocaleString(), rightX, rightY, true);
+  const leftX = 14
+  const rightX = pageWidth - 14
+  const columnWidth = (pageWidth - 28 - 16) / 2
+  const columnCenter = pageWidth / 2
+  let currentY = startY
 
-    // Move to next row of sections with proper spacing
-    startY = Math.max(leftY, rightY) + 15;
+  currentY = drawSectionHeader(
+    t('transactionDetailsPdf.sections.transactionInformation'),
+    currentY,
+    leftX,
+    leftX,
+    columnCenter - 8,
+  )
+  let leftY = currentY
+  leftY = drawField(partnerType, name, leftX, leftY)
+  leftY = drawField(t('transactionDetailsPdf.fields.paymentType'), paymentType, leftX, leftY)
+  leftY = drawField(t('transactionDetailsPdf.fields.status'), status, leftX, leftY)
 
-    // Left Column - Timeline Section
-    currentY = drawSectionHeader("Timeline", startY, leftX, leftX, columnCenter - 8);
-    leftY = currentY;
-    leftY = drawField("Created At", formatDateTime(transaction.createdAt), leftX, leftY);
-    leftY = drawField("Updated At", formatDateTime(transaction.updatedAt), leftX, leftY);
+  let rightY = startY
+  rightY = drawSectionHeader(
+    t('transactionDetailsPdf.sections.financialDetails'),
+    rightY,
+    columnCenter + 8,
+    columnCenter + 8,
+    rightX,
+  )
+  rightY = currentY
+  rightY = drawField(
+    t('transactionDetailsPdf.fields.totalAmount'),
+    transaction.totalAmount.toLocaleString(),
+    rightX,
+    rightY,
+    true,
+  )
+  rightY = drawField(
+    t('transactionDetailsPdf.fields.paid'),
+    transaction.paid.toLocaleString(),
+    rightX,
+    rightY,
+    true,
+  )
+  rightY = drawField(
+    t('transactionDetailsPdf.fields.pending'),
+    transaction.pending.toLocaleString(),
+    rightX,
+    rightY,
+    true,
+  )
 
-    // Right Column - Additional Information Section
-    rightY = startY; // Start at the same Y as left column
-    rightY = drawSectionHeader("Additional Information", rightY, columnCenter + 8, columnCenter + 8, rightX);
-    rightY = currentY; // Use the same starting Y for fields
-    const remarks = transaction.remarks || "N/A";
-    
-    // Draw Remarks label
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(107, 114, 128);
-    doc.text("Remarks", rightX, rightY, { align: "right" });
-    
-    // Draw Remarks value
-    rightY += 5;
-    doc.setFontSize(9);
-    doc.setTextColor(0, 0, 0);
-    const remarksLines = doc.splitTextToSize(remarks, columnWidth);
-    remarksLines.forEach((line: string, index: number) => {
-        doc.text(line, rightX, rightY + (index * 6), { align: "right" });
-    });
-    rightY += remarksLines.length * 6 + 4;
+  startY = Math.max(leftY, rightY) + 15
 
-    // Update startY for next section with proper spacing
-    startY = Math.max(leftY, rightY) + 15;
+  currentY = drawSectionHeader(
+    t('transactionDetailsPdf.sections.timeline'),
+    startY,
+    leftX,
+    leftX,
+    columnCenter - 8,
+  )
+  leftY = currentY
+  leftY = drawField(
+    t('transactionDetailsPdf.fields.createdAt'),
+    formatDateTime(transaction.createdAt),
+    leftX,
+    leftY,
+  )
+  leftY = drawField(
+    t('transactionDetailsPdf.fields.updatedAt'),
+    formatDateTime(transaction.updatedAt),
+    leftX,
+    leftY,
+  )
 
-    // --- Transaction Details Table ---
-    if (transaction.details && transaction.details.length > 0) {
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(11);
-        doc.text("Transaction Details", 14, startY);
-        startY += 8;
+  rightY = startY
+  rightY = drawSectionHeader(
+    t('transactionDetailsPdf.sections.additionalInformation'),
+    rightY,
+    columnCenter + 8,
+    columnCenter + 8,
+    rightX,
+  )
+  rightY = currentY
+  const remarks = transaction.remarks || na
 
-        // Helper function to format numbers
-        const formatNumber = (num: number | string | undefined | null) => {
-            const n = Number(num) || 0;
-            return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        };
+  setPdfFont(doc, 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(107, 114, 128)
+  doc.text(t('transactionDetailsPdf.fields.remarks'), rightX, rightY, { align: 'right' })
+  rightY += 5
+  doc.setFontSize(9)
+  doc.setTextColor(0, 0, 0)
+  const remarksLines = doc.splitTextToSize(remarks, columnWidth)
+  remarksLines.forEach((line: string, index: number) => {
+    doc.text(line, rightX, rightY + index * 6, { align: 'right' })
+  })
+  rightY += remarksLines.length * 6 + 4
 
-        // Prepare table data
-        const tableRows = transaction.details.map((detail) => [
-            detail.inventory?.name ?? "N/A",
-            detail.unitOfMeasurement?.name ?? "N/A",
-            formatNumber(detail.quantity || 0),
-            formatNumber(detail.price || 0),
-            formatNumber(detail.total || 0),
-        ]);
+  startY = Math.max(leftY, rightY) + 15
 
-        // Calculate subtotal (sum of all item totals)
-        const subtotal = transaction.details.reduce((sum, detail) => sum + Number(detail.total || 0), 0);
-        const total = transaction.totalAmount || subtotal;
-        const pending = transaction.pending || 0;
+  if (transaction.details && transaction.details.length > 0) {
+    setPdfFont(doc, 'bold')
+    doc.setFontSize(11)
+    doc.text(t('transactionDetailsPdf.sections.transactionDetailsTable'), 14, startY)
+    startY += 8
 
-        autoTable(doc, {
-            startY: startY,
-            head: [["Item", "UOM", "Qty", "Price", "Total"]],
-            body: tableRows,
-            theme: "plain",
-            headStyles: {
-                fillColor: [31, 41, 55],
-                textColor: 255,
-                halign: "center",
-                fontStyle: 'bold',
-                fontSize: 9,
-                cellPadding: 3
-            },
-            columnStyles: {
-                0: { cellWidth: 60, halign: "left" },
-                1: { cellWidth: 25, halign: "center" },
-                2: { cellWidth: 30, halign: "right" },
-                3: { cellWidth: 30, halign: "right" },
-                4: { cellWidth: 35, halign: "right" },
-            },
-            styles: {
-                fontSize: 8,
-                cellPadding: 2.5,
-                lineColor: [229, 231, 235],
-                lineWidth: 0.1
-            },
-            alternateRowStyles: {
-                fillColor: [255, 255, 255]
-            },
-        });
-
-        // --- Summary Section (white background with black borders) ---
-        const finalY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 12;
-        const summaryX = pageWidth - 90;
-        const summaryWidth = 76;
-        const summaryHeight = 32;
-        const padding = 6;
-
-        // Draw summary box with white background and black border only
-        doc.setFillColor(255, 255, 255);
-        doc.rect(summaryX, finalY, summaryWidth, summaryHeight, "F");
-        doc.setDrawColor(0, 0, 0);
-        doc.setLineWidth(0.5);
-        doc.rect(summaryX, finalY, summaryWidth, summaryHeight, "S");
-
-        const drawRow = (label: string, value: number, y: number, isBold = false) => {
-            doc.setFont("helvetica", isBold ? "bold" : "normal");
-            doc.setFontSize(9);
-            
-            // Label - black text on white background, with proper padding from border
-            doc.setTextColor(0, 0, 0);
-            doc.text(label, summaryX + padding, y);
-            
-            // Value - black text on white background, with proper padding from right border
-            doc.setTextColor(0, 0, 0);
-            const valueText = formatNumber(value);
-            doc.text(valueText, summaryX + summaryWidth - padding, y, { align: "right" });
-            
-            doc.setFont("helvetica", "normal");
-        };
-
-        drawRow("Sub Total:", subtotal, finalY + 8);
-        drawRow("Total:", total, finalY + 15);
-
-        // Divider line - black on white background, with proper padding from borders
-        doc.setDrawColor(0, 0, 0);
-        doc.setLineWidth(0.3);
-        doc.line(summaryX + padding, finalY + 20, summaryX + summaryWidth - padding, finalY + 20);
-        
-        drawRow("Pending:", pending, finalY + 27);
+    const formatNumber = (num: number | string | undefined | null) => {
+      const n = Number(num) || 0
+      return n.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
     }
 
-    // --- Footer ---
-    const pageCount = (doc as unknown as { internal: { getNumberOfPages: () => number } }).internal.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
-        doc.setPage(i);
-        doc.setFontSize(9);
-        doc.setFont("helvetica", "italic");
-        doc.text(
-            `Powered by ${COMPANY_NAME}`,
-            pageWidth / 2,
-            doc.internal.pageSize.getHeight() - 10,
-            { align: "center" }
-        );
-        doc.text(`Page ${i} of ${pageCount}`, pageWidth - 14, doc.internal.pageSize.getHeight() - 10, { align: "right" });
+    const tableRows = transaction.details.map((detail) => [
+      detail.inventory?.name ?? na,
+      detail.unitOfMeasurement?.name ?? na,
+      formatNumber(detail.quantity || 0),
+      formatNumber(detail.price || 0),
+      formatNumber(detail.total || 0),
+    ])
+
+    const subtotal = transaction.details.reduce(
+      (sum, detail) => sum + Number(detail.total || 0),
+      0,
+    )
+    const total = transaction.totalAmount || subtotal
+    const pending = transaction.pending || 0
+
+    autoTable(doc, {
+      startY,
+      head: [[
+        t('transactionDetailsPdf.tableHeaders.item'),
+        t('transactionDetailsPdf.tableHeaders.uom'),
+        t('transactionDetailsPdf.tableHeaders.qty'),
+        t('transactionDetailsPdf.tableHeaders.price'),
+        t('transactionDetailsPdf.tableHeaders.total'),
+      ]],
+      body: tableRows,
+      theme: 'plain',
+      headStyles: {
+        fillColor: [31, 41, 55],
+        textColor: 255,
+        halign: 'center',
+        fontStyle: 'bold',
+        fontSize: 9,
+        cellPadding: 3,
+        font: tableFont,
+      },
+      columnStyles: {
+        0: { cellWidth: 60, halign: 'left' },
+        1: { cellWidth: 25, halign: 'center' },
+        2: { cellWidth: 30, halign: 'right' },
+        3: { cellWidth: 30, halign: 'right' },
+        4: { cellWidth: 35, halign: 'right' },
+      },
+      styles: {
+        fontSize: 8,
+        cellPadding: 2.5,
+        lineColor: [229, 231, 235],
+        lineWidth: 0.1,
+        font: tableFont,
+      },
+      alternateRowStyles: { fillColor: [255, 255, 255] },
+    })
+
+    const finalY = (doc as any).lastAutoTable.finalY + 12
+    const summaryX = pageWidth - 90
+    const summaryWidth = 76
+    const summaryHeight = 32
+    const padding = 6
+
+    doc.setFillColor(255, 255, 255)
+    doc.rect(summaryX, finalY, summaryWidth, summaryHeight, 'F')
+    doc.setDrawColor(0, 0, 0)
+    doc.setLineWidth(0.5)
+    doc.rect(summaryX, finalY, summaryWidth, summaryHeight, 'S')
+
+    const drawRow = (label: string, value: number, y: number, isBold = false) => {
+      setPdfFont(doc, isBold ? 'bold' : 'normal')
+      doc.setFontSize(9)
+      doc.setTextColor(0, 0, 0)
+      doc.text(label, summaryX + padding, y)
+      doc.text(formatNumber(value), summaryX + summaryWidth - padding, y, {
+        align: 'right',
+      })
+      setPdfFont(doc, 'normal')
     }
 
-    const fileName = `Transaction_${transaction.no}_${Date.now()}.pdf`;
-    doc.save(fileName);
-};
+    drawRow(t('transactionDetailsPdf.summary.subTotal'), subtotal, finalY + 8)
+    drawRow(t('transactionDetailsPdf.summary.total'), total, finalY + 15)
+
+    doc.setDrawColor(0, 0, 0)
+    doc.setLineWidth(0.3)
+    doc.line(summaryX + padding, finalY + 20, summaryX + summaryWidth - padding, finalY + 20)
+
+    drawRow(t('transactionDetailsPdf.summary.pending'), pending, finalY + 27)
+  }
+
+  drawPdfFooter(doc, t as ExportTFunction, pageWidth)
+  doc.save(`Transaction_${transaction.no}_${Date.now()}.pdf`)
+}

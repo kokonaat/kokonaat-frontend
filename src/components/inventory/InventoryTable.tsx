@@ -13,7 +13,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { InventoryColumns as columns } from './InventoryColumns'
+import { useInventoryColumns } from './InventoryColumns'
+import { useTranslation } from '@/hooks/useTranslation'
 import { Input } from '@/components/ui/input'
 import { InventoryTableBulkActions } from './InventoryTableBulkActions'
 import { DataTableViewOptions } from '@/features/users/components/data-table-view-options'
@@ -36,6 +37,9 @@ const InventoryTable = ({
 }: InventoryTableProps & {
   onDateChange?: (from?: Date, to?: Date) => void
 }) => {
+  const { t } = useTranslation('inventory')
+  const columns = useInventoryColumns()
+
   // Table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -115,7 +119,7 @@ const InventoryTable = ({
         <div className="flex flex-col gap-2 md:flex-row md:items-center gap-x-2">
           <DateRangeSearch onDateChange={onDateChange} />
           <Input
-            placeholder="Search inventory..."
+            placeholder={t('table.searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="h-8 w-[150px] lg:w-[250px]"
@@ -169,8 +173,8 @@ const InventoryTable = ({
                   <Card className='m-4'>
                     <CardContent>
                       <NoDataFound
-                        message='No Inventory found!'
-                        details="Create a Inventory first."
+                        message={t('table.emptyMessage')}
+                        details={t('table.emptyDetails')}
                       />
                     </CardContent>
                   </Card>

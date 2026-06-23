@@ -1,0 +1,130 @@
+{
+  "page": {
+    "title": "Customers",
+    "subtitle": "Here is a list of your all Customers",
+    "errorLoading": "Error loading customers.",
+    "loading": "Loading customers data..."
+  },
+  "buttons": {
+    "create": "Create",
+    "saveChanges": "Save changes",
+    "close": "Close",
+    "delete": "Delete",
+    "view": "View",
+    "edit": "Edit",
+    "downloadPdf": "Download PDF"
+  },
+  "table": {
+    "filterPlaceholder": "Filter by id, name, phone or address...",
+    "rowTitle": "Click to view customer ledger",
+    "emptyMessage": "No Customer found!",
+    "emptyDetails": "Create a customer first.",
+    "columns": {
+      "selectAll": "Select all",
+      "selectRow": "Select row",
+      "id": "ID",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "city": "City",
+      "country": "Country",
+      "isB2B": "IsB2B",
+      "contactPerson": "Contact Person",
+      "contactPersonPhone": "Contact Person Phone"
+    }
+  },
+  "drawer": {
+    "titleCreate": "Create Customer",
+    "titleUpdate": "Update Customer",
+    "descriptionCreate": "Add a new customer by providing necessary info. Click save when you're done.",
+    "descriptionUpdate": "Update the customer by providing necessary info. Click save when you're done.",
+    "viewTitle": "Customer Details",
+    "viewDescription": "View information for {{name}}",
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "city": "City",
+      "country": "Country",
+      "b2b": "B2B",
+      "contactPerson": "Contact Person",
+      "contactPersonPhone": "Contact Person Phone",
+      "emptyValue": "—"
+    },
+    "placeholders": {
+      "name": "Rahul Roy",
+      "email": "rahul@gmail.com",
+      "phone": "01711111111",
+      "address": "Shyamoli,Dhaka",
+      "city": "Dhaka",
+      "country": "Bangladesh",
+      "contactPerson": "Ramesh Roy",
+      "contactPersonPhone": "01711111111"
+    }
+  },
+  "deleteDialog": {
+    "title": "Delete this customer: {{name}} ?",
+    "description": "You are about to delete a customer with the name {{name}}. This action cannot be undone.",
+    "confirm": "Delete"
+  },
+  "bulkDelete": {
+    "title": "Delete {{count}} selected customer(s)?",
+    "description": "You are about to delete {{count}} customer(s). This action cannot be undone.",
+    "deleteSelected": "Delete selected Customers",
+    "multiTitle": "Delete {{count}} {{entity}}",
+    "multiEntityPlural": "Customers",
+    "multiEntitySingular": "Customer",
+    "multiDescription": "Are you sure you want to delete the selected Customers? This action cannot be undone.",
+    "confirmTyping": "Confirm by typing \"DELETE\":",
+    "confirmPlaceholder": "Type \"DELETE\" to confirm.",
+    "warningTitle": "Warning!",
+    "warningDescription": "Please be careful, this operation can not be rolled back.",
+    "loading": "Deleting Customers...",
+    "success": "Deleted {{count}} {{entity}}",
+    "error": "Error deleting Customer"
+  },
+  "profile": {
+    "failedToLoad": "Failed to load customer",
+    "contactInformation": "Contact Information",
+    "businessDetails": "Business Details",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "shop": "Shop",
+    "businessType": "Business Type",
+    "b2b": "B2B",
+    "individual": "Individual",
+    "contactPerson": "Contact Person",
+    "transactions": "Transactions",
+    "failedTransactions": "Failed to load transactions"
+  },
+  "ledger": {
+    "loadingDetails": "Loading details...",
+    "entityNotFound": "No {{type}} found.",
+    "noLabel": "No:",
+    "contactInformation": "Contact Information",
+    "businessDetails": "Business Details",
+    "customerLedger": "Customer Ledger",
+    "vendorLedger": "Vendor Ledger",
+    "total": "Total",
+    "paid": "Paid",
+    "balance": "Balance",
+    "loadingTransactions": "Loading transactions...",
+    "failedTransactions": "Failed to load transactions",
+    "filterPlaceholder": "Filter by id, name, phone or address...",
+    "columns": {
+      "id": "ID",
+      "type": "Type",
+      "remarks": "Remarks",
+      "amount": "Amount",
+      "paid": "Paid",
+      "pending": "Pending",
+      "date": "Date"
+    },
+    "emptyMessage": "No Transactions Yet",
+    "emptyDetails": "You haven't recorded any transactions. Create a transaction to get started.",
+    "downloadAriaLabel": "Download transaction report"
+  }
+}

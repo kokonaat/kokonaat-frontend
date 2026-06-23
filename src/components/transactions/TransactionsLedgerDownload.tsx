@@ -1,4 +1,5 @@
 import { Download, Loader2 } from 'lucide-react'
+import { useTranslation } from '@/hooks/useTranslation'
 import { useShopStore } from '@/stores/shopStore'
 import { generatePDF } from '@/utils/enums/pdf'
 import type { Entity } from '@/utils/enums/pdf'
@@ -17,12 +18,15 @@ interface Props {
 }
 
 export const TransactionsLedgerDownload = ({ transaction }: Props) => {
+    const { t } = useTranslation('transactions')
+    const { t: tExport } = useTranslation('export')
+    const { t: tToast } = useTranslation('toast')
+    const { t: tEnums } = useTranslation('enums')
     const { currentShopId, currentShopName } = useShopStore()
 
-    // Determine which entity (vendor or customer) this transaction belongs to
     const entityId = transaction.vendor?.id || transaction.customer?.id
     const entityName = transaction.vendor?.name || transaction.customer?.name
-    const entityType = transaction.vendor ? 'vendor' : 'customer'
+    const entityType = transaction.vendor ? 'VENDOR' : 'CUSTOMER'
 
     const { isLoading, refetch } = useTransactionLedger(
         currentShopId ?? '',
@@ -39,25 +43,27 @@ export const TransactionsLedgerDownload = ({ transaction }: Props) => {
         e.stopPropagation()
 
         if (!currentShopId) {
-            toast.error('Shop ID is missing')
+            toast.error(tToast('transaction.shopIdMissing'))
             return
         }
 
         if (!entityId) {
-            toast.error('No vendor or customer associated with this transaction')
+            toast.error(tToast('transaction.noPartner'))
             return
         }
 
         try {
-            // Fetch latest data
             const { data: ledgerData } = await refetch()
 
             if (!ledgerData?.transactions?.length) {
-                toast.warning(`No transactions found for this ${entityType}`)
+                toast.warning(
+                    tToast('transaction.noTransactionsForPartner', {
+                        partnerType: tEnums(`partnerType.${entityType}`),
+                    })
+                )
                 return
             }
 
-            // Prepare entity data for PDF
             const entity: Entity = {
                 name: entityName || 'Unknown',
                 no: undefined,
@@ -72,20 +78,18 @@ export const TransactionsLedgerDownload = ({ transaction }: Props) => {
                 },
             }
 
-            // Generate PDF
-            generatePDF(entity, ledgerData.transactions, {
+            await generatePDF(tExport, entity, ledgerData.transactions, {
                 totalAmount: ledgerData.totalAmount || 0,
                 totalPaid: ledgerData.paid || 0,
             })
 
-            toast.success('Ledger report downloaded successfully')
+            toast.success(tToast('transaction.ledgerDownloaded'))
         } catch (error) {
             console.error('Download error:', error)
-            toast.error('Failed to download ledger report. Please try again.')
+            toast.error(tToast('transaction.ledgerDownloadFailed'))
         }
     }
 
-    // Don't show button if there's no vendor or customer
     if (!entityId) {
         return null
     }
@@ -98,7 +102,7 @@ export const TransactionsLedgerDownload = ({ transaction }: Props) => {
                         onClick={handleDownload}
                         disabled={isLoading}
                         className="p-1.5 hover:bg-muted rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        aria-label={`Download ${entityType} ledger`}
+                        aria-label={t('buttons.downloadPdf')}
                     >
                         {isLoading ? (
                             <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
@@ -108,7 +112,7 @@ export const TransactionsLedgerDownload = ({ transaction }: Props) => {
                     </button>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>Download PDF</p>
+                    <p>{t('buttons.downloadPdf')}</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>

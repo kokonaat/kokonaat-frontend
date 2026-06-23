@@ -1,0 +1,96 @@
+{
+  "signIn": {
+    "emailRequired": "অনুগ্রহ করে আপনার ইমেইল দিন",
+    "emailInvalid": "অনুগ্রহ করে একটি বৈধ ইমেইল ঠিকানা দিন",
+    "passwordRequired": "অনুগ্রহ করে আপনার পাসওয়ার্ড দিন",
+    "passwordMinLength": "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে"
+  },
+  "signUp": {
+    "nameMinLength": "অনুগ্রহ করে আপনার পূর্ণ নাম দিন (কমপক্ষে ৩ অক্ষর)",
+    "emailRequired": "অনুগ্রহ করে আপনার ইমেইল দিন",
+    "emailInvalid": "অনুগ্রহ করে একটি বৈধ ইমেইল ঠিকানা দিন",
+    "passwordMinLength": "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে",
+    "confirmPasswordMinLength": "অনুগ্রহ করে আপনার পাসওয়ার্ড নিশ্চিত করুন",
+    "passwordsMismatch": "পাসওয়ার্ড মিলছে না"
+  },
+  "forgetPassword": {
+    "emailRequired": "অনুগ্রহ করে আপনার ইমেইল দিন",
+    "emailInvalid": "অনুগ্রহ করে একটি বৈধ ইমেইল ঠিকানা দিন"
+  },
+  "resetPassword": {
+    "tokenRequired": "রিসেট টোকেন প্রয়োজন",
+    "newPasswordMinLength": "নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে",
+    "confirmPasswordMinLength": "অনুগ্রহ করে আপনার নতুন পাসওয়ার্ড নিশ্চিত করুন",
+    "passwordsMismatch": "পাসওয়ার্ড মিলছে না"
+  },
+  "changePassword": {
+    "oldPasswordMinLength": "পুরাতন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।",
+    "newPasswordMinLength": "নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।",
+    "confirmPasswordMinLength": "অনুগ্রহ করে আপনার নতুন পাসওয়ার্ড নিশ্চিত করুন।",
+    "passwordsMismatch": "নতুন পাসওয়ার্ড মিলছে না"
+  },
+  "transactionPayment": {
+    "amountRequired": "পরিমাণ প্রয়োজন",
+    "amountPositive": "পরিমাণ ০-এর বেশি হতে হবে",
+    "paymentTypeRequired": "অনুগ্রহ করে একটি পেমেন্ট ধরন নির্বাচন করুন"
+  },
+  "vendorForm": {
+    "nameRequired": "নাম প্রয়োজন",
+    "phoneRequired": "ফোন প্রয়োজন"
+  },
+  "userForm": {
+    "usernameRequired": "ব্যবহারকারীর নাম প্রয়োজন।",
+    "phoneRequired": "ফোন নম্বর প্রয়োজন।",
+    "roleRequired": "ভূমিকা প্রয়োজন।",
+    "passwordRequired": "পাসওয়ার্ড প্রয়োজন।",
+    "passwordMinLength": "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।",
+    "passwordsMismatch": "পাসওয়ার্ড মিলছে না।"
+  },
+  "uomForm": {
+    "nameRequired": "নাম প্রয়োজন"
+  },
+  "transactionForm": {
+    "partnerTypeRequired": "অনুগ্রহ করে একটি অংশীদার ধরন নির্বাচন করুন",
+    "entityTypeRequired": "অনুগ্রহ করে একটি সত্তা ধরন নির্বাচন করুন",
+    "transactionTypeRequired": "অনুগ্রহ করে একটি লেনদেন ধরন নির্বাচন করুন",
+    "amountPositive": "পরিমাণ ধনাত্মক হতে হবে",
+    "paymentTypeRequired": "অনুগ্রহ করে একটি পেমেন্ট ধরন নির্বাচন করুন",
+    "valueMinZero": "মান ০ বা তার বেশি হতে হবে।",
+    "inventoryRequired": "মজুদ নির্বাচন করুন",
+    "quantityGreaterThanZero": "পরিমাণ ০-এর বেশি হতে হবে",
+    "uomRequired": "পরিমাপ একক নির্বাচন করুন",
+    "priceGreaterThanZero": "মূল্য ০-এর বেশি হতে হবে",
+    "inventoryItemRequired": "অনুগ্রহ করে কমপক্ষে একটি মজুদ আইটেম যোগ করুন যার পরিমাণ ও মূল্য ধনাত্মক।",
+    "invalidSaleQuantity": "বিক্রয়ের জন্য অবৈধ পরিমাণ।",
+    "transactionAmountRequired": "এই ধরনের জন্য লেনদেনের পরিমাণ প্রয়োজন।"
+  },
+  "subscriptionForm": {
+    "planNameRequired": "প্ল্যানের নাম প্রয়োজন",
+    "descriptionRequired": "বিবরণ প্রয়োজন",
+    "priceMin": "মূল্য কমপক্ষে ০ হতে হবে",
+    "transactionsMin": "মোট লেনদেন কমপক্ষে ০ হতে হবে"
+  },
+  "inventoryForm": {
+    "nameRequired": "নাম প্রয়োজন",
+    "descriptionRequired": "বিবরণ কমপক্ষে ১ অক্ষরের হতে হবে",
+    "quantityMin": "পরিমাণ কমপক্ষে ০ হতে হবে",
+    "lastPriceMin": "সর্বশেষ মূল্য কমপক্ষে ০ হতে হবে",
+    "uomRequired": "পরিমাপ একক প্রয়োজন"
+  },
+  "expenseForm": {
+    "titleRequired": "শিরোনাম প্রয়োজন",
+    "amountMin": "পরিমাণ ০-এর বেশি হতে হবে",
+    "remarksRequired": "মন্তব্য প্রয়োজন",
+    "shopIdRequired": "দোকান আইডি প্রয়োজন"
+  },
+  "customerForm": {
+    "nameRequired": "নাম প্রয়োজন",
+    "phoneRequired": "ফোন প্রয়োজন",
+    "addressRequired": "ঠিকানা প্রয়োজন"
+  },
+  "createShopForm": {
+    "shopNameRequired": "অনুগ্রহ করে আপনার দোকানের নাম দিন",
+    "shopNameMaxLength": "দোকানের নাম ৫০ অক্ষরের কম হতে হবে",
+    "addressRequired": "অনুগ্রহ করে দোকানের ঠিকানা দিন"
+  }
+}

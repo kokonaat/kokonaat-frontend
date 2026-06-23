@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Download } from "lucide-react"
 import type { BalanceSheetDayItem, BalanceSheetItem } from "@/interface/reportInterface"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface BalanceSheetTableProps {
   data: BalanceSheetDayItem[]
@@ -35,46 +36,6 @@ const getTransactionTypeColor = (type: string) => {
   }
 }
 
-const renderItem = (item: BalanceSheetItem, index: number) => {
-  if (item.type === "transaction") {
-    return (
-      <TableRow key={`${item.id}-${index}`}>
-        <TableCell className="text-center">{item.no || "N/A"}</TableCell>
-        <TableCell>
-          <Badge variant="secondary" className={`font-medium ${getTransactionTypeColor(item.transactionType)}`}>
-            {item.transactionType}
-          </Badge>
-        </TableCell>
-        <TableCell>{item.customerName || item.vendorName || "N/A"}</TableCell>
-        <TableCell className="text-right">{item.totalAmount.toFixed(2)}</TableCell>
-        <TableCell className="text-right text-green-600">{item.paid.toFixed(2)}</TableCell>
-        <TableCell className={`text-right ${item.pending > 0 ? "text-destructive font-bold" : ""}`}>
-          {item.pending.toFixed(2)}
-        </TableCell>
-        <TableCell>{item.paymentType}</TableCell>
-        <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
-      </TableRow>
-    )
-  } else {
-    return (
-      <TableRow key={`${item.id}-${index}`}>
-        <TableCell className="text-center">N/A</TableCell>
-        <TableCell>
-          <Badge variant="secondary" className="font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
-            EXPENSE
-          </Badge>
-        </TableCell>
-        <TableCell>{item.expenseTitle}</TableCell>
-        <TableCell className="text-right">{item.expenseAmount.toFixed(2)}</TableCell>
-        <TableCell className="text-right">N/A</TableCell>
-        <TableCell className="text-right">N/A</TableCell>
-        <TableCell>N/A</TableCell>
-        <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
-      </TableRow>
-    )
-  }
-}
-
 export const BalanceSheetTable = ({
   data,
   pageIndex,
@@ -83,9 +44,12 @@ export const BalanceSheetTable = ({
   onPageChange,
   onDownloadPdf,
   onDownloadExcel,
-  title = "Balance Sheet Report",
+  title,
 }: BalanceSheetTableProps) => {
-  // Calculate pagination
+  const { t } = useTranslation('reports')
+  const { t: tEnums } = useTranslation('enums')
+  const na = t('common.notAvailable')
+
   const paginatedData = useMemo(() => {
     const start = pageIndex * pageSize
     const end = start + pageSize
@@ -106,6 +70,46 @@ export const BalanceSheetTable = ({
     }
   }
 
+  const renderItem = (item: BalanceSheetItem, index: number) => {
+    if (item.type === "transaction") {
+      return (
+        <TableRow key={`${item.id}-${index}`}>
+          <TableCell className="text-center">{item.no || na}</TableCell>
+          <TableCell>
+            <Badge variant="secondary" className={`font-medium ${getTransactionTypeColor(item.transactionType)}`}>
+              {tEnums(`transactionType.${item.transactionType}`)}
+            </Badge>
+          </TableCell>
+          <TableCell>{item.customerName || item.vendorName || na}</TableCell>
+          <TableCell className="text-right">{item.totalAmount.toFixed(2)}</TableCell>
+          <TableCell className="text-right text-green-600">{item.paid.toFixed(2)}</TableCell>
+          <TableCell className={`text-right ${item.pending > 0 ? "text-destructive font-bold" : ""}`}>
+            {item.pending.toFixed(2)}
+          </TableCell>
+          <TableCell>{item.paymentType ? tEnums(`paymentType.${item.paymentType}`) : na}</TableCell>
+          <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
+        </TableRow>
+      )
+    }
+
+    return (
+      <TableRow key={`${item.id}-${index}`}>
+        <TableCell className="text-center">{na}</TableCell>
+        <TableCell>
+          <Badge variant="secondary" className="font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
+            {t('balanceSheet.expenseBadge')}
+          </Badge>
+        </TableCell>
+        <TableCell>{item.expenseTitle}</TableCell>
+        <TableCell className="text-right">{item.expenseAmount.toFixed(2)}</TableCell>
+        <TableCell className="text-right">{na}</TableCell>
+        <TableCell className="text-right">{na}</TableCell>
+        <TableCell>{na}</TableCell>
+        <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
+      </TableRow>
+    )
+  }
+
   return (
     <div className="space-y-4 mt-5">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -114,11 +118,11 @@ export const BalanceSheetTable = ({
         </div>
         <div className="flex flex-col md:items-center gap-2">
           {onDownloadExcel && (
-            <Button onClick={onDownloadExcel}>Download as Excel</Button>
+            <Button onClick={onDownloadExcel}>{t('tables.downloadExcel')}</Button>
           )}
           <Button onClick={onDownloadPdf} className="gap-2">
             <Download className="h-4 w-4" />
-            Download PDF
+            {t('tables.downloadPdf')}
           </Button>
         </div>
       </div>
@@ -127,8 +131,8 @@ export const BalanceSheetTable = ({
         <Card className="m-4">
           <CardContent>
             <NoDataFound
-              message="No balance sheet data found!"
-              details="Try selecting a different date range."
+              message={t('balanceSheet.emptyMessage')}
+              details={t('balanceSheet.emptyDetails')}
             />
           </CardContent>
         </Card>
@@ -136,7 +140,6 @@ export const BalanceSheetTable = ({
         <div className="space-y-6">
           {paginatedData.map((dayItem) => (
             <div key={dayItem.date} className="rounded-md border">
-              {/* Date Header */}
               <div className="bg-muted/50 px-4 py-3 border-b">
                 <h3 className="text-lg font-semibold">
                   {new Date(dayItem.date).toLocaleDateString("en-US", {
@@ -147,18 +150,17 @@ export const BalanceSheetTable = ({
                 </h3>
               </div>
 
-              {/* Items Table */}
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-center">Ref No</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                    <TableHead className="text-right">Paid</TableHead>
-                    <TableHead className="text-right">Pending</TableHead>
-                    <TableHead>Payment Method</TableHead>
-                    <TableHead>Created At</TableHead>
+                    <TableHead className="text-center">{t('balanceSheet.columns.refNo')}</TableHead>
+                    <TableHead>{t('balanceSheet.columns.type')}</TableHead>
+                    <TableHead>{t('balanceSheet.columns.description')}</TableHead>
+                    <TableHead className="text-right">{t('balanceSheet.columns.amount')}</TableHead>
+                    <TableHead className="text-right">{t('balanceSheet.columns.paid')}</TableHead>
+                    <TableHead className="text-right">{t('balanceSheet.columns.pending')}</TableHead>
+                    <TableHead>{t('balanceSheet.columns.paymentMethod')}</TableHead>
+                    <TableHead>{t('balanceSheet.columns.createdAt')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -167,30 +169,29 @@ export const BalanceSheetTable = ({
                   ) : (
                     <TableRow>
                       <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
-                        No items for this date
+                        {t('balanceSheet.noItemsForDate')}
                       </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
               </Table>
 
-              {/* Closing Balance Summary */}
               <div className="bg-muted/30 px-4 py-3 border-t">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
-                    <span className="text-muted-foreground">Opening Balance:</span>
+                    <span className="text-muted-foreground">{t('balanceSheet.openingBalance')}</span>
                     <span className="ml-2 font-semibold">{dayItem.closingBalance.openingBalance.toFixed(2)}</span>
                   </div>
                   <div>
-                    <span className="text-green-600">Total In:</span>
+                    <span className="text-green-600">{t('balanceSheet.totalIn')}</span>
                     <span className="ml-2 font-semibold">{dayItem.closingBalance.totalInflow.toFixed(2)}</span>
                   </div>
                   <div>
-                    <span className="text-red-600">Total Out:</span>
+                    <span className="text-red-600">{t('balanceSheet.totalOut')}</span>
                     <span className="ml-2 font-semibold">{dayItem.closingBalance.totalOutflow.toFixed(2)}</span>
                   </div>
                   <div>
-                    <span className="text-blue-600">Closing Balance:</span>
+                    <span className="text-blue-600">{t('balanceSheet.closingBalance')}</span>
                     <span className="ml-2 font-semibold">{dayItem.closingBalance.closingBalance.toFixed(2)}</span>
                   </div>
                 </div>
@@ -200,11 +201,14 @@ export const BalanceSheetTable = ({
         </div>
       )}
 
-      {/* Pagination */}
       {data.length > 0 && (
         <div className="flex items-center justify-between px-2">
           <div className="flex-1 text-sm text-muted-foreground">
-            Showing {pageIndex * pageSize + 1} to {Math.min((pageIndex + 1) * pageSize, total)} of {total} dates
+            {t('balanceSheet.paginationShowing', {
+              from: pageIndex * pageSize + 1,
+              to: Math.min((pageIndex + 1) * pageSize, total),
+              total,
+            })}
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -213,10 +217,10 @@ export const BalanceSheetTable = ({
               onClick={handlePreviousPage}
               disabled={pageIndex === 0}
             >
-              Previous
+              {t('balanceSheet.previous')}
             </Button>
             <div className="text-sm">
-              Page {pageIndex + 1} of {pageCount}
+              {t('balanceSheet.pageOf', { current: pageIndex + 1, total: pageCount })}
             </div>
             <Button
               variant="outline"
@@ -224,7 +228,7 @@ export const BalanceSheetTable = ({
               onClick={handleNextPage}
               disabled={pageIndex >= pageCount - 1}
             >
-              Next
+              {t('balanceSheet.next')}
             </Button>
           </div>
         </div>

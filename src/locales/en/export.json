@@ -1,0 +1,405 @@
+{
+  "common": {
+    "fallbacks": {
+      "companyName": "Company Name",
+      "shopName": "Shop Name",
+      "notAvailable": "N/A",
+      "allTime": "All Time",
+      "allTypes": "All Types",
+      "defaultStatusPending": "Pending"
+    },
+    "labels": {
+      "reportPeriod": "Report Period:",
+      "generatedOn": "Generated On:",
+      "phone": "Phone:",
+      "summary": "Summary",
+      "subtotal": "Subtotal",
+      "subtotalUppercase": "SUBTOTAL",
+      "total": "Total",
+      "totalUppercase": "TOTAL"
+    },
+    "accountLabels": {
+      "accountHolder": "Account Holder:",
+      "customer": "Customer:",
+      "vendor": "Vendor"
+    },
+    "partnerTypes": {
+      "customer": "Customer",
+      "vendor": "Vendor"
+    },
+    "transactionTypes": {
+      "purchase": "PURCHASE",
+      "sale": "SALE",
+      "purchaseTitleCase": "Purchase",
+      "saleTitleCase": "Sale"
+    },
+    "financial": {
+      "totalAmount": "Total Amount:",
+      "totalPaid": "Total Paid:",
+      "balanceDue": "Balance Due:",
+      "paid": "Paid",
+      "pending": "Pending",
+      "paidWithAmount": "Paid: {{amount}}",
+      "paidAndPending": "Paid: {{paid}} | Pending: {{pending}}",
+      "currencyTaka": "Taka",
+      "currencyTakaFormatted": "{{amount}} Taka"
+    },
+    "footer": {
+      "poweredBy": "Powered by {{companyName}}",
+      "pageOf": "Page {{current}} of {{total}}"
+    },
+    "tableColumns": {
+      "date": "Date",
+      "time": "Time",
+      "trxNo": "Trx No",
+      "transactionId": "Transaction ID",
+      "transactionNo": "Transaction No",
+      "description": "Description",
+      "payment": "Payment",
+      "paymentMethod": "Payment Method",
+      "paymentType": "Payment Type",
+      "qty": "Qty",
+      "quantity": "Quantity",
+      "price": "Price",
+      "amount": "Amount",
+      "total": "Total",
+      "item": "Item",
+      "uom": "UOM",
+      "type": "Type",
+      "name": "Name",
+      "refNo": "Ref No",
+      "lastPrice": "Last Price",
+      "totalValue": "Total Value",
+      "party": "Party",
+      "items": "Items",
+      "method": "Method",
+      "due": "Due",
+      "customerVendor": "Customer/Vendor",
+      "billAmount": "Bill Amount",
+      "title": "Title",
+      "remarks": "Remarks",
+      "stock": "Stock",
+      "purchased": "Purchased",
+      "sold": "Sold",
+      "stockInHand": "Stock In Hand",
+      "numberSign": "#"
+    },
+    "dateRange": {
+      "to": "to",
+      "reportPeriodFormatted": "Report Period: {{from}} to {{to}}",
+      "transactionTypeFormatted": "Transaction Type: {{type}}"
+    }
+  },
+  "reportTypes": {
+    "customerLedger": "Customer Ledger",
+    "vendorLedger": "Vendor Ledger",
+    "transactionReport": "Transaction Report",
+    "stockReport": "Stock Report",
+    "stockTrackReport": "Stock Track Report",
+    "expenseReport": "Expense Report",
+    "balanceSheet": "Balance Sheet"
+  },
+  "transactionReportWithDetailsPdf": {
+    "title": "Transaction Report with Details",
+    "tableHeaders": {
+      "date": "Date",
+      "trxNo": "Trx No",
+      "description": "Description",
+      "payment": "Payment",
+      "qty": "Qty",
+      "price": "Price",
+      "amount": "Amount"
+    },
+    "summary": {
+      "totalAmount": "Total Amount:",
+      "totalPaid": "Total Paid:",
+      "balanceDue": "Balance Due:"
+    }
+  },
+  "transactionDetailsPdf": {
+    "title": "Transaction Details",
+    "transactionNumber": "Transaction #{{no}}",
+    "typeLabel": "Type: {{type}}",
+    "sections": {
+      "transactionInformation": "Transaction Information",
+      "financialDetails": "Financial Details",
+      "timeline": "Timeline",
+      "additionalInformation": "Additional Information",
+      "transactionDetailsTable": "Transaction Details"
+    },
+    "fields": {
+      "paymentType": "Payment Type",
+      "status": "Status",
+      "totalAmount": "Total Amount",
+      "paid": "Paid",
+      "pending": "Pending",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "remarks": "Remarks"
+    },
+    "tableHeaders": {
+      "item": "Item",
+      "uom": "UOM",
+      "qty": "Qty",
+      "price": "Price",
+      "total": "Total"
+    },
+    "summary": {
+      "subTotal": "Sub Total:",
+      "total": "Total:",
+      "pending": "Pending:"
+    }
+  },
+  "inventoryTrackingReportPdf": {
+    "title": "Inventory Tracking Report",
+    "labels": {
+      "inventory": "Inventory:",
+      "itemNo": "Item No:",
+      "currentStock": "Current Stock:",
+      "lastPrice": "Last Price:",
+      "generatedOn": "Generated On:"
+    },
+    "tableHeaders": {
+      "number": "#",
+      "date": "Date",
+      "time": "Time",
+      "type": "Type",
+      "purchased": "Purchased",
+      "sold": "Sold",
+      "price": "Price",
+      "amount": "Amount",
+      "stockInHand": "Stock In Hand"
+    },
+    "summary": {
+      "totalPurchased": "Total Purchased:",
+      "totalSold": "Total Sold:",
+      "currentStock": "Current Stock:"
+    }
+  },
+  "transactionReportPdf": {
+    "title": "Transaction Report",
+    "labels": {
+      "transactionType": "Transaction Type:",
+      "reportPeriod": "Report Period:",
+      "generatedOn": "Generated On:"
+    },
+    "tableHeaders": {
+      "date": "Date",
+      "party": "Party",
+      "items": "Items",
+      "method": "Method",
+      "amount": "Amount",
+      "paid": "Paid",
+      "due": "Due"
+    },
+    "totals": {
+      "totalRow": "TOTAL"
+    },
+    "summary": {
+      "totalTransactions": "Total Transactions:",
+      "totalBillAmount": "Total Bill Amount:",
+      "totalPaid": "Total Paid:",
+      "totalDue": "Total Due:"
+    }
+  },
+  "transactionReportExcel": {
+    "title": "Transaction Report",
+    "labels": {
+      "transactionType": "Transaction Type: {{type}}",
+      "reportPeriod": "Report Period: {{from}} to {{to}}",
+      "generatedOn": "Generated On: {{date}}"
+    },
+    "tableHeaders": {
+      "date": "Date",
+      "transactionId": "Transaction ID",
+      "type": "Type",
+      "customerVendor": "Customer/Vendor",
+      "items": "Items",
+      "billAmount": "Bill Amount",
+      "paid": "Paid",
+      "due": "Due",
+      "paymentMethod": "Payment Method"
+    },
+    "summary": {
+      "title": "Summary",
+      "totalTransactions": "Total Transactions",
+      "totalBillAmount": "Total Bill Amount",
+      "totalPaid": "Total Paid",
+      "totalDue": "Total Due"
+    },
+    "sheetName": "Transaction Report"
+  },
+  "stockTrackReportPdf": {
+    "title": "Stock Track Report",
+    "labels": {
+      "reportPeriod": "Report Period:",
+      "generatedOn": "Generated On:",
+      "inventory": "Inventory: {{name}}"
+    },
+    "tableHeaders": {
+      "date": "Date",
+      "type": "Type",
+      "name": "Name",
+      "stock": "Stock",
+      "price": "Price"
+    },
+    "summary": {
+      "grandTotalStock": "Grand Total Stock:",
+      "grandTotalAmount": "Grand Total Amount:"
+    }
+  },
+  "stockTrackReportExcel": {
+    "title": "Stock Track Report",
+    "labels": {
+      "reportPeriod": "Report Period:",
+      "generatedOn": "Generated On:"
+    },
+    "tableHeaders": {
+      "date": "Date",
+      "name": "Name",
+      "price": "Price",
+      "total": "Total"
+    },
+    "sheetName": "Stock Track"
+  },
+  "stockReportPdf": {
+    "title": "Stock Report",
+    "labels": {
+      "reportPeriod": "Report Period:",
+      "generatedOn": "Generated On:"
+    },
+    "tableHeaders": {
+      "refNo": "Ref No",
+      "name": "Name",
+      "description": "Description",
+      "quantity": "Quantity",
+      "uom": "UOM",
+      "lastPrice": "Last Price"
+    },
+    "totals": {
+      "totalRow": "Total"
+    },
+    "summary": {
+      "totalItems": "Total Items:",
+      "totalQuantity": "Total Quantity:",
+      "totalValue": "Total Value:"
+    }
+  },
+  "stockReportExcel": {
+    "title": "Stock Report",
+    "labels": {
+      "reportPeriod": "Report Period:",
+      "generatedOn": "Generated On:"
+    },
+    "tableHeaders": {
+      "refNo": "Ref No",
+      "name": "Name",
+      "description": "Description",
+      "quantity": "Quantity",
+      "uom": "UOM",
+      "lastPrice": "Last Price",
+      "totalValue": "Total Value"
+    },
+    "totals": {
+      "totalRow": "Total"
+    },
+    "summary": {
+      "title": "Summary",
+      "totalItems": "Total Items:",
+      "totalQuantity": "Total Quantity:",
+      "totalValue": "Total Value:"
+    },
+    "sheetName": "Stock Report"
+  },
+  "expenseReportPdf": {
+    "title": "Expense Report",
+    "labels": {
+      "reportPeriod": "Report Period:",
+      "generatedOn": "Generated On:"
+    },
+    "tableHeaders": {
+      "date": "Date",
+      "title": "Title",
+      "remarks": "Remarks",
+      "type": "Type",
+      "amount": "Amount"
+    },
+    "totals": {
+      "totalExpensesRow": "Total Expenses"
+    },
+    "summary": {
+      "totalExpenses": "Total Expenses:"
+    }
+  },
+  "expenseReportExcel": {
+    "title": "Expense Report",
+    "labels": {
+      "reportPeriod": "Report Period:",
+      "generatedOn": "Generated On:"
+    },
+    "tableHeaders": {
+      "date": "Date",
+      "title": "Title",
+      "type": "Type",
+      "amount": "Amount",
+      "remarks": "Remarks"
+    },
+    "totals": {
+      "totalExpensesRow": "Total Expenses"
+    },
+    "sheetName": "Expenses"
+  },
+  "customerOrVendorLedgerPdf": {
+    "title": "Ledger Transaction Report",
+    "labels": {
+      "customer": "Customer:",
+      "vendor": "Vendor:",
+      "reportPeriod": "Report Period:",
+      "generatedOn": "Generated On:"
+    },
+    "tableHeaders": {
+      "date": "Date",
+      "trxNo": "Trx No",
+      "item": "Item",
+      "uom": "UOM",
+      "type": "Type",
+      "qty": "Qty",
+      "price": "Price",
+      "total": "Total"
+    },
+    "totals": {
+      "subtotalRow": "Subtotal"
+    },
+    "summary": {
+      "totalAmount": "Total Amount:",
+      "totalPaid": "Total Paid:",
+      "balanceDue": "Balance Due:"
+    }
+  },
+  "customerOrVendorLedgerExcel": {
+    "title": "Ledger Report",
+    "labels": {
+      "reportPeriod": "Report Period:",
+      "generatedOn": "Generated On:"
+    },
+    "tableHeaders": {
+      "date": "Date",
+      "transactionNo": "Transaction No",
+      "item": "Item",
+      "uom": "UOM",
+      "type": "Type",
+      "quantity": "Quantity",
+      "price": "Price",
+      "total": "Total",
+      "paymentType": "Payment Type",
+      "customer": "Customer"
+    },
+    "summary": {
+      "title": "Summary",
+      "totalTransactions": "Total Transactions:",
+      "totalQuantity": "Total Quantity:",
+      "totalAmount": "Total Amount:"
+    },
+    "sheetName": "Ledger"
+  }
+}

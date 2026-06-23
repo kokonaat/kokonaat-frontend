@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
@@ -26,8 +26,12 @@ import type { AxiosError } from "axios"
 import { useCreateExpense, useUpdateExpense } from "@/hooks/useExpense"
 import { useShopStore } from "@/stores/shopStore"
 import type { ExpenseFormInterface } from "@/interface/expenseInterface"
-import { expenseFormSchema, type ExpenseFormType } from "@/schema/expenseFormSchema"
-import { expenseTypes } from "@/constance/expenseConstance"
+import {
+    createExpenseFormSchema,
+    type ExpenseFormType,
+} from "@/schema/expenseFormSchema"
+import { useExpenseTypeOptions } from "@/hooks/useTranslatedOptions"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface ExpenseMutateDrawerProps {
     open: boolean
@@ -42,15 +46,23 @@ const ExpenseMutateDrawer = ({
     currentRow,
     onSave,
 }: ExpenseMutateDrawerProps) => {
+    const { t } = useTranslation('expense')
+    const { t: tValidation } = useTranslation('validation')
+    const { t: tToast } = useTranslation('toast')
+    const expenseTypes = useExpenseTypeOptions()
     const shopId = useShopStore((s) => s.currentShopId)
     const isUpdate = !!currentRow?.id
+
+    const schema = useMemo(
+        () => createExpenseFormSchema(tValidation),
+        [tValidation]
+    )
 
     const createMutation = useCreateExpense(shopId || "")
     const updateMutation = useUpdateExpense(shopId || "")
 
-    // Using ExpenseFormType inferred from schema
     const form = useForm<ExpenseFormType>({
-        resolver: zodResolver(expenseFormSchema),
+        resolver: zodResolver(schema),
         defaultValues: {
             title: "",
             type: "DAILY_EXPENSE",
@@ -74,17 +86,15 @@ const ExpenseMutateDrawer = ({
         }
     }, [currentRow, open, form, shopId])
 
-    // isDirty is to check any field change or not
     const {
         formState: { isDirty },
     } = form
 
     const onSubmit: SubmitHandler<ExpenseFormType> = (data) => {
-        if (!shopId) return toast.error("Shop ID not found!")
+        if (!shopId) return toast.error(tToast('expense.shopIdNotFound'))
 
-        // prevent api call if no input field changed
         if (isUpdate && !isDirty) {
-            toast.info("No changes detected. Please modify something before saving.")
+            toast.info(tToast('expense.noChanges'))
             return
         }
 
@@ -92,40 +102,39 @@ const ExpenseMutateDrawer = ({
             ...data,
             title: data.title.trim(),
             remarks: data.remarks?.trim() || "",
-            amount: data.amount, // amount is already a number from form input
+            amount: data.amount,
             shopId,
         }
 
         if (isUpdate && currentRow?.id) {
-            // destructure to exclude 'id' from the request body for the PUT request.
-            const { id, ...updateData } = payload
+            const { id: _id, ...updateData } = payload
 
             updateMutation.mutate(
                 { id: currentRow.id, data: updateData },
                 {
                     onSuccess: () => {
-                        toast.success("Expense updated successfully.")
+                        toast.success(tToast('expense.updated'))
                         onOpenChange(false)
                         onSave?.(payload)
                         form.reset()
                     },
                     onError: (err: unknown) => {
                         const error = err as AxiosError<{ message: string }>
-                        toast.error(error?.response?.data?.message || "Update failed")
+                        toast.error(error?.response?.data?.message || tToast('expense.updateFailed'))
                     },
                 }
             )
         } else {
             createMutation.mutate(payload, {
                 onSuccess: () => {
-                    toast.success("Expense created successfully.")
+                    toast.success(tToast('expense.created'))
                     onOpenChange(false)
                     onSave?.(payload)
                     form.reset()
                 },
                 onError: (err: unknown) => {
                     const error = err as AxiosError<{ message: string }>
-                    toast.error(error?.response?.data?.message || "Creation failed")
+                    toast.error(error?.response?.data?.message || tToast('expense.creationFailed'))
                 },
             })
         }
@@ -135,12 +144,11 @@ const ExpenseMutateDrawer = ({
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent className="flex flex-col">
                 <SheetHeader className="text-start">
-                    <SheetTitle>{isUpdate ? "Update" : "Create"} Expense</SheetTitle>
+                    <SheetTitle>
+                        {isUpdate ? t('drawer.titleUpdate') : t('drawer.titleCreate')}
+                    </SheetTitle>
                     <SheetDescription>
-                        {isUpdate
-                            ? "Update the expense by providing necessary info."
-                            : "Add a new expense by providing necessary info."}{" "}
-                        Click save when you're done.
+                        {isUpdate ? t('drawer.descriptionUpdate') : t('drawer.descriptionCreate')}
                     </SheetDescription>
                 </SheetHeader>
 
@@ -155,9 +163,9 @@ const ExpenseMutateDrawer = ({
                             name="title"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Title</FormLabel>
+                                    <FormLabel>{t('drawer.fields.title')}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="Expense title" />
+                                        <Input {...field} placeholder={t('drawer.placeholders.title')} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -170,11 +178,11 @@ const ExpenseMutateDrawer = ({
                                 name="type"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Expense Type</FormLabel>
+                                        <FormLabel>{t('drawer.fields.expenseType')}</FormLabel>
                                         <FormControl>
                                             <Select value={field.value} onValueChange={field.onChange}>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select type" />
+                                                    <SelectValue placeholder={t('drawer.placeholders.typeSelect')} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {expenseTypes.map((type) => (
@@ -195,14 +203,14 @@ const ExpenseMutateDrawer = ({
                                 name="amount"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Amount</FormLabel>
+                                        <FormLabel>{t('drawer.fields.amount')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
                                                 inputMode="decimal"
                                                 step="any"
                                                 min="0"
-                                                placeholder="0.00"
+                                                placeholder={t('drawer.placeholders.amount')}
                                                 value={field.value ?? ""}
                                                 onChange={(e) => {
                                                     const val = e.target.value
@@ -221,9 +229,9 @@ const ExpenseMutateDrawer = ({
                             name="remarks"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Remarks</FormLabel>
+                                    <FormLabel>{t('drawer.fields.remarks')}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="Remarks" />
+                                        <Input {...field} placeholder={t('drawer.placeholders.remarks')} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -234,10 +242,10 @@ const ExpenseMutateDrawer = ({
 
                 <SheetFooter className="gap-2">
                     <SheetClose asChild>
-                        <Button variant="outline">Close</Button>
+                        <Button variant="outline">{t('buttons.close')}</Button>
                     </SheetClose>
                     <Button form="expense-form" type="submit">
-                        Save changes
+                        {t('buttons.saveChanges')}
                     </Button>
                 </SheetFooter>
             </SheetContent>

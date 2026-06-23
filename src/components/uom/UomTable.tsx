@@ -22,7 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import { UomColumns as columns } from "./UomColumns"
+import { useUomColumns } from "./UomColumns"
 import { Input } from "@/components/ui/input"
 import { DataTableViewOptions } from "@/features/users/components/data-table-view-options"
 import { DataTablePagination } from "@/features/users/components/data-table-pagination"
@@ -31,6 +31,7 @@ import { NoDataFound } from "../NoDataFound"
 import { Card, CardContent } from "../ui/card"
 import { UomTableBulkActions } from "./UomTableBulkActions"
 import type { UomTableProps } from "@/interface/uomInterface"
+import { useTranslation } from "@/hooks/useTranslation"
 
 const UomTable = ({
   data,
@@ -40,7 +41,9 @@ const UomTable = ({
   onPageChange,
   onSearchChange,
 }: UomTableProps) => {
-  // table states
+  const { t } = useTranslation('uom')
+  const columns = useUomColumns()
+
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] =
@@ -49,22 +52,13 @@ const UomTable = ({
   const [columnFilters, setColumnFilters] =
     useState<ColumnFiltersState>([])
 
-  // search states
   const [searchInput, setSearchInput] = useState("")
-
   const debouncedSearch = useDebounce(searchInput, 300)
 
-  // trigger server search
   useEffect(() => {
     onPageChange(0)
-    onSearchChange?.(
-      debouncedSearch,
-    )
-  }, [
-    debouncedSearch,
-    onPageChange,
-    onSearchChange,
-  ])
+    onSearchChange?.(debouncedSearch)
+  }, [debouncedSearch, onPageChange, onSearchChange])
 
   const table = useReactTable({
     data,
@@ -121,11 +115,10 @@ const UomTable = ({
 
   return (
     <div className="space-y-4 max-sm:has-[div[role='toolbar']]:mb-16">
-      {/* Toolbar */}
       <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2 md:flex-row md:items-center gap-x-2">
           <Input
-            placeholder="Search uom..."
+            placeholder={t('table.searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="h-8 w-[150px] lg:w-[250px]"
@@ -137,7 +130,6 @@ const UomTable = ({
         </div>
       </div>
 
-      {/* Table */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -180,8 +172,8 @@ const UomTable = ({
                   <Card className="m-4">
                     <CardContent>
                       <NoDataFound
-                        message="No Uom found!"
-                        details="Create a Uom first."
+                        message={t('table.emptyMessage')}
+                        details={t('table.emptyDetails')}
                       />
                     </CardContent>
                   </Card>

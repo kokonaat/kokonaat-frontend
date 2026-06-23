@@ -12,6 +12,7 @@ import {
 import type { ExpenseItemInterface } from '@/interface/expenseInterface'
 import { useExpense } from './expense-provider'
 import { expenseSchema } from '@/schema/expenseSchema'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type DataTableRowActionsProps<TData> = {
     row: Row<TData>
@@ -20,10 +21,10 @@ type DataTableRowActionsProps<TData> = {
 export function DataTableRowActions<TData>({
     row,
 }: DataTableRowActionsProps<TData>) {
-    // Parse using Zod
+    const { t } = useTranslation('expense')
+    const { t: tCommon } = useTranslation('common')
     const parsed = expenseSchema.parse(row.original)
 
-    // Use full ExpenseItemInterface
     const expense: ExpenseItemInterface = {
         ...parsed,
         remarks: parsed.remarks ?? '',
@@ -42,7 +43,7 @@ export function DataTableRowActions<TData>({
                     className='data-[state=open]:bg-muted flex h-8 w-8 p-0'
                 >
                     <DotsHorizontalIcon className='h-4 w-4' />
-                    <span className='sr-only'>Open menu</span>
+                    <span className='sr-only'>{tCommon('actions.view')}</span>
                 </Button>
             </DropdownMenuTrigger>
 
@@ -54,7 +55,7 @@ export function DataTableRowActions<TData>({
                         setOpen('view')
                     }}
                 >
-                    View
+                    {tCommon('actions.view')}
                     <DropdownMenuShortcut><Eye size={16} /></DropdownMenuShortcut>
                 </DropdownMenuItem>
 
@@ -65,7 +66,7 @@ export function DataTableRowActions<TData>({
                         setOpen('update')
                     }}
                 >
-                    Edit
+                    {tCommon('actions.edit')}
                     <DropdownMenuShortcut><Pencil size={16} /></DropdownMenuShortcut>
                 </DropdownMenuItem>
 
@@ -76,7 +77,7 @@ export function DataTableRowActions<TData>({
                         setOpen('delete')
                     }}
                 >
-                    Delete
+                    {t('buttons.delete')}
                     <DropdownMenuShortcut><Trash2 size={16} /></DropdownMenuShortcut>
                 </DropdownMenuItem>
             </DropdownMenuContent>

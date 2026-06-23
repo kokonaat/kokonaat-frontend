@@ -1,0 +1,96 @@
+{
+  "page": {
+    "title": "Dashboard",
+    "subtitle": "Cross-functional view of sales, purchases, expenses, and inventory",
+    "errorLoading": "Error loading dashboard data."
+  },
+  "sections": {
+    "financialPulse": "Financial pulse",
+    "trends": "Trends",
+    "insights": "Insights",
+    "inventoryAndActivity": "Inventory & activity"
+  },
+  "kpi": {
+    "grossSales": "Gross sales",
+    "collected": "Collected",
+    "collectedDescription": "Cash received from sales",
+    "receivables": "Receivables",
+    "receivablesDescription": "Outstanding from customers",
+    "purchases": "Purchases",
+    "expenses": "Expenses",
+    "netPosition": "Net position",
+    "netPositionDescription": "Inflow minus outflow",
+    "skusInStock": "SKUs in stock",
+    "customersVendors": "Customers / Vendors",
+    "transactions": "Transactions",
+    "salesPurchases": "Sales / Purchases",
+    "loadingValue": "...",
+    "changeVsPrior": "{{change}} vs prior"
+  },
+  "charts": {
+    "cashFlow": {
+      "title": "Cash flow",
+      "description": "Daily inflow vs outflow for selected period",
+      "legendIn": "In",
+      "legendOut": "Out",
+      "emptyMessage": "No cash flow in this period",
+      "emptyDetails": "Sales, purchases, and expenses will appear here."
+    },
+    "salesTrend": {
+      "title": "Sales trend",
+      "description": "Daily gross sales for selected period",
+      "label": "Sales",
+      "emptyMessage": "No sales in this period",
+      "emptyDetails": "Create a sale to see trends."
+    },
+    "topProducts": {
+      "title": "Top products",
+      "description": "Best sellers by revenue",
+      "labelRevenue": "Revenue",
+      "tooltipUnits": "{{amount}} ({{units}} units)",
+      "emptyMessage": "No product sales yet",
+      "emptyDetails": "Top sellers will appear after sales transactions."
+    },
+    "expenseBreakdown": {
+      "title": "Expense breakdown",
+      "description": "Where money is going",
+      "labelAmount": "Amount",
+      "emptyMessage": "No expenses in this period",
+      "emptyDetails": "Recorded expenses will appear here."
+    },
+    "topPartners": {
+      "title": "Top partners",
+      "description": "Key customers and vendors this period",
+      "topCustomers": "Top Customers",
+      "topVendors": "Top Vendors",
+      "noCustomerSales": "No customer sales yet.",
+      "noVendorPurchases": "No vendor purchases yet.",
+      "pending": "Pending: {{amount}}",
+      "emptyMessage": "No partner activity",
+      "emptyDetails": "Top customers and vendors will appear here."
+    },
+    "loadingChart": "Loading chart...",
+    "loading": "Loading..."
+  },
+  "inventoryHealth": {
+    "stockSummary": "Stock Summary",
+    "skus": "SKUs",
+    "totalUnits": "Total units",
+    "stockValue": "Stock value",
+    "lowStockAlerts": "Low Stock Alerts",
+    "allAboveThreshold": "All items above {{threshold}} units.",
+    "unitsLeft": "{{quantity}} left",
+    "viewInventory": "View inventory"
+  },
+  "recentTransactions": {
+    "title": "Recent transactions",
+    "description": "{{count}} transactions from {{startDate}} to {{endDate}}",
+    "columns": {
+      "type": "Type",
+      "total": "Total",
+      "pending": "Pending"
+    },
+    "emptyMessage": "No transactions in this period",
+    "emptyDetails": "Create a transaction to get started."
+  }
+}

@@ -7,25 +7,29 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Combobox } from '@/components/ui/combobox'
+import { useTranslation } from '@/hooks/useTranslation'
+import { usePaymentTypeOptions } from '@/hooks/useTranslatedOptions'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
-import { PAYMENT_TYPES } from '@/constance/transactionConstances'
 
 interface PaymentTypeFieldProps {
     form: UseFormReturn<TransactionFormValues>
 }
 
 export const PaymentTypeField = ({ form }: PaymentTypeFieldProps) => {
+    const { t } = useTranslation('transactions')
+    const paymentTypeOptions = usePaymentTypeOptions()
+
     return (
         <FormField
             control={form.control}
             name='paymentType'
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel>Payment Type</FormLabel>
+                    <FormLabel>{t('form.paymentType')}</FormLabel>
                     <FormControl>
                         <Combobox
-                            options={PAYMENT_TYPES}
-                            placeholder='Select payment type...'
+                            options={paymentTypeOptions}
+                            placeholder={t('form.paymentTypePlaceholder')}
                             className='w-full'
                             value={field.value}
                             onSelect={field.onChange}

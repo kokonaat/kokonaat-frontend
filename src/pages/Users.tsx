@@ -6,8 +6,10 @@ import { useShopStore } from '@/stores/shopStore'
 import { UsersPrimaryButtons } from '@/components/users/UserPrimaryButtons'
 import { UsersDialogs } from '@/components/users/UserDialogs'
 import { UsersTable } from '@/components/users/UserTable'
+import { useTranslation } from '@/hooks/useTranslation'
 
 const Users = () => {
+  const { t } = useTranslation('users')
   const shopId = useShopStore((s) => s.currentShopId)
 
   const [pageIndex, setPageIndex] = useState(0)
@@ -16,12 +18,10 @@ const Users = () => {
   const [_endDate, setEndDate] = useState<Date | undefined>(undefined)
   const pageSize = 10
 
-  // Stable callback to handle page changes
   const handlePageChange = useCallback((index: number) => {
     setPageIndex(index)
   }, [])
 
-  // Handle search and date range changes
   const handleSearchChange = useCallback((
     value?: string,
     from?: Date,
@@ -30,10 +30,9 @@ const Users = () => {
     setSearchBy(value || '')
     setStartDate(from)
     setEndDate(to)
-    setPageIndex(0) // Reset to first page when search changes
+    setPageIndex(0)
   }, [])
 
-  // Fetch users using updated hook
   const { data, isLoading, isError } = useUserList({
     shopId: shopId || '',
     page: pageIndex + 1,
@@ -41,7 +40,7 @@ const Users = () => {
     searchBy,
   })
 
-  if (isError) return <p>Error loading users.</p>
+  if (isError) return <p>{t('page.errorLoading')}</p>
 
   const users = data || []
   const total = users.length
@@ -51,17 +50,15 @@ const Users = () => {
       <Main>
         <div className="mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Users</h2>
-            <p className="text-muted-foreground">
-              Manage your users and their roles here.
-            </p>
+            <h2 className="text-2xl font-bold tracking-tight">{t('page.title')}</h2>
+            <p className="text-muted-foreground">{t('page.subtitle')}</p>
           </div>
           <UsersPrimaryButtons />
         </div>
 
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
           {isLoading ? (
-            <p>Loading users...</p>
+            <p>{t('page.loading')}</p>
           ) : (
             <UsersTable
               data={users}

@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useCustomers } from '../customers/customer-provider'
 import { vendorSchema } from '../../schema/vendorSchema'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type DataTableRowActionsProps<TData> = {
   row: Row<TData>
@@ -19,22 +20,20 @@ type DataTableRowActionsProps<TData> = {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
+  const { t } = useTranslation('vendors')
   const vendor = vendorSchema.parse(row.original)
-
-  // using customer provider to open or close drawer
   const { setOpen, setCurrentRow } = useCustomers()
 
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
-          // to prevent row click to change route
           variant='ghost'
           onClick={(e) => e.stopPropagation()}
           className='data-[state=open]:bg-muted flex h-8 w-8 p-0'
         >
           <DotsHorizontalIcon className='h-4 w-4' />
-          <span className='sr-only'>Open menu</span>
+          <span className='sr-only'>{t('buttons.view')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-40'>
@@ -46,7 +45,7 @@ export function DataTableRowActions<TData>({
             setOpen('view')
           }}
         >
-          View
+          {t('buttons.view')}
           <DropdownMenuShortcut>
             <Eye size={16} />
           </DropdownMenuShortcut>
@@ -60,7 +59,7 @@ export function DataTableRowActions<TData>({
             setOpen('update')
           }}
         >
-          Edit
+          {t('buttons.edit')}
           <DropdownMenuShortcut>
             <Pencil size={16} />
           </DropdownMenuShortcut>
@@ -74,7 +73,7 @@ export function DataTableRowActions<TData>({
             setOpen('delete')
           }}
         >
-          Delete
+          {t('buttons.delete')}
           <DropdownMenuShortcut>
             <Trash2 size={16} />
           </DropdownMenuShortcut>

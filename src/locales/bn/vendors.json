@@ -1,0 +1,98 @@
+{
+  "page": {
+    "title": "সরবরাহকারী",
+    "subtitle": "এখানে আপনার সব সরবরাহকারীর তালিকা",
+    "errorLoading": "সরবরাহকারী লোড করতে ত্রুটি।",
+    "loading": "সরবরাহকারী তথ্য লোড হচ্ছে..."
+  },
+  "buttons": {
+    "create": "তৈরি করুন",
+    "saveChanges": "পরিবর্তন সংরক্ষণ",
+    "close": "বন্ধ",
+    "delete": "মুছুন",
+    "view": "দেখুন",
+    "edit": "সম্পাদনা",
+    "downloadPdf": "PDF ডাউনলোড"
+  },
+  "table": {
+    "filterPlaceholder": "আইডি, নাম, ফোন বা ঠিকানা দিয়ে ফিল্টার...",
+    "rowTitle": "সরবরাহকারী খাতা দেখতে ক্লিক করুন",
+    "emptyMessage": "কোনো সরবরাহকারী পাওয়া যায়নি!",
+    "emptyDetails": "প্রথমে একটি সরবরাহকারী তৈরি করুন।",
+    "columns": {
+      "id": "আইডি",
+      "name": "নাম",
+      "email": "ইমেইল",
+      "phone": "ফোন",
+      "address": "ঠিকানা",
+      "city": "শহর",
+      "country": "দেশ",
+      "isB2B": "B2B",
+      "contactPerson": "যোগাযোগকারী",
+      "contactPersonPhone": "যোগাযোগকারীর ফোন"
+    }
+  },
+  "drawer": {
+    "titleCreate": "সরবরাহকারী তৈরি",
+    "titleUpdate": "সরবরাহকারী আপডেট",
+    "descriptionCreate": "প্রয়োজনীয় তথ্য দিয়ে নতুন সরবরাহকারী যোগ করুন। শেষে সংরক্ষণ ক্লিক করুন।",
+    "descriptionUpdate": "প্রয়োজনীয় তথ্য দিয়ে সরবরাহকারী আপডেট করুন। শেষে সংরক্ষণ ক্লিক করুন।",
+    "viewTitle": "সরবরাহকারী বিবরণ",
+    "viewDescription": "{{name}}-এর তথ্য দেখুন",
+    "fields": {
+      "name": "নাম",
+      "email": "ইমেইল",
+      "phone": "ফোন",
+      "city": "শহর",
+      "country": "দেশ",
+      "contactPerson": "যোগাযোগকারী",
+      "contactPhone": "যোগাযোগ ফোন",
+      "emptyValue": "—"
+    },
+    "placeholders": {
+      "name": "রাহুল রায়",
+      "email": "rahul@gmail.com",
+      "phone": "01711111111",
+      "address": "শ্যামলী, ঢাকা",
+      "city": "ঢাকা",
+      "country": "বাংলাদেশ",
+      "contactPerson": "রমেশ রায়",
+      "contactPersonPhone": "01711111111"
+    }
+  },
+  "deleteDialog": {
+    "title": "এই সরবরাহকারী মুছবেন: {{name}} ?",
+    "description": "আপনি {{name}} নামের সরবরাহকারী মুছতে যাচ্ছেন। এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "confirm": "মুছুন",
+    "success": "নিম্নলিখিত সরবরাহকারী মুছে ফেলা হয়েছে"
+  },
+  "bulkDelete": {
+    "title": "নির্বাচিত {{count}}টি সরবরাহকারী মুছবেন?",
+    "deleteSelected": "নির্বাচিত সরবরাহকারী মুছুন",
+    "multiTitle": "{{count}}টি {{entity}} মুছুন",
+    "multiEntityPlural": "সরবরাহকারী",
+    "multiEntitySingular": "সরবরাহকারী",
+    "description": "আপনি {{count}}টি ভেন্ডর মুছতে যাচ্ছেন। এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না.",
+    "multiDescription": "আপনি কি নির্বাচিত ভেন্ডরগুলো মুছতে চান? এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "confirmTyping": "\"DELETE\" টাইপ করে নিশ্চিত করুন:",
+    "confirmPlaceholder": "নিশ্চিত করতে \"DELETE\" টাইপ করুন।",
+    "warningTitle": "সতর্কতা!",
+    "warningDescription": "সাবধান থাকুন, এই অপারেশন পূর্বাবস্থায় ফেরানো যাবে না।",
+    "loading": "ভেন্ডর মুছছে...",
+    "success": "{{count}}টি {{entity}} মুছে ফেলা হয়েছে",
+    "error": "ভেন্ডর মুছতে ত্রুটি"
+  },
+  "transactions": {
+    "filterPlaceholder": "নং, ধরন, অবস্থা দিয়ে ফিল্টার...",
+    "columns": {
+      "no": "নং",
+      "type": "ধরন",
+      "status": "অবস্থা",
+      "amount": "পরিমাণ",
+      "paid": "পরিশোধ",
+      "pending": "বকেয়া",
+      "remarks": "মন্তব্য",
+      "date": "তারিখ"
+    }
+  }
+}

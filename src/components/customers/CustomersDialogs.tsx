@@ -4,21 +4,20 @@ import { useDeleteCustomer } from '@/hooks/useCustomer'
 import CustomersMutateDrawer from "./CustomersMutateDrawer"
 import CustomerViewDrawer from './CustomerViewDrawer'
 import { useDrawerStore } from '@/stores/drawerStore'
+import { useTranslation } from '@/hooks/useTranslation'
 
 const CustomersDialogs = () => {
+  const { t } = useTranslation('customers')
   const { open, setOpen, currentRow, setCurrentRow } = useCustomers()
   const shopId = localStorage.getItem('shop-storage')
     ? JSON.parse(localStorage.getItem('shop-storage')!).state?.currentShopId
     : null
 
   const deleteMutation = useDeleteCustomer(shopId || '')
-
-  // global drawer state to blur bg
   const setDrawerOpen = useDrawerStore((s) => s.setDrawerOpen)
 
   return (
     <>
-      {/* create modal */}
       <CustomersMutateDrawer
         key='customer-create'
         open={open === 'create'}
@@ -26,22 +25,18 @@ const CustomersDialogs = () => {
         onSave={() => setOpen(null)}
       />
 
-      {/* Update & Delete modals */}
       {currentRow && (
         <>
-          {/* view drawer */}
           <CustomerViewDrawer
             key={`customer-view-${currentRow.id}`}
             open={open === 'view'}
             onOpenChange={(val: boolean) => {
               setOpen(val ? 'view' : null)
-              // global blur state
               setDrawerOpen(val)
             }}
             currentRow={currentRow}
           />
 
-          {/* update modal */}
           <CustomersMutateDrawer
             key={`customer-update-${currentRow.id}`}
             open={open === 'update'}
@@ -50,7 +45,6 @@ const CustomersDialogs = () => {
             onSave={() => setOpen(null)}
           />
 
-          {/* delete modal */}
           <ConfirmDialog
             key='customer-delete'
             destructive
@@ -69,15 +63,9 @@ const CustomersDialogs = () => {
               )
             }}
             className='max-w-md'
-            title={`Delete this customer: ${currentRow.name} ?`}
-            desc={
-              <>
-                You are about to delete a customer with the name{' '}
-                <strong>{currentRow.name}</strong>. <br />
-                This action cannot be undone.
-              </>
-            }
-            confirmText='Delete'
+            title={t('deleteDialog.title', { name: currentRow.name })}
+            desc={t('deleteDialog.description', { name: currentRow.name })}
+            confirmText={t('deleteDialog.confirm')}
           />
         </>
       )}

@@ -11,12 +11,16 @@ import {
 import { useTransactionLedger } from '@/hooks/useTransaction'
 import { toast } from 'sonner'
 import type { Customer } from '@/interface/customerInterface'
+import { useTranslation } from '@/hooks/useTranslation'
 
 interface Props {
     customer: Customer
 }
 
 export const CustomerLedgerDownload = ({ customer }: Props) => {
+    const { t } = useTranslation('customers')
+    const { t: tExport } = useTranslation('export')
+    const { t: tToast } = useTranslation('toast')
     const { currentShopId, currentShopName } = useShopStore()
 
     const { isLoading, refetch } = useTransactionLedger(
@@ -34,20 +38,18 @@ export const CustomerLedgerDownload = ({ customer }: Props) => {
         e.stopPropagation()
 
         if (!currentShopId) {
-            toast.error('Shop ID is missing')
+            toast.error(tToast('transaction.shopIdMissing'))
             return
         }
 
         try {
-            // fetching latest data
             const { data: ledgerData } = await refetch()
 
             if (!ledgerData?.transactions?.length) {
-                toast.warning('No transactions found for this customer')
+                toast.warning(tToast('customer.noTransactions'))
                 return
             }
 
-            // preparing entity data for PDF
             const entity: Entity = {
                 name: customer.name,
                 no: customer.no ?? undefined,
@@ -62,16 +64,15 @@ export const CustomerLedgerDownload = ({ customer }: Props) => {
                 },
             }
 
-            // generate PDF
-            generatePDF(entity, ledgerData.transactions, {
+            await generatePDF(tExport, entity, ledgerData.transactions, {
                 totalAmount: ledgerData.totalAmount || 0,
                 totalPaid: ledgerData.paid || 0,
             })
 
-            toast.success('Ledger report downloaded successfully')
+            toast.success(tToast('transaction.ledgerDownloaded'))
         } catch (error) {
             console.error('Download error:', error)
-            toast.error('Failed to download ledger report. Please try again.')
+            toast.error(tToast('transaction.ledgerDownloadFailed'))
         }
     }
 
@@ -83,7 +84,7 @@ export const CustomerLedgerDownload = ({ customer }: Props) => {
                         onClick={handleDownload}
                         disabled={isLoading}
                         className="p-1.5 hover:bg-muted rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        aria-label="Download customer ledger"
+                        aria-label={t('ledger.downloadAriaLabel')}
                     >
                         {isLoading ? (
                             <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
@@ -93,7 +94,7 @@ export const CustomerLedgerDownload = ({ customer }: Props) => {
                     </button>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>Download PDF</p>
+                    <p>{t('buttons.downloadPdf')}</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>

@@ -15,9 +15,10 @@ import {
 import { NoDataFound } from '../NoDataFound'
 import { Card, CardContent } from '../ui/card'
 import type { InventoryTrackingItemInterface } from '@/interface/inventoryInterface'
-import { trackingColumns } from './InventoryTrackingColumns'
+import { useInventoryTrackingColumns } from './InventoryTrackingColumns'
 import { TransactionLedgerDataTablePagination } from '../customers/TransactionLedgerDataTablePagination'
 import { useMemo } from 'react'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type InventoryDetailsTrackingTableProps = {
     data: InventoryTrackingItemInterface[]
@@ -34,9 +35,13 @@ const InventoryDetailsTrackingTable = ({
     total,
     onPageChange,
 }: InventoryDetailsTrackingTableProps) => {
+    const { t } = useTranslation('inventory')
+    const { t: tReports } = useTranslation('reports')
+    const columns = useInventoryTrackingColumns()
+
     const table = useReactTable({
         data,
-        columns: trackingColumns,
+        columns,
         state: { pagination: { pageIndex, pageSize } },
         manualPagination: true,
         pageCount: Math.ceil(total / pageSize),
@@ -49,7 +54,6 @@ const InventoryDetailsTrackingTable = ({
         getPaginationRowModel: getPaginationRowModel(),
     })
 
-    // Calculate subtotals
     const subtotals = useMemo(() => {
         const totalPurchased = data.reduce(
             (sum, item) => sum + (item.isPurchased ? item.stock : 0),
@@ -66,7 +70,6 @@ const InventoryDetailsTrackingTable = ({
 
     return (
         <div className="space-y-4">
-            {/* Table */}
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -100,16 +103,19 @@ const InventoryDetailsTrackingTable = ({
                                     </TableRow>
                                 ))}
 
-                                {/* Subtotal Row */}
                                 <TableRow className="bg-slate-50 font-semibold border-t-2 border-slate-300">
                                     <TableCell className="text-right" colSpan={1}>
-                                        Subtotal:
+                                        {t('trackingTable.columns.stock')}:
                                     </TableCell>
                                     <TableCell className="text-center">
                                         <span className="inline-flex items-center gap-2">
-                                            <span className="text-green-600">In: {subtotals.totalPurchased}</span>
+                                            <span className="text-green-600">
+                                                {tReports('summaryCards.totalIn')}: {subtotals.totalPurchased}
+                                            </span>
                                             <span className="text-muted-foreground">/</span>
-                                            <span className="text-red-600">Out: {subtotals.totalSold}</span>
+                                            <span className="text-red-600">
+                                                {tReports('summaryCards.totalOut')}: {subtotals.totalSold}
+                                            </span>
                                         </span>
                                     </TableCell>
                                     <TableCell className="text-center">
@@ -123,14 +129,13 @@ const InventoryDetailsTrackingTable = ({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={trackingColumns.length}
+                                    colSpan={columns.length}
                                     className="h-24 text-center"
                                 >
                                     <Card className="m-4">
                                         <CardContent>
                                             <NoDataFound
-                                                message="No tracking records found!"
-                                                details="No tracking data available."
+                                                message={t('trackingTable.emptyMessage')}
                                             />
                                         </CardContent>
                                     </Card>
@@ -141,7 +146,6 @@ const InventoryDetailsTrackingTable = ({
                 </Table>
             </div>
 
-            {/* pagination */}
             {data.length > 0 && <TransactionLedgerDataTablePagination table={table} />}
         </div>
     )

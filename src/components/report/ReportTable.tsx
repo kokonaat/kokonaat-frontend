@@ -15,7 +15,7 @@ import { NoDataFound } from '../NoDataFound'
 import { Button } from '../ui/button'
 import { Download } from 'lucide-react'
 import { TransactionLedgerDataTablePagination } from '../customers/TransactionLedgerDataTablePagination'
-// import { generateLedgerExcel } from '@/utils/enums/customerOrVendorLedgerExcel'
+import { useTranslation } from '@/hooks/useTranslation'
 
 interface ReportTableProps<TData> {
     data: TData[]
@@ -39,9 +39,9 @@ export const ReportTable = <TData,>({
     onPageChange,
     onDownloadPdf,
     onDownloadExcel,
-    // entityName,
-    title = 'Ledger Details',
+    title,
 }: ReportTableProps<TData>) => {
+    const { t } = useTranslation('reports')
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = useState({})
@@ -90,13 +90,13 @@ export const ReportTable = <TData,>({
                 <div className='flex flex-col md:items-center gap-2'>
                     {onDownloadExcel && (
                         <Button onClick={onDownloadExcel}>
-                            Download as Excel
+                            {t('tables.downloadExcel')}
                         </Button>
                     )}
 
                     <Button onClick={onDownloadPdf} className="gap-2">
                         <Download className="h-4 w-4" />
-                        Download PDF
+                        {t('tables.downloadPdf')}
                     </Button>
                 </div>
             </div>
@@ -138,8 +138,8 @@ export const ReportTable = <TData,>({
                                     <Card className="m-4">
                                         <CardContent>
                                             <NoDataFound
-                                                message="No transaction details found!"
-                                                details="Try selecting a customer or vendor."
+                                                message={t('tables.emptyMessage')}
+                                                details={t('tables.emptyDetails')}
                                             />
                                         </CardContent>
                                     </Card>

@@ -5,6 +5,8 @@ import { Calendar } from '@/components/ui/calendar'
 import { format } from 'date-fns'
 import type { DateRange } from 'react-day-picker'
 import { CalendarIcon, X } from 'lucide-react'
+import { useTranslation } from '@/hooks/useTranslation'
+import { getDateLocale } from '@/utils/dateLocale'
 
 interface DateRangeSearchProps {
     value?: DateRange
@@ -12,6 +14,8 @@ interface DateRangeSearchProps {
 }
 
 export default function DateRangeSearch({ value, onDateChange }: DateRangeSearchProps) {
+    const { t } = useTranslation('common')
+    const dateLocale = getDateLocale()
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>(value)
     const [tempRange, setTempRange] = React.useState<DateRange | undefined>(value)
     const [open, setOpen] = React.useState(false)
@@ -30,7 +34,6 @@ export default function DateRangeSearch({ value, onDateChange }: DateRangeSearch
     }
 
     const handleCancel = () => {
-        // revert temporary selection
         setTempRange(dateRange)
         setOpen(false)
     }
@@ -44,14 +47,13 @@ export default function DateRangeSearch({ value, onDateChange }: DateRangeSearch
 
     const formattedLabel =
         dateRange?.from && dateRange?.to
-            ? `${format(dateRange.from, 'MMM dd, yyyy')} → ${format(dateRange.to, 'MMM dd, yyyy')}`
-            : 'Select date range'
+            ? `${format(dateRange.from, 'MMM dd, yyyy', { locale: dateLocale })} → ${format(dateRange.to, 'MMM dd, yyyy', { locale: dateLocale })}`
+            : t('dateRange.placeholder')
 
     return (
         <div className="flex items-center space-x-2">
             <Popover open={open} onOpenChange={(state) => {
                 setOpen(state)
-                // sync when opening
                 if (state) setTempRange(dateRange)
             }}>
                 <PopoverTrigger asChild>
@@ -71,15 +73,15 @@ export default function DateRangeSearch({ value, onDateChange }: DateRangeSearch
                         onSelect={setTempRange}
                         numberOfMonths={window.innerWidth < 640 ? 1 : 2}
                         initialFocus
+                        locale={dateLocale}
                     />
 
-                    {/* ok/cancel button */}
                     <div className="flex justify-end space-x-2 px-1">
                         <Button variant="ghost" size="sm" onClick={handleCancel}>
-                            Cancel
+                            {t('actions.cancel')}
                         </Button>
                         <Button variant="default" size="sm" onClick={handleOk}>
-                            OK
+                            {t('dateRange.ok')}
                         </Button>
                     </div>
                 </PopoverContent>
@@ -90,7 +92,7 @@ export default function DateRangeSearch({ value, onDateChange }: DateRangeSearch
                     variant="ghost"
                     size="icon"
                     onClick={handleClear}
-                    title="Clear date range"
+                    title={t('dateRange.clear')}
                     className="h-8 w-8"
                 >
                     <X className="h-4 w-4" />

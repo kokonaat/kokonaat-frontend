@@ -1,0 +1,15 @@
+{
+  "dashboard": "Dashboard",
+  "shops": "Shops",
+  "customer": "Customer",
+  "vendor": "Vendor",
+  "uom": "Uom",
+  "inventory": "Inventory",
+  "transactionBoard": "Transaction Board",
+  "expense": "Expense",
+  "reports": "Reports",
+  "userManagement": "User Management",
+  "users": "Users",
+  "userProfile": "User Profile",
+  "plans": "Plans"
+}

@@ -12,11 +12,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/hooks/useTranslation'
 import { useUserStore } from '@/stores/userStore'
 
 export function ProfileDropdown() {
   const { logout } = useAuth()
   const user = useUserStore((s) => s.user)
+  const { t: tCommon } = useTranslation('common')
+  const { t: tAuth } = useTranslation('auth')
 
   const handleLogOut = () => {
     void logout()
@@ -54,7 +57,7 @@ export function ProfileDropdown() {
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
             <Link to="/user/me" className="flex justify-between w-full cursor-pointer">
-              Profile
+              {tCommon('actions.profile')}
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </Link>
           </DropdownMenuItem>
@@ -68,20 +71,20 @@ export function ProfileDropdown() {
 
           <DropdownMenuItem asChild>
             <Link to="#" className="flex justify-between w-full cursor-pointer">
-              Settings
+              {tCommon('actions.settings')}
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </Link>
           </DropdownMenuItem>
 
           <DropdownMenuItem>
-            <Link to="/change-password">Change Password</Link>
+            <Link to="/change-password">{tAuth('changePassword.title')}</Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
         <DropdownMenuSeparator />
 
         <DropdownMenuItem onClick={handleLogOut} className='cursor-pointer'>
-          Log out
+          {tCommon('actions.logout')}
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>

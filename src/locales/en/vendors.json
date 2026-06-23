@@ -1,0 +1,98 @@
+{
+  "page": {
+    "title": "Vendors",
+    "subtitle": "Here is a list of your all Vendors",
+    "errorLoading": "Error loading vendors.",
+    "loading": "Loading vendors data..."
+  },
+  "buttons": {
+    "create": "Create",
+    "saveChanges": "Save changes",
+    "close": "Close",
+    "delete": "Delete",
+    "view": "View",
+    "edit": "Edit",
+    "downloadPdf": "Download PDF"
+  },
+  "table": {
+    "filterPlaceholder": "Filter by id, name, phone or address...",
+    "rowTitle": "Click to view vendor ledger",
+    "emptyMessage": "No Vendor found!",
+    "emptyDetails": "Create a vendor first.",
+    "columns": {
+      "id": "ID",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "city": "City",
+      "country": "Country",
+      "isB2B": "IsB2B",
+      "contactPerson": "Contact Person",
+      "contactPersonPhone": "Contact Person Phone"
+    }
+  },
+  "drawer": {
+    "titleCreate": "Create Vendor",
+    "titleUpdate": "Update Vendor",
+    "descriptionCreate": "Add a new vendor by providing necessary info. Click save when you're done.",
+    "descriptionUpdate": "Update the vendor by providing necessary info. Click save when you're done.",
+    "viewTitle": "Vendor Details",
+    "viewDescription": "View information for {{name}}",
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "city": "City",
+      "country": "Country",
+      "contactPerson": "Contact Person",
+      "contactPhone": "Contact Phone",
+      "emptyValue": "—"
+    },
+    "placeholders": {
+      "name": "Rahul Roy",
+      "email": "rahul@gmail.com",
+      "phone": "01711111111",
+      "address": "Shyamoli,Dhaka",
+      "city": "Dhaka",
+      "country": "Bangladesh",
+      "contactPerson": "Ramesh Roy",
+      "contactPersonPhone": "01711111111"
+    }
+  },
+  "deleteDialog": {
+    "title": "Delete this vendor: {{name}} ?",
+    "description": "You are about to delete a vendor with the name {{name}}. This action cannot be undone.",
+    "confirm": "Delete",
+    "success": "The following vendor has been deleted"
+  },
+  "bulkDelete": {
+    "title": "Delete {{count}} selected vendor(s)?",
+    "deleteSelected": "Delete selected Vendors",
+    "multiTitle": "Delete {{count}} {{entity}}",
+    "multiEntityPlural": "Vendors",
+    "multiEntitySingular": "Vendor",
+    "description": "You are about to delete {{count}} vendor(s). This action cannot be undone.",
+    "multiDescription": "Are you sure you want to delete the selected Vendors? This action cannot be undone.",
+    "confirmTyping": "Confirm by typing \"DELETE\":",
+    "confirmPlaceholder": "Type \"DELETE\" to confirm.",
+    "warningTitle": "Warning!",
+    "warningDescription": "Please be careful, this operation can not be rolled back.",
+    "loading": "Deleting Vendors...",
+    "success": "Deleted {{count}} {{entity}}",
+    "error": "Error deleting Vendor"
+  },
+  "transactions": {
+    "filterPlaceholder": "Filter by No, Type, Status...",
+    "columns": {
+      "no": "No",
+      "type": "Type",
+      "status": "Status",
+      "amount": "Amount",
+      "paid": "Paid",
+      "pending": "Pending",
+      "remarks": "Remarks",
+      "date": "Date"
+    }
+  }
+}

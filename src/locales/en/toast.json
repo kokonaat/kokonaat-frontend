@@ -1,0 +1,109 @@
+{
+  "auth": {
+    "signUpSuccess": "Account created and logged in!",
+    "signUpFailed": "Failed to sign up",
+    "signInSuccess": "Logged in successfully!",
+    "signInFailed": "Failed to log in",
+    "unexpectedResponse": "Unexpected server response.",
+    "noShopsFound": "No shops found",
+    "invalidShopData": "Invalid shop data received.",
+    "somethingWrong": "Something went wrong.",
+    "forgetPasswordSuccess": "If an account exists, you will receive an email",
+    "forgetPasswordFailed": "Failed to send reset email",
+    "resetPasswordSuccess": "Password has been reset successfully",
+    "resetPasswordFailed": "Failed to reset password",
+    "changePasswordSuccess": "Password changed successfully!",
+    "changePasswordSameError": "New password cannot be the same as the old password.",
+    "changePasswordFailed": "Failed to update password. Please try again."
+  },
+  "shop": {
+    "created": "Shop created successfully",
+    "createFailed": "Failed to create shop",
+    "updated": "Shop updated successfully!",
+    "updateFailed": "Failed to update shop"
+  },
+  "transaction": {
+    "created": "Transaction created successfully",
+    "exceedsPending": "Amount cannot exceed pending balance ({{amount}})",
+    "noVendor": "No vendor linked to this transaction",
+    "noCustomer": "No customer linked to this transaction",
+    "vendorPaymentRecorded": "Vendor payment recorded",
+    "paymentCollected": "Payment collected successfully",
+    "insufficientStock": "One or more items exceed available stock quantity.",
+    "shopIdMissing": "Shop ID is missing",
+    "noPartner": "No vendor or customer associated with this transaction",
+    "noTransactionsForPartner": "No transactions found for this {{partnerType}}",
+    "ledgerDownloaded": "Ledger report downloaded successfully",
+    "ledgerDownloadFailed": "Failed to download ledger report. Please try again.",
+    "transactionReportDownloaded": "Transaction report downloaded successfully",
+    "transactionReportFailed": "Failed to download transaction report. Please try again.",
+    "shopNameMissing": "Shop name is missing"
+  },
+  "customer": {
+    "shopIdNotFound": "Shop ID not found!",
+    "noChanges": "No changes detected. Please modify something before saving.",
+    "updated": "Customer updated successfully.",
+    "created": "Customer created successfully.",
+    "updateFailed": "Update failed",
+    "creationFailed": "Creation failed",
+    "noTransactions": "No transactions found for this customer"
+  },
+  "vendor": {
+    "shopIdNotFound": "Shop ID not found!",
+    "noChanges": "No changes detected. Please modify something before saving.",
+    "updated": "Vendor updated successfully.",
+    "created": "Vendor created successfully.",
+    "updateFailed": "Update failed",
+    "creationFailed": "Creation failed",
+    "deleted": "The following vendor has been deleted",
+    "noTransactions": "No transactions found for this vendor"
+  },
+  "inventory": {
+    "shopIdNotFound": "Shop ID not found!",
+    "noChanges": "No changes detected. Please modify something before saving.",
+    "updated": "Inventory updated successfully.",
+    "created": "Inventory created successfully.",
+    "updateFailed": "Update failed",
+    "creationFailed": "Creation failed",
+    "deleted": "The following inventory has been deleted",
+    "noTrackingData": "No tracking data available to download",
+    "pdfDownloaded": "PDF downloaded successfully",
+    "pdfFailed": "Failed to generate PDF"
+  },
+  "expense": {
+    "shopIdNotFound": "Shop ID not found!",
+    "noChanges": "No changes detected. Please modify something before saving.",
+    "updated": "Expense updated successfully.",
+    "created": "Expense created successfully.",
+    "updateFailed": "Update failed",
+    "creationFailed": "Creation failed",
+    "deleted": "The expense has been deleted successfully"
+  },
+  "uom": {
+    "shopIdNotFound": "Shop ID not found!",
+    "noChanges": "No changes detected. Please modify something before saving.",
+    "updated": "UOM updated successfully",
+    "created": "UOM created successfully",
+    "updateFailed": "Update failed",
+    "createFailed": "Create failed",
+    "deleted": "UOM deleted successfully"
+  },
+  "user": {
+    "created": "User create successfully",
+    "createFailed": "Failed to create user",
+    "deleted": "The following user has been deleted:"
+  },
+  "common": {
+    "somethingWrong": "Something went wrong",
+    "typeDeleteToConfirm": "Please type \"DELETE\" to confirm.",
+    "bulkDeleteSuccess": "Deleted {{count}} {{entity}}",
+    "bulkDeleteError": "Error deleting {{entity}}",
+    "bulkDeleteLoading": "Deleting {{entity}}...",
+    "bulkActivateSuccess": "Activated {{count}} user(s)",
+    "bulkActivateError": "Error activating users",
+    "bulkDeactivateSuccess": "Deactivated {{count}} user(s)",
+    "bulkDeactivateError": "Error deactivating users",
+    "bulkInviteSuccess": "Invited {{count}} user(s)",
+    "bulkInviteError": "Error inviting users"
+  }
+}

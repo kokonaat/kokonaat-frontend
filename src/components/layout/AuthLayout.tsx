@@ -1,10 +1,18 @@
+import { LanguageSwitch } from '@/components/language-switch'
+import { useTranslation } from '@/hooks/useTranslation'
+
 interface AuthLayoutProps {
   children: React.ReactNode
 }
 
 const AuthLayout = ({ children }: AuthLayoutProps) => {
+  const { t } = useTranslation('common')
+
   return (
-    <div className='container grid h-svh max-w-none items-center justify-center'>
+    <div className='container relative grid h-svh max-w-none items-center justify-center'>
+      <div className='absolute end-4 top-4'>
+        <LanguageSwitch />
+      </div>
       <div className='mx-auto flex w-full flex-col justify-center space-y-2 py-8 sm:w-[480px] sm:p-8'>
         <div className='mb-4 flex items-center justify-center'>
           <svg
@@ -19,7 +27,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
           >
             <path d='M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3' />
           </svg>
-          <h1 className='text-xl font-medium'>Kokonaat</h1>
+          <h1 className='text-xl font-medium'>{t('appName')}</h1>
         </div>
         {children}
       </div>

@@ -1,0 +1,96 @@
+{
+  "page": {
+    "title": "ড্যাশবোর্ড",
+    "subtitle": "বিক্রয়, ক্রয়, খরচ ও মজুদের সমন্বিত দৃশ্য",
+    "errorLoading": "ড্যাশবোর্ড তথ্য লোড করতে ত্রুটি।"
+  },
+  "sections": {
+    "financialPulse": "আর্থিক সারসংক্ষেপ",
+    "trends": "প্রবণতা",
+    "insights": "অন্তর্দৃষ্টি",
+    "inventoryAndActivity": "মজুদ ও কার্যকলাপ"
+  },
+  "kpi": {
+    "grossSales": "মোট বিক্রয়",
+    "collected": "আদায়",
+    "collectedDescription": "বিক্রয় থেকে প্রাপ্ত নগদ",
+    "receivables": "পাওনা",
+    "receivablesDescription": "গ্রাহকদের কাছ থেকে বকেয়া",
+    "purchases": "ক্রয়",
+    "expenses": "খরচ",
+    "netPosition": "নিট অবস্থান",
+    "netPositionDescription": "আগমন বিয়োগ বহির্গমন",
+    "skusInStock": "মজুদে SKU",
+    "customersVendors": "গ্রাহক / সরবরাহকারী",
+    "transactions": "লেনদেন",
+    "salesPurchases": "বিক্রয় / ক্রয়",
+    "loadingValue": "...",
+    "changeVsPrior": "পূর্ববর্তীর তুলনায় {{change}}"
+  },
+  "charts": {
+    "cashFlow": {
+      "title": "নগদ প্রবাহ",
+      "description": "নির্বাচিত সময়ের দৈনিক আগমন বনাম বহির্গমন",
+      "legendIn": "আগমন",
+      "legendOut": "বহির্গমন",
+      "emptyMessage": "এই সময়ে কোনো নগদ প্রবাহ নেই",
+      "emptyDetails": "বিক্রয়, ক্রয় ও খরচ এখানে দেখা যাবে।"
+    },
+    "salesTrend": {
+      "title": "বিক্রয় প্রবণতা",
+      "description": "নির্বাচিত সময়ের দৈনিক মোট বিক্রয়",
+      "label": "বিক্রয়",
+      "emptyMessage": "এই সময়ে কোনো বিক্রি নেই",
+      "emptyDetails": "প্রবণতা দেখতে একটি বিক্রয় তৈরি করুন।"
+    },
+    "topProducts": {
+      "title": "শীর্ষ পণ্য",
+      "description": "আয় অনুযায়ী সর্বোচ্চ বিক্রিত",
+      "labelRevenue": "আয়",
+      "tooltipUnits": "{{amount}} ({{units}} ইউনিট)",
+      "emptyMessage": "এখনও কোনো পণ্য বিক্রি নেই",
+      "emptyDetails": "বিক্রয় লেনদেনের পর শীর্ষ বিক্রিত পণ্য দেখা যাবে।"
+    },
+    "expenseBreakdown": {
+      "title": "খরচের বিভাজন",
+      "description": "টাকা কোথায় যাচ্ছে",
+      "labelAmount": "পরিমাণ",
+      "emptyMessage": "এই সময়ে কোনো খরচ নেই",
+      "emptyDetails": "রেকর্ড করা খরচ এখানে দেখা যাবে।"
+    },
+    "topPartners": {
+      "title": "শীর্ষ অংশীদার",
+      "description": "এই সময়ের প্রধান গ্রাহক ও সরবরাহকারী",
+      "topCustomers": "শীর্ষ গ্রাহক",
+      "topVendors": "শীর্ষ সরবরাহকারী",
+      "noCustomerSales": "এখনও কোনো গ্রাহক বিক্রি নেই।",
+      "noVendorPurchases": "এখনও কোনো সরবরাহকারী ক্রয় নেই।",
+      "pending": "বকেয়া: {{amount}}",
+      "emptyMessage": "কোনো অংশীদার কার্যকলাপ নেই",
+      "emptyDetails": "শীর্ষ গ্রাহক ও সরবরাহকারী এখানে দেখা যাবে।"
+    },
+    "loadingChart": "চার্ট লোড হচ্ছে...",
+    "loading": "লোড হচ্ছে..."
+  },
+  "inventoryHealth": {
+    "stockSummary": "মজুদ সারসংক্ষেপ",
+    "skus": "SKU",
+    "totalUnits": "মোট ইউনিট",
+    "stockValue": "মজুদ মূল্য",
+    "lowStockAlerts": "কম মজুদ সতর্কতা",
+    "allAboveThreshold": "সব আইটেম {{threshold}} ইউনিটের উপরে।",
+    "unitsLeft": "{{quantity}} বাকি",
+    "viewInventory": "মজুদ দেখুন"
+  },
+  "recentTransactions": {
+    "title": "সাম্প্রতিক লেনদেন",
+    "description": "{{startDate}} থেকে {{endDate}} পর্যন্ত {{count}}টি লেনদেন",
+    "columns": {
+      "type": "ধরন",
+      "total": "মোট",
+      "pending": "বকেয়া"
+    },
+    "emptyMessage": "এই সময়ে কোনো লেনদেন নেই",
+    "emptyDetails": "শুরু করতে একটি লেনদেন তৈরি করুন।"
+  }
+}

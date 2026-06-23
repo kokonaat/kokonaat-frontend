@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import type { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -24,10 +24,11 @@ import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { useCreateSubscriptionPlan } from "@/hooks/usePlans"
 import type { CreateSubscriptionPlanDto } from "@/interface/subscriptionInterface"
-import { subscriptionFormSchema } from "@/schema/subscriptionFormSchema"
+import { createSubscriptionFormSchema } from "@/schema/subscriptionFormSchema"
+import { useTranslation } from "@/hooks/useTranslation"
 // import { toast } from "sonner"
 
-type SubscriptionPlanForm = z.infer<typeof subscriptionFormSchema>
+type SubscriptionPlanForm = z.infer<ReturnType<typeof createSubscriptionFormSchema>>
 
 interface Props {
     open: boolean
@@ -35,10 +36,12 @@ interface Props {
 }
 
 const SubscriptionPlanMutateDrawer = ({ open, onOpenChange }: Props) => {
+    const { t: tValidation } = useTranslation('validation')
+    const schema = useMemo(() => createSubscriptionFormSchema(tValidation), [tValidation])
     const [loading, setLoading] = useState(false)
 
     const form = useForm<SubscriptionPlanForm>({
-        resolver: zodResolver(subscriptionFormSchema),
+        resolver: zodResolver(schema),
         defaultValues: {
             name: "",
             price: 0,
@@ -111,6 +114,7 @@ const SubscriptionPlanMutateDrawer = ({ open, onOpenChange }: Props) => {
                         />
 
                         <div className="flex items-center gap-2">
+                            {/* Price field — temporarily hidden until pricing is ready
                             <FormField
                                 control={form.control}
                                 name="price"
@@ -135,6 +139,7 @@ const SubscriptionPlanMutateDrawer = ({ open, onOpenChange }: Props) => {
                                     </FormItem>
                                 )}
                             />
+                            */}
 
                             <FormField
                                 control={form.control}

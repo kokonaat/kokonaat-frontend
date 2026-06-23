@@ -7,6 +7,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useTranslation } from '@/hooks/useTranslation'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 import type { BusinessEntityType } from '@/constance/transactionConstances'
 
@@ -25,6 +26,7 @@ export const PaymentFields = ({
     calculatedPending,
     total,
 }: PaymentFieldsProps) => {
+    const { t } = useTranslation('transactions')
     const showPaymentFields =
         transactionType === 'PURCHASE' || transactionType === 'SALE'
 
@@ -35,9 +37,8 @@ export const PaymentFields = ({
     return (
         <>
             <div className="flex justify-end gap-4">
-                {/* total */}
                 <FormItem className='flex-1 max-w-52'>
-                    <FormLabel>Total</FormLabel>
+                    <FormLabel>{t('form.total')}</FormLabel>
                     <FormControl>
                         <Input
                             type='number'
@@ -48,18 +49,17 @@ export const PaymentFields = ({
                     </FormControl>
                 </FormItem>
 
-                    {/* paid */}
                 <FormField
                     control={form.control}
                     name='paid'
                     render={({ field }) => (
                         <FormItem className='flex-1 max-w-52'>
-                            <FormLabel>Paid</FormLabel>
+                            <FormLabel>{t('form.paid')}</FormLabel>
                             <FormControl>
                                 <Input
                                     type='number'
                                     {...field}
-                                    placeholder='0'
+                                    placeholder={t('form.paidPlaceholder')}
                                     min={0}
                                     value={field.value === 0 ? '' : field.value ?? ''}
                                     onChange={(e) => {
@@ -73,9 +73,8 @@ export const PaymentFields = ({
                     )}
                 />
 
-                {/* pending (read-only computed) */}
                 <FormItem className='flex-1 max-w-52'>
-                    <FormLabel>Pending</FormLabel>
+                    <FormLabel>{t('form.pending')}</FormLabel>
                     <FormControl>
                         <Input
                             type='number'

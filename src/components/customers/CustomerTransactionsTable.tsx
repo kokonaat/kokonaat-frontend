@@ -10,12 +10,12 @@ import {
   type SortingState,
 } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-// import { Input } from "@/components/ui/input"
 import { DataTableViewOptions } from "@/features/users/components/data-table-view-options"
 import { DataTablePagination } from "@/features/users/components/data-table-pagination"
 import type { VendorTransactionInterface } from "@/interface/vendorInterface"
-import { CustomerTransactionColumns } from "./CustomerTransactionsColumns"
+import { useCustomerTransactionColumns } from "./CustomerTransactionsColumns"
 import DateRangeSearch from "../DateRangeSearch"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface VendorTransactionTableProps {
   data: VendorTransactionInterface[]
@@ -34,7 +34,9 @@ const CustomerTransactionsTable = ({
   onPageChange,
   onDateChange,
 }: VendorTransactionTableProps) => {
-  // Properly typed states
+  const { t } = useTranslation('customers')
+  const columns = useCustomerTransactionColumns()
+
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({})
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({})
@@ -43,7 +45,7 @@ const CustomerTransactionsTable = ({
 
   const table = useReactTable({
     data,
-    columns: CustomerTransactionColumns,
+    columns,
     state: {
       sorting,
       columnVisibility,
@@ -99,16 +101,10 @@ const CustomerTransactionsTable = ({
           <DateRangeSearch
             onDateChange={(from, to) => {
               onDateChange?.(from?.toISOString(), to?.toISOString())
-              onPageChange(0) // reset page
+              onPageChange(0)
             }}
           />
         </div>
-        {/* <Input
-          placeholder="Filter by No, Type, Status..."
-          value={table.getState().globalFilter ?? ""}
-          onChange={(e) => table.setGlobalFilter(e.target.value)}
-          className="h-8 w-[200px] lg:w-[300px]"
-        /> */}
       </div>
 
       <div className="rounded-md border">
@@ -138,8 +134,8 @@ const CustomerTransactionsTable = ({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={CustomerTransactionColumns.length} className="h-24 text-center">
-                  No transactions found.
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  {t('ledger.emptyMessage')}
                 </TableCell>
               </TableRow>
             )}

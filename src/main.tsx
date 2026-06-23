@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 // context provider
 import { ThemeProvider } from './context/theme-provider'
+import { LanguageProvider } from './context/language-provider'
 import { FontProvider } from './context/font-provider'
 import { DirectionProvider } from './context/direction-provider'
 import { SidebarProvider } from './components/ui/sidebar'
@@ -13,6 +14,7 @@ import { AxiosError } from 'axios'
 import { LayoutProvider } from './context/layout-provider'
 import { SearchProvider } from './context/search-provider'
 import AppRoutes from './routes/AppRoutes'
+import './i18n'
 import './styles/index.css'
 
 // --- React Query Setup ---
@@ -44,6 +46,7 @@ if (!rootElement.innerHTML) {
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools initialIsOpen={false} />
         <ThemeProvider>
+          <LanguageProvider>
           <FontProvider>
             <DirectionProvider>
               <BrowserRouter>
@@ -57,6 +60,7 @@ if (!rootElement.innerHTML) {
               </BrowserRouter>
             </DirectionProvider>
           </FontProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </StrictMode>

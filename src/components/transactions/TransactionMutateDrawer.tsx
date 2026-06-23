@@ -39,6 +39,7 @@ import { AmountField } from './AmountField'
 import { PaymentFields } from './PaymentFields'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useTranslation } from '@/hooks/useTranslation'
 import { Input } from '../ui/input'
 import { useUomList } from '@/hooks/useUom'
 
@@ -47,6 +48,8 @@ const TransactionMutateDrawer = ({
   onOpenChange,
   currentRow,
 }: TransactionMutateDrawerProps) => {
+  const { t } = useTranslation('transactions')
+  const { t: tToast } = useTranslation('toast')
   // flag uom
   const [uomSearchQueries, setUomSearchQueries] = useState<Record<number, string>>({})
   const [showCloseConfirm, setShowCloseConfirm] = useState(false)
@@ -267,8 +270,8 @@ const TransactionMutateDrawer = ({
       });
 
       if (hasInsufficientStock) {
-        toast.error("One or more items exceed available stock quantity.");
-        return; // Stop the API call
+        toast.error(tToast('transaction.insufficientStock'))
+        return
       }
     }
 
@@ -356,7 +359,7 @@ const TransactionMutateDrawer = ({
 
     createTransaction(payload as CreateTransactionDto, {
       onSuccess: async () => {
-        toast.success('Transaction created successfully')
+        toast.success(tToast('transaction.created'))
 
         try {
           // await refetchInventories()
@@ -373,7 +376,7 @@ const TransactionMutateDrawer = ({
         } else if (error instanceof Error) {
           toast.error(error.message)
         } else {
-          toast.error('Something went wrong')
+          toast.error(tToast('common.somethingWrong'))
         }
       },
     })
@@ -386,10 +389,10 @@ const TransactionMutateDrawer = ({
       <ConfirmDialog
         open={showCloseConfirm}
         onOpenChange={setShowCloseConfirm}
-        title="Discard Changes?"
-        desc="You have unsaved changes. Are you sure you want to close? All entered data will be lost."
-        confirmText="Discard"
-        cancelBtnText="Cancel"
+        title={t('createDrawer.discardTitle')}
+        desc={t('createDrawer.discardDescription')}
+        confirmText={t('createDrawer.discardConfirm')}
+        cancelBtnText={t('createDrawer.discardCancel')}
         destructive
         handleConfirm={handleConfirmClose}
       />
@@ -397,13 +400,12 @@ const TransactionMutateDrawer = ({
         <SheetContent variant='wide' className='flex flex-col'>
         <SheetHeader className='text-start'>
           <SheetTitle>
-            {currentRow ? 'Update' : 'Create'} Transaction
+            {currentRow ? t('createDrawer.titleUpdate') : t('createDrawer.titleCreate')}
           </SheetTitle>
           <SheetDescription>
             {currentRow
-              ? 'Update the transaction by providing necessary info.'
-              : 'Add a new transaction by providing necessary info.'}{' '}
-            Click save when you're done.
+              ? t('createDrawer.descriptionUpdate')
+              : t('createDrawer.descriptionCreate')}
           </SheetDescription>
         </SheetHeader>
 
@@ -447,12 +449,12 @@ const TransactionMutateDrawer = ({
                     name="remarks"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Remarks</FormLabel>
+                        <FormLabel>{t('form.remarks')}</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             type="text"
-                            placeholder="Remarks"
+                            placeholder={t('form.remarksPlaceholder')}
                           />
                         </FormControl>
                         <FormMessage />
@@ -510,10 +512,10 @@ const TransactionMutateDrawer = ({
             variant='outline' 
             onClick={() => handleOpenChange(false)}
           >
-            Close
+            {t('buttons.close')}
           </Button>
           <Button form={FORM_ID} type='submit' disabled={isPending}>
-            {isPending ? 'Saving...' : 'Save changes'}
+            {isPending ? t('buttons.saving') : t('buttons.saveChanges')}
           </Button>
         </SheetFooter>
       </SheetContent>

@@ -1,0 +1,62 @@
+{
+  "page": {
+    "title": "Expense",
+    "subtitle": "Here is a list of your all expenses",
+    "errorLoading": "Error loading expenses.",
+    "loading": "Loading expense data..."
+  },
+  "buttons": {
+    "create": "Create",
+    "saveChanges": "Save changes",
+    "close": "Close",
+    "delete": "Delete"
+  },
+  "table": {
+    "searchPlaceholder": "Search expense...",
+    "emptyMessage": "No expense found!",
+    "emptyDetails": "Create an expense first.",
+    "columns": {
+      "title": "Title",
+      "type": "Type",
+      "amount": "Amount",
+      "remarks": "Remarks",
+      "selectAll": "Select all",
+      "selectRow": "Select row"
+    }
+  },
+  "drawer": {
+    "titleCreate": "Create Expense",
+    "titleUpdate": "Update Expense",
+    "descriptionCreate": "Add a new expense by providing necessary info. Click save when you're done.",
+    "descriptionUpdate": "Update the expense by providing necessary info. Click save when you're done.",
+    "fields": {
+      "title": "Title",
+      "expenseType": "Expense Type",
+      "amount": "Amount",
+      "remarks": "Remarks",
+      "createdAt": "Created At"
+    },
+    "placeholders": {
+      "title": "Expense title",
+      "typeSelect": "Select type",
+      "amount": "0.00",
+      "remarks": "Remarks"
+    },
+    "viewTitle": "Details",
+    "viewDescription": "View details for {{title}}"
+  },
+  "deleteDialog": {
+    "title": "Delete this expense: {{title}} ?",
+    "description": "You are about to delete an expense titled {{title}}. This action cannot be undone.",
+    "confirm": "Delete",
+    "success": "The expense has been deleted successfully"
+  },
+  "bulkDelete": {
+    "title": "Delete {{count}} expense(s)?",
+    "deleteSelected": "Delete selected Expense",
+    "description": "You are about to delete {{count}} expense(s). This action cannot be undone."
+  },
+  "common": {
+    "notAvailable": "N/A"
+  }
+}

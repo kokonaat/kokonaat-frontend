@@ -1,23 +1,21 @@
 import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-// import { useDrawerStore } from '@/stores/drawerStore'
 import { useUom } from './uom-provider'
 import UomMutateDrawer from './UomMutateDrawer'
-// import UomViewDrawer from './UomViewDrawer'
 import { useDeleteUom } from '@/hooks/useUom'
 import { useShopStore } from '@/stores/shopStore'
+import { useTranslation } from '@/hooks/useTranslation'
 
 const UomDialogs = () => {
+  const { t } = useTranslation('uom')
+  const { t: tToast } = useTranslation('toast')
   const { open, setOpen, currentRow, setCurrentRow } = useUom()
 
   const shopId = useShopStore(s => s.currentShopId)!
   const deleteMutation = useDeleteUom(shopId)
 
-  // const setDrawerOpen = useDrawerStore((s) => s.setDrawerOpen)
-
   return (
     <>
-      {/* Create */}
       <UomMutateDrawer
         open={open === 'create'}
         onOpenChange={(val) => setOpen(val ? 'create' : null)}
@@ -26,17 +24,6 @@ const UomDialogs = () => {
 
       {currentRow && (
         <>
-          {/* View */}
-          {/* <UomViewDrawer
-            open={open === 'view'}
-            onOpenChange={(val) => {
-              setOpen(val ? 'view' : null)
-              setDrawerOpen(val)
-            }}
-            currentRow={currentRow}
-          /> */}
-
-          {/* Update */}
           <UomMutateDrawer
             open={open === 'update'}
             onOpenChange={(val) => setOpen(val ? 'update' : null)}
@@ -49,7 +36,6 @@ const UomDialogs = () => {
             onSave={() => setOpen(null)}
           />
 
-          {/* Delete */}
           <ConfirmDialog
             destructive
             open={open === 'delete'}
@@ -63,20 +49,14 @@ const UomDialogs = () => {
                   onSuccess: () => {
                     setOpen(null)
                     setCurrentRow(null)
-                    toast.success('UOM deleted successfully')
+                    toast.success(tToast('uom.deleted'))
                   },
                 }
               )
             }}
-            title={`Delete this UOM: ${currentRow.name}?`}
-            desc={
-              <>
-                You are about to delete <strong>{currentRow.name}</strong>.
-                <br />
-                This action cannot be undone.
-              </>
-            }
-            confirmText="Delete"
+            title={t('deleteDialog.title', { name: currentRow.name })}
+            desc={t('deleteDialog.description', { name: currentRow.name })}
+            confirmText={t('deleteDialog.confirm')}
           />
         </>
       )}

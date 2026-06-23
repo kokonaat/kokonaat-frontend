@@ -6,20 +6,20 @@ import { useDeleteExpense } from "@/hooks/useExpense"
 import { useExpense } from "./expense-provider"
 import { useDrawerStore } from "@/stores/drawerStore"
 import { useShopStore } from "@/stores/shopStore"
+import { useTranslation } from "@/hooks/useTranslation"
 
 export default function ExpenseDialogs() {
+    const { t } = useTranslation('expense')
+    const { t: tToast } = useTranslation('toast')
     const { open, setOpen, currentRow, setCurrentRow } = useExpense()
 
     const shopId = useShopStore((s) => s.currentShopId)
 
     const deleteMutation = useDeleteExpense()
-
-    // global drawer state (background blur)
     const setDrawerOpen = useDrawerStore((s) => s.setDrawerOpen)
 
     return (
         <>
-            {/* Create drawer */}
             <ExpenseMutateDrawer
                 key="expense-create"
                 open={open === "create"}
@@ -27,10 +27,8 @@ export default function ExpenseDialogs() {
                 onSave={() => setOpen(null)}
             />
 
-            {/* View / Update / Delete */}
             {currentRow && (
                 <>
-                    {/* View drawer */}
                     <ExpenseViewDrawer
                         key={`expense-view-${currentRow.id}`}
                         open={open === "view"}
@@ -41,7 +39,6 @@ export default function ExpenseDialogs() {
                         currentRow={currentRow}
                     />
 
-                    {/* Update drawer */}
                     <ExpenseMutateDrawer
                         key={`expense-update-${currentRow.id}`}
                         open={open === "update"}
@@ -53,7 +50,6 @@ export default function ExpenseDialogs() {
                         onSave={() => setOpen(null)}
                     />
 
-                    {/* Delete dialog */}
                     <ConfirmDialog
                         key="expense-delete"
                         destructive
@@ -68,22 +64,15 @@ export default function ExpenseDialogs() {
                                     onSuccess: () => {
                                         setOpen(null)
                                         setCurrentRow(null)
-                                        toast.success("The expense has been deleted successfully")
+                                        toast.success(tToast('expense.deleted'))
                                     },
                                 }
                             )
                         }}
                         className="max-w-md"
-                        title={`Delete this expense: ${currentRow.title} ?`}
-                        desc={
-                            <>
-                                You are about to delete an expense titled{" "}
-                                <strong>{currentRow.title}</strong>.
-                                <br />
-                                This action cannot be undone.
-                            </>
-                        }
-                        confirmText="Delete"
+                        title={t('deleteDialog.title', { title: currentRow.title })}
+                        desc={t('deleteDialog.description', { title: currentRow.title })}
+                        confirmText={t('deleteDialog.confirm')}
                     />
                 </>
             )}

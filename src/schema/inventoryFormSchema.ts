@@ -1,9 +1,15 @@
-import { z } from "zod"
+import type { TFunction } from 'i18next'
+import { z } from 'zod'
 
-export const inventoryFormSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    description: z.string().min(1, {message:'Description should be at least 1 character'}),
-    quantity: z.number().min(0, "Quantity must be at least 0"),
-    lastPrice: z.number().min(0, "Last price must be at least 0"),
-    unitOfMeasurementId: z.string().min(1, "UOM is required"),
-})
+export const createInventoryFormSchema = (t: TFunction) =>
+  z.object({
+    name: z.string().min(1, t('inventoryForm.nameRequired')),
+    description: z
+      .string()
+      .min(1, { message: t('inventoryForm.descriptionRequired') }),
+    quantity: z.number().min(0, t('inventoryForm.quantityMin')),
+    lastPrice: z.number().min(0, t('inventoryForm.lastPriceMin')),
+    unitOfMeasurementId: z.string().min(1, t('inventoryForm.uomRequired')),
+  })
+
+export type InventoryFormValues = z.infer<ReturnType<typeof createInventoryFormSchema>>

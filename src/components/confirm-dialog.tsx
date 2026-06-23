@@ -9,6 +9,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type ConfirmDialogProps = {
   open: boolean
@@ -26,6 +27,7 @@ type ConfirmDialogProps = {
 }
 
 export function ConfirmDialog(props: ConfirmDialogProps) {
+  const { t } = useTranslation('common')
   const {
     title,
     desc,
@@ -51,14 +53,14 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
         {children}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isLoading}>
-            {cancelBtnText ?? 'Cancel'}
+            {cancelBtnText ?? t('actions.cancel')}
           </AlertDialogCancel>
           <Button
             variant={destructive ? 'destructive' : 'default'}
             onClick={handleConfirm}
             disabled={disabled || isLoading}
           >
-            {confirmText ?? 'Continue'}
+            {confirmText ?? t('actions.continue')}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

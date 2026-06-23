@@ -9,12 +9,14 @@ import { AppSidebar } from './app-sidebar'
 import { TeamSwitcher } from './team-switcher'
 import { Header } from './header'
 import { Search } from '../search'
+import { LanguageSwitch } from '../language-switch'
 import { ThemeSwitch } from '../theme-switch'
 import { ConfigDrawer } from '../config-drawer'
 import { ProfileDropdown } from '../profile-dropdown'
 import { NavGroup } from './nav-group'
 import { NavUser } from './nav-user'
-import { sidebarData as staticSidebarData } from '../../constance/sidebarConstances'
+import { useSidebarNav } from '@/hooks/useSidebarNav'
+import { useTranslation } from '@/hooks/useTranslation'
 import { useShopList } from '@/hooks/useShop'
 import { Command, GalleryVerticalEnd, AudioWaveform } from 'lucide-react'
 import type { AuthenticatedLayoutProps } from '@/interface/sidebarDataInerface'
@@ -24,6 +26,8 @@ import { useDrawerStore } from '@/stores/drawerStore'
 export default function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
   const { data, isLoading, isError } = useShopList()
   const user = useUserStore((s) => s.user)
+  const sidebarData = useSidebarNav()
+  const { t } = useTranslation('common')
 
   // global drawer state apply blur while any drawer open to view
   const isAnyDrawerOpen = useDrawerStore((s) => s.isAnyDrawerOpen)
@@ -50,13 +54,13 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
         {/* sidebar */}
         <AppSidebar>
           <SidebarHeader>
-            {isLoading && <p className="text-sm text-gray-500">Loading shops...</p>}
-            {isError && <p className="text-sm text-red-500">Failed to load shops</p>}
+            {isLoading && <p className="text-sm text-gray-500">{t('loading.shops')}</p>}
+            {isError && <p className="text-sm text-red-500">{t('errors.loadShops')}</p>}
             {!isLoading && !isError && <TeamSwitcher teams={dynamicTeams} />}
           </SidebarHeader>
 
           <SidebarContent className="overflow-y-auto">
-            {staticSidebarData.navGroups.map((group) => (
+            {sidebarData.navGroups.map((group) => (
               <NavGroup key={group.title} {...group} />
             ))}
           </SidebarContent>
@@ -65,7 +69,7 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
             {user ? (
               <NavUser user={user} />
             ) : (
-              <NavUser user={{ id: '', name: 'Guest', phone: '' }} />
+              <NavUser user={{ id: '', name: t('guest'), phone: '' }} />
             )}
           </SidebarFooter>
         </AppSidebar>
@@ -80,6 +84,7 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
             </div>
 
             <div className="ms-auto flex items-center space-x-4">
+              <LanguageSwitch />
               <ThemeSwitch />
               <ConfigDrawer />
               <ProfileDropdown />

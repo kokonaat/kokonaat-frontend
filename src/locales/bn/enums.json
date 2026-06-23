@@ -1,0 +1,41 @@
+{
+  "transactionType": {
+    "SALE": "বিক্রয়",
+    "PURCHASE": "ক্রয়",
+    "PAYMENT": "পেমেন্ট",
+    "RECEIVABLE": "পাওনা",
+    "COMMISSION": "কমিশন"
+  },
+  "paymentType": {
+    "CASH": "নগদ",
+    "BANK_TRANSFER": "ব্যাংক ট্রান্সফার",
+    "MOBILE_PAYMENT": "মোবাইল পেমেন্ট",
+    "CREDIT_CARD": "ক্রেডিট কার্ড",
+    "DEBIT_CARD": "ডেবিট কার্ড"
+  },
+  "expenseType": {
+    "DAILY_EXPENSE": "দৈনিক খরচ",
+    "MONTHLY_SALARY": "মাসিক বেতন",
+    "MONTHLY_RENT": "মাসিক ভাড়া",
+    "MONTHLY_UTILITIES": "মাসিক ইউটিলিটি",
+    "MONTHLY_OTHER": "মাসিক অন্যান্য",
+    "OTHER": "অন্যান্য"
+  },
+  "reportType": {
+    "CUSTOMER_LEDGER": "গ্রাহক খাতা",
+    "VENDOR_LEDGER": "সরবরাহকারী খাতা",
+    "TRANSACTION_REPORT": "লেনদেন রিপোর্ট",
+    "STOCK_REPORT": "স্টক রিপোর্ট",
+    "STOCK_TRACK_REPORT": "স্টক ট্র্যাক রিপোর্ট",
+    "EXPENSE_REPORT": "খরচ রিপোর্ট",
+    "BALANCE_SHEET": "ব্যালেন্স শিট"
+  },
+  "partnerType": {
+    "VENDOR": "সরবরাহকারী",
+    "CUSTOMER": "গ্রাহক"
+  },
+  "stockTrackType": {
+    "PURCHASE": "ক্রয়",
+    "SALE": "বিক্রয়"
+  }
+}

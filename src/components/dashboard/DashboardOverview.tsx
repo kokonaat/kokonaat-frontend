@@ -5,135 +5,136 @@ import {
   Bar,
   CartesianGrid,
   Legend,
-} from "recharts"
-import { format, parseISO } from "date-fns"
-import {
-  Card,
-} from "@/components/ui/card"
+} from 'recharts'
+import { format, parseISO } from 'date-fns'
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
-} from "@/components/ui/chart"
-import { NoDataFound } from "../NoDataFound"
+} from '@/components/ui/chart'
+import { NoDataFound } from '../NoDataFound'
+import type { DashboardData } from '@/interface/dashboardInterface'
+import {
+  dashboardChartClassName,
+  formatCurrency,
+  getChartTickInterval,
+} from '@/utils/dashboardFormatters'
+import { useTranslation } from '@/hooks/useTranslation'
+import { useMemo } from 'react'
 
 interface DashboardOverviewProps {
-  data?: {
-    last12MonthsInflowOutflow?: Array<{
-      month: string
-      totalInflow: number
-      totalOutflow: number
-    }>
-  }
+  data?: DashboardData
   isLoading?: boolean
 }
 
-// chart configuration for ChartContainer
-const chartConfig = {
-  inflow: {
-    label: "In",
-    theme: {
-      light: "hsl(0, 0%, 20%)", // dark gray/black for light mode
-      dark: "hsl(0, 0%, 70%)", // light gray for dark mode
-    },
-  },
-  outflow: {
-    label: "Out",
-    theme: {
-      light: "hsl(0, 0%, 50%)", // medium gray for light mode
-      dark: "hsl(0, 0%, 50%)", // medium gray for dark mode
-    },
-  },
-} satisfies ChartConfig
-
 const DashboardOverview = ({ data, isLoading }: DashboardOverviewProps) => {
+  const { t } = useTranslation('dashboard')
+
+  const chartConfig = useMemo(
+    () =>
+      ({
+        inflow: {
+          label: t('charts.cashFlow.legendIn'),
+          theme: {
+            light: 'hsl(142, 76%, 36%)',
+            dark: 'hsl(142, 70%, 45%)',
+          },
+        },
+        outflow: {
+          label: t('charts.cashFlow.legendOut'),
+          theme: {
+            light: 'hsl(0, 72%, 51%)',
+            dark: 'hsl(0, 72%, 55%)',
+          },
+        },
+      }) satisfies ChartConfig,
+    [t],
+  )
 
   const chartData =
-    data?.last12MonthsInflowOutflow
-      ?.map((item) => {
-        // format the month from "YYYY-MM" to "MMM" (e.g., "Jan")
-        const monthName = format(parseISO(item.month + "-01"), "MMM")
-        return {
-          name: monthName,
-          inflow: item.totalInflow || 0,
-          outflow: item.totalOutflow || 0,
-        }
-      }) || []
+    data?.periodCashFlow?.map((item) => ({
+      name: format(parseISO(item.date), 'MMM d'),
+      inflow: item.totalInflow || 0,
+      outflow: item.totalOutflow || 0,
+    })) || []
 
   const hasData = chartData.some((item) => item.inflow > 0 || item.outflow > 0)
+  const tickInterval = getChartTickInterval(chartData.length)
+  const denseLabels = chartData.length > 10
 
   if (isLoading) {
     return (
-      <Card>
-        <div className="flex items-center justify-center h-87.5">
-          <p className="text-muted-foreground">Loading chart...</p>
-        </div>
-      </Card>
+      <div className="flex h-[260px] items-center justify-center">
+        <p className="text-muted-foreground">{t('charts.loadingChart')}</p>
+      </div>
     )
   }
 
   if (!hasData) {
     return (
-      <div className="rounded-xl border bg-card shadow-sm overflow-auto">
+      <div className="flex h-[260px] items-center justify-center">
         <NoDataFound
-          message="No Recent Transactions"
-          details="Create a transaction to get started."
+          message={t('charts.cashFlow.emptyMessage')}
+          details={t('charts.cashFlow.emptyDetails')}
         />
       </div>
     )
   }
 
-  // the highest revenue value for the CardFooter message
-  // const totalRevenueSum = chartData.reduce((acc, item) => acc + item.total, 0)
-  // const averageRevenue = totalRevenueSum / chartData.length
-
-  // Example of a simplistic "trending up" calculation (e.g., last vs. second to last)
-  // const isTrendingUp = chartData.length > 1 && chartData[chartData.length - 1].total > chartData[chartData.length - 2].total;
-
-
   return (
-
-    <ChartContainer config={chartConfig} className="min-h-85 w-full">
-      <RechartsBarChart 
-        accessibilityLayer 
+    <ChartContainer config={chartConfig} className={dashboardChartClassName}>
+      <RechartsBarChart
+        accessibilityLayer
         data={chartData}
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        margin={{
+          top: 10,
+          right: 8,
+          left: 0,
+          bottom: denseLabels ? 20 : 5,
+        }}
       >
         <CartesianGrid vertical={false} />
         <XAxis
           dataKey="name"
           tickLine={false}
-          tickMargin={10}
+          tickMargin={8}
           axisLine={false}
+          interval={tickInterval}
+          angle={denseLabels ? -35 : 0}
+          textAnchor={denseLabels ? 'end' : 'middle'}
+          height={denseLabels ? 50 : 30}
+          tick={{ fontSize: 11 }}
         />
         <YAxis
           tickLine={false}
           axisLine={false}
-          tickFormatter={(value) => `${value}`}
+          width={48}
+          tick={{ fontSize: 11 }}
+          tickFormatter={(v) =>
+            Number(v) >= 1000 ? `${(Number(v) / 1000).toFixed(0)}k` : String(v)
+          }
         />
-        <ChartTooltip 
-          cursor={false} 
-          content={<ChartTooltipContent
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            formatter={(value: any) => {
-              const numericValue = typeof value === 'string' ? parseFloat(value) : value
-              return `${numericValue.toFixed(0)}`
-            }}
-          />} 
+        <ChartTooltip
+          cursor={false}
+          content={
+            <ChartTooltipContent
+              formatter={(value) => formatCurrency(Number(value))}
+            />
+          }
         />
-        <Legend />
+        <Legend wrapperStyle={{ fontSize: 12 }} />
         <Bar
           dataKey="inflow"
           fill="var(--color-inflow)"
           radius={[4, 4, 0, 0]}
-          name="In"
+          name={t('charts.cashFlow.legendIn')}
         />
         <Bar
           dataKey="outflow"
           fill="var(--color-outflow)"
           radius={[4, 4, 0, 0]}
-          name="Out"
+          name={t('charts.cashFlow.legendOut')}
         />
       </RechartsBarChart>
     </ChartContainer>

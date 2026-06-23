@@ -1,11 +1,12 @@
+import { useMemo } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Link } from 'react-router-dom'
+import { useTranslation } from '@/hooks/useTranslation'
 import type { Transaction } from '@/interface/transactionInterface'
-import { ChevronRight } from 'lucide-react'
 import { Tooltip, TooltipContent } from '../ui/tooltip'
 import { TooltipTrigger } from '@radix-ui/react-tooltip'
 import { Badge } from '../ui/badge'
-import { TransactionsLedgerDownload } from './TransactionsLedgerDownload'
+import { TransactionRowActions } from './TransactionRowActions'
 
 const getTransactionTypeColor = (type: string) => {
   switch (type) {
@@ -24,119 +25,121 @@ const getTransactionTypeColor = (type: string) => {
   }
 }
 
-export const TransactionColumns: ColumnDef<Transaction>[] = [
-  {
-    accessorKey: 'no',
-    header: 'No',
-  },
-  {
-    accessorKey: 'transactionType',
-    header: 'Type',
-    cell: ({ row }) => {
-      const type = row.original.transactionType
-      return (
-        <Badge variant="secondary" className={`font-medium ${getTransactionTypeColor(type)}`}>
-          {type}
-        </Badge>
-      )
-    },
-  },
-  {
-    accessorKey: 'remarks',
-    header: 'Remarks',
-    cell: ({ row }) => {
-      const text = row.getValue('remarks') as string || null
-      return (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="max-w-50 truncate">{text ?? 'N/A'}</div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <div className="max-w-sm wrap-break-word">{text ?? 'N/A'}</div>
-          </TooltipContent>
-        </Tooltip>
-      )
-    }
-  },
-  {
-    id: 'partnerName',
-    header: 'Vendor/Customer Name',
-    cell: ({ row }) => {
-      const data = row.original
+export function useTransactionColumns(): ColumnDef<Transaction>[] {
+  const { t } = useTranslation('transactions')
+  const { t: tEnums } = useTranslation('enums')
 
-      const handleLinkClick = (e: React.MouseEvent) => {
-        // prevent triggering row click
-        e.stopPropagation()
-      }
+  return useMemo(
+    () => [
+      {
+        accessorKey: 'no',
+        header: t('table.columns.no'),
+      },
+      {
+        accessorKey: 'transactionType',
+        header: t('table.columns.type'),
+        cell: ({ row }) => {
+          const type = row.original.transactionType
+          return (
+            <Badge
+              variant="secondary"
+              className={`font-medium ${getTransactionTypeColor(type)}`}
+            >
+              {tEnums(`transactionType.${type}`)}
+            </Badge>
+          )
+        },
+      },
+      {
+        accessorKey: 'remarks',
+        header: t('table.columns.remarks'),
+        cell: ({ row }) => {
+          const text = (row.getValue('remarks') as string) || null
+          const notAvailable = t('table.columns.notAvailable')
+          return (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="max-w-50 truncate">{text ?? notAvailable}</div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="max-w-sm wrap-break-word">{text ?? notAvailable}</div>
+              </TooltipContent>
+            </Tooltip>
+          )
+        },
+      },
+      {
+        id: 'partnerName',
+        header: t('table.columns.partnerName'),
+        cell: ({ row }) => {
+          const data = row.original
 
-      if (data.vendor) {
-        return (
-          <Link
-            to={`/transactions/ledger/vendor/${data.vendor.id}`}
-            onClick={handleLinkClick}
-            className='font-medium text-blue-600 hover:underline'
-          >
-            {data.vendor.name}
-          </Link>
-        )
-      }
+          const handleLinkClick = (e: React.MouseEvent) => {
+            e.stopPropagation()
+          }
 
-      if (data.customer) {
-        return (
-          <Link
-            to={`/transactions/ledger/customer/${data.customer.id}`}
-            onClick={handleLinkClick}
-            className='font-medium text-blue-600 hover:underline'
-          >
-            {data.customer.name}
-          </Link>
-        )
-      }
-      return <span className='text-gray-500'>-</span>
-    },
-  },
-  {
-    id: 'amounts',
-    header: 'Total / Paid / Pending',
-    cell: ({ row }) => {
-      const data = row.original
-      const total = data.totalAmount
-      const paid = data.paid
-      const pending = data.pending
+          if (data.vendor) {
+            return (
+              <Link
+                to={`/transactions/ledger/vendor/${data.vendor.id}`}
+                onClick={handleLinkClick}
+                className="font-medium text-blue-600 hover:underline"
+              >
+                {data.vendor.name}
+              </Link>
+            )
+          }
 
-      return (
-        <div className="font-mono">
-          {total.toFixed(2)} / {paid.toFixed(2)} / {pending.toFixed(2)}
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'createdAt',
-    header: 'Date',
-    cell: ({ row }) => {
-      const date = new Date(row.original.createdAt)
-      return date.toLocaleDateString()
-    },
-  },
-  {
-    id: 'open',
-    header: '',
-    cell: () => (
-      <div className="flex justify-center">
-        <ChevronRight className="h-4 w-4 text-muted-foreground" />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    id: 'ledger',
-    header: '',
-    cell: ({ row }) => (
-      <TransactionsLedgerDownload transaction={row.original} />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-]
+          if (data.customer) {
+            return (
+              <Link
+                to={`/transactions/ledger/customer/${data.customer.id}`}
+                onClick={handleLinkClick}
+                className="font-medium text-blue-600 hover:underline"
+              >
+                {data.customer.name}
+              </Link>
+            )
+          }
+          return <span className="text-gray-500">{t('table.columns.emptyPartner')}</span>
+        },
+      },
+      {
+        id: 'amounts',
+        header: t('table.columns.amounts'),
+        cell: ({ row }) => {
+          const data = row.original
+          const total = data.totalAmount
+          const paid = data.paid
+          const pending = data.pending
+
+          return (
+            <div className="font-mono">
+              {total.toFixed(2)} / {paid.toFixed(2)} / {pending.toFixed(2)}
+            </div>
+          )
+        },
+      },
+      {
+        accessorKey: 'createdAt',
+        header: t('table.columns.date'),
+        cell: ({ row }) => {
+          const date = new Date(row.original.createdAt)
+          return date.toLocaleDateString()
+        },
+      },
+      {
+        id: 'actions',
+        header: '',
+        cell: ({ row }) => (
+          <div className="flex justify-end" onClick={(e) => e.stopPropagation()}>
+            <TransactionRowActions row={row} />
+          </div>
+        ),
+        enableSorting: false,
+        enableHiding: false,
+      },
+    ],
+    [t, tEnums]
+  )
+}

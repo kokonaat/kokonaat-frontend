@@ -2,6 +2,7 @@ import type { UseFormReturn, FieldArrayWithId } from 'react-hook-form'
 import { Minus, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from '@/hooks/useTranslation'
 import {
     FormControl,
     FormField,
@@ -74,6 +75,7 @@ export const InventoryRow = ({
     // isExistingInventory,
     lockedUomValue,
 }: InventoryRowProps) => {
+    const { t } = useTranslation('transactions')
 
     const stock = itemDisplayData?.stockQuantity
     const isOverStock = transactionType === 'SALE' &&
@@ -91,12 +93,12 @@ export const InventoryRow = ({
                         name={`inventories.${index}.inventoryId`}
                         render={({ field: _field }) => (
                             <FormItem className='w-36 sm:w-48 md:w-48'>
-                                <FormLabel>Inventory</FormLabel>
+                                <FormLabel>{t('form.inventory')}</FormLabel>
                                 <FormControl>
                                     <Combobox
                                         options={filteredInventoryOptions}
                                         className='w-full'
-                                        placeholder='Select inventory...'
+                                        placeholder={t('form.inventoryPlaceholder')}
                                         value={currentInputValue}
                                         onSelect={(val) => {
                                             // Check if this is a real selection from options
@@ -112,7 +114,7 @@ export const InventoryRow = ({
 
                                                 if (isAlreadyUsed(nameToCheck)) {
                                                     toast.warning(
-                                                        'This inventory is already selected in another row'
+                                                        t('form.inventoryAlreadySelected')
                                                     )
                                                     return
                                                 }
@@ -131,7 +133,7 @@ export const InventoryRow = ({
 
                                             if (isAlreadyUsed(query)) {
                                                 toast.warning(
-                                                    'This inventory name is already used in another row'
+                                                    t('form.inventoryNameAlreadyUsed')
                                                 )
                                                 return
                                             }
@@ -161,12 +163,12 @@ export const InventoryRow = ({
 
                             return (
                                 <FormItem className='flex-1'>
-                                    <FormLabel>UOM</FormLabel>
+                                    <FormLabel>{t('form.uom')}</FormLabel>
                                     <FormControl>
                                         <Combobox
                                             options={uomOptions}
                                             className='w-full'
-                                            placeholder='Select UOM...'
+                                            placeholder={t('form.uomPlaceholder')}
                                             value={displayValue}
                                             onSelect={(val) => {
                                                 if (!isUomLocked) {
@@ -206,7 +208,7 @@ export const InventoryRow = ({
                         render={({ field }) => (
                             <FormItem className='flex-1'>
                                 <div className='flex flex-col'>
-                                    <FormLabel>Quantity</FormLabel>
+                                    <FormLabel>{t('form.quantity')}</FormLabel>
                                     {itemDisplayData?.stockQuantity !== undefined &&
                                         itemDisplayData.stockQuantity !== null && (
                                             <p
@@ -215,7 +217,7 @@ export const InventoryRow = ({
                                                     : 'text-muted-foreground'
                                                     }`}
                                             >
-                                                Stock: {itemDisplayData.stockQuantity}
+                                                {t('form.stock', { quantity: itemDisplayData.stockQuantity })}
                                             </p>
                                         )}
                                 </div>
@@ -224,7 +226,7 @@ export const InventoryRow = ({
                                         type='number'
                                         {...field}
                                         className={isOverStock ? "border-destructive focus-visible:ring-destructive" : ""}
-                                        placeholder='0'
+                                        placeholder={t('form.quantityPlaceholder')}
                                         min={0}
                                         value={field.value === 0 ? '' : field.value ?? ''}
                                         onChange={(e) => {
@@ -235,7 +237,7 @@ export const InventoryRow = ({
                                 </FormControl>
                                 {isOverStock && (
                                     <p className="text-[0.8rem] font-medium text-destructive mt-1">
-                                        Insufficient stock! Max: {stock}
+                                        {t('form.insufficientStock', { max: stock })}
                                     </p>
                                 )}
 
@@ -252,11 +254,11 @@ export const InventoryRow = ({
                         render={({ field }) => (
                             <FormItem className='flex-1'>
                                 <div className='flex flex-col'>
-                                    <FormLabel>Unit Price</FormLabel>
+                                    <FormLabel>{t('form.unitPrice')}</FormLabel>
                                     {itemDisplayData?.lastPrice !== undefined &&
                                         itemDisplayData.lastPrice !== null && (
                                             <p className='text-xs text-green-700 font-semibold mt-1'>
-                                                Last Price: {itemDisplayData.lastPrice.toFixed(2)}
+                                                {t('form.lastPrice', { price: itemDisplayData.lastPrice.toFixed(2) })}
                                             </p>
                                         )}
                                 </div>
@@ -264,7 +266,7 @@ export const InventoryRow = ({
                                     <Input
                                         type='number'
                                         {...field}
-                                        placeholder='0.00'
+                                        placeholder={t('form.amountPlaceholder')}
                                         min={0}
                                         step="0.01"
                                         value={field.value === 0 ? '' : field.value ?? ''}
@@ -303,14 +305,14 @@ export const InventoryRow = ({
                         <TooltipTrigger asChild>
                             <span className="inline-flex items-center cursor-help">
                                 <span className="text-xs italic truncate max-w-[180px]">
-                                    Desc: {itemDisplayData.description}
+                                    {t('form.descriptionPrefix')} {itemDisplayData.description}
                                 </span>
                             </span>
                         </TooltipTrigger>
 
                         <TooltipContent className="max-w-xs wrap-break-word">
                             <p className="text-xs italic leading-relaxed">
-                                Desc: {itemDisplayData.description}
+                                {t('form.descriptionPrefix')} {itemDisplayData.description}
                             </p>
                         </TooltipContent>
                     </Tooltip>

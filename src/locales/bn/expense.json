@@ -1,0 +1,62 @@
+{
+  "page": {
+    "title": "খরচ",
+    "subtitle": "এখানে আপনার সব খরচের তালিকা",
+    "errorLoading": "খরচ লোড করতে ত্রুটি।",
+    "loading": "খরচ তথ্য লোড হচ্ছে..."
+  },
+  "buttons": {
+    "create": "তৈরি করুন",
+    "saveChanges": "পরিবর্তন সংরক্ষণ",
+    "close": "বন্ধ",
+    "delete": "মুছুন"
+  },
+  "table": {
+    "searchPlaceholder": "খরচ অনুসন্ধান...",
+    "emptyMessage": "কোনো খরচ পাওয়া যায়নি!",
+    "emptyDetails": "প্রথমে একটি খরচ তৈরি করুন।",
+    "columns": {
+      "title": "শিরোনাম",
+      "type": "ধরন",
+      "amount": "পরিমাণ",
+      "remarks": "মন্তব্য",
+      "selectAll": "সব নির্বাচন",
+      "selectRow": "সারি নির্বাচন"
+    }
+  },
+  "drawer": {
+    "titleCreate": "খরচ তৈরি",
+    "titleUpdate": "খরচ আপডেট",
+    "descriptionCreate": "প্রয়োজনীয় তথ্য দিয়ে নতুন খরচ যোগ করুন। শেষে সংরক্ষণ ক্লিক করুন।",
+    "descriptionUpdate": "প্রয়োজনীয় তথ্য দিয়ে খরচ আপডেট করুন। শেষে সংরক্ষণ ক্লিক করুন।",
+    "fields": {
+      "title": "শিরোনাম",
+      "expenseType": "খরচের ধরন",
+      "amount": "পরিমাণ",
+      "remarks": "মন্তব্য",
+      "createdAt": "তৈরির সময়"
+    },
+    "placeholders": {
+      "title": "খরচের শিরোনাম",
+      "typeSelect": "ধরন নির্বাচন",
+      "amount": "0.00",
+      "remarks": "মন্তব্য"
+    },
+    "viewTitle": "বিবরণ",
+    "viewDescription": "{{title}}-এর বিবরণ দেখুন"
+  },
+  "deleteDialog": {
+    "title": "এই খরচ মুছবেন: {{title}} ?",
+    "description": "আপনি {{title}} শিরোনামের খরচ মুছতে যাচ্ছেন। এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "confirm": "মুছুন",
+    "success": "খরচ সফলভাবে মুছে ফেলা হয়েছে"
+  },
+  "bulkDelete": {
+    "title": "{{count}}টি খরচ মুছবেন?",
+    "deleteSelected": "নির্বাচিত খরচ মুছুন",
+    "description": "আপনি {{count}}টি খরচ মুছতে যাচ্ছেন। এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।"
+  },
+  "common": {
+    "notAvailable": "N/A"
+  }
+}

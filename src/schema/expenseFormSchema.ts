@@ -1,24 +1,23 @@
-import { z } from "zod"
+import type { TFunction } from 'i18next'
+import { z } from 'zod'
 
 export const expenseTypesArray = [
-    "DAILY_EXPENSE",
-    "MONTHLY_SALARY",
-    "MONTHLY_RENT",
-    "MONTHLY_UTILITIES",
-    "MONTHLY_OTHER",
-    "OTHER",
+  'DAILY_EXPENSE',
+  'MONTHLY_SALARY',
+  'MONTHLY_RENT',
+  'MONTHLY_UTILITIES',
+  'MONTHLY_OTHER',
+  'OTHER',
 ] as const
 
-// Define the schema without the final z.ZodType<ExpenseFormInterface> cast
-export const expenseFormSchema = z.object({
-    // Keep id optional here as it's needed for form reset/default values
+export const createExpenseFormSchema = (t: TFunction) =>
+  z.object({
     id: z.string().optional(),
-    title: z.string().min(1, "Title is required"),
+    title: z.string().min(1, t('expenseForm.titleRequired')),
     type: z.enum(expenseTypesArray),
-    amount: z.number().min(0.01, "Amount must be greater than 0"),
-    remarks: z.string().min(1, "Remarks is required"),
-    shopId: z.string().min(1, "Shop ID is required"),
-})
+    amount: z.number().min(0.01, t('expenseForm.amountMin')),
+    remarks: z.string().min(1, t('expenseForm.remarksRequired')),
+    shopId: z.string().min(1, t('expenseForm.shopIdRequired')),
+  })
 
-// Type inferred from Zod (now correctly compatible with useForm)
-export type ExpenseFormType = z.infer<typeof expenseFormSchema>
+export type ExpenseFormType = z.infer<ReturnType<typeof createExpenseFormSchema>>

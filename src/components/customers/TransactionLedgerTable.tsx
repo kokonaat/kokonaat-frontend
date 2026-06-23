@@ -24,6 +24,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { ChevronDown, Download, Loader2 } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import { useShopStore } from "@/stores/shopStore"
+import { useTranslation } from '@/hooks/useTranslation'
 import { generateTransactionDetailsPDF } from "@/utils/enums/transactionDetailsPdf"
 import { toast } from "sonner"
 
@@ -36,6 +37,12 @@ const TransactionLedgerTable = ({
     onDateChange,
     initialDateRange,
 }: TransactionLedgerTableProps) => {
+    const { t } = useTranslation('customers')
+    const { t: tExport } = useTranslation('export')
+    const { t: tTransactions } = useTranslation('transactions')
+    const { t: tToast } = useTranslation('toast')
+    const { t: tEnums } = useTranslation('enums')
+    const notAvailable = tTransactions('table.columns.notAvailable')
     const navigate = useNavigate()
     const { currentShopName } = useShopStore()
     const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set())
@@ -52,7 +59,7 @@ const TransactionLedgerTable = ({
         e.stopPropagation()
 
         if (!currentShopName) {
-            toast.error('Shop name is missing')
+            toast.error(tToast('transaction.shopNameMissing'))
             return
         }
 
@@ -86,11 +93,11 @@ const TransactionLedgerTable = ({
                 details: transaction.details || []
             }
 
-            generateTransactionDetailsPDF(transactionForPdf, currentShopName)
-            toast.success('Transaction report downloaded successfully')
+            await generateTransactionDetailsPDF(tExport, transactionForPdf, currentShopName)
+            toast.success(tToast('transaction.transactionReportDownloaded'))
         } catch (error) {
             console.error('Download error:', error)
-            toast.error('Failed to download transaction report. Please try again.')
+            toast.error(tToast('transaction.transactionReportFailed'))
         } finally {
             setDownloadingIds(prev => {
                 const newSet = new Set(prev)
@@ -104,7 +111,7 @@ const TransactionLedgerTable = ({
     const columns: ColumnDef<TransactionLedgerInterface>[] = [
         {
             accessorKey: 'id',
-            header: 'ID',
+            header: t('ledger.columns.id'),
         },
     ]
 
@@ -164,7 +171,7 @@ const TransactionLedgerTable = ({
                         onDateChange={onDateChange}
                     />
                     <Input
-                        placeholder="Filter by id, name, phone or address..."
+                        placeholder={t('ledger.filterPlaceholder')}
                         // value={searchInput}
                         // onChange={(e) => setSearchInput(e.target.value)}
                         className="h-8 w-37.5 lg:w-62.5"
@@ -182,13 +189,13 @@ const TransactionLedgerTable = ({
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="w-[50px]"></TableHead>
-                                <TableHead className="w-[140px]">ID</TableHead>
-                                <TableHead className="w-[100px]">Type</TableHead>
-                                <TableHead className="min-w-[200px]">Remarks</TableHead>
-                                <TableHead className="w-[100px] text-right">Amount</TableHead>
-                                <TableHead className="w-[100px] text-right">Paid</TableHead>
-                                <TableHead className="w-[100px] text-right">Pending</TableHead>
-                                <TableHead className="w-[100px] text-right">Date</TableHead>
+                                <TableHead className="w-[140px]">{t('ledger.columns.id')}</TableHead>
+                                <TableHead className="w-[100px]">{t('ledger.columns.type')}</TableHead>
+                                <TableHead className="min-w-[200px]">{t('ledger.columns.remarks')}</TableHead>
+                                <TableHead className="w-[100px] text-right">{t('ledger.columns.amount')}</TableHead>
+                                <TableHead className="w-[100px] text-right">{t('ledger.columns.paid')}</TableHead>
+                                <TableHead className="w-[100px] text-right">{t('ledger.columns.pending')}</TableHead>
+                                <TableHead className="w-[100px] text-right">{t('ledger.columns.date')}</TableHead>
                                 <TableHead className="w-[50px]"></TableHead>
                             </TableRow>
                         </TableHeader>
@@ -257,12 +264,12 @@ const TransactionLedgerTable = ({
                                                     }
                                                     className="text-xs"
                                                 >
-                                                    {transaction.transactionType}
+                                                    {tEnums(`transactionType.${transaction.transactionType}`)}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
-                                                <div className="max-w-[200px] truncate" title={transaction.remarks || 'N/A'}>
-                                                    {transaction.remarks || 'N/A'}
+                                                <div className="max-w-[200px] truncate" title={transaction.remarks || notAvailable}>
+                                                    {transaction.remarks || notAvailable}
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-right font-medium">
@@ -294,7 +301,7 @@ const TransactionLedgerTable = ({
                                                                 onClick={(e) => handleDownload(e, transaction)}
                                                                 disabled={downloadingIds.has(transaction.id)}
                                                                 className="p-1.5 hover:bg-muted rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                                                aria-label="Download transaction report"
+                                                                aria-label={t('ledger.downloadAriaLabel')}
                                                             >
                                                                 {downloadingIds.has(transaction.id) ? (
                                                                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -304,7 +311,7 @@ const TransactionLedgerTable = ({
                                                             </button>
                                                         </TooltipTrigger>
                                                         <TooltipContent>
-                                                            <p>Download PDF</p>
+                                                            <p>{tTransactions('buttons.downloadPdf')}</p>
                                                         </TooltipContent>
                                                     </Tooltip>
                                                 </TooltipProvider>
@@ -329,8 +336,8 @@ const TransactionLedgerTable = ({
                         <Card className="w-full p-4">
                             <CardContent>
                                 <NoDataFound
-                                    message="No Transactions Yet"
-                                    details="You haven't recorded any transactions. Create a transaction to get started."
+                                    message={t('ledger.emptyMessage')}
+                                    details={t('ledger.emptyDetails')}
                                 />
                             </CardContent>
                         </Card>

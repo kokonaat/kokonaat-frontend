@@ -7,10 +7,11 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Combobox } from '@/components/ui/combobox'
-import type { BusinessEntityType } from '@/constance/transactionConstances'
+import { useTranslation } from '@/hooks/useTranslation'
+import { usePartnerTypeOptions } from '@/hooks/useTranslatedOptions'
+import { BusinessEntityType } from '@/constance/transactionConstances'
 import type { ComboboxOptionInterface } from '@/interface/transactionInterface'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
-import { createBusinessEntityOptions, getEntityLabel, getEntityPlaceholder } from './utils/transactionHelpers'
 
 interface PartnerSelectionFieldsProps {
     form: UseFormReturn<TransactionFormValues>
@@ -33,7 +34,20 @@ export const PartnerSelectionFields = ({
     onEntitySearch,
     showPartnerTypeSelector,
 }: PartnerSelectionFieldsProps) => {
+    const { t } = useTranslation('transactions')
+    const partnerTypeOptions = usePartnerTypeOptions()
+
     if (!transactionType) return null
+
+    const entityLabel =
+        selectedBusinessEntity === BusinessEntityType.VENDOR
+            ? t('form.vendor')
+            : t('form.customer')
+
+    const entityPlaceholder =
+        selectedBusinessEntity === BusinessEntityType.VENDOR
+            ? t('form.vendorPlaceholder')
+            : t('form.customerPlaceholder')
 
     return (
         <div className='flex items-end gap-4'>
@@ -43,11 +57,11 @@ export const PartnerSelectionFields = ({
                     name='partnerType'
                     render={({ field }) => (
                         <FormItem className='flex-1'>
-                            <FormLabel>Partner Type</FormLabel>
+                            <FormLabel>{t('form.partnerType')}</FormLabel>
                             <FormControl>
                                 <Combobox
-                                    options={createBusinessEntityOptions()}
-                                    placeholder='Select partner type...'
+                                    options={partnerTypeOptions}
+                                    placeholder={t('form.partnerTypePlaceholder')}
                                     className='w-full'
                                     value={field.value}
                                     onSelect={(val) => {
@@ -68,11 +82,11 @@ export const PartnerSelectionFields = ({
                     name='entityTypeId'
                     render={({ field }) => (
                         <FormItem className='flex-1'>
-                            <FormLabel>{getEntityLabel(selectedBusinessEntity)}</FormLabel>
+                            <FormLabel>{entityLabel}</FormLabel>
                             <FormControl>
                                 <Combobox
                                     options={entityOptions}
-                                    placeholder={getEntityPlaceholder(selectedBusinessEntity)}
+                                    placeholder={entityPlaceholder}
                                     className='w-full'
                                     value={field.value}
                                     onSelect={field.onChange}

@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import type z from "zod"
 import {
@@ -16,12 +17,17 @@ import { useForm } from "react-hook-form"
 import { useCreateShop } from "@/hooks/useShop"
 import { createShopFormSchema } from "@/schema/createShopFormSchema"
 import AuthLayout from "@/components/layout/AuthLayout"
+import { useTranslation } from "@/hooks/useTranslation"
 
-type FormValues = z.infer<typeof createShopFormSchema>
+type FormValues = z.infer<ReturnType<typeof createShopFormSchema>>
 
 const CreateShop = ({ className, ...props }: React.HTMLAttributes<HTMLFormElement>) => {
+    const { t } = useTranslation('shops')
+    const { t: tValidation } = useTranslation('validation')
+    const schema = useMemo(() => createShopFormSchema(tValidation), [tValidation])
+
     const form = useForm<FormValues>({
-        resolver: zodResolver(createShopFormSchema),
+        resolver: zodResolver(schema),
         defaultValues: { name: "", address: "" },
     })
 
@@ -37,11 +43,8 @@ const CreateShop = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
             <div className="max-w-md mx-auto mt-10">
                 <Card className="gap-4">
                     <CardHeader>
-                        <CardTitle className="text-lg tracking-tight">Create Shop</CardTitle>
-                        <CardDescription>
-                            Enter your shop name below to <br />
-                            create your shop
-                        </CardDescription>
+                        <CardTitle className="text-lg tracking-tight">{t('createPage.title')}</CardTitle>
+                        <CardDescription>{t('createPage.description')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Form {...form}>
@@ -55,9 +58,9 @@ const CreateShop = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Shop Name</FormLabel>
+                                            <FormLabel>{t('createPage.shopName')}</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Barnick Procharoni" {...field} />
+                                                <Input placeholder={t('createPage.placeholders.shopName')} {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -69,9 +72,9 @@ const CreateShop = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
                                     name="address"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Shop Address</FormLabel>
+                                            <FormLabel>{t('createPage.shopAddress')}</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Shyamoli,Dhaka" {...field} />
+                                                <Input placeholder={t('createPage.placeholders.address')} {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -79,20 +82,20 @@ const CreateShop = ({ className, ...props }: React.HTMLAttributes<HTMLFormElemen
                                 />
 
                                 <Button type="submit" className="mt-2" disabled={isPending}>
-                                    {isPending ? "Creating..." : "Create Shop"}
+                                    {isPending ? t('createPage.creating') : t('buttons.createShop')}
                                 </Button>
                             </form>
                         </Form>
                     </CardContent>
                     <CardFooter>
                         <p className="text-muted-foreground px-8 text-center text-sm">
-                            By clicking create shop, you agree to our{" "}
+                            {t('createPage.termsPrefix')}{" "}
                             <a href="/terms" className="hover:text-primary underline underline-offset-4">
-                                Terms of Service
+                                {t('createPage.termsOfService')}
                             </a>{" "}
-                            and{" "}
+                            {t('createPage.and')}{" "}
                             <a href="/privacy" className="hover:text-primary underline underline-offset-4">
-                                Privacy Policy
+                                {t('createPage.privacyPolicy')}
                             </a>
                             .
                         </p>

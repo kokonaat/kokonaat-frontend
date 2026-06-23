@@ -2,6 +2,7 @@ import { useState, useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { Mail, MapPin, Phone, User, Building2, Download, Briefcase, Contact } from "lucide-react"
 import { Badge } from "../ui/badge"
+import { useTranslation } from '@/hooks/useTranslation'
 import { generatePDF } from "@/utils/enums/pdf"
 import type { Entity } from "@/utils/enums/pdf"
 import { Main } from "@/components/layout/main"
@@ -24,6 +25,9 @@ import { useVendorById } from "@/hooks/useVendor"
 import { format, subDays } from "date-fns"
 
 const TransactionLedger = () => {
+  const { t } = useTranslation('customers')
+  const { t: tExport } = useTranslation('export')
+  const { t: tTransactions } = useTranslation('transactions')
   const shopId = useShopStore((s) => s.currentShopId)
 
   // Now we have the type in URL
@@ -85,14 +89,13 @@ const TransactionLedger = () => {
 
   // loading handler
   if (isCustomerLoading || isVendorLoading) {
-    return <p>Loading details...</p>
+    return <p>{t('ledger.loadingDetails')}</p>
   }
 
-  // no entity found
   if (!entity) {
     return (
       <p className="text-red-500 text-center mt-4">
-        No {type} found.
+        {t('ledger.entityNotFound', { type })}
       </p>
     )
   }
@@ -114,7 +117,7 @@ const TransactionLedger = () => {
                 {entity.name}
               </CardTitle>
               <CardDescription>
-                No: {entity.no || <span className="text-muted-foreground">N/A</span>}
+                {t('ledger.noLabel')} {entity.no || <span className="text-muted-foreground">{tTransactions('table.columns.notAvailable')}</span>}
               </CardDescription>
             </CardHeader>
 
@@ -126,7 +129,7 @@ const TransactionLedger = () => {
                   <div className="flex items-center gap-2 pb-2 border-b">
                     <Contact className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
-                      Contact Information
+                      {t('ledger.contactInformation')}
                     </h3>
                   </div>
                   <div className="space-y-3.5">
@@ -134,7 +137,7 @@ const TransactionLedger = () => {
                       <div className="flex items-start gap-3">
                         <Mail className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-muted-foreground mb-0.5">Email</p>
+                          <p className="text-xs text-muted-foreground mb-0.5">{t('profile.email')}</p>
                           <p className="text-sm font-medium break-all">{entity.email}</p>
                         </div>
                       </div>
@@ -143,7 +146,7 @@ const TransactionLedger = () => {
                       <div className="flex items-start gap-3">
                         <Phone className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-muted-foreground mb-0.5">Phone</p>
+                          <p className="text-xs text-muted-foreground mb-0.5">{t('profile.phone')}</p>
                           <p className="text-sm font-medium">{entity.phone}</p>
                         </div>
                       </div>
@@ -152,9 +155,9 @@ const TransactionLedger = () => {
                       <div className="flex items-start gap-3">
                         <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-muted-foreground mb-0.5">Address</p>
+                          <p className="text-xs text-muted-foreground mb-0.5">{t('profile.address')}</p>
                           <p className="text-sm font-medium">
-                            {[entity.address, entity.city].filter(Boolean).join(", ") || "N/A"}
+                            {[entity.address, entity.city].filter(Boolean).join(", ") || tTransactions('table.columns.notAvailable')}
                           </p>
                         </div>
                       </div>
@@ -167,29 +170,29 @@ const TransactionLedger = () => {
                   <div className="flex items-center gap-2 pb-2 border-b">
                     <Briefcase className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
-                      Business Details
+                      {t('ledger.businessDetails')}
                     </h3>
                   </div>
                   <div className="space-y-3.5">
                     {isCustomer && entity.shop?.name && (
                       <div>
-                        <p className="text-xs text-muted-foreground mb-0.5">Shop</p>
+                        <p className="text-xs text-muted-foreground mb-0.5">{t('profile.shop')}</p>
                         <p className="text-sm font-medium">{entity.shop.name}</p>
                       </div>
                     )}
                     {isCustomer && (
                       <div>
-                        <p className="text-xs text-muted-foreground mb-1.5">Business Type</p>
+                        <p className="text-xs text-muted-foreground mb-1.5">{t('profile.businessType')}</p>
                         {entity.isB2B ? (
-                          <Badge variant="default" className="text-xs">B2B</Badge>
+                          <Badge variant="default" className="text-xs">{t('profile.b2b')}</Badge>
                         ) : (
-                          <Badge variant="secondary" className="text-xs">Individual</Badge>
+                          <Badge variant="secondary" className="text-xs">{t('profile.individual')}</Badge>
                         )}
                       </div>
                     )}
                     {(entity.contactPerson || entity.contactPersonPhone) && (
                       <div>
-                        <p className="text-xs text-muted-foreground mb-0.5">Contact Person</p>
+                        <p className="text-xs text-muted-foreground mb-0.5">{t('profile.contactPerson')}</p>
                         <p className="text-sm font-medium">
                           {entity.contactPerson && entity.contactPersonPhone
                             ? `${entity.contactPerson} (${entity.contactPersonPhone})`
@@ -210,7 +213,7 @@ const TransactionLedger = () => {
               <CardContent className="space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
                   <h3 className="text-lg font-semibold">
-                    {isCustomer ? "Customer Ledger" : "Vendor Ledger"}
+                    {isCustomer ? t('ledger.customerLedger') : t('ledger.vendorLedger')}
                   </h3>
 
                   {isLoading ? (
@@ -222,30 +225,32 @@ const TransactionLedger = () => {
                   ) : (
                     <div className="flex flex-wrap gap-4">
                       <div className="flex items-center gap-2 bg-muted/40 px-3 py-2 rounded-lg">
-                        <span className="text-sm text-muted-foreground">Total</span>
+                        <span className="text-sm text-muted-foreground">{t('ledger.total')}</span>
                         <span className="font-semibold">{totalAmount}</span>
                       </div>
 
                       <div className="flex items-center gap-2 bg-green-100 text-green-700 dark:bg-green-900/30 px-3 py-2 rounded-lg">
-                        <span className="text-sm">Paid</span>
+                        <span className="text-sm">{t('ledger.paid')}</span>
                         <span className="font-semibold">{totalPaid}</span>
                       </div>
 
                       <div className="flex items-center gap-2 bg-red-100 text-red-700 dark:bg-red-900/30 px-3 py-2 rounded-lg">
-                        <span className="text-sm">Balance</span>
+                        <span className="text-sm">{t('ledger.balance')}</span>
                         <span className="font-semibold">{totalPending}</span>
                       </div>
 
                       <Button
-                        onClick={() => generatePDF(entity as Entity, transactions, {
-                          totalAmount,
-                          totalPaid,
-                        })}
+                        onClick={async () => {
+                          await generatePDF(tExport, entity as Entity, transactions, {
+                            totalAmount,
+                            totalPaid,
+                          })
+                        }}
                         variant="default"
                         className="gap-2"
                       >
                         <Download className="h-4 w-4" />
-                        Download PDF
+                        {tTransactions('buttons.downloadPdf')}
                       </Button>
                     </div>
                   )}
@@ -253,9 +258,9 @@ const TransactionLedger = () => {
 
                 {/* table */}
                 {isLoading ? (
-                  <p>Loading transactions...</p>
+                  <p>{t('ledger.loadingTransactions')}</p>
                 ) : isError ? (
-                  <p className="text-red-500">Failed to load transactions</p>
+                  <p className="text-red-500">{t('ledger.failedTransactions')}</p>
                 ) : (
                   <TransactionLedgerTable
                     data={transactions}
@@ -289,15 +294,15 @@ const TransactionLedger = () => {
               <CardContent className="space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
                   <h3 className="text-lg font-semibold">
-                    {isCustomer ? "Customer Ledger" : "Vendor Ledger"}
+                    {isCustomer ? t('ledger.customerLedger') : t('ledger.vendorLedger')}
                   </h3>
                 </div>
 
                 {/* table */}
                 {isLoading ? (
-                  <p>Loading transactions...</p>
+                  <p>{t('ledger.loadingTransactions')}</p>
                 ) : isError ? (
-                  <p className="text-red-500">Failed to load transactions</p>
+                  <p className="text-red-500">{t('ledger.failedTransactions')}</p>
                 ) : (
                   <TransactionLedgerTable
                     data={transactions}

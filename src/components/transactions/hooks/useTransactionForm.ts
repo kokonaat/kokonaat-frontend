@@ -1,14 +1,18 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { Resolver } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { transactionFormSchema } from '@/schema/transactionFormSchema'
+import { useTranslation } from '@/hooks/useTranslation'
+import { createTransactionFormSchema } from '@/schema/transactionFormSchema'
 import { DEFAULT_VALUES } from '@/constance/transactionConstances'
 import type { TransactionFormValues } from '@/schema/transactionFormSchema'
 import type { BusinessEntityType } from '@/constance/transactionConstances'
 import type { ComboboxOptionInterface } from '@/interface/transactionInterface'
 
 export const useTransactionForm = () => {
+    const { t } = useTranslation('validation')
+    const schema = useMemo(() => createTransactionFormSchema(t), [t])
+
     const [selectedBusinessEntity, setSelectedBusinessEntity] =
         useState<BusinessEntityType | null>(null)
     const [entitySearchQuery, setEntitySearchQuery] = useState('')
@@ -19,19 +23,12 @@ export const useTransactionForm = () => {
     const [inventoryDisplayData, setInventoryDisplayData] = useState<
         Record<number, { lastPrice: number | null; stockQuantity: number | null; description: string | null }>
     >({})
-    // Cache of selected inventory options (ID -> option) to ensure they display correctly
-    // even when not in search results
     const [selectedInventoryOptionsCache, setSelectedInventoryOptionsCache] = useState<
         Record<string, ComboboxOptionInterface>
     >({})
-
-    // flag uom
     const [uomSearchQueries, setUomSearchQueries] = useState<Record<number, string>>({})
 
-
-    const resolver = zodResolver(
-        transactionFormSchema
-    ) as Resolver<TransactionFormValues>
+    const resolver = zodResolver(schema) as Resolver<TransactionFormValues>
 
     const form = useForm<TransactionFormValues>({
         resolver,
@@ -46,7 +43,6 @@ export const useTransactionForm = () => {
         setInventoryInputValues({})
         setInventoryDisplayData({})
         setSelectedInventoryOptionsCache({})
-        // flag uom
         setUomSearchQueries({})
     }
 
@@ -65,7 +61,6 @@ export const useTransactionForm = () => {
         selectedInventoryOptionsCache,
         setSelectedInventoryOptionsCache,
         resetFormStates,
-        // flag uom
         uomSearchQueries,
         setUomSearchQueries,
     }

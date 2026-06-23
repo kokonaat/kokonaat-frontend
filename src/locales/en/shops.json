@@ -1,0 +1,48 @@
+{
+  "page": {
+    "title": "Your Shop's",
+    "subtitle": "Here's a list of your shops!",
+    "searchPlaceholder": "Search your shop",
+    "loading": "Loading shops..."
+  },
+  "buttons": {
+    "create": "Create",
+    "close": "Close",
+    "createShop": "Create Shop",
+    "creating": "Creating...",
+    "updateAddress": "Update Address",
+    "updating": "Updating...",
+    "edit": "Edit"
+  },
+  "card": {
+    "selected": "Selected",
+    "noAddress": "no address provided"
+  },
+  "drawer": {
+    "titleCreate": "Create Shop",
+    "titleEdit": "Edit Shop",
+    "descriptionCreate": "Add a new shop by providing the necessary details. Click save when you're done.",
+    "descriptionEdit": "Update the shop address below. Click save when you're done.",
+    "shopName": "Shop Name",
+    "address": "Address",
+    "placeholders": {
+      "shopName": "Barnick Pracharani",
+      "address": "2/ka pc culture housing, shalymoli, dhaka"
+    }
+  },
+  "createPage": {
+    "title": "Create Shop",
+    "description": "Enter your shop name below to create your shop",
+    "shopName": "Shop Name",
+    "shopAddress": "Shop Address",
+    "placeholders": {
+      "shopName": "Barnick Procharoni",
+      "address": "Shyamoli,Dhaka"
+    },
+    "creating": "Creating...",
+    "termsPrefix": "By clicking create shop, you agree to our",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy"
+  }
+}

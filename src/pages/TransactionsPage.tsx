@@ -1,4 +1,5 @@
 import { useCallback, useState, useMemo } from "react"
+import { useTranslation } from '@/hooks/useTranslation'
 import { Main } from "@/components/layout/main"
 import { TransactionProvider } from "@/components/transactions/transaction-provider"
 import TransactionDialogs from "@/components/transactions/TransactionDialogs"
@@ -8,11 +9,11 @@ import { useShopStore } from "@/stores/shopStore"
 import { useTransactionList } from "@/hooks/useTransaction"
 
 const TransactionsPage = () => {
+  const { t } = useTranslation('transactions')
   const shopId = useShopStore((s) => s.currentShopId)
   const [pageIndex, setPageIndex] = useState(0)
   const [searchBy, setSearchBy] = useState('')
   
-  // Initialize with last 30 days
   const defaultDateRange = useMemo(() => {
     const today = new Date()
     const thirtyDaysAgo = new Date()
@@ -23,7 +24,6 @@ const TransactionsPage = () => {
     }
   }, [])
   
-  // Initialize state with default range
   const [startDate, setStartDate] = useState<Date | undefined>(defaultDateRange.from)
   const [endDate, setEndDate] = useState<Date | undefined>(defaultDateRange.to)
   const [transactionTypes, setTransactionTypes] = useState<string[]>([])
@@ -32,7 +32,6 @@ const TransactionsPage = () => {
 
   const pageSize = 10
 
-  // useCallback ensures stable function references
   const handlePageChange = useCallback((index: number) => {
     setPageIndex(index)
   }, [])
@@ -55,10 +54,9 @@ const TransactionsPage = () => {
     setTransactionTypes(types)
     setVendorIds(vendors)
     setCustomerIds(customers)
-    setPageIndex(0) // Reset to first page when filters change
+    setPageIndex(0)
   }, [])
 
-  // Format dates to ISO string for API
   const startDateString = startDate ? startDate.toISOString() : undefined
   const endDateString = endDate ? endDate.toISOString() : undefined
 
@@ -74,8 +72,8 @@ const TransactionsPage = () => {
     customerIds.length > 0 ? customerIds : undefined
   )
 
-  if (!shopId) return <div>No shop selected</div>
-  if (isError) return <div>Error loading transactions.</div>
+  if (!shopId) return <div>{t('page.noShopSelected')}</div>
+  if (isError) return <div>{t('page.errorLoading')}</div>
 
   const transactions = data?.data || []
   const total = data?.total || 0
@@ -85,15 +83,15 @@ const TransactionsPage = () => {
       <Main>
         <div className="mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Transactions Board</h2>
-            <p className="text-muted-foreground">Here is a list of all your transactions</p>
+            <h2 className="text-2xl font-bold tracking-tight">{t('page.title')}</h2>
+            <p className="text-muted-foreground">{t('page.subtitle')}</p>
           </div>
           <TransactionPrimaryButtons />
         </div>
 
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
           {isLoading ? (
-            <p>Loading transactions data...</p>
+            <p>{t('page.loading')}</p>
           ) : (
             <TransactionTable
               shopId={shopId}
@@ -104,7 +102,7 @@ const TransactionsPage = () => {
               onPageChange={handlePageChange}
               onSearchChange={handleSearchChange}
               onFiltersChange={handleFiltersChange}
-              initialDateRange={defaultDateRange} // Pass default date range
+              initialDateRange={defaultDateRange}
             />
           )}
         </div>

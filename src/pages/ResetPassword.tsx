@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { Link, useSearchParams } from "react-router-dom"
-import type { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
@@ -22,18 +21,24 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import AuthLayout from "@/components/layout/AuthLayout"
-import { resetPasswordSchema } from "@/schema/resetPasswordSchema"
-import type { ResetPasswordFormValues } from "@/schema/resetPasswordSchema"
+import {
+  createResetPasswordSchema,
+  type ResetPasswordFormValues,
+} from "@/schema/resetPasswordSchema"
 import { useResetPassword } from "@/hooks/useAuth"
+import { useTranslation } from "@/hooks/useTranslation"
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams()
   const token = searchParams.get("token") ?? ""
   const [isLoading, setIsLoading] = useState(false)
   const { mutate: submitResetPassword } = useResetPassword()
+  const { t: tAuth } = useTranslation('auth')
+  const { t: tValidation } = useTranslation('validation')
+  const schema = useMemo(() => createResetPasswordSchema(tValidation), [tValidation])
 
   const form = useForm<ResetPasswordFormValues>({
-    resolver: zodResolver(resetPasswordSchema),
+    resolver: zodResolver(schema),
     defaultValues: { token: "", newPassword: "", confirmPassword: "" },
   })
 
@@ -43,9 +48,9 @@ const ResetPassword = () => {
     }
   }, [token, form])
 
-  const onSubmit = (data: z.infer<typeof resetPasswordSchema>) => {
+  const onSubmit = (data: ResetPasswordFormValues) => {
     if (!data.token) {
-      form.setError("token", { message: "Reset token is required" })
+      form.setError("token", { message: tAuth('resetPassword.tokenRequired') })
       return
     }
     setIsLoading(true)
@@ -61,9 +66,9 @@ const ResetPassword = () => {
     <AuthLayout>
       <Card className="gap-4">
         <CardHeader>
-          <CardTitle className="text-lg tracking-tight">Reset password</CardTitle>
+          <CardTitle className="text-lg tracking-tight">{tAuth('resetPassword.title')}</CardTitle>
           <CardDescription>
-            Enter your new password below.
+            {tAuth('resetPassword.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -75,9 +80,9 @@ const ResetPassword = () => {
                   name="token"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Reset token</FormLabel>
+                      <FormLabel>{tAuth('resetPassword.token')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Paste token from email" {...field} />
+                        <Input placeholder={tAuth('resetPassword.tokenPlaceholder')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -89,9 +94,9 @@ const ResetPassword = () => {
                 name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New password</FormLabel>
+                    <FormLabel>{tAuth('resetPassword.newPassword')}</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Min 6 characters" {...field} />
+                      <Input type="password" placeholder={tAuth('resetPassword.newPasswordPlaceholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -102,16 +107,16 @@ const ResetPassword = () => {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm password</FormLabel>
+                    <FormLabel>{tAuth('resetPassword.confirmPassword')}</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Confirm new password" {...field} />
+                      <Input type="password" placeholder={tAuth('resetPassword.confirmPasswordPlaceholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <Button type="submit" className="mt-2" disabled={isLoading}>
-                {isLoading ? "Resetting..." : "Reset password"}
+                {isLoading ? tAuth('resetPassword.submitting') : tAuth('resetPassword.submit')}
               </Button>
             </form>
           </Form>
@@ -119,7 +124,7 @@ const ResetPassword = () => {
         <CardFooter>
           <p className="text-muted-foreground text-center text-sm">
             <Link to="/sign-in" className="hover:text-primary underline underline-offset-4">
-              Back to Login
+              {tAuth('resetPassword.backToLogin')}
             </Link>
           </p>
         </CardFooter>

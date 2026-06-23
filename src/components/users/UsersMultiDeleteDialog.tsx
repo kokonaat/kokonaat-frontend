@@ -6,6 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type UserMultiDeleteDialogProps<TData> = {
     open: boolean
@@ -22,26 +23,30 @@ export function UsersMultiDeleteDialog<TData>({
     onOpenChange,
     table,
 }: UserMultiDeleteDialogProps<TData>) {
+    const { t } = useTranslation('users')
     const [value, setValue] = useState('')
 
     const selectedRows = table.getFilteredSelectedRowModel().rows
+    const entityKey = selectedRows.length > 1 ? 'entityPlural' : 'entitySingular'
 
     const handleDelete = () => {
         if (value.trim() !== CONFIRM_WORD) {
-            toast.error(`Please type "${CONFIRM_WORD}" to confirm.`)
+            toast.error(t('multiDelete.confirmPlaceholder'))
             return
         }
 
         onOpenChange(false)
 
         toast.promise(sleep(2000), {
-            loading: 'Deleting users...',
+            loading: t('multiDelete.loading'),
             success: () => {
                 table.resetRowSelection()
-                return `Deleted ${selectedRows.length} ${selectedRows.length > 1 ? 'users' : 'user'
-                    }`
+                return t('multiDelete.success', {
+                    count: selectedRows.length,
+                    entity: t(`multiDelete.${entityKey}`),
+                })
             },
-            error: 'Error',
+            error: t('multiDelete.error'),
         })
     }
 
@@ -57,35 +62,34 @@ export function UsersMultiDeleteDialog<TData>({
                         className='stroke-destructive me-1 inline-block'
                         size={18}
                     />{' '}
-                    Delete {selectedRows.length}{' '}
-                    {selectedRows.length > 1 ? 'users' : 'user'}
+                    {t('multiDelete.title', {
+                        count: selectedRows.length,
+                        entity: t(`multiDelete.${entityKey}`),
+                    })}
                 </span>
             }
             desc={
                 <div className='space-y-4'>
-                    <p className='mb-2'>
-                        Are you sure you want to delete the selected users? <br />
-                        This action cannot be undone.
-                    </p>
+                    <p className='mb-2'>{t('multiDelete.description')}</p>
 
                     <Label className='my-4 flex flex-col items-start gap-1.5'>
-                        <span className=''>Confirm by typing "{CONFIRM_WORD}":</span>
+                        <span className=''>{t('multiDelete.confirmTyping')}</span>
                         <Input
                             value={value}
                             onChange={(e) => setValue(e.target.value)}
-                            placeholder={`Type "${CONFIRM_WORD}" to confirm.`}
+                            placeholder={t('multiDelete.confirmPlaceholder')}
                         />
                     </Label>
 
                     <Alert variant='destructive'>
-                        <AlertTitle>Warning!</AlertTitle>
+                        <AlertTitle>{t('deleteDialog.warningTitle')}</AlertTitle>
                         <AlertDescription>
-                            Please be careful, this operation can not be rolled back.
+                            {t('deleteDialog.warningDescription')}
                         </AlertDescription>
                     </Alert>
                 </div>
             }
-            confirmText='Delete'
+            confirmText={t('buttons.delete')}
             destructive
         />
     )

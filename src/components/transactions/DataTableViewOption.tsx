@@ -9,6 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type DataTableViewOptionsProps<TData> = {
   table: Table<TData>
@@ -17,6 +18,8 @@ type DataTableViewOptionsProps<TData> = {
 export function DataTableViewOptions<TData>({
   table,
 }: DataTableViewOptionsProps<TData>) {
+  const { t } = useTranslation('transactions')
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -26,11 +29,11 @@ export function DataTableViewOptions<TData>({
           className='ms-auto hidden h-8 lg:flex'
         >
           <MixerHorizontalIcon className='size-4' />
-          View
+          {t('viewOptions.view')}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-[150px]'>
-        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('viewOptions.toggleColumns')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()

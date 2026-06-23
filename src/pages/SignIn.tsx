@@ -9,22 +9,24 @@ import {
     CardTitle,
 } from '@/components/ui/card'
 import AuthLayout from '@/components/layout/AuthLayout'
+import { useTranslation } from '@/hooks/useTranslation'
 
 const SignIn = () => {
+    const { t } = useTranslation('auth')
+
     return (
         <AuthLayout>
             <Card className='gap-4'>
                 <CardHeader>
-                    <CardTitle className='text-lg tracking-tight'>Login</CardTitle>
+                    <CardTitle className='text-lg tracking-tight'>{t('signIn.title')}</CardTitle>
                     <CardDescription>
-                        Enter your email and password below to
-                        log into your account <br />
-                        Haven't signup yet?{' '}
+                        {t('signIn.description')} <br />
+                        {t('signIn.noAccount')}{' '}
                         <Link
                             to='/sign-up'
                             className='hover:text-primary underline underline-offset-4'
                         >
-                            Sign Up
+                            {t('signIn.signUpLink')}
                         </Link>
                     </CardDescription>
                 </CardHeader>
@@ -33,19 +35,19 @@ const SignIn = () => {
                 </CardContent>
                 <CardFooter>
                     <p className='text-muted-foreground px-8 text-center text-sm'>
-                        By clicking login, you agree to our{' '}
+                        {t('signIn.termsPrefix')}{' '}
                         <a
                             href='/terms'
                             className='hover:text-primary underline underline-offset-4'
                         >
-                            Terms of Service
+                            {t('signIn.termsOfService')}
                         </a>{' '}
-                        and{' '}
+                        {t('signIn.and')}{' '}
                         <a
                             href='/privacy'
                             className='hover:text-primary underline underline-offset-4'
                         >
-                            Privacy Policy
+                            {t('signIn.privacyPolicy')}
                         </a>
                         .
                     </p>
@@ -55,4 +57,4 @@ const SignIn = () => {
     )
 }
 
-export default SignIn  
+export default SignIn

@@ -1,0 +1,48 @@
+{
+  "page": {
+    "title": "আপনার দোকান",
+    "subtitle": "এখানে আপনার দোকানগুলোর তালিকা!",
+    "searchPlaceholder": "দোকান অনুসন্ধান",
+    "loading": "দোকান লোড হচ্ছে..."
+  },
+  "buttons": {
+    "create": "তৈরি করুন",
+    "close": "বন্ধ",
+    "createShop": "দোকান তৈরি",
+    "creating": "তৈরি হচ্ছে...",
+    "updateAddress": "ঠিকানা আপডেট",
+    "updating": "আপডেট হচ্ছে...",
+    "edit": "সম্পাদনা"
+  },
+  "card": {
+    "selected": "নির্বাচিত",
+    "noAddress": "কোনো ঠিকানা দেওয়া হয়নি"
+  },
+  "drawer": {
+    "titleCreate": "দোকান তৈরি",
+    "titleEdit": "দোকান সম্পাদনা",
+    "descriptionCreate": "প্রয়োজনীয় বিবরণ দিয়ে নতুন দোকান যোগ করুন। শেষে সংরক্ষণ ক্লিক করুন।",
+    "descriptionEdit": "নিচে দোকানের ঠিকানা আপডেট করুন। শেষে সংরক্ষণ ক্লিক করুন।",
+    "shopName": "দোকানের নাম",
+    "address": "ঠিকানা",
+    "placeholders": {
+      "shopName": "বর্ণিক প্রচারণী",
+      "address": "২/কা পিসি কালচার হাউজিং, শ্যামলী, ঢাকা"
+    }
+  },
+  "createPage": {
+    "title": "দোকান তৈরি",
+    "description": "দোকান তৈরি করতে নিচে দোকানের নাম দিন",
+    "shopName": "দোকানের নাম",
+    "shopAddress": "দোকানের ঠিকানা",
+    "placeholders": {
+      "shopName": "বর্ণিক প্রচারণী",
+      "address": "শ্যামলী, ঢাকা"
+    },
+    "creating": "তৈরি হচ্ছে...",
+    "termsPrefix": "দোকান তৈরি ক্লিক করে, আপনি আমাদের",
+    "termsOfService": "সেবার শর্তাবলী",
+    "and": "এবং",
+    "privacyPolicy": "গোপনীয়তা নীতি"
+  }
+}

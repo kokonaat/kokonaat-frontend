@@ -1,0 +1,85 @@
+{
+  "page": {
+    "title": "Inventory",
+    "subtitle": "Here is a list of your all Inventories",
+    "errorLoading": "Error loading inventories.",
+    "loading": "Loading inventories data..."
+  },
+  "buttons": {
+    "create": "Create",
+    "saveChanges": "Save changes",
+    "saving": "Saving...",
+    "close": "Close",
+    "delete": "Delete",
+    "downloadPdf": "Download PDF"
+  },
+  "table": {
+    "searchPlaceholder": "Search inventory...",
+    "emptyMessage": "No Inventory found!",
+    "emptyDetails": "Create a Inventory first.",
+    "columns": {
+      "name": "Name",
+      "description": "Description",
+      "quantity": "Quantity",
+      "uom": "Uom",
+      "lastPrice": "Last Price",
+      "selectAll": "Select all",
+      "selectRow": "Select row"
+    }
+  },
+  "drawer": {
+    "titleCreate": "Create Inventory",
+    "titleUpdate": "Update Inventory",
+    "descriptionCreate": "Add a new inventory by providing necessary info. Click save when you're done.",
+    "descriptionUpdate": "Update the inventory by providing necessary info. Click save when you're done.",
+    "fields": {
+      "name": "Name",
+      "description": "Description",
+      "quantity": "Quantity",
+      "uom": "Uom",
+      "lastPrice": "Last Price"
+    },
+    "placeholders": {
+      "name": "Inventory name",
+      "description": "Inventory description",
+      "quantity": "0",
+      "lastPrice": "0.00",
+      "uomLoading": "Loading UOMs...",
+      "uomSelect": "Select UOM"
+    }
+  },
+  "viewDrawer": {
+    "title": "Inventory history",
+    "description": "View information for {{name}}",
+    "name": "Name:",
+    "stockInHand": "Stock In Hand:",
+    "descriptionLabel": "Description:",
+    "lastPrice": "Last Price:",
+    "tracking": "Tracking",
+    "loadingTracking": "Loading tracking data...",
+    "errorTracking": "Error loading tracking data",
+    "emptyTracking": "No tracking records found!",
+    "notAvailable": "N/A"
+  },
+  "trackingTable": {
+    "columns": {
+      "inventoryName": "Inventory Name",
+      "type": "Type",
+      "stock": "Stock",
+      "price": "Price",
+      "createdAt": "Created At"
+    },
+    "emptyMessage": "No tracking records found!"
+  },
+  "deleteDialog": {
+    "title": "Delete this inventory: {{name}} ?",
+    "success": "The following inventory has been deleted",
+    "description": "You are about to delete an inventory named {{name}}. This action cannot be undone.",
+    "confirm": "Delete"
+  },
+  "bulkDelete": {
+    "title": "Delete {{count}} inventory(s)?",
+    "deleteSelected": "Delete selected Inventory",
+    "description": "You are about to delete {{count}} inventory(s). This action cannot be undone."
+  }
+}

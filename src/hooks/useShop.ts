@@ -5,6 +5,7 @@ import type { CreateShopInterface, UserRoleWiseShopInterface, UpdateShopInterfac
 import { createShop, shopList, updateShop } from "@/api/shopApi"
 import { useShopStore } from "@/stores/shopStore"
 import { useNavigate } from "react-router-dom"
+import i18n from "@/i18n"
 
 // query key
 const SHOP_KEYS = {
@@ -39,7 +40,7 @@ export const useCreateShop = () => {
                 setCurrentShop(createShopRes.id, createShopRes.name)
             }
 
-            toast.success("Shop created successfully")
+            toast.success(i18n.t('toast:shop.created'))
             queryClient.invalidateQueries({ queryKey: ["shops"] })
             queryClient.invalidateQueries({queryKey: ["user"]})
 
@@ -61,7 +62,7 @@ export const useCreateShop = () => {
             navigate("/shops")
         },
         onError: (err: AxiosError<{ message: string }>) => {
-            toast.error(err?.response?.data?.message || "Failed to create shop")
+            toast.error(err?.response?.data?.message || i18n.t('toast:shop.createFailed'))
         }
     })
 }
@@ -73,11 +74,11 @@ export const useUpdateShop = () => {
     return useMutation({
         mutationFn: (data: UpdateShopInterface) => updateShop(data),
         onSuccess: () => {
-            toast.success("Shop updated successfully!")
+            toast.success(i18n.t('toast:shop.updated'))
             queryClient.invalidateQueries({ queryKey: SHOP_KEYS.all })
         },
         onError: (err: AxiosError<{ message: string }>) => {
-            toast.error(err?.response?.data?.message || "Failed to update shop")
+            toast.error(err?.response?.data?.message || i18n.t('toast:shop.updateFailed'))
         }
     })
 }

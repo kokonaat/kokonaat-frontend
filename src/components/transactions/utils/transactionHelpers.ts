@@ -10,21 +10,6 @@ export const createEntityOptions = (
     }))
 }
 
-export const createBusinessEntityOptions = (): ComboboxOptionInterface[] => {
-    return [
-        { value: 'VENDOR', label: 'Vendor' },
-        { value: 'CUSTOMER', label: 'Customer' },
-    ]
-}
-
-export const getEntityLabel = (entityType: BusinessEntityType): string => {
-    return entityType === 'VENDOR' ? 'Vendor' : 'Customer'
-}
-
-export const getEntityPlaceholder = (entityType: BusinessEntityType): string => {
-    return entityType === 'VENDOR' ? 'Select vendor...' : 'Select customer...'
-}
-
 export const calculateTotal = (
     inventories: Array<{ quantity: number; price: number }> | undefined
 ): number => {

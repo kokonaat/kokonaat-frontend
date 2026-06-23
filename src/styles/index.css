@@ -17,6 +17,10 @@
     @apply bg-background text-foreground has-[div[data-variant='inset']]:bg-sidebar min-h-svh w-full;
   }
 
+  html.font-bengali body {
+    font-family: var(--font-bengali);
+  }
+
   /* Override Radix scroll locking for sticky headers */
   body[data-scroll-locked] {
     overflow: unset !important;

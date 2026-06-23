@@ -6,8 +6,10 @@ import { UomProvider } from "@/components/uom/uom-provider"
 import UomCreateButton from "@/components/uom/UomCreateButton"
 import UomTable from "@/components/uom/UomTable"
 import UomDialogs from "@/components/uom/UomDialogs"
+import { useTranslation } from "@/hooks/useTranslation"
 
 const Uom = () => {
+  const { t } = useTranslation('uom')
   const shopId = useShopStore((s) => s.currentShopId)
 
   const [pageIndex, setPageIndex] = useState(0)
@@ -33,7 +35,7 @@ const Uom = () => {
     searchBy,
   )
 
-  if (isError) return <p>Error loading uoms.</p>
+  if (isError) return <p>{t('page.errorLoading')}</p>
 
   const uoms = data?.items || []
   const total = data?.total || 0
@@ -44,10 +46,10 @@ const Uom = () => {
         <div className="mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">
-              Unit of Measurement
+              {t('page.title')}
             </h2>
             <p className="text-muted-foreground">
-              Here is a list of your all Unit of Measurement
+              {t('page.subtitle')}
             </p>
           </div>
           <UomCreateButton />
@@ -55,7 +57,7 @@ const Uom = () => {
 
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
           {isLoading ? (
-            <p>Loading uom data...</p>
+            <p>{t('page.loading')}</p>
           ) : (
             <UomTable
               data={uoms}

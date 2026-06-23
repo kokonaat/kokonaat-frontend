@@ -13,7 +13,8 @@ import {
     useReactTable,
 } from '@tanstack/react-table'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { usersColumns as columns } from './UserColumns'
+import { useUsersColumns } from './UserColumns'
+import { useTranslation } from '@/hooks/useTranslation'
 import { Input } from '@/components/ui/input'
 import { DataTablePagination } from '../data-table-pagination'
 import { DataTableBulkActions } from './DataTableBulkActions'
@@ -40,6 +41,8 @@ export function UsersTable({
     onPageChange,
     onSearchChange,
 }: UsersTableProps) {
+    const { t } = useTranslation('users')
+    const columns = useUsersColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -105,7 +108,7 @@ export function UsersTable({
                 <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-x-2">
                         <Input
-                            placeholder="Filter by id, name, phone..."
+                            placeholder={t('table.filterPlaceholder')}
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                             className="h-8 w-[150px] lg:w-[250px]"
@@ -155,8 +158,8 @@ export function UsersTable({
                                     <Card className='m-4'>
                                         <CardContent>
                                             <NoDataFound
-                                                message='No User found!'
-                                                details="Create a user first."
+                                                message={t('table.emptyMessage')}
+                                                details={t('table.emptyDetails')}
                                             />
                                         </CardContent>
                                     </Card>

@@ -27,9 +27,14 @@ import { generateTransactionReportPDF } from "@/utils/enums/transactionReportPdf
 import { generateTransactionReportExcel } from "@/utils/enums/transactionReportExcel"
 import { generateLedgerExcel } from "@/utils/enums/customerOrVendorLedgerExcel"
 import { NoDataFound } from "@/components/NoDataFound"
-import { TRANSACTION_TYPES } from "@/constance/transactionConstances"
-import { useBalanceSheetReport, useExpensesReport, useStocksReport, useStocksReportTracking, useTransactionReport } from "@/hooks/useReport"
-import { ExpensesReportColumns, LedgerReportColumns, TransactionReportColumns, StocksReportColumns, StockTrackReportColumns } from "@/components/report/ReportColumns"
+import { useExpensesReport, useStocksReport, useStocksReportTracking, useTransactionReport, useBalanceSheetReport } from "@/hooks/useReport"
+import {
+  useExpensesReportColumns,
+  useLedgerReportColumns,
+  useTransactionReportColumns,
+  useStocksReportColumns,
+  useStockTrackReportColumns,
+} from "@/components/report/ReportColumns"
 import Loader from "@/components/layout/Loader"
 import { generateExpenseReportPDF } from "@/utils/enums/expensesreportPdf"
 import { generateExpenseReportExcel } from "@/utils/enums/expensesreportExcel"
@@ -39,8 +44,21 @@ import { Badge } from "@/components/ui/badge"
 import { generateStockTrackReportPDF } from "@/utils/enums/stockTrackreportPdf"
 import { generateStockTrackReportExcel } from "@/utils/enums/stockTrackreportExcel"
 import { Combobox } from "@/components/ui/combobox"
+import { useTranslation } from "@/hooks/useTranslation"
+import { useReportTypeOptions, useTransactionTypeOptions } from "@/hooks/useTranslatedOptions"
 
 const Reports = () => {
+  const { t } = useTranslation('reports')
+  const { t: tExport } = useTranslation('export')
+  const { t: tCommon } = useTranslation('common')
+  const reportTypeOptions = useReportTypeOptions()
+  const transactionTypeOptions = useTransactionTypeOptions()
+  const ledgerReportColumns = useLedgerReportColumns()
+  const transactionReportColumns = useTransactionReportColumns()
+  const expensesReportColumns = useExpensesReportColumns()
+  const stocksReportColumns = useStocksReportColumns()
+  const stockTrackReportColumns = useStockTrackReportColumns()
+
   const shopId = useShopStore((s) => s.currentShopId) ?? ""
   const [pageIndex, setPageIndex] = useState(0)
   const limit = 10
@@ -322,7 +340,7 @@ const Reports = () => {
     if (appliedFilters?.reportType === ReportType.TRANSACTION_REPORT) {
       // If all types removed, fetch with all transaction types
       const typesToApply = newTypes.length === 0
-        ? TRANSACTION_TYPES.map(t => t.value)
+        ? transactionTypeOptions.map(opt => opt.value)
         : newTypes
 
       setAppliedFilters({
@@ -401,31 +419,25 @@ const Reports = () => {
   // filter transaction types based on search and already selected
   const filteredTransactionTypes = useMemo(() => {
     const searchLower = transactionTypeSearch.toLowerCase()
-    return TRANSACTION_TYPES.filter(type => {
+    return transactionTypeOptions.filter(type => {
       const matchesSearch = !transactionTypeSearch ||
         type.label.toLowerCase().includes(searchLower) ||
         type.value.toLowerCase().includes(searchLower)
       const notSelected = !transactionTypes.includes(type.value)
       return matchesSearch && notSelected
-    }).map(type => ({
-      value: type.value,
-      label: type.label
-    }))
-  }, [transactionTypeSearch, transactionTypes])
+    })
+  }, [transactionTypeSearch, transactionTypes, transactionTypeOptions])
 
-  // filter report types based on search
   const filteredReportTypes = useMemo(() => {
     const searchLower = reportTypeSearch.toLowerCase()
-    return Object.values(ReportType)
-      .filter(type => {
-        if (!reportTypeSearch) return true
-        return type.toLowerCase().includes(searchLower)
-      })
-      .map(type => ({
-        value: type,
-        label: type
-      }))
-  }, [reportTypeSearch])
+    return reportTypeOptions.filter(opt => {
+      if (!reportTypeSearch) return true
+      return (
+        opt.label.toLowerCase().includes(searchLower) ||
+        opt.value.toLowerCase().includes(searchLower)
+      )
+    })
+  }, [reportTypeSearch, reportTypeOptions])
 
   const detailRows: TransactionLedgerDetailItem[] = ledger?.transactions.flatMap(
     (tran: TransactionLedgerItem) =>
@@ -447,152 +459,139 @@ const Reports = () => {
   const entityNames = appliedFilters?.entityIds
     ? appliedFilters.entityIds.map(id => {
       if (appliedFilters.reportType === ReportType.CUSTOMER_LEDGER) {
-        return customerResponse?.customers.find(c => c.id === id)?.name ?? "Customer"
+        return customerResponse?.customers.find(c => c.id === id)?.name ?? t('tables.fallbackCustomer')
       } else {
-        return vendorResponse?.data.find(v => v.id === id)?.name ?? "Vendor"
+        return vendorResponse?.data.find(v => v.id === id)?.name ?? t('tables.fallbackVendor')
       }
     }).join(", ")
-    : "Unknown"
+    : t('tables.fallbackUnknown')
 
-  const handleDownloadPdf = () => {
-    // transaction report pdf
+  const shopNameFallback = t('tables.fallbackShopName')
+
+  const handleDownloadPdf = async () => {
+    const dateRange =
+      appliedFilters?.dateRange?.from && appliedFilters.dateRange?.to
+        ? {
+            from: appliedFilters.dateRange.from.toISOString(),
+            to: appliedFilters.dateRange.to.toISOString(),
+          }
+        : undefined
+
     if (appliedFilters?.reportType === ReportType.TRANSACTION_REPORT && transactionData?.data) {
-      generateTransactionReportPDF(
+      await generateTransactionReportPDF(
+        tExport,
         transactionData.data,
-        currentShopName ?? "Shop Name",
-        appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toISOString(),
-          to: appliedFilters.dateRange.to.toISOString()
-        } : undefined,
-        appliedFilters.transactionTypes?.join(", ")
-      );
+        currentShopName ?? shopNameFallback,
+        dateRange,
+        appliedFilters.transactionTypes?.join(', '),
+      )
       return
     }
 
-    // expense report pdf
     if (appliedFilters?.reportType === ReportType.EXPENSE_REPORT && expensesdata) {
-      generateExpenseReportPDF(
+      await generateExpenseReportPDF(
+        tExport,
         expensesdata,
-        currentShopName ?? "Shop Name",
-        appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toISOString(),
-          to: appliedFilters.dateRange.to.toISOString()
-        } : undefined
-      );
+        currentShopName ?? shopNameFallback,
+        dateRange,
+      )
       return
     }
 
-    // stock report pdf
     if (appliedFilters?.reportType === ReportType.STOCK_REPORT && stocksData.length > 0) {
-      generateStockReportPDF(
+      await generateStockReportPDF(
+        tExport,
         stocksData,
-        currentShopName ?? "Shop Name",
-        appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toISOString(),
-          to: appliedFilters.dateRange.to.toISOString()
-        } : undefined
-      );
-      return;
+        currentShopName ?? shopNameFallback,
+        dateRange,
+      )
+      return
     }
 
-    // stock track report pdf - Add your PDF generation function here
     if (appliedFilters?.reportType === ReportType.STOCK_TRACK_REPORT && stockTrackData.length > 0) {
-      generateStockTrackReportPDF(
+      await generateStockTrackReportPDF(
+        tExport,
         stockTrackData,
-        currentShopName ?? "Shop Name",
-        appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toISOString(),
-          to: appliedFilters.dateRange.to.toISOString()
-        } : undefined
-      );
-      return;
+        currentShopName ?? shopNameFallback,
+        dateRange,
+      )
+      return
     }
 
-    // ledger report pdf
-    if (!ledger || !appliedFilters?.entityIds || appliedFilters.entityIds.length === 0) return; // ← CHANGE
+    if (!ledger || !appliedFilters?.entityIds || appliedFilters.entityIds.length === 0) return
 
-    generateLedgerPDF(
+    await generateLedgerPDF(
+      tExport,
       entityNames,
-      currentShopName ?? "Shop Name",
+      currentShopName ?? shopNameFallback,
       detailRows,
       {
         totalAmount: ledger.totalAmount,
         totalPaid: ledger.paid,
       },
-      appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-        from: appliedFilters.dateRange.from.toISOString(),
-        to: appliedFilters.dateRange.to.toISOString()
-      } : undefined,
-      appliedFilters.reportType === ReportType.CUSTOMER_LEDGER ? "customer" : "vendor"
+      dateRange,
+      appliedFilters.reportType === ReportType.CUSTOMER_LEDGER ? 'customer' : 'vendor',
     )
   }
 
   const handleDownloadExcel = () => {
-    // transaction report excel
+    const dateRange =
+      appliedFilters?.dateRange?.from && appliedFilters.dateRange?.to
+        ? {
+            from: appliedFilters.dateRange.from.toISOString(),
+            to: appliedFilters.dateRange.to.toISOString(),
+          }
+        : undefined
+
     if (appliedFilters?.reportType === ReportType.TRANSACTION_REPORT && transactionData?.data) {
       generateTransactionReportExcel(
+        tExport,
         transactionData.data,
-        currentShopName ?? "Shop Name",
-        appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toISOString(),
-          to: appliedFilters.dateRange.to.toISOString()
-        } : undefined,
-        appliedFilters.transactionTypes?.join(", ")
+        currentShopName ?? shopNameFallback,
+        dateRange,
+        appliedFilters.transactionTypes?.join(', '),
       )
       return
     }
 
-    // expense report excel
     if (appliedFilters?.reportType === ReportType.EXPENSE_REPORT && expensesdata) {
       generateExpenseReportExcel(
+        tExport,
         expensesdata,
-        currentShopName ?? "Shop Name",
-        appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toISOString(),
-          to: appliedFilters.dateRange.to.toISOString()
-        } : undefined
-      );
-      return;
+        currentShopName ?? shopNameFallback,
+        dateRange,
+      )
+      return
     }
 
-    // stock report excel
     if (appliedFilters?.reportType === ReportType.STOCK_REPORT && stocksData.length > 0) {
       generateStockReportExcel(
+        tExport,
         stocksData,
-        currentShopName ?? "Shop Name",
-        appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toISOString(),
-          to: appliedFilters.dateRange.to.toISOString()
-        } : undefined
-      );
-      return;
+        currentShopName ?? shopNameFallback,
+        dateRange,
+      )
+      return
     }
 
-    // stock track report excel - Add your Excel generation function here
     if (appliedFilters?.reportType === ReportType.STOCK_TRACK_REPORT && stockTrackData.length > 0) {
       generateStockTrackReportExcel(
+        tExport,
         stockTrackData,
-        currentShopName ?? "Shop Name",
-        appliedFilters.dateRange?.from && appliedFilters.dateRange?.to ? {
-          from: appliedFilters.dateRange.from.toISOString(),
-          to: appliedFilters.dateRange.to.toISOString()
-        } : undefined
-      );
-      return;
+        currentShopName ?? shopNameFallback,
+        dateRange,
+      )
+      return
     }
 
-    // ledger report excel
-    if (!ledger || !appliedFilters?.entityIds || appliedFilters.entityIds.length === 0) return // ← CHANGE
+    if (!ledger || !appliedFilters?.entityIds || appliedFilters.entityIds.length === 0) return
+
     generateLedgerExcel(
-      currentShopName ?? "Shop Name",
+      tExport,
+      currentShopName ?? shopNameFallback,
       entityNames,
       detailRows,
-      appliedFilters?.dateRange?.from && appliedFilters?.dateRange?.to
-        ? {
-          from: appliedFilters.dateRange.from.toISOString(),
-          to: appliedFilters.dateRange.to.toISOString(),
-        }
-        : undefined
+      dateRange,
     )
   }
 
@@ -659,28 +658,26 @@ const Reports = () => {
     <Main>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold">Reports</h2>
-          <p className="text-sm text-muted-foreground">Comprehensive business reports</p>
+          <h2 className="text-2xl font-semibold">{t('page.title')}</h2>
+          <p className="text-sm text-muted-foreground">{t('page.subtitle')}</p>
         </div>
       </div>
 
       <div className="flex items-end gap-4 flex-wrap p-4">
-        {/* date range input */}
         <div>
-          <label className="text-sm font-medium mb-1 block">Date Range</label>
+          <label className="text-sm font-medium mb-1 block">{t('filters.dateRange')}</label>
           <DateRangeSearch
             value={dateRange}
             onDateChange={(from, to) => setDateRange(from && to ? { from, to } : undefined)}
           />
         </div>
 
-        {/* report type combobox */}
         <div>
-          <label className="text-sm font-medium mb-1 block">Report Type</label>
+          <label className="text-sm font-medium mb-1 block">{t('filters.reportType')}</label>
           <Combobox
             options={filteredReportTypes}
-            placeholder="Search & select report type"
-            emptyMessage="No report types found"
+            placeholder={t('filters.reportTypePlaceholder')}
+            emptyMessage={t('filters.reportTypeEmpty')}
             value={reportType || reportTypeSearch}
             onSelect={handleReportTypeSelect}
             onSearch={setReportTypeSearch}
@@ -690,14 +687,13 @@ const Reports = () => {
           />
         </div>
 
-        {/* transaction type combobox */}
         {reportType === ReportType.TRANSACTION_REPORT && (
           <div>
-            <label className="text-sm font-medium mb-1 block">Transaction Types (Required)</label>
+            <label className="text-sm font-medium mb-1 block">{t('filters.transactionTypes')}</label>
             <Combobox
               options={filteredTransactionTypes}
-              placeholder="Search & select types"
-              emptyMessage="No transaction types found"
+              placeholder={t('filters.transactionTypesPlaceholder')}
+              emptyMessage={t('filters.transactionTypesEmpty')}
               value={transactionTypeSearch}
               onSelect={handleTransactionTypeSelect}
               onSearch={setTransactionTypeSearch}
@@ -712,12 +708,22 @@ const Reports = () => {
           (reportType === ReportType.CUSTOMER_LEDGER || reportType === ReportType.VENDOR_LEDGER) && (
             <div>
               <label className="text-sm font-medium mb-1 block">
-                {reportType === ReportType.CUSTOMER_LEDGER ? "Select Customers (Required)" : "Select Vendors (Required)"}
+                {reportType === ReportType.CUSTOMER_LEDGER
+                  ? t('filters.selectCustomers')
+                  : t('filters.selectVendors')}
               </label>
               <Combobox
                 options={filteredEntities}
-                placeholder={`Search & select ${reportType === ReportType.CUSTOMER_LEDGER ? "customers" : "vendors"}`}
-                emptyMessage={`No ${reportType === ReportType.CUSTOMER_LEDGER ? "customers" : "vendors"} found`}
+                placeholder={
+                  reportType === ReportType.CUSTOMER_LEDGER
+                    ? t('filters.entityPlaceholderCustomers')
+                    : t('filters.entityPlaceholderVendors')
+                }
+                emptyMessage={
+                  reportType === ReportType.CUSTOMER_LEDGER
+                    ? t('filters.entityEmptyCustomers')
+                    : t('filters.entityEmptyVendors')
+                }
                 value={entitySearch}
                 onSelect={handleEntitySelect}
                 onSearch={setEntitySearch}
@@ -731,12 +737,14 @@ const Reports = () => {
         {isEntityEnabled && (reportType === ReportType.STOCK_REPORT || reportType === ReportType.STOCK_TRACK_REPORT) && (
           <div>
             <label className="text-sm font-medium mb-1 block">
-              Select Inventories {reportType === ReportType.STOCK_REPORT ? "(Optional)" : "(Required)"}
+              {reportType === ReportType.STOCK_REPORT
+                ? t('filters.selectInventoriesOptional')
+                : t('filters.selectInventoriesRequired')}
             </label>
             <Combobox
               options={filteredInventories}
-              placeholder="Search & select inventories"
-              emptyMessage="No inventories found"
+              placeholder={t('filters.inventoriesPlaceholder')}
+              emptyMessage={t('filters.inventoriesEmpty')}
               value={inventorySearch}
               onSelect={handleInventorySelect}
               onSearch={setInventorySearch}
@@ -759,7 +767,7 @@ const Reports = () => {
           className="flex gap-2"
         >
           <Search className="h-4 w-4" />
-          Search
+          {t('filters.search')}
         </Button>
       </div>
 
@@ -767,7 +775,7 @@ const Reports = () => {
       {reportType === ReportType.TRANSACTION_REPORT && transactionTypes.length > 0 && (
         <div className="px-4 pb-4">
           <div className="flex items-center gap-2 mb-2">
-            <label className="text-sm font-medium">Selected Transaction Types:</label>
+            <label className="text-sm font-medium">{t('filters.selectedTransactionTypes')}</label>
             <Button
               variant="ghost"
               size="sm"
@@ -777,12 +785,12 @@ const Reports = () => {
               }}
               className="h-7 text-xs text-muted-foreground hover:text-foreground"
             >
-              Clear All
+              {t('filters.clearAll')}
             </Button>
           </div>
           <div className="flex flex-wrap gap-2">
             {transactionTypes.map((type) => {
-              const transactionType = TRANSACTION_TYPES.find(t => t.value === type)
+              const transactionType = transactionTypeOptions.find(tOpt => tOpt.value === type)
               return (
                 <Badge key={type} variant="secondary" className="flex items-center gap-2 px-2 py-1">
                   <span>{transactionType?.label || type}</span>
@@ -809,7 +817,9 @@ const Reports = () => {
         <div className="px-4 pb-4">
           <div className="flex items-center gap-2 mb-2">
             <label className="text-sm font-medium">
-              Selected {reportType === ReportType.CUSTOMER_LEDGER ? "Customers" : "Vendors"}:
+              {reportType === ReportType.CUSTOMER_LEDGER
+                ? t('filters.selectedCustomers')
+                : t('filters.selectedVendors')}
             </label>
             <Button
               variant="ghost"
@@ -820,7 +830,7 @@ const Reports = () => {
               }}
               className="h-7 text-xs text-muted-foreground hover:text-foreground"
             >
-              Clear All
+              {t('filters.clearAll')}
             </Button>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -853,7 +863,7 @@ const Reports = () => {
       {(reportType === ReportType.STOCK_REPORT || reportType === ReportType.STOCK_TRACK_REPORT) && selectedInventoryIds.length > 0 && (
         <div className="px-4 pb-4">
           <div className="flex items-center gap-2 mb-2">
-            <label className="text-sm font-medium">Selected Inventories:</label>
+            <label className="text-sm font-medium">{t('filters.selectedInventories')}</label>
             <Button
               variant="ghost"
               size="sm"
@@ -874,7 +884,7 @@ const Reports = () => {
               }}
               className="h-7 text-xs text-muted-foreground hover:text-foreground"
             >
-              Clear All
+              {t('filters.clearAll')}
             </Button>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -904,9 +914,9 @@ const Reports = () => {
       {/* cards data for customer/vendor ledger */}
       {appliedFilters && isLedgerReport && hasData && ledger && (
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <ReportCard label="Total Amount" value={ledger.totalAmount} />
-          <ReportCard label="Total Paid" value={ledger.paid} />
-          <ReportCard label="Total Pending" value={ledger.totalPending} />
+          <ReportCard label={t('summaryCards.totalAmount')} value={ledger.totalAmount} />
+          <ReportCard label={t('summaryCards.totalPaid')} value={ledger.paid} />
+          <ReportCard label={t('summaryCards.totalPending')} value={ledger.totalPending} />
         </div>
       )}
 
@@ -914,17 +924,17 @@ const Reports = () => {
       {appliedFilters && isTransactionReport && hasData && transactionData?.data && (
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           <ReportCard
-            label="Total Amount"
+            label={t('summaryCards.totalAmount')}
             value={transactionData.data.reduce(
               (sum: number, t: TransactionReportItem) => sum + t.totalAmount, 0)}
           />
           <ReportCard
-            label="Total Paid"
+            label={t('summaryCards.totalPaid')}
             value={transactionData.data.reduce(
               (sum: number, t: TransactionReportItem) => sum + t.paid, 0)}
           />
           <ReportCard
-            label="Total Due"
+            label={t('summaryCards.totalDue')}
             value={transactionData.data.reduce(
               (sum: number, t: TransactionReportItem) => sum + (t.totalAmount - t.paid), 0)}
           />
@@ -935,7 +945,7 @@ const Reports = () => {
       {appliedFilters && isExpenseReport && hasData && expensesdata && (
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
           <ReportCard
-            label="Total Expenses"
+            label={t('summaryCards.totalExpenses')}
             value={expensesdata.reduce((s: number, e: ExpenseReportItem) => s + e.amount, 0)}
           />
         </div>
@@ -950,10 +960,10 @@ const Reports = () => {
             const closingBalance = latestDay.closingBalance
             return (
               <>
-                <ReportCard label="Opening Balance" value={closingBalance.openingBalance} />
-                <ReportCard label="Total In" value={closingBalance.totalInflow} />
-                <ReportCard label="Total Out" value={closingBalance.totalOutflow} />
-                <ReportCard label="Closing Balance" value={closingBalance.closingBalance} />
+                <ReportCard label={t('summaryCards.openingBalance')} value={closingBalance.openingBalance} />
+                <ReportCard label={t('summaryCards.totalIn')} value={closingBalance.totalInflow} />
+                <ReportCard label={t('summaryCards.totalOut')} value={closingBalance.totalOutflow} />
+                <ReportCard label={t('summaryCards.closingBalance')} value={closingBalance.closingBalance} />
               </>
             )
           })()}
@@ -966,8 +976,8 @@ const Reports = () => {
       {/* empty state */}
       {!appliedFilters && (
         <NoDataFound
-          message="No report selected"
-          details="Select a date range and report type to generate your report."
+          message={tCommon('empty.noReportSelected')}
+          details={tCommon('empty.noReportSelectedDetails')}
         />
       )}
 
@@ -975,25 +985,25 @@ const Reports = () => {
         <NoDataFound
           message={
             isExpenseReport
-              ? "No Expenses Found"
+              ? tCommon('empty.noExpensesFound')
               : isStockReport
-                ? "No Stock Data Found"
+                ? tCommon('empty.noStockData')
                 : isStockTrackReport
-                  ? "No Stock Track Data Found"
+                  ? tCommon('empty.noStockTrackData')
                   : isBalanceSheetReport
-                    ? "No Balance Sheet Data Found"
-                    : "No Transactions Found"
+                    ? tCommon('empty.noBalanceSheetData')
+                    : tCommon('empty.noTransactionsFound')
           }
           details={
             isExpenseReport
-              ? "There are no recorded expenses for the selected date range."
+              ? tCommon('empty.noExpensesDetails')
               : isStockReport
-                ? "No stock data matches your selected filters and date range."
+                ? tCommon('empty.noStockDetails')
                 : isStockTrackReport
-                  ? "No stock tracking data matches your selected filters and date range."
+                  ? tCommon('empty.noStockTrackDetails')
                   : isBalanceSheetReport
-                    ? "No balance sheet data matches your selected date range."
-                    : "No data matches your selected filters and date range."
+                    ? tCommon('empty.noBalanceSheetDetails')
+                    : tCommon('empty.noDataDetails')
           }
         />
       )}
@@ -1002,22 +1012,21 @@ const Reports = () => {
       {appliedFilters && !isLoading && isTransactionReport && transactionData?.data && transactionData.data.length > 0 && (
         <ReportTable<TransactionReportItem>
           data={transactionData.data}
-          columns={TransactionReportColumns}
+          columns={transactionReportColumns}
           pageIndex={pageIndex}
           pageSize={limit}
           total={transactionData.total ?? 0}
           onPageChange={handlePageChange}
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}
-          title="Transaction Report"
+          title={t('tables.transactionReport')}
         />
       )}
 
-      {/* ledger report table */}
       {appliedFilters && !isLoading && isLedgerReport && detailRows.length > 0 && ledger && (
         <ReportTable<TransactionLedgerDetailItem>
           data={detailRows}
-          columns={LedgerReportColumns}
+          columns={ledgerReportColumns}
           pageIndex={pageIndex}
           pageSize={limit}
           total={ledger.total}
@@ -1025,63 +1034,59 @@ const Reports = () => {
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}
           entityName={entityNames}
-          title="Ledger Details"
+          title={t('tables.ledgerDetails')}
         />
       )}
 
-      {/* expenses table */}
       {appliedFilters && !isLoading && isExpenseReport && expensesdata && expensesdata.length > 0 && (
         <ReportTable<ExpenseReportItem>
           data={expensesdata}
-          columns={ExpensesReportColumns}
+          columns={expensesReportColumns}
           pageIndex={pageIndex}
           pageSize={limit}
           total={expensesdata.length}
-          title="Expenses Report"
+          title={t('tables.expensesReport')}
           onPageChange={handlePageChange}
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}
         />
       )}
 
-      {/* stocks table */}
       {appliedFilters && !isLoading && isStockReport && stocksData.length > 0 && (
         <ReportTable<StockReportItem>
           data={stocksData}
-          columns={StocksReportColumns}
+          columns={stocksReportColumns}
           pageIndex={pageIndex}
           pageSize={limit}
           total={stocksResponse?.total ?? stocksData.length}
-          title="Stock Report"
+          title={t('tables.stockReport')}
           onPageChange={handlePageChange}
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}
         />
       )}
 
-      {/* stock track table */}
       {appliedFilters && !isLoading && isStockTrackReport && stockTrackData.length > 0 && (
         <ReportTable<StockTrackReportItem>
           data={stockTrackData}
-          columns={StockTrackReportColumns}
+          columns={stockTrackReportColumns}
           pageIndex={pageIndex}
           pageSize={limit}
           total={stockTrackResponse?.total ?? stockTrackData.length}
-          title="Stock Track Report"
+          title={t('tables.stockTrackReport')}
           onPageChange={handlePageChange}
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}
         />
       )}
 
-      {/* balance sheet table */}
       {appliedFilters && !isLoading && isBalanceSheetReport && balanceSheetResponse?.data && balanceSheetResponse.data.length > 0 && (
         <BalanceSheetTable
           data={balanceSheetResponse.data}
           pageIndex={pageIndex}
           pageSize={limit}
           total={balanceSheetResponse.total ?? balanceSheetResponse.data.length}
-          title="Balance Sheet Report"
+          title={t('tables.balanceSheetReport')}
           onPageChange={handlePageChange}
           onDownloadPdf={handleDownloadPdf}
           onDownloadExcel={handleDownloadExcel}

@@ -1,0 +1,85 @@
+{
+  "page": {
+    "title": "মজুদ",
+    "subtitle": "এখানে আপনার সব মজুদের তালিকা",
+    "errorLoading": "মজুদ লোড করতে ত্রুটি।",
+    "loading": "মজুদ তথ্য লোড হচ্ছে..."
+  },
+  "buttons": {
+    "create": "তৈরি করুন",
+    "saveChanges": "পরিবর্তন সংরক্ষণ",
+    "saving": "সংরক্ষণ হচ্ছে...",
+    "close": "বন্ধ",
+    "delete": "মুছুন",
+    "downloadPdf": "PDF ডাউনলোড"
+  },
+  "table": {
+    "searchPlaceholder": "মজুদ অনুসন্ধান...",
+    "emptyMessage": "কোনো মজুদ পাওয়া যায়নি!",
+    "emptyDetails": "প্রথমে একটি মজুদ তৈরি করুন।",
+    "columns": {
+      "name": "নাম",
+      "description": "বিবরণ",
+      "quantity": "পরিমাণ",
+      "uom": "পরিমাপ একক",
+      "lastPrice": "সর্বশেষ মূল্য",
+      "selectAll": "সব নির্বাচন",
+      "selectRow": "সারি নির্বাচন"
+    }
+  },
+  "drawer": {
+    "titleCreate": "মজুদ তৈরি",
+    "titleUpdate": "মজুদ আপডেট",
+    "descriptionCreate": "প্রয়োজনীয় তথ্য দিয়ে নতুন মজুদ যোগ করুন। শেষে সংরক্ষণ ক্লিক করুন।",
+    "descriptionUpdate": "প্রয়োজনীয় তথ্য দিয়ে মজুদ আপডেট করুন। শেষে সংরক্ষণ ক্লিক করুন।",
+    "fields": {
+      "name": "নাম",
+      "description": "বিবরণ",
+      "quantity": "পরিমাণ",
+      "uom": "পরিমাপ একক",
+      "lastPrice": "সর্বশেষ মূল্য"
+    },
+    "placeholders": {
+      "name": "মজুদের নাম",
+      "description": "মজুদের বিবরণ",
+      "quantity": "0",
+      "lastPrice": "0.00",
+      "uomLoading": "পরিমাপ একক লোড হচ্ছে...",
+      "uomSelect": "পরিমাপ একক নির্বাচন"
+    }
+  },
+  "viewDrawer": {
+    "title": "মজুদ ইতিহাস",
+    "description": "{{name}}-এর তথ্য দেখুন",
+    "name": "নাম:",
+    "stockInHand": "হাতে মজুদ:",
+    "descriptionLabel": "বিবরণ:",
+    "lastPrice": "সর্বশেষ মূল্য:",
+    "tracking": "ট্র্যাকিং",
+    "loadingTracking": "ট্র্যাকিং তথ্য লোড হচ্ছে...",
+    "errorTracking": "ট্র্যাকিং তথ্য লোড করতে ত্রুটি",
+    "emptyTracking": "কোনো ট্র্যাকিং রেকর্ড পাওয়া যায়নি!",
+    "notAvailable": "N/A"
+  },
+  "trackingTable": {
+    "columns": {
+      "inventoryName": "মজুদের নাম",
+      "type": "ধরন",
+      "stock": "মজুদ",
+      "price": "মূল্য",
+      "createdAt": "তৈরির সময়"
+    },
+    "emptyMessage": "কোনো ট্র্যাকিং রেকর্ড পাওয়া যায়নি!"
+  },
+  "deleteDialog": {
+    "title": "এই মজুদ মুছবেন: {{name}} ?",
+    "success": "নিম্নলিখিত মজুদ মুছে ফেলা হয়েছে",
+    "description": "আপনি {{name}} নামের একটি ইনভেন্টরি মুছতে যাচ্ছেন। এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "confirm": "মুছুন"
+  },
+  "bulkDelete": {
+    "title": "{{count}}টি মজুদ মুছবেন?",
+    "deleteSelected": "নির্বাচিত মজুদ মুছুন",
+    "description": "আপনি {{count}}টি ইনভেন্টরি মুছতে যাচ্ছেন। এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।"
+  }
+}

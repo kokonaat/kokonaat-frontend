@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import {
     useReactTable,
     flexRender,
@@ -10,6 +10,7 @@ import {
     type ColumnFiltersState,
     type ColumnDef,
 } from "@tanstack/react-table"
+import { useTranslation } from '@/hooks/useTranslation'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { DataTableViewOptions } from "@/features/users/components/data-table-view-options"
@@ -29,6 +30,9 @@ interface TransactionDetailsTableProps {
 }
 
 export const TransactionDetailsTable = ({ data }: TransactionDetailsTableProps) => {
+    const { t } = useTranslation('transactions')
+    const notAvailable = t('table.columns.notAvailable')
+
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({})
     const [globalFilter, setGlobalFilter] = useState("")
@@ -36,17 +40,32 @@ export const TransactionDetailsTable = ({ data }: TransactionDetailsTableProps) 
     const [pageIndex, setPageIndex] = useState(0)
     const pageSize = 10
 
-    const columns: ColumnDef<TransactionDetail>[] = [
-        {
-            header: "Item",
-            accessorKey: "inventory.name",
-            cell: (info) => info.row.original.inventory?.name ?? "N/A",
-        },
-        { header: "UOM", accessorKey: "unitOfMeasurement.name", cell: (info) => info.row.original.unitOfMeasurement?.name ?? "N/A" },
-        { header: "Qty", accessorKey: "quantity" },
-        { header: "Price", accessorKey: "price", cell: (info) => `${info.getValue<number>()}` },
-        { header: "Total", accessorKey: "total", cell: (info) => `${info.getValue<number>()}` },
-    ]
+    const columns: ColumnDef<TransactionDetail>[] = useMemo(
+        () => [
+            {
+                header: t('details.detailsTable.columns.item'),
+                accessorKey: "inventory.name",
+                cell: (info) => info.row.original.inventory?.name ?? notAvailable,
+            },
+            {
+                header: t('details.detailsTable.columns.uom'),
+                accessorKey: "unitOfMeasurement.name",
+                cell: (info) => info.row.original.unitOfMeasurement?.name ?? notAvailable,
+            },
+            { header: t('details.detailsTable.columns.qty'), accessorKey: "quantity" },
+            {
+                header: t('details.detailsTable.columns.price'),
+                accessorKey: "price",
+                cell: (info) => `${info.getValue<number>()}`,
+            },
+            {
+                header: t('details.detailsTable.columns.total'),
+                accessorKey: "total",
+                cell: (info) => `${info.getValue<number>()}`,
+            },
+        ],
+        [t, notAvailable]
+    )
 
     const table = useReactTable({
         data,
@@ -96,7 +115,7 @@ export const TransactionDetailsTable = ({ data }: TransactionDetailsTableProps) 
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <Input
-                    placeholder="Filter by name, price, total, UOM..."
+                    placeholder={t('details.detailsTable.filterPlaceholder')}
                     value={globalFilter}
                     onChange={(e) => setGlobalFilter(e.target.value)}
                     className="h-8 w-[250px]"
@@ -131,7 +150,7 @@ export const TransactionDetailsTable = ({ data }: TransactionDetailsTableProps) 
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No transaction details found.
+                                    {t('details.detailsTable.empty')}
                                 </TableCell>
                             </TableRow>
                         )}

@@ -20,7 +20,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { CustomerColumns as columns } from './CustomerColumns'
+import { useCustomerColumns } from './CustomerColumns'
+import { useTranslation } from '@/hooks/useTranslation'
 import { Input } from '@/components/ui/input'
 import type { ColumnFiltersState } from '@tanstack/react-table'
 import { DataTableViewOptions } from '@/features/users/components/data-table-view-options'
@@ -47,6 +48,9 @@ const CustomerTable = ({
   onSearchChange,
   initialDateRange,
 }: CustomerTableProps) => {
+  const { t } = useTranslation('customers')
+  const columns = useCustomerColumns()
+
   // table states
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -190,7 +194,7 @@ const CustomerTable = ({
             />
             {/* Use custom handler instead of direct onChange */}
             <Input
-              placeholder="Filter by id, name, phone or address..."
+              placeholder={t('table.filterPlaceholder')}
               value={searchInput}
               onChange={handleSearchInputChange}
               className="h-8 w-37.5 lg:w-62.5"
@@ -223,7 +227,7 @@ const CustomerTable = ({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  title="Click to view customer ledger"
+                  title={t('table.rowTitle')}
                   data-state={row.getIsSelected() && 'selected'}
                   onClick={() => handleClick(row.original.id)}
                   className="cursor-pointer"
@@ -241,8 +245,8 @@ const CustomerTable = ({
                   <Card className='m-4'>
                     <CardContent>
                       <NoDataFound
-                        message='No Customer found!'
-                        details="Create a customer first."
+                        message={t('table.emptyMessage')}
+                        details={t('table.emptyDetails')}
                       />
                     </CardContent>
                   </Card>

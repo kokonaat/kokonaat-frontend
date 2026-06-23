@@ -12,6 +12,7 @@ import {
 import { useInventory } from './inventory-provider'
 import { inventorySchema } from '@/schema/inventorySchema'
 import type { InventoryListItem } from '@/interface/inventoryInterface'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type DataTableRowActionsProps<TData> = {
   row: Row<TData>
@@ -20,12 +21,13 @@ type DataTableRowActionsProps<TData> = {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
+  const { t } = useTranslation('inventory')
+  const { t: tCommon } = useTranslation('common')
   const parsed = inventorySchema.parse(row.original)
 
-  // Normalize description to match InventoryListItem type
   const inventory: InventoryListItem = {
     ...parsed,
-    description: parsed.description ?? undefined, // convert null → undefined
+    description: parsed.description ?? undefined,
   }
 
   const { setOpen, setCurrentRow } = useInventory()
@@ -39,7 +41,7 @@ export function DataTableRowActions<TData>({
           className='data-[state=open]:bg-muted flex h-8 w-8 p-0'
         >
           <DotsHorizontalIcon className='h-4 w-4' />
-          <span className='sr-only'>Open menu</span>
+          <span className='sr-only'>{tCommon('actions.view')}</span>
         </Button>
       </DropdownMenuTrigger>
 
@@ -51,7 +53,7 @@ export function DataTableRowActions<TData>({
             setOpen('view')
           }}
         >
-          View
+          {tCommon('actions.view')}
           <DropdownMenuShortcut><Eye size={16} /></DropdownMenuShortcut>
         </DropdownMenuItem>
 
@@ -62,7 +64,7 @@ export function DataTableRowActions<TData>({
             setOpen('update')
           }}
         >
-          Edit
+          {tCommon('actions.edit')}
           <DropdownMenuShortcut><Pencil size={16} /></DropdownMenuShortcut>
         </DropdownMenuItem>
 
@@ -73,7 +75,7 @@ export function DataTableRowActions<TData>({
             setOpen('delete')
           }}
         >
-          Delete
+          {t('buttons.delete')}
           <DropdownMenuShortcut><Trash2 size={16} /></DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>

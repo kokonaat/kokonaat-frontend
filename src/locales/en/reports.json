@@ -1,0 +1,134 @@
+{
+  "page": {
+    "title": "Reports",
+    "subtitle": "Comprehensive business reports"
+  },
+  "filters": {
+    "dateRange": "Date Range",
+    "reportType": "Report Type",
+    "reportTypePlaceholder": "Search & select report type",
+    "reportTypeEmpty": "No report types found",
+    "transactionTypes": "Transaction Types (Required)",
+    "transactionTypesPlaceholder": "Search & select types",
+    "transactionTypesEmpty": "No transaction types found",
+    "selectCustomers": "Select Customers (Required)",
+    "selectVendors": "Select Vendors (Required)",
+    "entityPlaceholderCustomers": "Search & select customers",
+    "entityPlaceholderVendors": "Search & select vendors",
+    "entityEmptyCustomers": "No customers found",
+    "entityEmptyVendors": "No vendors found",
+    "selectInventoriesOptional": "Select Inventories (Optional)",
+    "selectInventoriesRequired": "Select Inventories (Required)",
+    "inventoriesPlaceholder": "Search & select inventories",
+    "inventoriesEmpty": "No inventories found",
+    "search": "Search",
+    "clearAll": "Clear All",
+    "selectedTransactionTypes": "Selected Transaction Types:",
+    "selectedCustomers": "Selected Customers:",
+    "selectedVendors": "Selected Vendors:",
+    "selectedInventories": "Selected Inventories:"
+  },
+  "summaryCards": {
+    "totalAmount": "Total Amount",
+    "totalPaid": "Total Paid",
+    "totalPending": "Total Pending",
+    "totalDue": "Total Due",
+    "totalExpenses": "Total Expenses",
+    "openingBalance": "Opening Balance",
+    "totalIn": "Total In",
+    "totalOut": "Total Out",
+    "closingBalance": "Closing Balance"
+  },
+  "tables": {
+    "transactionReport": "Transaction Report",
+    "ledgerDetails": "Ledger Details",
+    "expensesReport": "Expenses Report",
+    "stockReport": "Stock Report",
+    "stockTrackReport": "Stock Track Report",
+    "balanceSheetReport": "Balance Sheet Report",
+    "downloadExcel": "Download as Excel",
+    "downloadPdf": "Download PDF",
+    "emptyMessage": "No transaction details found!",
+    "emptyDetails": "Try selecting a customer or vendor.",
+    "fallbackCustomer": "Customer",
+    "fallbackVendor": "Vendor",
+    "fallbackUnknown": "Unknown",
+    "fallbackShopName": "Shop Name"
+  },
+  "ledgerColumns": {
+    "refNo": "Ref No",
+    "date": "Date",
+    "type": "Type",
+    "partyName": "Party Name",
+    "item": "Item",
+    "qty": "Qty",
+    "uom": "UOM",
+    "price": "Price",
+    "total": "Total",
+    "payment": "Payment"
+  },
+  "transactionReportColumns": {
+    "transactionId": "Transaction ID",
+    "date": "Date",
+    "type": "Type",
+    "customerVendor": "Customer/Vendor",
+    "items": "Items",
+    "amount": "Amount",
+    "paid": "Paid",
+    "due": "Due",
+    "method": "Method"
+  },
+  "expenseReportColumns": {
+    "title": "Title",
+    "type": "Type",
+    "amount": "Amount",
+    "remarks": "Remarks",
+    "date": "Date"
+  },
+  "stockReportColumns": {
+    "refNo": "Ref No",
+    "name": "Name",
+    "description": "Description",
+    "quantity": "Quantity",
+    "uom": "UOM",
+    "lastPrice": "Last Price"
+  },
+  "stockTrackColumns": {
+    "date": "Date",
+    "type": "Type",
+    "itemName": "Item Name",
+    "stock": "Stock",
+    "price": "Price",
+    "purchase": "PURCHASE",
+    "sale": "SALE"
+  },
+  "balanceSheet": {
+    "columns": {
+      "refNo": "Ref No",
+      "type": "Type",
+      "description": "Description",
+      "amount": "Amount",
+      "paid": "Paid",
+      "pending": "Pending",
+      "paymentMethod": "Payment Method",
+      "createdAt": "Created At",
+      "date": "Date",
+      "itemType": "Item Type"
+    },
+    "expenseBadge": "EXPENSE",
+    "noItemsForDate": "No items for this date",
+    "emptyMessage": "No balance sheet data found!",
+    "emptyDetails": "Try selecting a different date range.",
+    "openingBalance": "Opening Balance:",
+    "totalIn": "Total In:",
+    "totalOut": "Total Out:",
+    "closingBalance": "Closing Balance:",
+    "paginationShowing": "Showing {{from}} to {{to}} of {{total}} dates",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{current}} of {{total}}"
+  },
+  "common": {
+    "notAvailable": "N/A"
+  }
+}

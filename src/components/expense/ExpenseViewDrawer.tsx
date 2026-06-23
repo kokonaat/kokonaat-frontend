@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/drawer'
 import type { ExpenseItemInterface } from '@/interface/expenseInterface'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type ExpenseViewDrawerProps = {
     open: boolean
@@ -19,6 +20,9 @@ const ExpenseViewDrawer = ({
     onOpenChange,
     currentRow,
 }: ExpenseViewDrawerProps) => {
+    const { t } = useTranslation('expense')
+    const { t: tEnums } = useTranslation('enums')
+
     if (!currentRow) return null
 
     return (
@@ -26,48 +30,46 @@ const ExpenseViewDrawer = ({
             <DrawerContent className="max-w-xl mx-auto p-6 space-y-6">
                 <DrawerHeader>
                     <DrawerTitle className="text-lg font-semibold">
-                        Details
+                        {t('drawer.viewTitle')}
                     </DrawerTitle>
                     <DrawerDescription className="text-sm text-muted-foreground">
-                        View details for{' '}
-                        <span className="font-medium">{currentRow.title}</span>
+                        {t('drawer.viewDescription', { title: currentRow.title })}
                     </DrawerDescription>
                 </DrawerHeader>
 
-                {/* Expense Info */}
                 <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
                     <div>
-                        <span className="font-medium text-foreground">Title:</span>{' '}
+                        <span className="font-medium text-foreground">{t('drawer.fields.title')}:</span>{' '}
                         {currentRow.title}
                     </div>
 
                     <div>
-                        <span className="font-medium text-foreground">Type:</span>{' '}
-                        {currentRow.type.replace(/_/g, ' ')}
+                        <span className="font-medium text-foreground">{t('drawer.fields.expenseType')}:</span>{' '}
+                        {tEnums(`expenseType.${currentRow.type}`)}
                     </div>
 
                     <div>
-                        <span className="font-medium text-foreground">Amount:</span>
+                        <span className="font-medium text-foreground">{t('drawer.fields.amount')}:</span>{' '}
                         {currentRow.amount}
                     </div>
 
                     <div>
-                        <span className="font-medium text-foreground">Created At:</span>{' '}
+                        <span className="font-medium text-foreground">{t('drawer.fields.createdAt')}:</span>{' '}
                         {new Date(currentRow.createdAt).toLocaleString()}
                     </div>
 
                     <div className="col-span-2 flex gap-1">
-                        <span className="font-medium text-foreground">Remarks:</span>
+                        <span className="font-medium text-foreground">{t('drawer.fields.remarks')}:</span>
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <div className="max-w-[350px] truncate cursor-help">
-                                        {currentRow.remarks || 'N/A'}
+                                        {currentRow.remarks || t('common.notAvailable')}
                                     </div>
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p className="max-w-sm wrap-break-word">
-                                        {currentRow.remarks || 'N/A'}
+                                        {currentRow.remarks || t('common.notAvailable')}
                                     </p>
                                 </TooltipContent>
                             </Tooltip>

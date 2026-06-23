@@ -25,6 +25,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { roles } from '../../features/users/data/data'
+import { useTranslation } from '@/hooks/useTranslation'
 
 const formSchema = z.object({
   email: z.email({
@@ -46,6 +47,7 @@ export function UsersInviteDialog({
   open,
   onOpenChange,
 }: UserInviteDialogProps) {
+  const { t } = useTranslation('users')
   const form = useForm<UserInviteForm>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: '', role: '', desc: '' },
@@ -68,12 +70,9 @@ export function UsersInviteDialog({
       <DialogContent className='sm:max-w-md'>
         <DialogHeader className='text-start'>
           <DialogTitle className='flex items-center gap-2'>
-            <MailPlus /> Invite User
+            <MailPlus /> {t('inviteDialog.title')}
           </DialogTitle>
-          <DialogDescription>
-            Invite new user to join your team by sending them an email
-            invitation. Assign a role to define their access level.
-          </DialogDescription>
+          <DialogDescription>{t('inviteDialog.description')}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -86,11 +85,11 @@ export function UsersInviteDialog({
               name='email'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t('inviteDialog.email')}</FormLabel>
                   <FormControl>
                     <Input
                       type='email'
-                      placeholder='eg: john.doe@gmail.com'
+                      placeholder={t('inviteDialog.emailPlaceholder')}
                       {...field}
                     />
                   </FormControl>
@@ -103,11 +102,11 @@ export function UsersInviteDialog({
               name='role'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Role</FormLabel>
+                  <FormLabel>{t('inviteDialog.role')}</FormLabel>
                   <SelectDropdown
                     defaultValue={field.value}
                     onValueChange={field.onChange}
-                    placeholder='Select a role'
+                    placeholder={t('inviteDialog.rolePlaceholder')}
                     items={roles.map(({ label, value }) => ({
                       label,
                       value,
@@ -122,11 +121,11 @@ export function UsersInviteDialog({
               name='desc'
               render={({ field }) => (
                 <FormItem className=''>
-                  <FormLabel>Description (optional)</FormLabel>
+                  <FormLabel>{t('inviteDialog.descriptionOptional')}</FormLabel>
                   <FormControl>
                     <Textarea
                       className='resize-none'
-                      placeholder='Add a personal note to your invitation (optional)'
+                      placeholder={t('inviteDialog.notePlaceholder')}
                       {...field}
                     />
                   </FormControl>
@@ -138,10 +137,10 @@ export function UsersInviteDialog({
         </Form>
         <DialogFooter className='gap-y-2'>
           <DialogClose asChild>
-            <Button variant='outline'>Cancel</Button>
+            <Button variant='outline'>{t('buttons.cancel')}</Button>
           </DialogClose>
           <Button type='submit' form='user-invite-form'>
-            Invite <Send />
+            {t('buttons.invite')} <Send />
           </Button>
         </DialogFooter>
       </DialogContent>

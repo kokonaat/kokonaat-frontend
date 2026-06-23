@@ -16,8 +16,11 @@ import { Separator } from "@/components/ui/separator"
 import { Mail, Phone, MapPin, User, Briefcase, Contact } from "lucide-react"
 import { useCustomerById, useCustomerTransactions } from "@/hooks/useCustomer"
 import CustomerTransactionsTable from "./CustomerTransactionsTable"
+import { useTranslation } from "@/hooks/useTranslation"
 
 const CustomerTransactionsProfile = () => {
+  const { t } = useTranslation('customers')
+  const { t: tTransactions } = useTranslation('transactions')
   const shopId = useShopStore((s) => s.currentShopId)
   const [startDate, setStartDate] = useState<string>()
   const [endDate, setEndDate] = useState<string>()
@@ -25,11 +28,9 @@ const CustomerTransactionsProfile = () => {
   const [pageIndex, setPageIndex] = useState(0)
   const pageSize = 10
 
-  // Fetch customer info
   const { data: customer, isLoading: isCustomerLoading, isError: isCustomerError } =
     useCustomerById(shopId ?? "", id ?? "")
 
-  // Fetch customer transactions
   const {
     data: transactionsResponse,
     isLoading: isTransactionsLoading,
@@ -48,8 +49,8 @@ const CustomerTransactionsProfile = () => {
   return (
     <CustomersProvider>
       <Main>
-        {isCustomerLoading && <p>Loading customer details...</p>}
-        {isCustomerError && <p className="text-red-500">Failed to load customer</p>}
+        {isCustomerLoading && <p>{t('ledger.loadingDetails')}</p>}
+        {isCustomerError && <p className="text-red-500">{t('profile.failedToLoad')}</p>}
 
         {customer && (
           <Card className="rounded-2xl shadow-sm border bg-card">
@@ -58,19 +59,19 @@ const CustomerTransactionsProfile = () => {
                 <User className="h-8 w-8 text-primary" />
                 {customer.name}
               </CardTitle>
-              <CardDescription>No: {customer.no}</CardDescription>
+              <CardDescription>
+                {t('ledger.noLabel')} {customer.no}
+              </CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-6">
-              {/* Basic Info */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                
-                {/* Contact Information Section */}
+
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 pb-2 border-b">
                     <Contact className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
-                      Contact Information
+                      {t('profile.contactInformation')}
                     </h3>
                   </div>
                   <div className="space-y-3.5">
@@ -78,7 +79,7 @@ const CustomerTransactionsProfile = () => {
                       <div className="flex items-start gap-3">
                         <Mail className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-muted-foreground mb-0.5">Email</p>
+                          <p className="text-xs text-muted-foreground mb-0.5">{t('profile.email')}</p>
                           <p className="text-sm font-medium break-all">{customer.email}</p>
                         </div>
                       </div>
@@ -87,7 +88,7 @@ const CustomerTransactionsProfile = () => {
                       <div className="flex items-start gap-3">
                         <Phone className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-muted-foreground mb-0.5">Phone</p>
+                          <p className="text-xs text-muted-foreground mb-0.5">{t('profile.phone')}</p>
                           <p className="text-sm font-medium">{customer.phone}</p>
                         </div>
                       </div>
@@ -96,9 +97,9 @@ const CustomerTransactionsProfile = () => {
                       <div className="flex items-start gap-3">
                         <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-muted-foreground mb-0.5">Address</p>
+                          <p className="text-xs text-muted-foreground mb-0.5">{t('profile.address')}</p>
                           <p className="text-sm font-medium">
-                            {[customer.address, customer.city].filter(Boolean).join(", ") || "N/A"}
+                            {[customer.address, customer.city].filter(Boolean).join(", ") || tTransactions('table.columns.notAvailable')}
                           </p>
                         </div>
                       </div>
@@ -106,32 +107,31 @@ const CustomerTransactionsProfile = () => {
                   </div>
                 </div>
 
-                {/* Business Details Section */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 pb-2 border-b">
                     <Briefcase className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
-                      Business Details
+                      {t('profile.businessDetails')}
                     </h3>
                   </div>
                   <div className="space-y-3.5">
                     {customer.shop?.name && (
                       <div>
-                        <p className="text-xs text-muted-foreground mb-0.5">Shop</p>
+                        <p className="text-xs text-muted-foreground mb-0.5">{t('profile.shop')}</p>
                         <p className="text-sm font-medium">{customer.shop.name}</p>
                       </div>
                     )}
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1.5">Business Type</p>
+                      <p className="text-xs text-muted-foreground mb-1.5">{t('profile.businessType')}</p>
                       {customer.isB2B ? (
-                        <Badge variant="default" className="text-xs">B2B</Badge>
+                        <Badge variant="default" className="text-xs">{t('profile.b2b')}</Badge>
                       ) : (
-                        <Badge variant="secondary" className="text-xs">Individual</Badge>
+                        <Badge variant="secondary" className="text-xs">{t('profile.individual')}</Badge>
                       )}
                     </div>
                     {(customer.contactPerson || customer.contactPersonPhone) && (
                       <div>
-                        <p className="text-xs text-muted-foreground mb-0.5">Contact Person</p>
+                        <p className="text-xs text-muted-foreground mb-0.5">{t('profile.contactPerson')}</p>
                         <p className="text-sm font-medium">
                           {customer.contactPerson && customer.contactPersonPhone
                             ? `${customer.contactPerson} (${customer.contactPersonPhone})`
@@ -145,12 +145,11 @@ const CustomerTransactionsProfile = () => {
 
               <Separator />
 
-              {/* Transactions Table */}
               <div>
-                <h3 className="text-lg font-semibold mb-2">Transactions</h3>
-                {isTransactionsLoading && <p>Loading transactions...</p>}
+                <h3 className="text-lg font-semibold mb-2">{t('profile.transactions')}</h3>
+                {isTransactionsLoading && <p>{t('ledger.loadingTransactions')}</p>}
                 {isTransactionsError && (
-                  <p className="text-red-500">Failed to load transactions</p>
+                  <p className="text-red-500">{t('profile.failedTransactions')}</p>
                 )}
                 {!isTransactionsLoading && transactions.length > 0 && (
                   <CustomerTransactionsTable
@@ -166,7 +165,7 @@ const CustomerTransactionsProfile = () => {
                   />
                 )}
                 {!isTransactionsLoading && transactions.length === 0 && (
-                  <p>No transactions found.</p>
+                  <p>{t('ledger.emptyMessage')}</p>
                 )}
               </div>
             </CardContent>

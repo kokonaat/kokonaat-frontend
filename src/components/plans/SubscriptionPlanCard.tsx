@@ -24,7 +24,10 @@ const SubscriptionPlanCard = ({ plan }: SubscriptionPlanCardProps) => {
 
 
                 <div className="mt-2 text-sm text-muted-foreground space-y-1">
-                    <p><span className="font-medium">Price:</span> {plan.price}</p>
+                    {/* <p><span className="font-medium">Price:</span> {plan.price}</p> */}
+                    <Badge variant="outline" className="text-xs">
+                        Coming Soon
+                    </Badge>
                     <p>
                         <span className="font-medium">Transactions Limit:</span>
                         {plan.totalTransactions}

@@ -45,6 +45,7 @@ export interface AuthState {
 export interface UserInterface {
     id: string
     name: string
+    email?: string
     phone: string
     createdAt: string
     shopWiseUserRoles: ShopWiseUserRole[]
@@ -65,6 +66,7 @@ export interface Role {
 export interface Shop {
     id: string
     name: string
+    slug?: string
     address?: string
     isActive?: boolean
 }
@@ -96,18 +98,52 @@ export interface User {
 export interface UserListItem {
     id: string
     name: string
+    email?: string
     phone: string
     createdAt: string | Date
     shopWiseUserRoles: ShopWiseUserRole[]
 }
 
-// Create user request/response
 export interface CreateUserRequest {
     name: string
+    username: string
     phone: string
     password: string
     shopId: string
     roleId: string
+    moduleKeys?: string[]
+}
+
+export interface UpdateEmployeeRequest {
+    userId: string
+    shopId: string
+    name?: string
+    phone?: string
+    roleId?: string
+    moduleKeys?: string[]
+}
+
+export interface ResetEmployeePasswordRequest {
+    userId: string
+    shopId: string
+    newPassword: string
+    confirmPassword: string
+}
+
+export interface EmployeePermissionsResponse {
+    moduleKeys: string[]
+    roleId: string
+    roleName: string
+}
+
+export interface ShopModulePermissionsResponse {
+    isOwner: boolean
+    modules: string[]
+    definitions: Array<{
+        key: string
+        permissions: string[]
+        routes: string[]
+    }>
 }
 
 export interface CreateUserResponse {

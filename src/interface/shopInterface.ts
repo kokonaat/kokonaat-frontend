@@ -14,6 +14,7 @@ export interface UserRoleWiseShopInterface {
     shopAddress: string
     shopId: string
     shopName: string
+    shopSlug?: string
     roleId: string
     roleName: string
 }
@@ -47,6 +48,13 @@ export interface ShopProps {
 export interface ShopStoreInterface {
     currentShopId: string | null
     currentShopName: string | null
-    setCurrentShop: (id: string, name: string) => void
+    currentShopSlug: string | null
+    currentShopRoleName: string | null
+    setCurrentShop: (
+        id: string,
+        name: string,
+        slug?: string | null,
+        roleName?: string | null,
+    ) => void
     clearCurrentShop: () => void
 }

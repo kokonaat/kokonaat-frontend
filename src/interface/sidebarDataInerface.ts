@@ -37,6 +37,8 @@ export interface AuthenticatedLayoutProps {
 export interface Team {
     id: string
     name: string
+    slug?: string
+    roleName?: string
     logo: React.ElementType
 }
 

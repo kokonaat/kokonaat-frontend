@@ -1,15 +1,38 @@
 {
   "page": {
     "title": "Subscription Plans",
-    "subtitle": "Choose a plan that fits your business"
+    "subtitle": "Choose a plan that fits your business. Upgrade or downgrade anytime."
   },
-  "comingSoon": {
-    "badge": "Coming Soon",
-    "title": "Plans & pricing are on the way",
-    "description": "We're working on subscription plans and pricing. Check back soon for updates."
+  "billing": {
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yearlySave": "Save 16%",
+    "perMonth": "/ month",
+    "perYear": "/ year",
+    "free": "Free forever"
   },
-  "disabled": {
-    "loading": "Loading plans...",
-    "empty": "No subscription plans found."
-  }
+  "cta": {
+    "current": "Current Plan",
+    "upgrade": "Upgrade",
+    "getStarted": "Get Started"
+  },
+  "badge": {
+    "current": "Current Plan",
+    "popular": "Most Popular"
+  },
+  "limits": {
+    "shops": "Shops",
+    "users": "Users",
+    "vendors": "Vendors",
+    "customers": "Customers",
+    "transactions": "Transactions / month",
+    "expenses": "Expense entries",
+    "unlimited": "Unlimited"
+  },
+  "upgrade": {
+    "title": "Upgrade your plan",
+    "description": "You have reached the limit for your current plan. Upgrade to unlock more capacity."
+  },
+  "loading": "Loading plans...",
+  "empty": "No plans found."
 }

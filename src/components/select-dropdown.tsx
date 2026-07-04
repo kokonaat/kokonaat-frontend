@@ -30,9 +30,10 @@ export function SelectDropdown({
   className = '',
   isControlled = false,
 }: SelectDropdownProps) {
+  const selectValue = defaultValue || undefined
   const defaultState = isControlled
-    ? { value: defaultValue, onValueChange }
-    : { defaultValue, onValueChange }
+    ? { value: selectValue, onValueChange }
+    : { defaultValue: selectValue, onValueChange }
   return (
     <Select {...defaultState}>
       <FormControl>

@@ -45,6 +45,13 @@ export function useUsersColumns(): ColumnDef<UserListItem>[] {
                 cell: ({ row }) => <LongText>{row.getValue("name")}</LongText>,
             },
             {
+                accessorKey: "email",
+                header: ({ column }) => (
+                    <DataTableColumnHeader column={column} title={t('table.columns.email')} />
+                ),
+                cell: ({ row }) => <LongText>{row.getValue("email") || "—"}</LongText>,
+            },
+            {
                 accessorKey: "phone",
                 header: ({ column }) => (
                     <DataTableColumnHeader column={column} title={t('table.columns.phone')} />
@@ -59,7 +66,13 @@ export function useUsersColumns(): ColumnDef<UserListItem>[] {
                 cell: ({ row }) => {
                     const roles = row.original.shopWiseUserRoles
                     const roleName = roles?.[0]?.role?.name ?? "N/A"
-                    return <Badge variant="outline">{roleName}</Badge>
+                    const labelKey = `roles.${roleName}`
+                    const label = t(labelKey)
+                    return (
+                        <Badge variant="outline">
+                            {label === labelKey ? roleName.replace(/_/g, ' ') : label}
+                        </Badge>
+                    )
                 },
             },
             {

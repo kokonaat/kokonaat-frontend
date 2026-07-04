@@ -70,11 +70,17 @@ export interface ApiEndpoints {
     currentUser: string
     userList: string
     allRoles: string
+    assignableRoles: string
     createUser: string
+    updateEmployee: string
+    resetEmployeePassword: string
+    employeePermissions: string
+    modulePermissions: string
     changePassword: string
   }
   subscriptionPlans: {
     subscriptionList: string
+    myPlan: string
     createSubscriptionPlan: string
     updateSubscriptionPlan: string
     getSubscriptionPlanById: string

@@ -27,7 +27,12 @@ const Shops = () => {
                 shopAddress: data[0].shopAddress,
             }
             setCurrentShop(shop)
-            setGlobalShop(shop.shopId, shop.shopName)
+            setGlobalShop(
+                data[0].shopId,
+                data[0].shopName,
+                data[0].shopSlug ?? null,
+                data[0].roleName ?? null,
+            )
         }
     }, [data, setGlobalShop])
 
@@ -73,7 +78,12 @@ const Shops = () => {
                                         shopAddress: item.shopAddress,
                                     }
                                     setCurrentShop(shop)
-                                    setGlobalShop(shop.shopId, shop.shopName)
+                                    setGlobalShop(
+                                        shop.shopId,
+                                        shop.shopName,
+                                        item.shopSlug ?? null,
+                                        item.roleName ?? null,
+                                    )
                                     setDrawerOpen(true)
                                 }}
                             />

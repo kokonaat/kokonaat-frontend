@@ -89,8 +89,12 @@
     "deleted": "UOM deleted successfully"
   },
   "user": {
-    "created": "User create successfully",
-    "createFailed": "Failed to create user",
+    "created": "Employee created successfully",
+    "createFailed": "Failed to create employee",
+    "updated": "Employee updated successfully",
+    "updateFailed": "Failed to update employee",
+    "passwordReset": "Password updated successfully",
+    "passwordResetFailed": "Failed to reset password",
     "deleted": "The following user has been deleted:"
   },
   "common": {

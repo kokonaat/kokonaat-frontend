@@ -20,6 +20,7 @@
     "emptyDetails": "প্রথমে একটি ব্যবহারকারী তৈরি করুন।",
     "columns": {
       "name": "নাম",
+      "email": "লগইন ইমেইল",
       "phone": "ফোন",
       "role": "ভূমিকা",
       "createdAt": "তৈরির সময়",
@@ -36,22 +37,38 @@
     }
   },
   "addEditDialog": {
-    "titleAdd": "নতুন ব্যবহারকারী যোগ",
-    "titleEdit": "ব্যবহারকারী সম্পাদনা",
-    "descriptionAdd": "এখানে নতুন ব্যবহারকারী তৈরি করুন। শেষে সংরক্ষণ ক্লিক করুন।",
-    "descriptionEdit": "এখানে ব্যবহারকারী আপডেট করুন। শেষে সংরক্ষণ ক্লিক করুন।",
+    "titleAdd": "নতুন কর্মচারী যোগ",
+    "titleEdit": "কর্মচারী সম্পাদনা",
+    "descriptionAdd": "লগইন ইমেইল ও মডিউল অ্যাক্সেসসহ নতুন কর্মচারী তৈরি করুন।",
+    "descriptionEdit": "কর্মচারীর তথ্য, ভূমিকা ও মডিউল অ্যাক্সেস আপডেট করুন।",
+    "displayName": "পূর্ণ নাম",
+    "loginUsername": "লগইন ব্যবহারকারীর নাম",
+    "loginEmail": "লগইন ইমেইল",
+    "emailPreview": "লগইন ইমেইল: {{email}}",
     "username": "ব্যবহারকারীর নাম",
     "phoneNumber": "ফোন নম্বর",
     "role": "ভূমিকা",
+    "modules": "মডিউল অ্যাক্সেস",
     "password": "পাসওয়ার্ড",
     "confirmPassword": "পাসওয়ার্ড নিশ্চিত করুন",
     "loadingRoles": "ভূমিকা লোড হচ্ছে...",
     "rolePlaceholder": "একটি ভূমিকা নির্বাচন",
+    "rolesLoadFailed": "ভূমিকা লোড করা যায়নি। রিফ্রেশ করে আবার চেষ্টা করুন।",
+    "noRolesAvailable": "কোনো কর্মচারী ভূমিকা পাওয়া যায়নি।",
     "placeholders": {
-      "username": "john_doe",
-      "phone": "+123456789",
+      "displayName": "করিম উদ্দিন",
+      "username": "karim",
+      "phone": "+8801712345678",
       "password": "যেমন, S3cur3P@ssw0rd"
     }
+  },
+  "resetPasswordDialog": {
+    "title": "কর্মচারীর পাসওয়ার্ড রিসেট",
+    "description": "{{name}}-এর জন্য নতুন পাসওয়ার্ড সেট করুন।",
+    "menuLabel": "পাসওয়ার্ড রিসেট",
+    "newPassword": "নতুন পাসওয়ার্ড",
+    "confirmPassword": "পাসওয়ার্ড নিশ্চিত করুন",
+    "submit": "পাসওয়ার্ড আপডেট"
   },
   "inviteDialog": {
     "title": "ব্যবহারকারী আমন্ত্রণ",
@@ -100,10 +117,21 @@
     "error": "ত্রুটি"
   },
   "roles": {
+    "shop_owner": "দোকান মালিক",
+    "shop_manager": "দোকান ম্যানেজার",
+    "sales_man": "সেলস ম্যান",
     "superadmin": "সুপার অ্যাডমিন",
     "admin": "অ্যাডমিন",
     "manager": "ম্যানেজার",
     "cashier": "ক্যাশিয়ার"
+  },
+  "modules": {
+    "inventory": "ইনভেন্টরি",
+    "transactions": "লেনদেন",
+    "customers": "গ্রাহক",
+    "vendors": "ভেন্ডর",
+    "expenses": "খরচ",
+    "reports": "রিপোর্ট"
   },
   "profile": {
     "title": "ব্যবহারকারী প্রোফাইল"

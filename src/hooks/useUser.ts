@@ -1,12 +1,28 @@
 import { useEffect } from "react"
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createUser, fetchCurrentUser, fetchUserList, fetchUserRoles } from "@/api/userApi"
+import {
+    createUser,
+    fetchAssignableRoles,
+    fetchCurrentUser,
+    fetchEmployeePermissions,
+    fetchShopModulePermissions,
+    fetchUserList,
+    resetEmployeePassword,
+    updateEmployee,
+} from "@/api/userApi"
 import { useUserStore } from "@/stores/userStore"
-import type { CreateUserRequest, CreateUserResponse, FetchUserListParams, UserInterface, UserListItem } from "@/interface/userInterface"
+import type {
+    CreateUserRequest,
+    CreateUserResponse,
+    FetchUserListParams,
+    ResetEmployeePasswordRequest,
+    UpdateEmployeeRequest,
+    UserInterface,
+    UserListItem,
+} from "@/interface/userInterface"
 import { useAuthStore } from "@/stores/authStore"
 import { useShopStore } from "@/stores/shopStore"
 
-// current user info
 export const useUser = () => {
     const { access_token } = useAuthStore()
     const setUser = useUserStore((s) => s.setUser)
@@ -17,26 +33,32 @@ export const useUser = () => {
         queryKey: ["user"],
         queryFn: fetchCurrentUser,
         staleTime: 1000 * 60 * 5,
-        // existing Zustand value as initial
         initialData: user ?? undefined,
-        // keeps data fresh
         refetchOnWindowFocus: false,
-        // only run if access token exists
         enabled: !!access_token,
     })
 
-    // sync query result to Zustand
     useEffect(() => {
         if (!query.data) return
 
         setUser(query.data)
 
-        const currentShop = query.data.shopWiseUserRoles.find(
-            (r) => r.isCurrent
-        )?.shop
+        const currentShopId = useShopStore.getState().currentShopId
 
-        if (currentShop) {
-            setCurrentShop(currentShop.id, currentShop.name)
+        const currentMembership =
+            query.data.shopWiseUserRoles.find(
+                (r) => r.shop?.id === currentShopId,
+            ) ??
+            query.data.shopWiseUserRoles.find((r) => r.isCurrent) ??
+            query.data.shopWiseUserRoles[0]
+
+        if (currentMembership?.shop) {
+            setCurrentShop(
+                currentMembership.shop.id,
+                currentMembership.shop.name,
+                currentMembership.shop.slug ?? null,
+                currentMembership.role?.name ?? null,
+            )
         }
     }, [query.data, setUser, setCurrentShop])
 
@@ -54,35 +76,77 @@ export const useUserList = (params: FetchUserListParams) => {
             return data.map((u) => ({
                 id: u.id,
                 name: u.name,
+                email: u.email,
                 phone: u.phone,
                 createdAt: u.createdAt,
                 shopWiseUserRoles: u.shopWiseUserRoles ?? [],
             }))
         },
         enabled: !!shopId,
-        placeholderData: keepPreviousData, // smooth pagination
+        placeholderData: keepPreviousData,
     })
 }
 
-// get all roles
-export const useUserRoles = () => {
+export const useAssignableRoles = (enabled = true) => {
     return useQuery({
-        queryKey: ["userRoles"],
-        queryFn: fetchUserRoles,
+        queryKey: ["assignableRoles"],
+        queryFn: fetchAssignableRoles,
         staleTime: 1000 * 60 * 10,
         refetchOnWindowFocus: false,
+        enabled,
     })
 }
 
-// create user
+export const useEmployeePermissions = (userId?: string, shopId?: string) => {
+    return useQuery({
+        queryKey: ["employeePermissions", userId, shopId],
+        queryFn: () => fetchEmployeePermissions(userId!, shopId!),
+        enabled: !!userId && !!shopId,
+    })
+}
+
 export const useCreateUser = () => {
     const queryClient = useQueryClient()
 
     return useMutation<CreateUserResponse, Error, CreateUserRequest>({
         mutationFn: createUser,
         onSuccess: () => {
-            // invalidate user list after successful creation
             queryClient.invalidateQueries({ queryKey: ["userList"] })
         },
     })
+}
+
+export const useUpdateEmployee = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: (payload: UpdateEmployeeRequest) => updateEmployee(payload),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["userList"] })
+        },
+    })
+}
+
+export const useResetEmployeePassword = () => {
+    return useMutation({
+        mutationFn: (payload: ResetEmployeePasswordRequest) =>
+            resetEmployeePassword(payload),
+    })
+}
+
+export const useShopPermissions = (shopId?: string | null) => {
+    return useQuery({
+        queryKey: ["shopModulePermissions", shopId],
+        queryFn: () => fetchShopModulePermissions(shopId!),
+        enabled: !!shopId,
+        staleTime: 1000 * 60 * 5,
+    })
+}
+
+export const useIsShopOwner = () => {
+    const shopId = useShopStore((s) => s.currentShopId)
+    const roleName = useShopStore((s) => s.currentShopRoleName)
+    const { data: permissions } = useShopPermissions(shopId)
+
+    return roleName === 'shop_owner' || permissions?.isOwner === true
 }

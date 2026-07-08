@@ -18,7 +18,7 @@ export interface SubscriptionPlanInterface {
 }
 
 export interface CreateSubscriptionPlanDto {
-    planKey: PlanKey
+    planKey?: PlanKey
     name: string
     description: string
     price: number

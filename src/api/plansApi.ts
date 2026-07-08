@@ -32,7 +32,7 @@ export const getSubscriptionById = async (id: string): Promise<SubscriptionPlanI
 // update
 export const updateSubscriptionPlan = async (
     id: string,
-    data: CreateSubscriptionPlanDto
+    data: Partial<CreateSubscriptionPlanDto>
 ): Promise<SubscriptionPlanInterface> => {
     const url = apiEndpoints.subscriptionPlans.updateSubscriptionPlan.replace("{id}", id)
     const res = await axiosInstance.put(url, data)

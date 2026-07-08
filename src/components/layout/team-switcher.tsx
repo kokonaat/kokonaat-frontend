@@ -35,13 +35,16 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
   // sync when teams or shopId change
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    const selected = teams.find((t) => t.id === currentShopId)
-    if (selected) {
-      setActiveTeam(selected)
-    } else if (teams.length > 0) {
-      setActiveTeam(teams[0])
-      setCurrentShop(teams[0].id, teams[0].name)
-    }
+    const selected = teams.find((t) => t.id === currentShopId) ?? teams[0]
+    if (!selected) return
+
+    setActiveTeam(selected)
+    setCurrentShop(
+      selected.id,
+      selected.name,
+      selected.slug ?? null,
+      selected.roleName ?? null,
+    )
   }, [teams, currentShopId, setCurrentShop])
 
   return (
@@ -78,7 +81,7 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
                 key={team.name}
                 onClick={() => {
                   setActiveTeam(team)
-                  setCurrentShop(team.id, team.name)
+                  setCurrentShop(team.id, team.name, team.slug ?? null, team.roleName ?? null)
                 }}
                 className='gap-2 p-2'
               >

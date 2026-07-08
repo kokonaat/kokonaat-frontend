@@ -37,7 +37,12 @@ export const useCreateShop = () => {
         onSuccess: ({ shopsRes, createShopRes }) => {
             // store the created shop ID in Zustand (and persist via localStorage if using persist)
             if (createShopRes?.id) {
-                setCurrentShop(createShopRes.id, createShopRes.name)
+                setCurrentShop(
+                    createShopRes.id,
+                    createShopRes.name,
+                    createShopRes.slug ?? null,
+                    'shop_owner',
+                )
             }
 
             toast.success(i18n.t('toast:shop.created'))

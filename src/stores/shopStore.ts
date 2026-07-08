@@ -7,13 +7,29 @@ export const useShopStore = create<ShopStoreInterface>()(
         (set) => ({
             currentShopId: null,
             currentShopName: null,
-            setCurrentShop: (id: string, name: string) => {
-                set({ currentShopId: id, currentShopName: name })
+            currentShopSlug: null,
+            currentShopRoleName: null,
+            setCurrentShop: (id, name, slug?, roleName?) => {
+                set((state) => ({
+                    currentShopId: id,
+                    currentShopName: name,
+                    currentShopSlug:
+                        slug !== undefined ? (slug ?? null) : state.currentShopSlug,
+                    currentShopRoleName:
+                        roleName !== undefined
+                            ? (roleName ?? null)
+                            : state.currentShopRoleName,
+                }))
             },
-            clearCurrentShop: () => set({ currentShopId: null, currentShopName: null }),
+            clearCurrentShop: () =>
+                set({
+                    currentShopId: null,
+                    currentShopName: null,
+                    currentShopSlug: null,
+                    currentShopRoleName: null,
+                }),
         }),
         {
-            // ls key name
             name: 'shop-storage',
         }
     )

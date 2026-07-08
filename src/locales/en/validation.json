@@ -39,6 +39,8 @@
     "phoneRequired": "Phone is required"
   },
   "userForm": {
+    "nameRequired": "Name is required.",
+    "loginUsernameRequired": "Login username is required.",
     "usernameRequired": "Username is required.",
     "phoneRequired": "Phone number is required.",
     "roleRequired": "Role is required.",

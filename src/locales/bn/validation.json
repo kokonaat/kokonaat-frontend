@@ -39,6 +39,8 @@
     "phoneRequired": "ফোন প্রয়োজন"
   },
   "userForm": {
+    "nameRequired": "নাম প্রয়োজন।",
+    "loginUsernameRequired": "লগইন ব্যবহারকারীর নাম প্রয়োজন।",
     "usernameRequired": "ব্যবহারকারীর নাম প্রয়োজন।",
     "phoneRequired": "ফোন নম্বর প্রয়োজন।",
     "roleRequired": "ভূমিকা প্রয়োজন।",

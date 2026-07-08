@@ -40,6 +40,8 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
     data?.map((item, index) => ({
       id: item.shopId,
       name: item.shopName,
+      slug: item.shopSlug,
+      roleName: item.roleName,
       logo: icons[index % icons.length],
     })) ?? []
 

@@ -100,7 +100,12 @@ export const useAuth = () => {
                         return
                     }
 
-                    useShopStore.getState().setCurrentShop(shop.shopId, shop.shopName)
+                    useShopStore.getState().setCurrentShop(
+                        shop.shopId,
+                        shop.shopName,
+                        shop.shopSlug ?? null,
+                        shop.roleName ?? null,
+                    )
                     navigate("/")
                     return
                 }

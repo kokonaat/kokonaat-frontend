@@ -28,7 +28,12 @@ const ShopCard = ({ shop, onEdit }: ShopProps) => {
         <Card
             onClick={() => {
                 if (shop.shopId && !isActive) {
-                    setCurrentShop(shop.shopId, shop.shopName)
+                    setCurrentShop(
+                        shop.shopId,
+                        shop.shopName,
+                        undefined,
+                        userRole?.name,
+                    )
                 }
             }}
             className={`list-none relative rounded-lg border p-4 transition-all duration-200 cursor-pointer ${

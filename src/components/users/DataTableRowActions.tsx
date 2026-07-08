@@ -1,6 +1,6 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import type { Row } from '@tanstack/react-table'
-import { Trash2, UserPen } from 'lucide-react'
+import { KeyRound, Trash2, UserPen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
@@ -13,8 +13,8 @@ import {
 import { useUsers } from './UserProvider'
 import type { UserListItem } from '@/interface/userInterface'
 import { useTranslation } from '@/hooks/useTranslation'
+import { useIsShopOwner } from '@/hooks/useShopPermissions'
 
-// Make sure TData extends UserListItem
 interface DataTableRowActionsProps<TData extends UserListItem> {
     row: Row<TData>
 }
@@ -23,7 +23,13 @@ export function DataTableRowActions<TData extends UserListItem>({
     row,
 }: DataTableRowActionsProps<TData>) {
     const { t } = useTranslation('common')
+    const { t: tUsers } = useTranslation('users')
     const { setOpen, setCurrentRow } = useUsers()
+    const isShopOwner = useIsShopOwner()
+
+    if (!isShopOwner) {
+        return null
+    }
 
     return (
         <DropdownMenu modal={false}>
@@ -37,7 +43,7 @@ export function DataTableRowActions<TData extends UserListItem>({
                 </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align='end' className='w-40'>
+            <DropdownMenuContent align='end' className='w-44'>
                 <DropdownMenuItem
                     onClick={() => {
                         setCurrentRow(row.original)
@@ -47,6 +53,18 @@ export function DataTableRowActions<TData extends UserListItem>({
                     {t('actions.edit')}
                     <DropdownMenuShortcut>
                         <UserPen size={16} />
+                    </DropdownMenuShortcut>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                    onClick={() => {
+                        setCurrentRow(row.original)
+                        setOpen('resetPassword')
+                    }}
+                >
+                    {tUsers('resetPasswordDialog.menuLabel')}
+                    <DropdownMenuShortcut>
+                        <KeyRound size={16} />
                     </DropdownMenuShortcut>
                 </DropdownMenuItem>
 

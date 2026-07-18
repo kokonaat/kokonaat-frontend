@@ -37,7 +37,9 @@
     "ledgerDownloadFailed": "Failed to download ledger report. Please try again.",
     "transactionReportDownloaded": "Transaction report downloaded successfully",
     "transactionReportFailed": "Failed to download transaction report. Please try again.",
-    "shopNameMissing": "Shop name is missing"
+    "shopNameMissing": "Shop name is missing",
+    "deleted": "Transaction deleted successfully",
+    "updated": "Transaction updated successfully"
   },
   "customer": {
     "shopIdNotFound": "Shop ID not found!",

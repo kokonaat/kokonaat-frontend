@@ -1,6 +1,6 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createTransaction, getTransactionById, getTransactions, transactionLedger } from "@/api/transactionApi"
-import type { CreateTransactionDto, TransactionListResponse } from "@/interface/transactionInterface"
+import { createTransaction, deleteTransaction, getTransactionById, getTransactions, transactionLedger, updateTransaction } from "@/api/transactionApi"
+import type { CreateTransactionDto, TransactionListResponse, UpdateTransactionDto } from "@/interface/transactionInterface"
 import { INVENTORY_KEYS } from "./useInventory"
 
 const TRANSACTIONS_KEYS = {
@@ -48,6 +48,31 @@ export const useCreateTransaction = (shopId: string) => {
                 queryKey: INVENTORY_KEYS.all,
                 exact: false 
             })
+        },
+    })
+}
+
+// update
+export const useUpdateTransaction = (shopId: string) => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: ({ id, data }: { id: string; data: UpdateTransactionDto }) =>
+            updateTransaction(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [...TRANSACTIONS_KEYS.all, shopId] })
+        },
+    })
+}
+
+// delete
+export const useDeleteTransaction = (shopId: string) => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: (id: string) => deleteTransaction(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [...TRANSACTIONS_KEYS.all, shopId] })
         },
     })
 }

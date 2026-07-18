@@ -1,6 +1,6 @@
 import { apiEndpoints } from "@/config/api"
 import { axiosInstance } from "./axios"
-import type { CreateTransactionDto, TransactionListResponse } from "@/interface/transactionInterface"
+import type { CreateTransactionDto, TransactionListResponse, UpdateTransactionDto } from "@/interface/transactionInterface"
 
 export const getTransactions = async (
   shopId: string,
@@ -82,5 +82,17 @@ export const transactionLedger = async (
   )
 
   const res = await axiosInstance.get(path, { params })
+  return res.data
+}
+
+export const updateTransaction = async (id: string, data: UpdateTransactionDto) => {
+  const path = apiEndpoints.transactions.updateTransaction.replace('{id}', id)
+  const res = await axiosInstance.patch(path, data)
+  return res.data
+}
+
+export const deleteTransaction = async (id: string) => {
+  const path = apiEndpoints.transactions.deleteTransaction.replace('{id}', id)
+  const res = await axiosInstance.delete(path)
   return res.data
 }

@@ -42,6 +42,8 @@ export interface ApiEndpoints {
     transactionsList: string
     createTransactions: string
     getTransactionById: string
+    updateTransaction: string
+    deleteTransaction: string
     transactionLedger: string
   }
   uom: {

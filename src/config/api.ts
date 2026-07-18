@@ -46,6 +46,8 @@ export const apiEndpoints: ApiEndpoints = {
     transactionsList: '/transactions',
     createTransactions: '/transactions',
     getTransactionById: '/transactions/{id}',
+    updateTransaction: '/transactions/{id}',
+    deleteTransaction: '/transactions/{id}',
     transactionLedger: '/transaction/ledger/{customerOrVendorId}',
   },
   uom: {

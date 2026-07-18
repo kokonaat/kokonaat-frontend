@@ -1,7 +1,7 @@
 export interface TransactionMutateDrawerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  currentRow?: { id: string; title: string }
+  currentRow?: Transaction
   onSave?: (updatedData: { title: string }) => void
 }
 
@@ -66,6 +66,13 @@ export interface Transaction {
   createdAt: string
   updatedAt: string
   details: TransactionDetail[]
+}
+
+export interface UpdateTransactionDto {
+  paid?: number
+  remarks?: string
+  paymentType?: string
+  totalAmount?: number
 }
 
 // update main DTO

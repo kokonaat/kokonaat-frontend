@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/sheet'
 import { useShopStore } from '@/stores/shopStore'
 import { useInventoryList } from '@/hooks/useInventory'
-import { useCreateTransaction } from '@/hooks/useTransaction'
+import { useCreateTransaction, useUpdateTransaction } from '@/hooks/useTransaction'
 import { BusinessEntityType, FORM_ID } from '@/constance/transactionConstances'
 import type {
   TransactionMutateDrawerProps,
@@ -141,7 +141,9 @@ const TransactionMutateDrawer = ({
     }))
   }, [inventoryList])
 
-  const { mutate: createTransaction, isPending } = useCreateTransaction(shopId!)
+  const { mutate: createTransaction, isPending: isCreatePending } = useCreateTransaction(shopId!)
+  const { mutate: updateTransaction, isPending: isUpdatePending } = useUpdateTransaction(shopId!)
+  const isPending = currentRow ? isUpdatePending : isCreatePending
 
   // Set business entity based on transaction type
   useEffect(() => {
@@ -155,10 +157,56 @@ const TransactionMutateDrawer = ({
   }, [transactionType, setSelectedBusinessEntity, form])
 
   useEffect(() => {
-    if (showInventoryFields && fields.length === 0) {
+    if (showInventoryFields && fields.length === 0 && !currentRow) {
       append({ inventoryId: '', quantity: 0, price: 0, unitOfMeasurementId: '' })
     }
-  }, [showInventoryFields, append, fields.length])
+  }, [showInventoryFields, append, fields.length, currentRow])
+
+  // Populate form when editing an existing transaction
+  useEffect(() => {
+    if (!currentRow || !open) return
+
+    const entityType = currentRow.vendor
+      ? BusinessEntityType.VENDOR
+      : BusinessEntityType.CUSTOMER
+    setSelectedBusinessEntity(entityType)
+
+    const entityId = currentRow.vendorId || currentRow.customerId || ''
+    const isInventoryType =
+      currentRow.transactionType === 'PURCHASE' || currentRow.transactionType === 'SALE'
+    const isAmountOnlyType = ['PAYMENT', 'RECEIVABLE', 'COMMISSION'].includes(
+      currentRow.transactionType,
+    )
+
+    form.reset({
+      transactionType: currentRow.transactionType,
+      partnerType: entityType,
+      entityTypeId: entityId,
+      paymentType: currentRow.paymentType || '',
+      remarks: currentRow.remarks || '',
+      paid: isInventoryType ? Number(currentRow.paid) : 0,
+      transactionAmount: isAmountOnlyType
+        ? Number(currentRow.totalAmount || currentRow.paid)
+        : null,
+      inventories:
+        isInventoryType && currentRow.details?.length
+          ? currentRow.details.map((d) => ({
+              inventoryId: d.inventory?.id || '',
+              quantity: Number(d.quantity),
+              price: Number(d.price),
+              unitOfMeasurementId: d.unitOfMeasurement?.id || '',
+            }))
+          : [],
+    })
+
+    if (isInventoryType && currentRow.details?.length) {
+      const newInputValues: Record<number, string> = {}
+      currentRow.details.forEach((d, i) => {
+        newInputValues[i] = d.inventory?.id || ''
+      })
+      setInventoryInputValues(newInputValues)
+    }
+  }, [currentRow, open]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const entityOptions = useMemo(() => {
     if (!selectedBusinessEntity) return []
@@ -356,6 +404,36 @@ const TransactionMutateDrawer = ({
           totalAmount: totalAmountValue,
           details: inventoryDetailsPayload,
         }
+
+    if (currentRow) {
+      const updatePayload = {
+        paid: isAmountOnlyTransaction ? Number(values.transactionAmount) : Number(values.paid),
+        remarks: values.remarks,
+        paymentType: values.paymentType,
+        totalAmount: isAmountOnlyTransaction ? Number(values.transactionAmount) : undefined,
+      }
+      updateTransaction(
+        { id: currentRow.id, data: updatePayload },
+        {
+          onSuccess: () => {
+            toast.success(tToast('transaction.updated'))
+            setPendingClose(true)
+            resetFormStates()
+            onOpenChange(false)
+          },
+          onError: (error: unknown) => {
+            if (axios.isAxiosError(error)) {
+              toast.error(error.response?.data?.message || error.message)
+            } else if (error instanceof Error) {
+              toast.error(error.message)
+            } else {
+              toast.error(tToast('common.somethingWrong'))
+            }
+          },
+        },
+      )
+      return
+    }
 
     createTransaction(payload as CreateTransactionDto, {
       onSuccess: async () => {

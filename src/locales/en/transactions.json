@@ -46,8 +46,15 @@
   },
   "rowActions": {
     "openMenu": "Open menu",
+    "edit": "Edit",
+    "delete": "Delete",
     "payVendor": "Pay vendor",
     "collectPayment": "Collect payment"
+  },
+  "deleteDialog": {
+    "title": "Delete Transaction",
+    "description": "Are you sure you want to delete transaction {{no}}? This action cannot be undone.",
+    "confirm": "Delete"
   },
   "createDrawer": {
     "titleCreate": "Create Transaction",

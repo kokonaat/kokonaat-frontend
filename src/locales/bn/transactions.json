@@ -46,8 +46,15 @@
   },
   "rowActions": {
     "openMenu": "মেনু খুলুন",
+    "edit": "সম্পাদনা",
+    "delete": "মুছুন",
     "payVendor": "সরবরাহকারীকে পরিশোধ",
     "collectPayment": "পেমেন্ট আদায়"
+  },
+  "deleteDialog": {
+    "title": "লেনদেন মুছুন",
+    "description": "আপনি কি লেনদেন {{no}} মুছতে চান? এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "confirm": "মুছুন"
   },
   "createDrawer": {
     "titleCreate": "লেনদেন তৈরি",

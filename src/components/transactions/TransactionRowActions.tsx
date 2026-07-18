@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { type Row } from '@tanstack/react-table'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { Download, Loader2, Wallet, HandCoins } from 'lucide-react'
+import { Download, Loader2, Wallet, HandCoins, Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,6 +16,7 @@ import { useTransactions } from './transaction-provider'
 import type { Transaction } from '@/interface/transactionInterface'
 import { useShopStore } from '@/stores/shopStore'
 import { useTransactionLedger } from '@/hooks/useTransaction'
+import { useIsShopOwner } from '@/hooks/useShopPermissions'
 import { generatePDF } from '@/utils/enums/pdf'
 import type { Entity } from '@/utils/enums/pdf'
 
@@ -44,6 +45,7 @@ export function TransactionRowActions({ row }: TransactionRowActionsProps) {
   const transaction = row.original
   const { setOpen, setCurrentRow, setRecordPaymentMode } = useTransactions()
   const { currentShopId, currentShopName } = useShopStore()
+  const isShopOwner = useIsShopOwner()
   const [isDownloading, setIsDownloading] = useState(false)
 
   const entityId = transaction.vendor?.id || transaction.customer?.id
@@ -64,6 +66,18 @@ export function TransactionRowActions({ row }: TransactionRowActionsProps) {
   const showPay = canPayVendor(transaction)
   const showCollect = canCollectPayment(transaction)
   const showDownload = !!entityId
+
+  const handleEdit = (e: Event) => {
+    e.stopPropagation()
+    setCurrentRow(transaction)
+    setOpen('update')
+  }
+
+  const handleDelete = (e: Event) => {
+    e.stopPropagation()
+    setCurrentRow(transaction)
+    setOpen('delete')
+  }
 
   const handlePay = (e: Event) => {
     e.stopPropagation()
@@ -126,7 +140,7 @@ export function TransactionRowActions({ row }: TransactionRowActionsProps) {
     }
   }
 
-  if (!showPay && !showCollect && !showDownload) {
+  if (!showPay && !showCollect && !showDownload && !isShopOwner) {
     return null
   }
 
@@ -143,6 +157,19 @@ export function TransactionRowActions({ row }: TransactionRowActionsProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
+        {isShopOwner && (
+          <DropdownMenuItem className="cursor-pointer" onSelect={handleEdit}>
+            <Pencil className="mr-2 h-4 w-4" />
+            {t('rowActions.edit')}
+          </DropdownMenuItem>
+        )}
+        {isShopOwner && (
+          <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive" onSelect={handleDelete}>
+            <Trash2 className="mr-2 h-4 w-4" />
+            {t('rowActions.delete')}
+          </DropdownMenuItem>
+        )}
+        {isShopOwner && (showPay || showCollect || showDownload) && <DropdownMenuSeparator />}
         {showPay && (
           <DropdownMenuItem className="cursor-pointer" onSelect={handlePay}>
             <Wallet className="mr-2 h-4 w-4" />

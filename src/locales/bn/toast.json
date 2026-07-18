@@ -37,7 +37,9 @@
     "ledgerDownloadFailed": "খাতা রিপোর্ট ডাউনলোড করতে ব্যর্থ। আবার চেষ্টা করুন।",
     "transactionReportDownloaded": "লেনদেন রিপোর্ট সফলভাবে ডাউনলোড হয়েছে",
     "transactionReportFailed": "লেনদেন রিপোর্ট ডাউনলোড করতে ব্যর্থ। আবার চেষ্টা করুন।",
-    "shopNameMissing": "দোকানের নাম নেই"
+    "shopNameMissing": "দোকানের নাম নেই",
+    "deleted": "লেনদেন সফলভাবে মুছে গেছে",
+    "updated": "লেনদেন সফলভাবে আপডেট হয়েছে"
   },
   "customer": {
     "shopIdNotFound": "দোকান আইডি পাওয়া যায়নি!",

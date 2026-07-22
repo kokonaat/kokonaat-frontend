@@ -21,3 +21,9 @@ export const updateShop = async (data: UpdateShopInterface) => {
     const response = await axiosInstance.put(`${apiEndpoints.shop.updateShop}${data.id}`, payload)
     return response.data
 }
+
+// delete
+export const deleteShop = async (id: string) => {
+    const response = await axiosInstance.delete(`${apiEndpoints.shop.deleteShop}${id}`)
+    return response.data
+}

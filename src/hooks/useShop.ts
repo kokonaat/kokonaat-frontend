@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import type { AxiosError } from "axios"
 import type { CreateShopInterface, UserRoleWiseShopInterface, UpdateShopInterface } from "@/interface/shopInterface"
-import { createShop, shopList, updateShop } from "@/api/shopApi"
+import { createShop, shopList, updateShop, deleteShop } from "@/api/shopApi"
 import { useShopStore } from "@/stores/shopStore"
 import { useNavigate } from "react-router-dom"
 import i18n from "@/i18n"
@@ -68,6 +68,28 @@ export const useCreateShop = () => {
         },
         onError: (err: AxiosError<{ message: string }>) => {
             toast.error(err?.response?.data?.message || i18n.t('toast:shop.createFailed'))
+        }
+    })
+}
+
+// delete
+export const useDeleteShop = () => {
+    const queryClient = useQueryClient()
+    const currentShopId = useShopStore((s) => s.currentShopId)
+    const clearCurrentShop = useShopStore((s) => s.clearCurrentShop)
+
+    return useMutation({
+        mutationFn: (id: string) => deleteShop(id),
+        onSuccess: (_, deletedId) => {
+            if (currentShopId === deletedId) {
+                clearCurrentShop()
+            }
+            toast.success(i18n.t('toast:shop.deleted'))
+            queryClient.invalidateQueries({ queryKey: SHOP_KEYS.all })
+            queryClient.invalidateQueries({ queryKey: ['user'] })
+        },
+        onError: (err: AxiosError<{ message: string }>) => {
+            toast.error(err?.response?.data?.message || i18n.t('toast:shop.deleteFailed'))
         }
     })
 }

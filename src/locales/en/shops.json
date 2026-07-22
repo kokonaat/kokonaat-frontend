@@ -12,7 +12,14 @@
     "creating": "Creating...",
     "updateAddress": "Update Address",
     "updating": "Updating...",
-    "edit": "Edit"
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "deleteDialog": {
+    "title": "Delete Shop",
+    "description": "Are you sure you want to delete \"{{name}}\"? This will permanently delete all associated data including customers, vendors, inventory, transactions, and expenses. This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Delete Shop"
   },
   "card": {
     "selected": "Selected",

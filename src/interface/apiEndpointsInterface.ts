@@ -12,6 +12,7 @@ export interface ApiEndpoints {
     createShop: string
     shopList: string
     updateShop: string
+    deleteShop: string
   }
   dashbaord: {
     dashboardReport: string

@@ -20,7 +20,9 @@
     "created": "Shop created successfully",
     "createFailed": "Failed to create shop",
     "updated": "Shop updated successfully!",
-    "updateFailed": "Failed to update shop"
+    "updateFailed": "Failed to update shop",
+    "deleted": "Shop deleted successfully",
+    "deleteFailed": "Failed to delete shop"
   },
   "transaction": {
     "created": "Transaction created successfully",

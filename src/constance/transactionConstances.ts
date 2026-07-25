@@ -21,6 +21,9 @@ export const DEFAULT_VALUES = {
   entityTypeId: '',
   paymentType: '',
   paid: 0,
+  cnfCost: 0,
+  labourCost: 0,
+  transportCost: 0,
   transactionAmount: null,
   inventories: [],
 }

@@ -60,6 +60,9 @@ export interface Transaction {
   paymentType: "CASH" | "CREDIT_CARD" | "BANK_TRANSFER" | "MOBILE_PAYMENT"
   isPaid: boolean
   remarks: string | null
+  cnfCost: number
+  labourCost: number
+  transportCost: number
   payable: number
   receivable: number
   shopId: string
@@ -73,6 +76,9 @@ export interface UpdateTransactionDto {
   remarks?: string
   paymentType?: string
   totalAmount?: number
+  cnfCost?: number
+  labourCost?: number
+  transportCost?: number
 }
 
 // update main DTO
@@ -84,11 +90,17 @@ export interface CreateTransactionDto {
   transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT" | "RECEIVABLE"
   totalAmount?: number
   paymentType?: "CASH" | "CREDIT_CARD" | "BANK_TRANSFER" | "MOBILE_PAYMENT"
+  cnfCost?: number
+  labourCost?: number
+  transportCost?: number
   details?: {
-    inventoryId: string
+    inventoryId?: string
+    inventoryName?: string
     quantity: number
     price: number
     total: number
+    unitOfMeasurementId?: string
+    unitOfMeasurementName?: string
   }[]
 }
 

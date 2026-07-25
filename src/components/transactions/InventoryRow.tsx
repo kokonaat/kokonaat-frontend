@@ -182,8 +182,7 @@ export const InventoryRow = ({
                                                 }
                                             }}
                                             onSearch={(query) => {
-                                                if (!isUomLocked) {
-                                                    // Allow typing custom UOM names for new inventories
+                                                if (!isUomLocked && transactionType === 'PURCHASE') {
                                                     onUomSearch(query, index)
                                                 }
                                             }}

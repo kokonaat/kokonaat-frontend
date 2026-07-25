@@ -54,6 +54,7 @@ const TransactionMutateDrawer = ({
   const [uomSearchQueries, setUomSearchQueries] = useState<Record<number, string>>({})
   const [showCloseConfirm, setShowCloseConfirm] = useState(false)
   const [pendingClose, setPendingClose] = useState(false)
+  const [createdEntityCache, setCreatedEntityCache] = useState<{ id: string; name: string } | null>(null)
 
   const shopId = useShopStore((s) => s.currentShopId)
 
@@ -185,6 +186,9 @@ const TransactionMutateDrawer = ({
       paymentType: currentRow.paymentType || '',
       remarks: currentRow.remarks || '',
       paid: isInventoryType ? Number(currentRow.paid) : 0,
+      cnfCost: Number(currentRow.cnfCost) || 0,
+      labourCost: Number(currentRow.labourCost) || 0,
+      transportCost: Number(currentRow.transportCost) || 0,
       transactionAmount: isAmountOnlyType
         ? Number(currentRow.totalAmount || currentRow.paid)
         : null,
@@ -210,13 +214,21 @@ const TransactionMutateDrawer = ({
 
   const entityOptions = useMemo(() => {
     if (!selectedBusinessEntity) return []
-    return selectedBusinessEntity === BusinessEntityType.VENDOR
+    const options = selectedBusinessEntity === BusinessEntityType.VENDOR
       ? createEntityOptions(flatVendorList)
       : createEntityOptions(flatCustomerList)
-  }, [selectedBusinessEntity, flatVendorList, flatCustomerList])
+    if (createdEntityCache && !options.some(opt => opt.value === createdEntityCache.id)) {
+      return [{ value: createdEntityCache.id, label: createdEntityCache.name }, ...options]
+    }
+    return options
+  }, [selectedBusinessEntity, flatVendorList, flatCustomerList, createdEntityCache])
 
   const inventories = form.watch('inventories') || []
-  const total = calculateTotal(inventories)
+  const cnfCost = Number(form.watch('cnfCost')) || 0
+  const labourCost = Number(form.watch('labourCost')) || 0
+  const transportCost = Number(form.watch('transportCost')) || 0
+  const inventorySubtotal = calculateTotal(inventories)
+  const total = inventorySubtotal + cnfCost + labourCost + transportCost
   const transactionAmount = form.watch('transactionAmount')
   const paid = form.watch('paid')
   const remarks = form.watch('remarks')
@@ -277,6 +289,7 @@ const TransactionMutateDrawer = ({
     form.setValue('inventories', [])
     setInventoryInputValues({})
     setInventoryDisplayData({})
+    setCreatedEntityCache(null)
 
     // For non-commission transactions, auto-set the partner type
     if (value !== 'COMMISSION') {
@@ -292,6 +305,12 @@ const TransactionMutateDrawer = ({
   const handleBusinessEntitySelect = (value: string) => {
     setSelectedBusinessEntity(value as BusinessEntityType)
     form.setValue('entityTypeId', '')
+    setCreatedEntityCache(null)
+  }
+
+  const handleEntityCreated = (entity: { id: string; name: string }) => {
+    setCreatedEntityCache(entity)
+    form.setValue('entityTypeId', entity.id)
   }
 
   const handleFormSubmit = (values: TransactionFormValues) => {
@@ -382,6 +401,14 @@ const TransactionMutateDrawer = ({
       ? 0 
       : undefined // Let backend calculate from inventory details
 
+    const extraCosts = showInventoryFields
+      ? {
+          cnfCost: values.cnfCost || 0,
+          labourCost: values.labourCost || 0,
+          transportCost: values.transportCost || 0,
+        }
+      : {}
+
     const payload =
       selectedBusinessEntity === BusinessEntityType.VENDOR
         ? {
@@ -393,6 +420,7 @@ const TransactionMutateDrawer = ({
           paid: paidValue,
           totalAmount: totalAmountValue,
           details: inventoryDetailsPayload,
+          ...extraCosts,
         }
         : {
           shopId,
@@ -403,6 +431,7 @@ const TransactionMutateDrawer = ({
           paid: paidValue,
           totalAmount: totalAmountValue,
           details: inventoryDetailsPayload,
+          ...extraCosts,
         }
 
     if (currentRow) {
@@ -511,6 +540,8 @@ const TransactionMutateDrawer = ({
                   onBusinessEntitySelect={handleBusinessEntitySelect}
                   onEntitySearch={setEntitySearchQuery}
                   showPartnerTypeSelector={showPartnerTypeSelector}
+                  shopId={shopId || ''}
+                  onEntityCreated={handleEntityCreated}
                 />
               </div>
             </div>
@@ -571,6 +602,86 @@ const TransactionMutateDrawer = ({
               ) : showAmountField ? (
                 <AmountField form={form} />
               ) : null
+            )}
+
+            {showInventoryFields && entityTypeId && paymentType && (
+              <div className='space-y-2'>
+                <p className='text-xs text-muted-foreground font-medium'>{t('form.additionalCosts')}</p>
+                <div className='flex items-end gap-4'>
+                  <FormField
+                    control={form.control}
+                    name='cnfCost'
+                    render={({ field }) => (
+                      <FormItem className='flex-1'>
+                        <FormLabel>{t('form.cnfCost')}</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='number'
+                            {...field}
+                            placeholder={t('form.cnfCostPlaceholder')}
+                            min={0}
+                            step='0.01'
+                            value={field.value === 0 ? '' : (field.value ?? '')}
+                            onChange={(e) => {
+                              const val = e.target.value
+                              field.onChange(val === '' ? 0 : parseFloat(val))
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='labourCost'
+                    render={({ field }) => (
+                      <FormItem className='flex-1'>
+                        <FormLabel>{t('form.labourCost')}</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='number'
+                            {...field}
+                            placeholder={t('form.labourCostPlaceholder')}
+                            min={0}
+                            step='0.01'
+                            value={field.value === 0 ? '' : (field.value ?? '')}
+                            onChange={(e) => {
+                              const val = e.target.value
+                              field.onChange(val === '' ? 0 : parseFloat(val))
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='transportCost'
+                    render={({ field }) => (
+                      <FormItem className='flex-1'>
+                        <FormLabel>{t('form.transportCost')}</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='number'
+                            {...field}
+                            placeholder={t('form.transportCostPlaceholder')}
+                            min={0}
+                            step='0.01'
+                            value={field.value === 0 ? '' : (field.value ?? '')}
+                            onChange={(e) => {
+                              const val = e.target.value
+                              field.onChange(val === '' ? 0 : parseFloat(val))
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
             )}
 
             {showPaymentFields && entityTypeId && paymentType && (

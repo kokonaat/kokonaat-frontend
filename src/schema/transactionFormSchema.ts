@@ -33,6 +33,9 @@ export const createTransactionFormSchema = (t: TFunction) => {
         .optional(),
       paymentType: z.string().min(1, t('transactionForm.paymentTypeRequired')),
       remarks: z.string().optional(),
+      cnfCost: zNumberOrZero.optional().default(0),
+      labourCost: zNumberOrZero.optional().default(0),
+      transportCost: zNumberOrZero.optional().default(0),
       paid: zNumberOrZero,
       inventories: z
         .array(

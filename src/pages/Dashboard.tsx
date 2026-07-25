@@ -32,7 +32,7 @@ const Dashboard = () => {
 
   const defaultEndDate = useMemo(() => new Date(), [])
   const defaultStartDate = useMemo(
-    () => subDays(defaultEndDate, 30),
+    () => subDays(defaultEndDate, 1),
     [defaultEndDate],
   )
 

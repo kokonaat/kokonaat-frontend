@@ -97,7 +97,27 @@
     "descriptionPrefix": "বিবরণ:",
     "insufficientStock": "অপর্যাপ্ত মজুদ! সর্বোচ্চ: {{max}}",
     "inventoryAlreadySelected": "এই মজুদ অন্য সারিতে ইতিমধ্যে নির্বাচিত",
-    "inventoryNameAlreadyUsed": "এই মজুদের নাম অন্য সারিতে ইতিমধ্যে ব্যবহৃত"
+    "inventoryNameAlreadyUsed": "এই মজুদের নাম অন্য সারিতে ইতিমধ্যে ব্যবহৃত",
+    "cnfCost": "সি&এফ খরচ",
+    "cnfCostPlaceholder": "০.০০",
+    "labourCost": "শ্রম খরচ",
+    "labourCostPlaceholder": "০.০০",
+    "transportCost": "পরিবহন খরচ",
+    "transportCostPlaceholder": "০.০০",
+    "additionalCosts": "অতিরিক্ত খরচ (ঐচ্ছিক)"
+  },
+  "quickCreate": {
+    "customerTitle": "নতুন গ্রাহক",
+    "customerDescription": "এই লেনদেনে ব্যবহারের জন্য দ্রুত একজন নতুন গ্রাহক যোগ করুন।",
+    "vendorTitle": "নতুন সরবরাহকারী",
+    "vendorDescription": "এই লেনদেনে ব্যবহারের জন্য দ্রুত একটি নতুন সরবরাহকারী যোগ করুন।",
+    "newButton": "+ নতুন",
+    "name": "নাম",
+    "namePlaceholder": "নাম লিখুন",
+    "phone": "ফোন",
+    "phonePlaceholder": "ফোন নম্বর লিখুন",
+    "address": "ঠিকানা",
+    "addressPlaceholder": "ঠিকানা লিখুন"
   },
   "paymentDrawer": {
     "titlePay": "সরবরাহকারীকে পরিশোধ",

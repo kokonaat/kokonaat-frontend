@@ -48,8 +48,8 @@ export const getVendorById = async (
 // create
 export const createVendor = async (data: VendorFormInterface) => {
     if (!data.shopId) throw new Error("Shop ID is required")
-    const res = await axiosInstance.post<VendorListApiResponseInterface>(apiEndpoints.vendor.createVendor, data)
-    return res.data.data
+    const res = await axiosInstance.post(apiEndpoints.vendor.createVendor, data)
+    return res.data
 }
 
 // update

@@ -97,7 +97,27 @@
     "descriptionPrefix": "Desc:",
     "insufficientStock": "Insufficient stock! Max: {{max}}",
     "inventoryAlreadySelected": "This inventory is already selected in another row",
-    "inventoryNameAlreadyUsed": "This inventory name is already used in another row"
+    "inventoryNameAlreadyUsed": "This inventory name is already used in another row",
+    "cnfCost": "C&F Cost",
+    "cnfCostPlaceholder": "0.00",
+    "labourCost": "Labour Cost",
+    "labourCostPlaceholder": "0.00",
+    "transportCost": "Transport Cost",
+    "transportCostPlaceholder": "0.00",
+    "additionalCosts": "Additional Costs (Optional)"
+  },
+  "quickCreate": {
+    "customerTitle": "New Customer",
+    "customerDescription": "Quickly add a new customer to use in this transaction.",
+    "vendorTitle": "New Vendor",
+    "vendorDescription": "Quickly add a new vendor to use in this transaction.",
+    "newButton": "+ New",
+    "name": "Name",
+    "namePlaceholder": "Enter name",
+    "phone": "Phone",
+    "phonePlaceholder": "Enter phone number",
+    "address": "Address",
+    "addressPlaceholder": "Enter address"
   },
   "paymentDrawer": {
     "titlePay": "Pay vendor",

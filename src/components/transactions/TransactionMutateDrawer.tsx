@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
-import { useFieldArray } from 'react-hook-form'
+import { useFieldArray, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
@@ -24,7 +24,6 @@ import type {
 import { useTransactionForm } from './hooks/useTransactionForm'
 import { useEntityData } from './hooks/useEntityData'
 import {
-  calculatePending,
   calculateTotal,
   createEntityOptions,
   getEntityTypeForTransaction,
@@ -33,7 +32,6 @@ import {
 } from './utils/transactionHelpers'
 import { TransactionTypeField } from './TransactionTypeFields'
 import { PartnerSelectionFields } from './PartnetSelectionFields'
-import { PaymentTypeField } from './PaymentTypeField'
 import { InventoryFields } from './InventoryFields'
 import { AmountField } from './AmountField'
 import { PaymentFields } from './PaymentFields'
@@ -80,6 +78,11 @@ const TransactionMutateDrawer = ({
     name: 'inventories',
   })
 
+  const { fields: paymentFields, append: appendPayment, remove: removePayment } = useFieldArray({
+    control: form.control,
+    name: 'payments',
+  })
+
   const { flatVendorList, flatCustomerList, isLoading } = useEntityData(
     shopId,
     selectedBusinessEntity,
@@ -88,7 +91,7 @@ const TransactionMutateDrawer = ({
 
   const transactionType = form.watch('transactionType')
   const entityTypeId = form.watch('entityTypeId')
-  const paymentType = form.watch('paymentType')
+  const payments = useWatch({ control: form.control, name: 'payments' })
 
   const showInventoryFields = requiresInventoryFields(transactionType)
   const showAmountField = requiresAmountField(transactionType)
@@ -183,9 +186,10 @@ const TransactionMutateDrawer = ({
       transactionType: currentRow.transactionType,
       partnerType: entityType,
       entityTypeId: entityId,
-      paymentType: currentRow.paymentType || '',
       remarks: currentRow.remarks || '',
-      paid: isInventoryType ? Number(currentRow.paid) : 0,
+      payments: currentRow.payments && currentRow.payments.length > 0
+        ? currentRow.payments.map((p) => ({ paymentType: p.paymentType, amount: Number(p.amount) }))
+        : [{ paymentType: currentRow.paymentType || '', amount: isInventoryType ? Number(currentRow.paid) : 0 }],
       cnfCost: Number(currentRow.cnfCost) || 0,
       labourCost: Number(currentRow.labourCost) || 0,
       transportCost: Number(currentRow.transportCost) || 0,
@@ -230,25 +234,22 @@ const TransactionMutateDrawer = ({
   const inventorySubtotal = calculateTotal(inventories)
   const total = inventorySubtotal + cnfCost + labourCost + transportCost
   const transactionAmount = form.watch('transactionAmount')
-  const paid = form.watch('paid')
   const remarks = form.watch('remarks')
 
-  const amount = showInventoryFields ? total : (transactionAmount ?? 0)
-  const calculatedPending = calculatePending(amount, paid)
+  const totalPaid = (payments || []).reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
 
   // Check if form has any data entered
   const hasFormData = useMemo(() => {
     const hasTransactionType = !!transactionType
     const hasEntityId = !!entityTypeId
-    const hasPaymentType = !!paymentType
     const hasAmount = showAmountField ? (transactionAmount ?? 0) > 0 : false
-    const hasInventories = showInventoryFields ? (inventories?.length ?? 0) > 0 && 
+    const hasInventories = showInventoryFields ? (inventories?.length ?? 0) > 0 &&
       inventories?.some(inv => inv.inventoryId || inv.quantity > 0 || inv.price > 0) : false
-    const hasPaid = (paid ?? 0) > 0
+    const hasPayments = totalPaid > 0 || (payments || []).some(p => p.paymentType)
     const hasRemarks = !!remarks
 
-    return hasTransactionType || hasEntityId || hasPaymentType || hasAmount || hasInventories || hasPaid || hasRemarks
-  }, [transactionType, entityTypeId, paymentType, transactionAmount, inventories, paid, remarks, showAmountField, showInventoryFields])
+    return hasTransactionType || hasEntityId || hasAmount || hasInventories || hasPayments || hasRemarks
+  }, [transactionType, entityTypeId, transactionAmount, inventories, totalPaid, payments, remarks, showAmountField, showInventoryFields])
 
   const handleOpenChange = (isOpen: boolean) => {
     // If opening, just open normally
@@ -284,7 +285,7 @@ const TransactionMutateDrawer = ({
     // Reset dependent fields
     form.setValue('partnerType', '')
     form.setValue('entityTypeId', '')
-    form.setValue('paymentType', '')
+    form.setValue('payments', [{ paymentType: '', amount: 0 }])
     form.setValue('transactionAmount', null)
     form.setValue('inventories', [])
     setInventoryInputValues({})
@@ -310,7 +311,7 @@ const TransactionMutateDrawer = ({
 
   const handleEntityCreated = (entity: { id: string; name: string }) => {
     setCreatedEntityCache(entity)
-    form.setValue('entityTypeId', entity.id)
+    form.setValue('entityTypeId', entity.id, { shouldValidate: true })
   }
 
   const handleFormSubmit = (values: TransactionFormValues) => {
@@ -390,15 +391,20 @@ const TransactionMutateDrawer = ({
       : undefined
 
     // For PAYMENT, RECEIVABLE, COMMISSION: paid = entered amount, totalAmount = 0
-    // For PURCHASE, SALE: paid is from the form, totalAmount is calculated from inventory
+    // For PURCHASE, SALE: paid is sum of payment rows, totalAmount calculated from inventory
     const isAmountOnlyTransaction = ['PAYMENT', 'RECEIVABLE', 'COMMISSION'].includes(transactionTypeCasted)
-    
-    const paidValue = isAmountOnlyTransaction 
-      ? Number(values.transactionAmount) 
-      : Number(values.paid)
-    
-    const totalAmountValue = isAmountOnlyTransaction 
-      ? 0 
+
+    const paymentsTotal = (values.payments || []).reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
+    // Primary payment type = entry with the highest amount (or first entry)
+    const primaryPaymentType = [...(values.payments || [])]
+      .sort((a, b) => (Number(b.amount) || 0) - (Number(a.amount) || 0))[0]?.paymentType || undefined
+
+    const paidValue = isAmountOnlyTransaction
+      ? Number(values.transactionAmount)
+      : paymentsTotal
+
+    const totalAmountValue = isAmountOnlyTransaction
+      ? 0
       : undefined // Let backend calculate from inventory details
 
     const extraCosts = showInventoryFields
@@ -409,6 +415,10 @@ const TransactionMutateDrawer = ({
         }
       : {}
 
+    const validPayments = (values.payments || []).filter(
+      (p) => p.paymentType && (Number(p.amount) || 0) > 0
+    )
+
     const payload =
       selectedBusinessEntity === BusinessEntityType.VENDOR
         ? {
@@ -416,10 +426,11 @@ const TransactionMutateDrawer = ({
           vendorId: values.entityTypeId,
           transactionType: transactionTypeCasted,
           remarks: values.remarks,
-          paymentType: values.paymentType,
+          paymentType: primaryPaymentType,
           paid: paidValue,
           totalAmount: totalAmountValue,
           details: inventoryDetailsPayload,
+          payments: validPayments,
           ...extraCosts,
         }
         : {
@@ -427,19 +438,21 @@ const TransactionMutateDrawer = ({
           customerId: values.entityTypeId,
           transactionType: transactionTypeCasted,
           remarks: values.remarks,
-          paymentType: values.paymentType,
+          paymentType: primaryPaymentType,
           paid: paidValue,
           totalAmount: totalAmountValue,
           details: inventoryDetailsPayload,
+          payments: validPayments,
           ...extraCosts,
         }
 
     if (currentRow) {
       const updatePayload = {
-        paid: isAmountOnlyTransaction ? Number(values.transactionAmount) : Number(values.paid),
+        paid: paidValue,
         remarks: values.remarks,
-        paymentType: values.paymentType,
+        paymentType: primaryPaymentType,
         totalAmount: isAmountOnlyTransaction ? Number(values.transactionAmount) : undefined,
+        payments: validPayments,
       }
       updateTransaction(
         { id: currentRow.id, data: updatePayload },
@@ -488,8 +501,6 @@ const TransactionMutateDrawer = ({
       },
     })
   }
-
-  const showPaymentFields = showInventoryFields
 
   return (
     <>
@@ -546,35 +557,27 @@ const TransactionMutateDrawer = ({
               </div>
             </div>
 
-            <div className='flex items-end gap-4'>
-              <div className="flex-1">
-                {entityTypeId && <PaymentTypeField form={form} />}
-              </div>
-
-              <div className="flex-1">
-                {entityTypeId && (
-                  <FormField
-                    control={form.control}
-                    name="remarks"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('form.remarks')}</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="text"
-                            placeholder={t('form.remarksPlaceholder')}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+            {entityTypeId && (
+              <FormField
+                control={form.control}
+                name="remarks"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.remarks')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="text"
+                        placeholder={t('form.remarksPlaceholder')}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
-            </div>
+              />
+            )}
 
-            {entityTypeId && paymentType && (
+            {entityTypeId && (
               showInventoryFields ? (
                 <InventoryFields
                   form={form}
@@ -604,7 +607,7 @@ const TransactionMutateDrawer = ({
               ) : null
             )}
 
-            {showInventoryFields && entityTypeId && paymentType && (
+            {showInventoryFields && entityTypeId && (
               <div className='space-y-2'>
                 <p className='text-xs text-muted-foreground font-medium'>{t('form.additionalCosts')}</p>
                 <div className='flex items-end gap-4'>
@@ -684,13 +687,15 @@ const TransactionMutateDrawer = ({
               </div>
             )}
 
-            {showPaymentFields && entityTypeId && paymentType && (
+            {showInventoryFields && entityTypeId && (
               <PaymentFields
-                total={total}
                 form={form}
+                fields={paymentFields}
+                onAppend={() => appendPayment({ paymentType: '', amount: 0 })}
+                onRemove={removePayment}
+                total={total}
                 selectedBusinessEntity={selectedBusinessEntity}
                 transactionType={transactionType}
-                calculatedPending={calculatedPending}
               />
             )}
           </form>

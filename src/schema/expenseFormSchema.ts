@@ -16,7 +16,7 @@ export const createExpenseFormSchema = (t: TFunction) =>
     title: z.string().min(1, t('expenseForm.titleRequired')),
     type: z.enum(expenseTypesArray),
     amount: z.number().min(0.01, t('expenseForm.amountMin')),
-    remarks: z.string().min(1, t('expenseForm.remarksRequired')),
+    remarks: z.string().optional(),
     shopId: z.string().min(1, t('expenseForm.shopIdRequired')),
   })
 

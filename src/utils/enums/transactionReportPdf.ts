@@ -20,6 +20,9 @@ interface TransactionReportItem {
   paid: number
   pending: number
   paymentType: string
+  cnfCost?: number
+  labourCost?: number
+  transportCost?: number
   details: Array<{
     inventory?: { name: string }
     quantity: string
@@ -90,6 +93,9 @@ export const generateTransactionReportPDF = async (
     const itemsSummary = item.details
       .map((d) => `${d.inventory?.name || na} (${d.quantity})`)
       .join(', ')
+    const cnf = Number(item.cnfCost) || 0
+    const labour = Number(item.labourCost) || 0
+    const transport = Number(item.transportCost) || 0
 
     return [
       new Date(item.createdAt).toLocaleDateString(),
@@ -97,6 +103,9 @@ export const generateTransactionReportPDF = async (
       itemsSummary,
       item.paymentType,
       Number(item.totalAmount).toLocaleString(),
+      cnf > 0 ? cnf.toLocaleString() : '-',
+      labour > 0 ? labour.toLocaleString() : '-',
+      transport > 0 ? transport.toLocaleString() : '-',
       Number(item.paid).toLocaleString(),
       Number(item.pending).toLocaleString(),
     ]
@@ -112,6 +121,9 @@ export const generateTransactionReportPDF = async (
     '',
     t('transactionReportPdf.totals.totalRow'),
     subtotalAmount.toLocaleString(),
+    '',
+    '',
+    '',
     subtotalPaid.toLocaleString(),
     subtotalDue.toLocaleString(),
   ])
@@ -124,6 +136,9 @@ export const generateTransactionReportPDF = async (
       t('transactionReportPdf.tableHeaders.items'),
       t('transactionReportPdf.tableHeaders.method'),
       t('transactionReportPdf.tableHeaders.amount'),
+      t('transactionReportPdf.tableHeaders.cnfCost'),
+      t('transactionReportPdf.tableHeaders.labourCost'),
+      t('transactionReportPdf.tableHeaders.transportCost'),
       t('transactionReportPdf.tableHeaders.paid'),
       t('transactionReportPdf.tableHeaders.due'),
     ]],
@@ -136,15 +151,18 @@ export const generateTransactionReportPDF = async (
       font: tableFont,
     },
     columnStyles: {
-      0: { cellWidth: 22 },
-      1: { cellWidth: 30 },
-      2: { cellWidth: 35 },
-      3: { cellWidth: 25 },
-      4: { cellWidth: 25 },
-      5: { cellWidth: 22 },
-      6: { cellWidth: 18, halign: 'right' },
+      0: { cellWidth: 18 },
+      1: { cellWidth: 25 },
+      2: { cellWidth: 30 },
+      3: { cellWidth: 20 },
+      4: { cellWidth: 18, halign: 'right' },
+      5: { cellWidth: 14, halign: 'right' },
+      6: { cellWidth: 14, halign: 'right' },
+      7: { cellWidth: 14, halign: 'right' },
+      8: { cellWidth: 18, halign: 'right' },
+      9: { cellWidth: 14, halign: 'right' },
     },
-    styles: { fontSize: 8, font: tableFont },
+    styles: { fontSize: 7, font: tableFont },
     didParseCell: (dataCell) => {
       if (dataCell.row.index === tableRows.length - 1) {
         dataCell.cell.styles.fontStyle = 'bold'

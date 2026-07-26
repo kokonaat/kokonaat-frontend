@@ -109,9 +109,35 @@ const TransactionDetails = () => {
                                     </h3>
                                 </div>
                                 <div className="space-y-3.5">
+                                    {showDetailsTable && (
+                                        <div>
+                                            <p className="text-xs text-muted-foreground mb-0.5">{t('details.subtotal')}</p>
+                                            <p className="text-sm font-medium">
+                                                {(transaction.details || []).reduce((s: number, d: { total?: number | string }) => s + Number(d.total || 0), 0).toLocaleString()}
+                                            </p>
+                                        </div>
+                                    )}
+                                    {showDetailsTable && Number(transaction.cnfCost) > 0 && (
+                                        <div>
+                                            <p className="text-xs text-muted-foreground mb-0.5">{t('details.cnfCost')}</p>
+                                            <p className="text-sm font-medium">{Number(transaction.cnfCost).toLocaleString()}</p>
+                                        </div>
+                                    )}
+                                    {showDetailsTable && Number(transaction.labourCost) > 0 && (
+                                        <div>
+                                            <p className="text-xs text-muted-foreground mb-0.5">{t('details.labourCost')}</p>
+                                            <p className="text-sm font-medium">{Number(transaction.labourCost).toLocaleString()}</p>
+                                        </div>
+                                    )}
+                                    {showDetailsTable && Number(transaction.transportCost) > 0 && (
+                                        <div>
+                                            <p className="text-xs text-muted-foreground mb-0.5">{t('details.transportCost')}</p>
+                                            <p className="text-sm font-medium">{Number(transaction.transportCost).toLocaleString()}</p>
+                                        </div>
+                                    )}
                                     <div>
                                         <p className="text-xs text-muted-foreground mb-0.5">{t('details.totalAmount')}</p>
-                                        <p className="text-sm font-medium">{transaction.totalAmount.toLocaleString()}</p>
+                                        <p className="text-sm font-semibold">{transaction.totalAmount.toLocaleString()}</p>
                                     </div>
                                     <div>
                                         <p className="text-xs text-muted-foreground mb-0.5">{t('details.paid')}</p>
@@ -187,7 +213,12 @@ const TransactionDetails = () => {
                         </CardHeader>
                         <CardContent>
                             {transaction.details?.length ? (
-                                <TransactionDetailsTable data={transaction.details} />
+                                <TransactionDetailsTable
+                                    data={transaction.details}
+                                    cnfCost={transaction.cnfCost}
+                                    labourCost={transaction.labourCost}
+                                    transportCost={transaction.transportCost}
+                                />
                             ) : (
                                 <p className="text-muted-foreground">{t('details.noDetails')}</p>
                             )}

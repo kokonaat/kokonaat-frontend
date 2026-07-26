@@ -31,12 +31,24 @@ export const createTransactionFormSchema = (t: TFunction) => {
         })
         .nullable()
         .optional(),
-      paymentType: z.string().min(1, t('transactionForm.paymentTypeRequired')),
       remarks: z.string().optional(),
       cnfCost: zNumberOrZero.optional().default(0),
       labourCost: zNumberOrZero.optional().default(0),
       transportCost: zNumberOrZero.optional().default(0),
-      paid: zNumberOrZero,
+      payments: z.array(
+        z.object({
+          paymentType: z.string().optional().default(''),
+          amount: zNumberOrZero,
+        }).superRefine((val, ctx) => {
+          if ((val.amount || 0) > 0 && !val.paymentType) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t('transactionForm.paymentTypeRequired'),
+              path: ['paymentType'],
+            })
+          }
+        })
+      ).min(1),
       inventories: z
         .array(
           z.object({

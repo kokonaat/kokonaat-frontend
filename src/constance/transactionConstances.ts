@@ -19,13 +19,12 @@ export const DEFAULT_VALUES = {
   transactionType: '',
   partnerType: '',
   entityTypeId: '',
-  paymentType: '',
-  paid: 0,
   cnfCost: 0,
   labourCost: 0,
   transportCost: 0,
   transactionAmount: null,
   inventories: [],
+  payments: [{ paymentType: '', amount: 0 }],
 }
 
 export const PAYMENT_TYPES: ComboboxOptionInterface[] = [

@@ -104,7 +104,9 @@
     "labourCostPlaceholder": "0.00",
     "transportCost": "Transport Cost",
     "transportCostPlaceholder": "0.00",
-    "additionalCosts": "Additional Costs (Optional)"
+    "additionalCosts": "Additional Costs (Optional)",
+    "payment": "Payment",
+    "addPaymentMethod": "Add Payment Method"
   },
   "quickCreate": {
     "customerTitle": "New Customer",
@@ -149,6 +151,10 @@
     "customer": "Customer",
     "paymentType": "Payment Type",
     "status": "Status",
+    "subtotal": "Subtotal",
+    "cnfCost": "C&F Cost",
+    "labourCost": "Labour Cost",
+    "transportCost": "Transport Cost",
     "totalAmount": "Total Amount",
     "paid": "Paid",
     "pending": "Pending",
@@ -164,6 +170,7 @@
         "uom": "UOM",
         "qty": "Qty",
         "price": "Price",
+        "landedCost": "Landed Cost",
         "total": "Total"
       },
       "empty": "No transaction details found."

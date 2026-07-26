@@ -14,6 +14,7 @@ import { useUsers } from './UserProvider'
 import type { UserListItem } from '@/interface/userInterface'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useIsShopOwner } from '@/hooks/useShopPermissions'
+import { useUserStore } from '@/stores/userStore'
 
 interface DataTableRowActionsProps<TData extends UserListItem> {
     row: Row<TData>
@@ -26,8 +27,9 @@ export function DataTableRowActions<TData extends UserListItem>({
     const { t: tUsers } = useTranslation('users')
     const { setOpen, setCurrentRow } = useUsers()
     const isShopOwner = useIsShopOwner()
+    const currentUserId = useUserStore((s) => s.user?.id)
 
-    if (!isShopOwner) {
+    if (!isShopOwner || row.original.id === currentUserId) {
         return null
     }
 

@@ -44,6 +44,7 @@ export const PartnerSelectionFields = ({
     const { t } = useTranslation('transactions')
     const partnerTypeOptions = usePartnerTypeOptions()
     const [showCreateDialog, setShowCreateDialog] = useState(false)
+    const [createEntityName, setCreateEntityName] = useState('')
 
     if (!transactionType) return null
 
@@ -110,7 +111,12 @@ export const PartnerSelectionFields = ({
                                         value={field.value}
                                         onSelect={field.onChange}
                                         onSearch={onEntitySearch}
+                                        onSearchClear={() => onEntitySearch('')}
                                         loading={isLoading}
+                                        onCreateRequest={(name) => {
+                                            setCreateEntityName(name)
+                                            setShowCreateDialog(true)
+                                        }}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -123,12 +129,17 @@ export const PartnerSelectionFields = ({
             {selectedBusinessEntity && (
                 <QuickCreateEntityDialog
                     open={showCreateDialog}
-                    onOpenChange={setShowCreateDialog}
+                    onOpenChange={(open) => {
+                        setShowCreateDialog(open)
+                        if (!open) setCreateEntityName('')
+                    }}
                     entityType={selectedBusinessEntity}
                     shopId={shopId}
+                    initialName={createEntityName}
                     onCreated={(entity) => {
                         onEntityCreated(entity)
                         setShowCreateDialog(false)
+                        setCreateEntityName('')
                     }}
                 />
             )}

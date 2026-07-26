@@ -93,7 +93,8 @@ const TransactionLedgerTable = ({
                 shopId: transaction.shopId,
                 createdAt: transaction.createdAt,
                 updatedAt: transaction.updatedAt,
-                details: transaction.details || []
+                details: transaction.details || [],
+                payments: []
             }
 
             await generateTransactionDetailsPDF(tExport, transactionForPdf, currentShopName)

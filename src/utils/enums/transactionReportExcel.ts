@@ -17,6 +17,9 @@ interface TransactionReportItem {
   paid: number
   pending: number
   paymentType: string
+  cnfCost?: number
+  labourCost?: number
+  transportCost?: number
   details: Array<{
     inventory?: { name: string }
     quantity: string
@@ -79,6 +82,9 @@ export const generateTransactionReportExcel = (
     t('transactionReportExcel.tableHeaders.customerVendor'),
     t('transactionReportExcel.tableHeaders.items'),
     t('transactionReportExcel.tableHeaders.billAmount'),
+    t('transactionReportExcel.tableHeaders.cnfCost'),
+    t('transactionReportExcel.tableHeaders.labourCost'),
+    t('transactionReportExcel.tableHeaders.transportCost'),
     t('transactionReportExcel.tableHeaders.paid'),
     t('transactionReportExcel.tableHeaders.due'),
     t('transactionReportExcel.tableHeaders.paymentMethod'),
@@ -97,6 +103,9 @@ export const generateTransactionReportExcel = (
       partyName,
       itemsSummary,
       Number(item.totalAmount).toFixed(2),
+      Number(item.cnfCost || 0).toFixed(2),
+      Number(item.labourCost || 0).toFixed(2),
+      Number(item.transportCost || 0).toFixed(2),
       Number(item.paid).toFixed(2),
       Number(item.pending).toFixed(2),
       item.paymentType,
@@ -121,7 +130,10 @@ export const generateTransactionReportExcel = (
     { wch: 12 },
     { wch: 20 },
     { wch: 40 },
-    { wch: 15 },
+    { wch: 12 },
+    { wch: 12 },
+    { wch: 14 },
+    { wch: 14 },
     { wch: 12 },
     { wch: 12 },
     { wch: 15 },

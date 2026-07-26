@@ -202,11 +202,6 @@ export const InventoryFields = ({
       return newValues
     })
 
-    // If user typed a completely new inventory name,
-    // clear search after a short delay so list refetches full data
-    if (!inventoryList.find((i) => i.name.toLowerCase() === query.toLowerCase())) {
-      setTimeout(() => onInventorySearch(''), 400)
-    }
   }
 
   const handleUomSelect = (val: string, index: number) => {

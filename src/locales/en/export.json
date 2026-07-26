@@ -130,6 +130,10 @@
     "fields": {
       "paymentType": "Payment Type",
       "status": "Status",
+      "subtotal": "Subtotal",
+      "cnfCost": "C&F Cost",
+      "labourCost": "Labour Cost",
+      "transportCost": "Transport Cost",
       "totalAmount": "Total Amount",
       "paid": "Paid",
       "pending": "Pending",
@@ -142,11 +146,13 @@
       "uom": "UOM",
       "qty": "Qty",
       "price": "Price",
+      "landedCost": "Landed Cost",
       "total": "Total"
     },
     "summary": {
       "subTotal": "Sub Total:",
       "total": "Total:",
+      "paid": "Paid:",
       "pending": "Pending:"
     }
   },
@@ -189,6 +195,9 @@
       "items": "Items",
       "method": "Method",
       "amount": "Amount",
+      "cnfCost": "C&F",
+      "labourCost": "Labour",
+      "transportCost": "Transport",
       "paid": "Paid",
       "due": "Due"
     },
@@ -216,6 +225,9 @@
       "customerVendor": "Customer/Vendor",
       "items": "Items",
       "billAmount": "Bill Amount",
+      "cnfCost": "C&F Cost",
+      "labourCost": "Labour Cost",
+      "transportCost": "Transport Cost",
       "paid": "Paid",
       "due": "Due",
       "paymentMethod": "Payment Method"

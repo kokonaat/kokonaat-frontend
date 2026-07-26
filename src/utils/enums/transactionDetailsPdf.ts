@@ -130,7 +130,32 @@ export const generateTransactionDetailsPDF = async (
     columnCenter + 8,
     rightX,
   )
+  const isInventoryTransaction =
+    transaction.transactionType === 'PURCHASE' || transaction.transactionType === 'SALE'
+  const subtotal = (transaction.details || []).reduce((s, d) => s + Number(d.total || 0), 0)
+  const cnfCost = Number(transaction.cnfCost) || 0
+  const labourCost = Number(transaction.labourCost) || 0
+  const transportCost = Number(transaction.transportCost) || 0
+
   rightY = currentY
+  if (isInventoryTransaction) {
+    rightY = drawField(
+      t('transactionDetailsPdf.fields.subtotal'),
+      subtotal.toLocaleString(),
+      rightX,
+      rightY,
+      true,
+    )
+    if (cnfCost > 0) {
+      rightY = drawField(t('transactionDetailsPdf.fields.cnfCost'), cnfCost.toLocaleString(), rightX, rightY, true)
+    }
+    if (labourCost > 0) {
+      rightY = drawField(t('transactionDetailsPdf.fields.labourCost'), labourCost.toLocaleString(), rightX, rightY, true)
+    }
+    if (transportCost > 0) {
+      rightY = drawField(t('transactionDetailsPdf.fields.transportCost'), transportCost.toLocaleString(), rightX, rightY, true)
+    }
+  }
   rightY = drawField(
     t('transactionDetailsPdf.fields.totalAmount'),
     transaction.totalAmount.toLocaleString(),
@@ -216,13 +241,27 @@ export const generateTransactionDetailsPDF = async (
       })
     }
 
-    const tableRows = transaction.details.map((detail) => [
-      detail.inventory?.name ?? na,
-      detail.unitOfMeasurement?.name ?? na,
-      formatNumber(detail.quantity || 0),
-      formatNumber(detail.price || 0),
-      formatNumber(detail.total || 0),
-    ])
+    const pdfCnfCost = Number(transaction.cnfCost) || 0
+    const pdfLabourCost = Number(transaction.labourCost) || 0
+    const pdfTransportCost = Number(transaction.transportCost) || 0
+    const pdfTotalQty = transaction.details.reduce((s, d) => s + Number(d.quantity || 0), 0)
+    const pdfTotalExtraCosts = pdfCnfCost + pdfLabourCost + pdfTransportCost
+    const pdfExtraCostPerUnit = pdfTotalQty > 0 && pdfTotalExtraCosts > 0 ? pdfTotalExtraCosts / pdfTotalQty : 0
+    const pdfHasExtraCosts = pdfTotalExtraCosts > 0
+
+    const tableRows = transaction.details.map((detail) => {
+      const row: (string | number)[] = [
+        detail.inventory?.name ?? na,
+        detail.unitOfMeasurement?.name ?? na,
+        formatNumber(detail.quantity || 0),
+        formatNumber(detail.price || 0),
+      ]
+      if (pdfHasExtraCosts) {
+        row.push(formatNumber(Number(detail.price || 0) + pdfExtraCostPerUnit))
+      }
+      row.push(formatNumber(detail.total || 0))
+      return row
+    })
 
     const subtotal = transaction.details.reduce(
       (sum, detail) => sum + Number(detail.total || 0),
@@ -231,15 +270,35 @@ export const generateTransactionDetailsPDF = async (
     const total = transaction.totalAmount || subtotal
     const pending = transaction.pending || 0
 
+    const tableHead: string[] = [
+      t('transactionDetailsPdf.tableHeaders.item'),
+      t('transactionDetailsPdf.tableHeaders.uom'),
+      t('transactionDetailsPdf.tableHeaders.qty'),
+      t('transactionDetailsPdf.tableHeaders.price'),
+    ]
+    if (pdfHasExtraCosts) {
+      tableHead.push(t('transactionDetailsPdf.tableHeaders.landedCost'))
+    }
+    tableHead.push(t('transactionDetailsPdf.tableHeaders.total'))
+
+    const colStyles: Record<number, object> = pdfHasExtraCosts ? {
+      0: { cellWidth: 50, halign: 'left' },
+      1: { cellWidth: 22, halign: 'center' },
+      2: { cellWidth: 22, halign: 'right' },
+      3: { cellWidth: 25, halign: 'right' },
+      4: { cellWidth: 28, halign: 'right' },
+      5: { cellWidth: 30, halign: 'right' },
+    } : {
+      0: { cellWidth: 60, halign: 'left' },
+      1: { cellWidth: 25, halign: 'center' },
+      2: { cellWidth: 30, halign: 'right' },
+      3: { cellWidth: 30, halign: 'right' },
+      4: { cellWidth: 35, halign: 'right' },
+    }
+
     autoTable(doc, {
       startY,
-      head: [[
-        t('transactionDetailsPdf.tableHeaders.item'),
-        t('transactionDetailsPdf.tableHeaders.uom'),
-        t('transactionDetailsPdf.tableHeaders.qty'),
-        t('transactionDetailsPdf.tableHeaders.price'),
-        t('transactionDetailsPdf.tableHeaders.total'),
-      ]],
+      head: [tableHead],
       body: tableRows,
       theme: 'plain',
       headStyles: {
@@ -251,13 +310,7 @@ export const generateTransactionDetailsPDF = async (
         cellPadding: 3,
         font: tableFont,
       },
-      columnStyles: {
-        0: { cellWidth: 60, halign: 'left' },
-        1: { cellWidth: 25, halign: 'center' },
-        2: { cellWidth: 30, halign: 'right' },
-        3: { cellWidth: 30, halign: 'right' },
-        4: { cellWidth: 35, halign: 'right' },
-      },
+      columnStyles: colStyles,
       styles: {
         fontSize: 8,
         cellPadding: 2.5,
@@ -271,8 +324,18 @@ export const generateTransactionDetailsPDF = async (
     const finalY = (doc as any).lastAutoTable.finalY + 12
     const summaryX = pageWidth - 90
     const summaryWidth = 76
-    const summaryHeight = 32
     const padding = 6
+    const rowH = 7
+
+    const extraCostRows = [
+      cnfCost > 0 ? { label: t('transactionDetailsPdf.fields.cnfCost'), value: cnfCost } : null,
+      labourCost > 0 ? { label: t('transactionDetailsPdf.fields.labourCost'), value: labourCost } : null,
+      transportCost > 0 ? { label: t('transactionDetailsPdf.fields.transportCost'), value: transportCost } : null,
+    ].filter(Boolean) as { label: string; value: number }[]
+
+    // rows: subtotal, ...extra costs, total, divider, paid, divider, pending
+    const summaryRows = 2 + extraCostRows.length + 2 // subtotal + costs + total + paid + pending
+    const summaryHeight = padding + summaryRows * rowH + padding
 
     doc.setFillColor(255, 255, 255)
     doc.rect(summaryX, finalY, summaryWidth, summaryHeight, 'F')
@@ -280,25 +343,33 @@ export const generateTransactionDetailsPDF = async (
     doc.setLineWidth(0.5)
     doc.rect(summaryX, finalY, summaryWidth, summaryHeight, 'S')
 
-    const drawRow = (label: string, value: number, y: number, isBold = false) => {
+    const drawSummaryRow = (label: string, value: number, y: number, isBold = false) => {
       setPdfFont(doc, isBold ? 'bold' : 'normal')
       doc.setFontSize(9)
       doc.setTextColor(0, 0, 0)
       doc.text(label, summaryX + padding, y)
-      doc.text(formatNumber(value), summaryX + summaryWidth - padding, y, {
-        align: 'right',
-      })
+      doc.text(formatNumber(value), summaryX + summaryWidth - padding, y, { align: 'right' })
       setPdfFont(doc, 'normal')
     }
 
-    drawRow(t('transactionDetailsPdf.summary.subTotal'), subtotal, finalY + 8)
-    drawRow(t('transactionDetailsPdf.summary.total'), total, finalY + 15)
-
+    let sy = finalY + rowH
+    drawSummaryRow(t('transactionDetailsPdf.summary.subTotal'), subtotal, sy)
+    extraCostRows.forEach((row) => {
+      sy += rowH
+      drawSummaryRow(row.label, row.value, sy)
+    })
+    sy += rowH
+    drawSummaryRow(t('transactionDetailsPdf.summary.total'), total, sy, true)
+    sy += rowH - 2
     doc.setDrawColor(0, 0, 0)
     doc.setLineWidth(0.3)
-    doc.line(summaryX + padding, finalY + 20, summaryX + summaryWidth - padding, finalY + 20)
-
-    drawRow(t('transactionDetailsPdf.summary.pending'), pending, finalY + 27)
+    doc.line(summaryX + padding, sy, summaryX + summaryWidth - padding, sy)
+    sy += rowH - 2
+    drawSummaryRow(t('transactionDetailsPdf.summary.paid'), transaction.paid, sy)
+    sy += rowH - 2
+    doc.line(summaryX + padding, sy, summaryX + summaryWidth - padding, sy)
+    sy += rowH - 2
+    drawSummaryRow(t('transactionDetailsPdf.summary.pending'), pending, sy, true)
   }
 
   drawPdfFooter(doc, t as ExportTFunction, pageWidth)

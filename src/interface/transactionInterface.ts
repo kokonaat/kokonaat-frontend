@@ -38,6 +38,12 @@ export interface TransactionDetail {
   updatedAt: string
 }
 
+export interface TransactionPayment {
+  id: string
+  paymentType: "CASH" | "CREDIT_CARD" | "BANK_TRANSFER" | "MOBILE_PAYMENT"
+  amount: number
+}
+
 export interface Transaction {
   no: string
   id: string
@@ -69,6 +75,7 @@ export interface Transaction {
   createdAt: string
   updatedAt: string
   details: TransactionDetail[]
+  payments: TransactionPayment[]
 }
 
 export interface UpdateTransactionDto {
@@ -79,6 +86,7 @@ export interface UpdateTransactionDto {
   cnfCost?: number
   labourCost?: number
   transportCost?: number
+  payments?: { paymentType: string; amount: number }[]
 }
 
 // update main DTO
@@ -93,6 +101,7 @@ export interface CreateTransactionDto {
   cnfCost?: number
   labourCost?: number
   transportCost?: number
+  payments?: { paymentType: string; amount: number }[]
   details?: {
     inventoryId?: string
     inventoryName?: string

@@ -27,11 +27,19 @@ interface TransactionDetail {
 
 interface TransactionDetailsTableProps {
     data: TransactionDetail[]
+    cnfCost?: number
+    labourCost?: number
+    transportCost?: number
 }
 
-export const TransactionDetailsTable = ({ data }: TransactionDetailsTableProps) => {
+export const TransactionDetailsTable = ({ data, cnfCost = 0, labourCost = 0, transportCost = 0 }: TransactionDetailsTableProps) => {
     const { t } = useTranslation('transactions')
     const notAvailable = t('table.columns.notAvailable')
+
+    const totalQty = data.reduce((sum, d) => sum + Number(d.quantity), 0)
+    const totalExtraCosts = (cnfCost) + (labourCost) + (transportCost)
+    const extraCostPerUnit = totalQty > 0 && totalExtraCosts > 0 ? totalExtraCosts / totalQty : 0
+    const hasExtraCosts = totalExtraCosts > 0
 
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({})
@@ -58,13 +66,19 @@ export const TransactionDetailsTable = ({ data }: TransactionDetailsTableProps) 
                 accessorKey: "price",
                 cell: (info) => `${info.getValue<number>()}`,
             },
+            ...(hasExtraCosts ? [{
+                id: "landedCost",
+                header: t('details.detailsTable.columns.landedCost'),
+                cell: ({ row }: { row: { original: TransactionDetail } }) =>
+                    (Number(row.original.price) + extraCostPerUnit).toFixed(2),
+            } as ColumnDef<TransactionDetail>] : []),
             {
                 header: t('details.detailsTable.columns.total'),
                 accessorKey: "total",
                 cell: (info) => `${info.getValue<number>()}`,
             },
         ],
-        [t, notAvailable]
+        [t, notAvailable, hasExtraCosts, extraCostPerUnit]
     )
 
     const table = useReactTable({

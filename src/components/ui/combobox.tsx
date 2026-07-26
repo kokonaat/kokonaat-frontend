@@ -25,8 +25,10 @@ interface ComboboxProps {
   disabled?: boolean
   value?: string
   onSearchClear?: () => void
-  // allow custom values that don't exist in options
+  // allow custom values that don't exist in options (sets value on every keystroke)
   allowCustomValue?: boolean
+  // called when user explicitly clicks "Create" — opens external dialog, does NOT set value
+  onCreateRequest?: (value: string) => void
 }
 
 export function Combobox({
@@ -41,6 +43,7 @@ export function Combobox({
   value: controlledValue,
   onSearchClear,
   allowCustomValue = false,
+  onCreateRequest,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState("")
@@ -95,8 +98,8 @@ export function Combobox({
   const selectedOption = options.find((option) => option.value === currentValue)
   const displayLabel = selectedOption?.label || currentValue || placeholder
 
-  // Check if current search query could be a new custom value
-  const isCustomValue = allowCustomValue && searchQuery && !options.some(opt =>
+  // Show Create option when allowCustomValue OR onCreateRequest is provided and no exact match
+  const isCustomValue = (allowCustomValue || !!onCreateRequest) && searchQuery && !options.some(opt =>
     opt.value.toLowerCase() === searchQuery.toLowerCase() ||
     opt.label.toLowerCase() === searchQuery.toLowerCase()
   )
@@ -142,7 +145,16 @@ export function Combobox({
                     <CommandGroup>
                       <CommandItem
                         value={searchQuery}
-                        onSelect={() => handleSelect(searchQuery)}
+                        onSelect={() => {
+                          if (onCreateRequest) {
+                            // External create flow (e.g. dialog) — just close and notify
+                            setSearchQuery("")
+                            setOpen(false)
+                            onCreateRequest(searchQuery)
+                          } else {
+                            handleSelect(searchQuery)
+                          }
+                        }}
                         className="cursor-pointer text-blue-600 font-medium"
                       >
                         <Check

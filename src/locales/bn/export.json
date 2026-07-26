@@ -130,6 +130,10 @@
     "fields": {
       "paymentType": "পেমেন্ট ধরন",
       "status": "অবস্থা",
+      "subtotal": "সাবটোটাল",
+      "cnfCost": "সি&এফ খরচ",
+      "labourCost": "শ্রম খরচ",
+      "transportCost": "পরিবহন খরচ",
       "totalAmount": "মোট পরিমাণ",
       "paid": "পরিশোধ",
       "pending": "বকেয়া",
@@ -142,11 +146,13 @@
       "uom": "পরিমাপ একক",
       "qty": "পরিমাণ",
       "price": "মূল্য",
+      "landedCost": "ল্যান্ডেড কস্ট",
       "total": "মোট"
     },
     "summary": {
       "subTotal": "উপমোট:",
       "total": "মোট:",
+      "paid": "পরিশোধ:",
       "pending": "বকেয়া:"
     }
   },
@@ -189,6 +195,9 @@
       "items": "আইটেম",
       "method": "পদ্ধতি",
       "amount": "পরিমাণ",
+      "cnfCost": "সি&এফ",
+      "labourCost": "শ্রম",
+      "transportCost": "পরিবহন",
       "paid": "পরিশোধ",
       "due": "দেনা"
     },
@@ -216,6 +225,9 @@
       "customerVendor": "গ্রাহক/সরবরাহকারী",
       "items": "আইটেম",
       "billAmount": "বিল পরিমাণ",
+      "cnfCost": "সি&এফ খরচ",
+      "labourCost": "শ্রম খরচ",
+      "transportCost": "পরিবহন খরচ",
       "paid": "পরিশোধ",
       "due": "দেনা",
       "paymentMethod": "পেমেন্ট পদ্ধতি"

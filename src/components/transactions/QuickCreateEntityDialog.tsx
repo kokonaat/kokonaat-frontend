@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -42,6 +43,7 @@ interface QuickCreateEntityDialogProps {
     entityType: BusinessEntityType
     shopId: string
     onCreated: (entity: { id: string; name: string }) => void
+    initialName?: string
 }
 
 export const QuickCreateEntityDialog = ({
@@ -50,6 +52,7 @@ export const QuickCreateEntityDialog = ({
     entityType,
     shopId,
     onCreated,
+    initialName,
 }: QuickCreateEntityDialogProps) => {
     const { t } = useTranslation('transactions')
     const { t: tToast } = useTranslation('toast')
@@ -63,6 +66,12 @@ export const QuickCreateEntityDialog = ({
         resolver: zodResolver(schema),
         defaultValues: { name: '', phone: '', address: '' },
     })
+
+    useEffect(() => {
+        if (open && initialName) {
+            form.setValue('name', initialName)
+        }
+    }, [open, initialName])
 
     const handleClose = (isOpen: boolean) => {
         if (!isOpen) form.reset()

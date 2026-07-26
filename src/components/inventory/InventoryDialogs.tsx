@@ -65,6 +65,10 @@ const InventoryDialogs = () => {
                     setCurrentRow(null)
                     toast.success(tToast('inventory.deleted'))
                   },
+                  onError: (err: unknown) => {
+                    const message = (err as any)?.response?.data?.message
+                    toast.error(message || tToast('common.somethingWrong'))
+                  },
                 }
               )
             }}

@@ -127,10 +127,6 @@ export const InventoryRow = ({
                                             // So we ignore it here to avoid conflicts
                                         }}
                                         onSearch={(query) => {
-                                            if (transactionType !== 'PURCHASE') {
-                                                return
-                                            }
-
                                             if (isAlreadyUsed(query)) {
                                                 toast.warning(
                                                     t('form.inventoryNameAlreadyUsed')
@@ -142,7 +138,6 @@ export const InventoryRow = ({
                                         }}
                                         loading={isInventoryLoading}
                                         allowCustomValue={
-                                            transactionType === 'PURCHASE' &&
                                             !isAlreadyUsed(currentInputValue)
                                         }
                                     />
@@ -182,13 +177,13 @@ export const InventoryRow = ({
                                                 }
                                             }}
                                             onSearch={(query) => {
-                                                if (!isUomLocked && transactionType === 'PURCHASE') {
+                                                if (!isUomLocked) {
                                                     onUomSearch(query, index)
                                                 }
                                             }}
                                             loading={isUomLoading}
                                             disabled={isUomLocked}
-                                            allowCustomValue={!isUomLocked && transactionType === 'PURCHASE'}
+                                            allowCustomValue={!isUomLocked}
                                         />
                                     </FormControl>
                                     <FormMessage />

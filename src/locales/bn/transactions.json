@@ -104,7 +104,9 @@
     "labourCostPlaceholder": "০.০০",
     "transportCost": "পরিবহন খরচ",
     "transportCostPlaceholder": "০.০০",
-    "additionalCosts": "অতিরিক্ত খরচ (ঐচ্ছিক)"
+    "additionalCosts": "অতিরিক্ত খরচ (ঐচ্ছিক)",
+    "payment": "পেমেন্ট",
+    "addPaymentMethod": "পেমেন্ট পদ্ধতি যোগ করুন"
   },
   "quickCreate": {
     "customerTitle": "নতুন গ্রাহক",
@@ -149,6 +151,10 @@
     "customer": "গ্রাহক",
     "paymentType": "পেমেন্ট ধরন",
     "status": "অবস্থা",
+    "subtotal": "সাবটোটাল",
+    "cnfCost": "সি&এফ খরচ",
+    "labourCost": "শ্রম খরচ",
+    "transportCost": "পরিবহন খরচ",
     "totalAmount": "মোট পরিমাণ",
     "paid": "পরিশোধ",
     "pending": "বকেয়া",
@@ -164,6 +170,7 @@
         "uom": "পরিমাপ একক",
         "qty": "পরিমাণ",
         "price": "মূল্য",
+        "landedCost": "ল্যান্ডেড কস্ট",
         "total": "মোট"
       },
       "empty": "কোনো লেনদেন বিবরণ পাওয়া যায়নি।"

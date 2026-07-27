@@ -30,9 +30,10 @@ interface TransactionDetailsTableProps {
     cnfCost?: number
     labourCost?: number
     transportCost?: number
+    discount?: number
 }
 
-export const TransactionDetailsTable = ({ data, cnfCost = 0, labourCost = 0, transportCost = 0 }: TransactionDetailsTableProps) => {
+export const TransactionDetailsTable = ({ data, cnfCost = 0, labourCost = 0, transportCost = 0, discount = 0 }: TransactionDetailsTableProps) => {
     const { t } = useTranslation('transactions')
     const notAvailable = t('table.columns.notAvailable')
 
@@ -173,6 +174,14 @@ export const TransactionDetailsTable = ({ data, cnfCost = 0, labourCost = 0, tra
             </div>
 
             <TransactionLedgerDataTablePagination table={table} />
+
+            {discount > 0 && (
+                <div className="flex justify-end pt-2 border-t">
+                    <p className="text-sm text-red-600">
+                        {t('details.discount')}: <span className="font-semibold">-{Number(discount).toLocaleString()}</span>
+                    </p>
+                </div>
+            )}
         </div>
     )
 }

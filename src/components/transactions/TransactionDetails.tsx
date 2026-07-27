@@ -135,6 +135,12 @@ const TransactionDetails = () => {
                                             <p className="text-sm font-medium">{Number(transaction.transportCost).toLocaleString()}</p>
                                         </div>
                                     )}
+                                    {showDetailsTable && Number(transaction.discount) > 0 && (
+                                        <div>
+                                            <p className="text-xs text-muted-foreground mb-0.5">{t('details.discount')}</p>
+                                            <p className="text-sm font-medium text-red-600">-{Number(transaction.discount).toLocaleString()}</p>
+                                        </div>
+                                    )}
                                     <div>
                                         <p className="text-xs text-muted-foreground mb-0.5">{t('details.totalAmount')}</p>
                                         <p className="text-sm font-semibold">{transaction.totalAmount.toLocaleString()}</p>
@@ -218,6 +224,7 @@ const TransactionDetails = () => {
                                     cnfCost={transaction.cnfCost}
                                     labourCost={transaction.labourCost}
                                     transportCost={transaction.transportCost}
+                                    discount={transaction.discount}
                                 />
                             ) : (
                                 <p className="text-muted-foreground">{t('details.noDetails')}</p>

@@ -8,7 +8,8 @@
     "financialPulse": "Financial pulse",
     "trends": "Trends",
     "insights": "Insights",
-    "inventoryAndActivity": "Inventory & activity"
+    "inventoryAndActivity": "Inventory & activity",
+    "balanceSheet": "Balance Sheet"
   },
   "kpi": {
     "grossSales": "Gross sales",
@@ -92,5 +93,13 @@
     },
     "emptyMessage": "No transactions in this period",
     "emptyDetails": "Create a transaction to get started."
+  },
+  "balanceNet": {
+    "balance": "Balance",
+    "balanceDescription": "Gross sales / total income",
+    "expense": "Expense",
+    "expenseDescription": "Total operating expenses",
+    "net": "Net",
+    "netDescription": "Balance minus expenses"
   }
 }

@@ -8,7 +8,8 @@
     "financialPulse": "আর্থিক সারসংক্ষেপ",
     "trends": "প্রবণতা",
     "insights": "অন্তর্দৃষ্টি",
-    "inventoryAndActivity": "মজুদ ও কার্যকলাপ"
+    "inventoryAndActivity": "মজুদ ও কার্যকলাপ",
+    "balanceSheet": "ব্যালেন্স শিট"
   },
   "kpi": {
     "grossSales": "মোট বিক্রয়",
@@ -92,5 +93,13 @@
     },
     "emptyMessage": "এই সময়ে কোনো লেনদেন নেই",
     "emptyDetails": "শুরু করতে একটি লেনদেন তৈরি করুন।"
+  },
+  "balanceNet": {
+    "balance": "ব্যালেন্স",
+    "balanceDescription": "মোট বিক্রয় / আয়",
+    "expense": "খরচ",
+    "expenseDescription": "মোট পরিচালন খরচ",
+    "net": "নিট",
+    "netDescription": "ব্যালেন্স বিয়োগ খরচ"
   }
 }

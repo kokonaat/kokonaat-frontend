@@ -14,6 +14,8 @@ export function DetailsRow({
         )
     }
 
+    const discount = Number(row.discount) || 0
+
     return (
         <div className="space-y-4">
             <div className="rounded-md border bg-muted/30">
@@ -46,6 +48,13 @@ export function DetailsRow({
                     </TableBody>
                 </Table>
             </div>
+            {discount > 0 && (
+                <div className="flex justify-end pr-2">
+                    <p className="text-sm text-red-600">
+                        Discount: <span className="font-semibold">-{discount.toLocaleString()}</span>
+                    </p>
+                </div>
+            )}
         </div>
     )
 }

@@ -274,6 +274,7 @@ export const InventoryRow = ({
                             </FormItem>
                         )}
                     />
+
                 </div>
 
 

@@ -88,6 +88,7 @@ const TransactionLedgerTable = ({
                 cnfCost: 0,
                 labourCost: 0,
                 transportCost: 0,
+                discount: transaction.discount || 0,
                 payable: transaction.payable,
                 receivable: transaction.receivable,
                 shopId: transaction.shopId,

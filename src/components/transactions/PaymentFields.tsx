@@ -123,42 +123,21 @@ export const PaymentFields = ({
                 ))}
             </div>
 
-            <div className='flex justify-end gap-4 pt-1 border-t'>
-                <FormItem className='flex-1 max-w-52'>
-                    <FormLabel>{t('form.total')}</FormLabel>
-                    <FormControl>
-                        <Input
-                            type='number'
-                            value={total}
-                            readOnly
-                            className='cursor-not-allowed bg-gray-100'
-                        />
-                    </FormControl>
-                </FormItem>
-
-                <FormItem className='flex-1 max-w-52'>
-                    <FormLabel>{t('form.paid')}</FormLabel>
-                    <FormControl>
-                        <Input
-                            type='number'
-                            value={totalPaid}
-                            readOnly
-                            className='cursor-not-allowed bg-gray-100'
-                        />
-                    </FormControl>
-                </FormItem>
-
-                <FormItem className='flex-1 max-w-52'>
-                    <FormLabel>{t('form.pending')}</FormLabel>
-                    <FormControl>
-                        <Input
-                            type='number'
-                            value={pending}
-                            readOnly
-                            className={`cursor-not-allowed ${pending > 0 ? 'bg-amber-50 text-amber-700 font-medium' : 'bg-gray-100'}`}
-                        />
-                    </FormControl>
-                </FormItem>
+            <div className='flex justify-end items-end gap-6 pt-2 border-t'>
+                <div className='text-right'>
+                    <p className='text-xs text-muted-foreground mb-0.5'>{t('form.total')}</p>
+                    <p className='text-sm font-semibold tabular-nums'>{total.toFixed(2)}</p>
+                </div>
+                <div className='text-right'>
+                    <p className='text-xs text-muted-foreground mb-0.5'>{t('form.paid')}</p>
+                    <p className='text-sm font-semibold tabular-nums'>{totalPaid.toFixed(2)}</p>
+                </div>
+                <div className='text-right'>
+                    <p className='text-xs text-muted-foreground mb-0.5'>{t('form.pending')}</p>
+                    <p className={`text-sm font-semibold tabular-nums ${pending > 0 ? 'text-amber-600' : 'text-muted-foreground'}`}>
+                        {pending.toFixed(2)}
+                    </p>
+                </div>
             </div>
         </div>
     )

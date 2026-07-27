@@ -106,7 +106,9 @@
     "transportCostPlaceholder": "0.00",
     "additionalCosts": "Additional Costs (Optional)",
     "payment": "Payment",
-    "addPaymentMethod": "Add Payment Method"
+    "addPaymentMethod": "Add Payment Method",
+    "discount": "Discount",
+    "discountPlaceholder": "0.00"
   },
   "quickCreate": {
     "customerTitle": "New Customer",
@@ -155,6 +157,7 @@
     "cnfCost": "C&F Cost",
     "labourCost": "Labour Cost",
     "transportCost": "Transport Cost",
+    "discount": "Discount",
     "totalAmount": "Total Amount",
     "paid": "Paid",
     "pending": "Pending",

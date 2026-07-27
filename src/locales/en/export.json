@@ -134,6 +134,7 @@
       "cnfCost": "C&F Cost",
       "labourCost": "Labour Cost",
       "transportCost": "Transport Cost",
+      "discount": "Discount",
       "totalAmount": "Total Amount",
       "paid": "Paid",
       "pending": "Pending",
@@ -151,6 +152,7 @@
     },
     "summary": {
       "subTotal": "Sub Total:",
+      "discount": "Discount:",
       "total": "Total:",
       "paid": "Paid:",
       "pending": "Pending:"

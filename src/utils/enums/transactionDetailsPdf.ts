@@ -136,6 +136,7 @@ export const generateTransactionDetailsPDF = async (
   const cnfCost = Number(transaction.cnfCost) || 0
   const labourCost = Number(transaction.labourCost) || 0
   const transportCost = Number(transaction.transportCost) || 0
+  const discount = Number(transaction.discount) || 0
 
   rightY = currentY
   if (isInventoryTransaction) {
@@ -154,6 +155,9 @@ export const generateTransactionDetailsPDF = async (
     }
     if (transportCost > 0) {
       rightY = drawField(t('transactionDetailsPdf.fields.transportCost'), transportCost.toLocaleString(), rightX, rightY, true)
+    }
+    if (discount > 0) {
+      rightY = drawField(t('transactionDetailsPdf.fields.discount'), `-${discount.toLocaleString()}`, rightX, rightY, true)
     }
   }
   rightY = drawField(
@@ -244,6 +248,7 @@ export const generateTransactionDetailsPDF = async (
     const pdfCnfCost = Number(transaction.cnfCost) || 0
     const pdfLabourCost = Number(transaction.labourCost) || 0
     const pdfTransportCost = Number(transaction.transportCost) || 0
+    const pdfDiscount = Number(transaction.discount) || 0
     const pdfTotalQty = transaction.details.reduce((s, d) => s + Number(d.quantity || 0), 0)
     const pdfTotalExtraCosts = pdfCnfCost + pdfLabourCost + pdfTransportCost
     const pdfExtraCostPerUnit = pdfTotalQty > 0 && pdfTotalExtraCosts > 0 ? pdfTotalExtraCosts / pdfTotalQty : 0
@@ -333,8 +338,12 @@ export const generateTransactionDetailsPDF = async (
       transportCost > 0 ? { label: t('transactionDetailsPdf.fields.transportCost'), value: transportCost } : null,
     ].filter(Boolean) as { label: string; value: number }[]
 
-    // rows: subtotal, ...extra costs, total, divider, paid, divider, pending
-    const summaryRows = 2 + extraCostRows.length + 2 // subtotal + costs + total + paid + pending
+    const discountRow = pdfDiscount > 0
+      ? { label: t('transactionDetailsPdf.summary.discount'), value: -pdfDiscount }
+      : null
+
+    // rows: subtotal, ...extra costs, discount?, total, divider, paid, divider, pending
+    const summaryRows = 2 + extraCostRows.length + (discountRow ? 1 : 0) + 2 // subtotal + costs + discount + total + paid + pending
     const summaryHeight = padding + summaryRows * rowH + padding
 
     doc.setFillColor(255, 255, 255)
@@ -358,6 +367,10 @@ export const generateTransactionDetailsPDF = async (
       sy += rowH
       drawSummaryRow(row.label, row.value, sy)
     })
+    if (discountRow) {
+      sy += rowH
+      drawSummaryRow(discountRow.label, discountRow.value, sy)
+    }
     sy += rowH
     drawSummaryRow(t('transactionDetailsPdf.summary.total'), total, sy, true)
     sy += rowH - 2

@@ -69,6 +69,7 @@ export interface Transaction {
   cnfCost: number
   labourCost: number
   transportCost: number
+  discount: number
   payable: number
   receivable: number
   shopId: string
@@ -86,6 +87,7 @@ export interface UpdateTransactionDto {
   cnfCost?: number
   labourCost?: number
   transportCost?: number
+  discount?: number
   payments?: { paymentType: string; amount: number }[]
 }
 
@@ -101,6 +103,7 @@ export interface CreateTransactionDto {
   cnfCost?: number
   labourCost?: number
   transportCost?: number
+  discount?: number
   payments?: { paymentType: string; amount: number }[]
   details?: {
     inventoryId?: string
@@ -139,6 +142,7 @@ export interface TransactionLedgerInterface {
   paymentType: string
   isPaid: boolean
   remarks: string
+  discount: number
   payable: number
   receivable: number
   shopId: string

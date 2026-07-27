@@ -134,6 +134,7 @@
       "cnfCost": "সি&এফ খরচ",
       "labourCost": "শ্রম খরচ",
       "transportCost": "পরিবহন খরচ",
+      "discount": "ছাড়",
       "totalAmount": "মোট পরিমাণ",
       "paid": "পরিশোধ",
       "pending": "বকেয়া",
@@ -151,6 +152,7 @@
     },
     "summary": {
       "subTotal": "উপমোট:",
+      "discount": "ছাড়:",
       "total": "মোট:",
       "paid": "পরিশোধ:",
       "pending": "বকেয়া:"

@@ -106,7 +106,9 @@
     "transportCostPlaceholder": "০.০০",
     "additionalCosts": "অতিরিক্ত খরচ (ঐচ্ছিক)",
     "payment": "পেমেন্ট",
-    "addPaymentMethod": "পেমেন্ট পদ্ধতি যোগ করুন"
+    "addPaymentMethod": "পেমেন্ট পদ্ধতি যোগ করুন",
+    "discount": "ছাড়",
+    "discountPlaceholder": "০.০০"
   },
   "quickCreate": {
     "customerTitle": "নতুন গ্রাহক",
@@ -155,6 +157,7 @@
     "cnfCost": "সি&এফ খরচ",
     "labourCost": "শ্রম খরচ",
     "transportCost": "পরিবহন খরচ",
+    "discount": "ছাড়",
     "totalAmount": "মোট পরিমাণ",
     "paid": "পরিশোধ",
     "pending": "বকেয়া",

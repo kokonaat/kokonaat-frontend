@@ -22,6 +22,7 @@ export const DEFAULT_VALUES = {
   cnfCost: 0,
   labourCost: 0,
   transportCost: 0,
+  discount: 0,
   transactionAmount: null,
   inventories: [],
   payments: [{ paymentType: '', amount: 0 }],

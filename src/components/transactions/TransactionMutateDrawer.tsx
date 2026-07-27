@@ -193,6 +193,7 @@ const TransactionMutateDrawer = ({
       cnfCost: Number(currentRow.cnfCost) || 0,
       labourCost: Number(currentRow.labourCost) || 0,
       transportCost: Number(currentRow.transportCost) || 0,
+      discount: Number(currentRow.discount) || 0,
       transactionAmount: isAmountOnlyType
         ? Number(currentRow.totalAmount || currentRow.paid)
         : null,
@@ -231,8 +232,9 @@ const TransactionMutateDrawer = ({
   const cnfCost = Number(form.watch('cnfCost')) || 0
   const labourCost = Number(form.watch('labourCost')) || 0
   const transportCost = Number(form.watch('transportCost')) || 0
+  const discount = Number(form.watch('discount')) || 0
   const inventorySubtotal = calculateTotal(inventories)
-  const total = inventorySubtotal + cnfCost + labourCost + transportCost
+  const total = inventorySubtotal + cnfCost + labourCost + transportCost - discount
   const transactionAmount = form.watch('transactionAmount')
   const remarks = form.watch('remarks')
 
@@ -368,7 +370,6 @@ const TransactionMutateDrawer = ({
             quantity: item.quantity as number,
             price: item.price as number,
             total: (item.quantity as number) * (item.price as number),
-            // Use unitOfMeasurementId if it's a UUID, otherwise use unitOfMeasurementName
             ...(isExistingUom
               ? { unitOfMeasurementId: uomValue }
               : { unitOfMeasurementName: uomValue }
@@ -380,7 +381,6 @@ const TransactionMutateDrawer = ({
             quantity: item.quantity as number,
             price: item.price as number,
             total: (item.quantity as number) * (item.price as number),
-            // Use unitOfMeasurementId if it's a UUID, otherwise use unitOfMeasurementName
             ...(isExistingUom
               ? { unitOfMeasurementId: uomValue }
               : { unitOfMeasurementName: uomValue }
@@ -412,6 +412,7 @@ const TransactionMutateDrawer = ({
           cnfCost: values.cnfCost || 0,
           labourCost: values.labourCost || 0,
           transportCost: values.transportCost || 0,
+          discount: values.discount || 0,
         }
       : {}
 
@@ -670,6 +671,30 @@ const TransactionMutateDrawer = ({
                             type='number'
                             {...field}
                             placeholder={t('form.transportCostPlaceholder')}
+                            min={0}
+                            step='0.01'
+                            value={field.value === 0 ? '' : (field.value ?? '')}
+                            onChange={(e) => {
+                              const val = e.target.value
+                              field.onChange(val === '' ? 0 : parseFloat(val))
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='discount'
+                    render={({ field }) => (
+                      <FormItem className='flex-1'>
+                        <FormLabel>{t('form.discount')}</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='number'
+                            {...field}
+                            placeholder={t('form.discountPlaceholder')}
                             min={0}
                             step='0.01'
                             value={field.value === 0 ? '' : (field.value ?? '')}

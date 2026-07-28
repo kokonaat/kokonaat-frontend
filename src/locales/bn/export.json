@@ -112,6 +112,7 @@
     },
     "summary": {
       "totalAmount": "মোট পরিমাণ:",
+      "totalDiscount": "মোট ছাড়:",
       "totalPaid": "মোট পরিশোধ:",
       "balanceDue": "বকেয়া ব্যালেন্স:"
     }
@@ -200,6 +201,7 @@
       "cnfCost": "সি&এফ",
       "labourCost": "শ্রম",
       "transportCost": "পরিবহন",
+      "discount": "ছাড়",
       "paid": "পরিশোধ",
       "due": "দেনা"
     },
@@ -209,6 +211,7 @@
     "summary": {
       "totalTransactions": "মোট লেনদেন:",
       "totalBillAmount": "মোট বিল পরিমাণ:",
+      "totalDiscount": "মোট ছাড়:",
       "totalPaid": "মোট পরিশোধ:",
       "totalDue": "মোট দেনা:"
     }
@@ -230,6 +233,7 @@
       "cnfCost": "সি&এফ খরচ",
       "labourCost": "শ্রম খরচ",
       "transportCost": "পরিবহন খরচ",
+      "discount": "ছাড়",
       "paid": "পরিশোধ",
       "due": "দেনা",
       "paymentMethod": "পেমেন্ট পদ্ধতি"
@@ -238,6 +242,7 @@
       "title": "সারসংক্ষেপ",
       "totalTransactions": "মোট লেনদেন",
       "totalBillAmount": "মোট বিল পরিমাণ",
+      "totalDiscount": "মোট ছাড়",
       "totalPaid": "মোট পরিশোধ",
       "totalDue": "মোট দেনা"
     },
@@ -386,6 +391,7 @@
     },
     "summary": {
       "totalAmount": "মোট পরিমাণ:",
+      "totalDiscount": "মোট ছাড়:",
       "totalPaid": "মোট পরিশোধ:",
       "balanceDue": "বকেয়া ব্যালেন্স:"
     }
@@ -412,6 +418,7 @@
       "title": "সারসংক্ষেপ",
       "totalTransactions": "মোট লেনদেন:",
       "totalQuantity": "মোট পরিমাণ:",
+      "totalDiscount": "মোট ছাড়:",
       "totalAmount": "মোট পরিমাণ:"
     },
     "sheetName": "খাতা"

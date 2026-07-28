@@ -112,6 +112,7 @@
     },
     "summary": {
       "totalAmount": "Total Amount:",
+      "totalDiscount": "Total Discount:",
       "totalPaid": "Total Paid:",
       "balanceDue": "Balance Due:"
     }
@@ -200,6 +201,7 @@
       "cnfCost": "C&F",
       "labourCost": "Labour",
       "transportCost": "Transport",
+      "discount": "Discount",
       "paid": "Paid",
       "due": "Due"
     },
@@ -209,6 +211,7 @@
     "summary": {
       "totalTransactions": "Total Transactions:",
       "totalBillAmount": "Total Bill Amount:",
+      "totalDiscount": "Total Discount:",
       "totalPaid": "Total Paid:",
       "totalDue": "Total Due:"
     }
@@ -230,6 +233,7 @@
       "cnfCost": "C&F Cost",
       "labourCost": "Labour Cost",
       "transportCost": "Transport Cost",
+      "discount": "Discount",
       "paid": "Paid",
       "due": "Due",
       "paymentMethod": "Payment Method"
@@ -238,6 +242,7 @@
       "title": "Summary",
       "totalTransactions": "Total Transactions",
       "totalBillAmount": "Total Bill Amount",
+      "totalDiscount": "Total Discount",
       "totalPaid": "Total Paid",
       "totalDue": "Total Due"
     },
@@ -386,6 +391,7 @@
     },
     "summary": {
       "totalAmount": "Total Amount:",
+      "totalDiscount": "Total Discount:",
       "totalPaid": "Total Paid:",
       "balanceDue": "Balance Due:"
     }
@@ -412,6 +418,7 @@
       "title": "Summary",
       "totalTransactions": "Total Transactions:",
       "totalQuantity": "Total Quantity:",
+      "totalDiscount": "Total Discount:",
       "totalAmount": "Total Amount:"
     },
     "sheetName": "Ledger"

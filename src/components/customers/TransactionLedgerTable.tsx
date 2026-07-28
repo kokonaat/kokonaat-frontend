@@ -65,16 +65,15 @@ const TransactionLedgerTable = ({
 
         try {
             setDownloadingIds(prev => new Set(prev).add(transaction.id))
-            
-            // Convert TransactionLedgerInterface to Transaction format
-            // Note: TransactionLedgerInterface has vendor field but partnerType indicates actual type
+
             const isVendor = transaction.partnerType === "VENDOR" || transaction.partnerType === "vendor"
+            const partner = transaction.vendor ?? transaction.customer ?? null
             const transactionForPdf: Transaction = {
                 no: transaction.no,
                 id: transaction.id,
                 partnerType: (isVendor ? "VENDOR" : "CUSTOMER") as "VENDOR" | "CUSTOMER",
-                vendor: isVendor ? transaction.vendor : undefined,
-                customer: !isVendor ? { id: transaction.vendor.id, name: transaction.vendor.name } : undefined,
+                vendor: isVendor && partner ? { id: partner.id, name: partner.name } : undefined,
+                customer: !isVendor && partner ? { id: partner.id, name: partner.name } : undefined,
                 vendorId: isVendor ? transaction.vendorId : undefined,
                 customerId: !isVendor ? transaction.vendorId : undefined,
                 transactionType: transaction.transactionType as Transaction["transactionType"],
@@ -198,6 +197,7 @@ const TransactionLedgerTable = ({
                                 <TableHead className="w-[100px]">{t('ledger.columns.type')}</TableHead>
                                 <TableHead className="min-w-[200px]">{t('ledger.columns.remarks')}</TableHead>
                                 <TableHead className="w-[100px] text-right">{t('ledger.columns.amount')}</TableHead>
+                                <TableHead className="w-[100px] text-right">{t('ledger.columns.discount')}</TableHead>
                                 <TableHead className="w-[100px] text-right">{t('ledger.columns.paid')}</TableHead>
                                 <TableHead className="w-[100px] text-right">{t('ledger.columns.pending')}</TableHead>
                                 <TableHead className="w-[100px] text-right">{t('ledger.columns.date')}</TableHead>
@@ -280,6 +280,9 @@ const TransactionLedgerTable = ({
                                             <TableCell className="text-right font-medium">
                                                 {Number(transaction.totalAmount ?? 0).toLocaleString()}
                                             </TableCell>
+                                            <TableCell className="text-right font-medium text-red-500">
+                                                {Number(transaction.discount ?? 0) > 0 ? `-${Number(transaction.discount).toLocaleString()}` : '-'}
+                                            </TableCell>
                                             <TableCell className="text-right font-medium text-green-600">
                                                 {transaction.paid.toLocaleString()}
                                             </TableCell>
@@ -324,7 +327,7 @@ const TransactionLedgerTable = ({
                                         </TableRow>
                                         {hasDetails && isExpanded && (
                                             <TableRow>
-                                                <TableCell colSpan={9} className="p-0 bg-muted/30">
+                                                <TableCell colSpan={10} className="p-0 bg-muted/30">
                                                     <div className="px-6 py-4">
                                                         <DetailsRow row={transaction} />
                                                     </div>

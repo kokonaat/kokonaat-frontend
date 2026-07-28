@@ -520,6 +520,11 @@ const Reports = () => {
 
     if (!ledger || !appliedFilters?.entityIds || appliedFilters.entityIds.length === 0) return
 
+    const ledgerTotalDiscount = ledger.transactions.reduce(
+      (sum: number, t: TransactionLedgerItem) => sum + (Number(t.discount) || 0),
+      0,
+    )
+
     await generateLedgerPDF(
       tExport,
       entityNames,
@@ -527,6 +532,7 @@ const Reports = () => {
       detailRows,
       {
         totalAmount: ledger.totalAmount,
+        totalDiscount: ledgerTotalDiscount > 0 ? ledgerTotalDiscount : undefined,
         totalPaid: ledger.paid,
       },
       dateRange,
@@ -586,12 +592,18 @@ const Reports = () => {
 
     if (!ledger || !appliedFilters?.entityIds || appliedFilters.entityIds.length === 0) return
 
+    const ledgerDiscountExcel = ledger.transactions.reduce(
+      (sum: number, t: TransactionLedgerItem) => sum + (Number(t.discount) || 0),
+      0,
+    )
+
     generateLedgerExcel(
       tExport,
       currentShopName ?? shopNameFallback,
       entityNames,
       detailRows,
       dateRange,
+      ledgerDiscountExcel > 0 ? ledgerDiscountExcel : undefined,
     )
   }
 

@@ -19,6 +19,7 @@ interface TransactionReportItem {
   totalAmount: number
   paid: number
   pending: number
+  discount?: number
   paymentType: string
   cnfCost?: number
   labourCost?: number
@@ -35,6 +36,7 @@ interface TransactionReportItem {
 interface TransactionSummary {
   totalTransactions: number
   totalBillAmount: number
+  totalDiscount: number
   totalPaid: number
   totalDue: number
 }
@@ -55,6 +57,7 @@ export const generateTransactionReportPDF = async (
   const summary: TransactionSummary = {
     totalTransactions: data.length,
     totalBillAmount: data.reduce((acc, item) => acc + Number(item.totalAmount), 0),
+    totalDiscount: data.reduce((acc, item) => acc + (Number(item.discount) || 0), 0),
     totalPaid: data.reduce((acc, item) => acc + Number(item.paid), 0),
     totalDue: data.reduce((acc, item) => acc + Number(item.pending), 0),
   }
@@ -97,6 +100,8 @@ export const generateTransactionReportPDF = async (
     const labour = Number(item.labourCost) || 0
     const transport = Number(item.transportCost) || 0
 
+    const discount = Number(item.discount) || 0
+
     return [
       new Date(item.createdAt).toLocaleDateString(),
       partyName,
@@ -106,12 +111,14 @@ export const generateTransactionReportPDF = async (
       cnf > 0 ? cnf.toLocaleString() : '-',
       labour > 0 ? labour.toLocaleString() : '-',
       transport > 0 ? transport.toLocaleString() : '-',
+      discount > 0 ? `-${discount.toLocaleString()}` : '-',
       Number(item.paid).toLocaleString(),
       Number(item.pending).toLocaleString(),
     ]
   })
 
   const subtotalAmount = data.reduce((acc, item) => acc + Number(item.totalAmount || 0), 0)
+  const subtotalDiscount = data.reduce((acc, item) => acc + (Number(item.discount) || 0), 0)
   const subtotalPaid = data.reduce((acc, item) => acc + Number(item.paid || 0), 0)
   const subtotalDue = data.reduce((acc, item) => acc + Number(item.pending || 0), 0)
 
@@ -124,6 +131,7 @@ export const generateTransactionReportPDF = async (
     '',
     '',
     '',
+    subtotalDiscount > 0 ? `-${subtotalDiscount.toLocaleString()}` : '-',
     subtotalPaid.toLocaleString(),
     subtotalDue.toLocaleString(),
   ])
@@ -139,6 +147,7 @@ export const generateTransactionReportPDF = async (
       t('transactionReportPdf.tableHeaders.cnfCost'),
       t('transactionReportPdf.tableHeaders.labourCost'),
       t('transactionReportPdf.tableHeaders.transportCost'),
+      t('transactionReportPdf.tableHeaders.discount'),
       t('transactionReportPdf.tableHeaders.paid'),
       t('transactionReportPdf.tableHeaders.due'),
     ]],
@@ -152,15 +161,16 @@ export const generateTransactionReportPDF = async (
     },
     columnStyles: {
       0: { cellWidth: 18 },
-      1: { cellWidth: 25 },
-      2: { cellWidth: 30 },
-      3: { cellWidth: 20 },
-      4: { cellWidth: 18, halign: 'right' },
-      5: { cellWidth: 14, halign: 'right' },
-      6: { cellWidth: 14, halign: 'right' },
-      7: { cellWidth: 14, halign: 'right' },
-      8: { cellWidth: 18, halign: 'right' },
-      9: { cellWidth: 14, halign: 'right' },
+      1: { cellWidth: 22 },
+      2: { cellWidth: 26 },
+      3: { cellWidth: 18 },
+      4: { cellWidth: 16, halign: 'right' },
+      5: { cellWidth: 12, halign: 'right' },
+      6: { cellWidth: 12, halign: 'right' },
+      7: { cellWidth: 12, halign: 'right' },
+      8: { cellWidth: 14, halign: 'right' },
+      9: { cellWidth: 16, halign: 'right' },
+      10: { cellWidth: 12, halign: 'right' },
     },
     styles: { fontSize: 7, font: tableFont },
     didParseCell: (dataCell) => {
@@ -173,11 +183,13 @@ export const generateTransactionReportPDF = async (
 
   const finalY = (doc as any).lastAutoTable.finalY + 10
   const summaryX = pageWidth - 90
+  const hasDiscount = summary.totalDiscount > 0
+  const summaryHeight = hasDiscount ? 42 : 35
 
   doc.setFillColor(248, 250, 252)
-  doc.rect(summaryX, finalY, 76, 35, 'F')
+  doc.rect(summaryX, finalY, 76, summaryHeight, 'F')
   doc.setDrawColor(226, 232, 240)
-  doc.rect(summaryX, finalY, 76, 35, 'S')
+  doc.rect(summaryX, finalY, 76, summaryHeight, 'S')
 
   const drawRow = (
     label: string,
@@ -195,13 +207,22 @@ export const generateTransactionReportPDF = async (
     setPdfFont(doc, 'normal')
   }
 
-  drawRow(t('transactionReportPdf.summary.totalTransactions'), summary.totalTransactions, finalY + 7, false, false)
-  drawRow(t('transactionReportPdf.summary.totalBillAmount'), summary.totalBillAmount, finalY + 14)
-  drawRow(t('transactionReportPdf.summary.totalPaid'), summary.totalPaid, finalY + 21)
+  let sy = finalY + 7
+  drawRow(t('transactionReportPdf.summary.totalTransactions'), summary.totalTransactions, sy, false, false)
+  sy += 7
+  drawRow(t('transactionReportPdf.summary.totalBillAmount'), summary.totalBillAmount, sy)
+  if (hasDiscount) {
+    sy += 7
+    drawRow(t('transactionReportPdf.summary.totalDiscount'), summary.totalDiscount, sy)
+  }
+  sy += 7
+  drawRow(t('transactionReportPdf.summary.totalPaid'), summary.totalPaid, sy)
 
+  sy += 3
   doc.setDrawColor(200)
-  doc.line(summaryX + 2, finalY + 24, pageWidth - 16, finalY + 24)
-  drawRow(t('transactionReportPdf.summary.totalDue'), summary.totalDue, finalY + 31, true)
+  doc.line(summaryX + 2, sy, pageWidth - 16, sy)
+  sy += 7
+  drawRow(t('transactionReportPdf.summary.totalDue'), summary.totalDue, sy, true)
 
   drawPdfFooter(doc, exportT, pageWidth)
   doc.save(`Transaction_Report_${transactionType || 'All'}_${Date.now()}.pdf`)

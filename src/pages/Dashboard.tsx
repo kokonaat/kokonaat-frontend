@@ -81,6 +81,47 @@ const Dashboard = () => {
       <Tabs defaultValue="overview" className="mt-6 min-w-0 space-y-6">
         <TabsContent value="overview" className="min-w-0 space-y-8">
           <section className="min-w-0">
+            <h2 className="mb-4 text-lg font-semibold">{t('sections.balanceSheet')}</h2>
+            <Card className="min-w-0">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
+                  <div className="flex-1 rounded-lg bg-green-50 dark:bg-green-950 p-4">
+                    <p className="text-sm text-muted-foreground">{t('balanceNet.balance')}</p>
+                    <p className="text-2xl font-bold text-green-700 dark:text-green-400">
+                      {isLoading ? '...' : (data?.salesSummary?.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">{t('balanceNet.balanceDescription')}</p>
+                  </div>
+                  <div className="hidden sm:flex text-2xl font-bold text-muted-foreground">−</div>
+                  <div className="flex-1 rounded-lg bg-red-50 dark:bg-red-950 p-4">
+                    <p className="text-sm text-muted-foreground">{t('balanceNet.expense')}</p>
+                    <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+                      {isLoading ? '...' : (data?.operatingSummary?.totalExpenses ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">{t('balanceNet.expenseDescription')}</p>
+                  </div>
+                  <div className="hidden sm:flex text-2xl font-bold text-muted-foreground">=</div>
+                  <div className={`flex-1 rounded-lg p-4 ${
+                    ((data?.salesSummary?.total ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)) >= 0
+                      ? 'bg-blue-50 dark:bg-blue-950'
+                      : 'bg-orange-50 dark:bg-orange-950'
+                  }`}>
+                    <p className="text-sm text-muted-foreground">{t('balanceNet.net')}</p>
+                    <p className={`text-2xl font-bold ${
+                      ((data?.salesSummary?.total ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)) >= 0
+                        ? 'text-blue-700 dark:text-blue-400'
+                        : 'text-orange-600 dark:text-orange-400'
+                    }`}>
+                      {isLoading ? '...' : ((data?.salesSummary?.total ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">{t('balanceNet.netDescription')}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+
+          <section className="min-w-0">
             <h2 className="mb-4 text-lg font-semibold">{t('sections.financialPulse')}</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <AnalyticsKpiCard
@@ -120,47 +161,6 @@ const Dashboard = () => {
                 isLoading={isLoading}
               />
             </div>
-          </section>
-
-          <section className="min-w-0">
-            <h2 className="mb-4 text-lg font-semibold">{t('sections.balanceSheet')}</h2>
-            <Card className="min-w-0">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
-                  <div className="flex-1 rounded-lg bg-green-50 dark:bg-green-950 p-4">
-                    <p className="text-sm text-muted-foreground">{t('balanceNet.balance')}</p>
-                    <p className="text-2xl font-bold text-green-700 dark:text-green-400">
-                      {isLoading ? '...' : (data?.salesSummary?.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">{t('balanceNet.balanceDescription')}</p>
-                  </div>
-                  <div className="hidden sm:flex text-2xl font-bold text-muted-foreground">−</div>
-                  <div className="flex-1 rounded-lg bg-red-50 dark:bg-red-950 p-4">
-                    <p className="text-sm text-muted-foreground">{t('balanceNet.expense')}</p>
-                    <p className="text-2xl font-bold text-red-600 dark:text-red-400">
-                      {isLoading ? '...' : (data?.operatingSummary?.totalExpenses ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">{t('balanceNet.expenseDescription')}</p>
-                  </div>
-                  <div className="hidden sm:flex text-2xl font-bold text-muted-foreground">=</div>
-                  <div className={`flex-1 rounded-lg p-4 ${
-                    ((data?.salesSummary?.total ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)) >= 0
-                      ? 'bg-blue-50 dark:bg-blue-950'
-                      : 'bg-orange-50 dark:bg-orange-950'
-                  }`}>
-                    <p className="text-sm text-muted-foreground">{t('balanceNet.net')}</p>
-                    <p className={`text-2xl font-bold ${
-                      ((data?.salesSummary?.total ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)) >= 0
-                        ? 'text-blue-700 dark:text-blue-400'
-                        : 'text-orange-600 dark:text-orange-400'
-                    }`}>
-                      {isLoading ? '...' : ((data?.salesSummary?.total ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">{t('balanceNet.netDescription')}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </section>
 
           <section className="min-w-0">

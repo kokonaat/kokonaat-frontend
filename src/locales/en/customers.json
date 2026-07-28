@@ -119,6 +119,7 @@
       "type": "Type",
       "remarks": "Remarks",
       "amount": "Amount",
+      "discount": "Discount",
       "paid": "Paid",
       "pending": "Pending",
       "date": "Date"

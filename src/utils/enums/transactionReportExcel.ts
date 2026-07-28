@@ -16,6 +16,7 @@ interface TransactionReportItem {
   totalAmount: number
   paid: number
   pending: number
+  discount?: number
   paymentType: string
   cnfCost?: number
   labourCost?: number
@@ -47,6 +48,7 @@ export const generateTransactionReportExcel = (
   const exportT = t as ExportTFunction
   const locale = getDateLocale()
 
+  const totalDiscount = data.reduce((acc, item) => acc + (Number(item.discount) || 0), 0)
   const summary: TransactionSummary = {
     totalTransactions: data.length,
     totalBillAmount: data.reduce((acc, item) => acc + Number(item.totalAmount), 0),
@@ -85,6 +87,7 @@ export const generateTransactionReportExcel = (
     t('transactionReportExcel.tableHeaders.cnfCost'),
     t('transactionReportExcel.tableHeaders.labourCost'),
     t('transactionReportExcel.tableHeaders.transportCost'),
+    t('transactionReportExcel.tableHeaders.discount'),
     t('transactionReportExcel.tableHeaders.paid'),
     t('transactionReportExcel.tableHeaders.due'),
     t('transactionReportExcel.tableHeaders.paymentMethod'),
@@ -106,6 +109,7 @@ export const generateTransactionReportExcel = (
       Number(item.cnfCost || 0).toFixed(2),
       Number(item.labourCost || 0).toFixed(2),
       Number(item.transportCost || 0).toFixed(2),
+      Number(item.discount || 0) > 0 ? `-${Number(item.discount).toFixed(2)}` : '-',
       Number(item.paid).toFixed(2),
       Number(item.pending).toFixed(2),
       item.paymentType,
@@ -117,6 +121,7 @@ export const generateTransactionReportExcel = (
     [t('transactionReportExcel.summary.title')],
     [t('transactionReportExcel.summary.totalTransactions'), summary.totalTransactions],
     [t('transactionReportExcel.summary.totalBillAmount'), summary.totalBillAmount.toFixed(2)],
+    ...(totalDiscount > 0 ? [[t('transactionReportExcel.summary.totalDiscount'), `-${totalDiscount.toFixed(2)}`]] : []),
     [t('transactionReportExcel.summary.totalPaid'), summary.totalPaid.toFixed(2)],
     [t('transactionReportExcel.summary.totalDue'), summary.totalDue.toFixed(2)],
   ]
@@ -134,6 +139,7 @@ export const generateTransactionReportExcel = (
     { wch: 12 },
     { wch: 14 },
     { wch: 14 },
+    { wch: 12 },
     { wch: 12 },
     { wch: 12 },
     { wch: 15 },

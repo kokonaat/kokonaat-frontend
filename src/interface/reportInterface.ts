@@ -9,6 +9,7 @@ export interface TransactionReportItem {
     totalAmount: number
     paid: number
     pending: number
+    discount?: number
     paymentType: string
 }
 
@@ -43,6 +44,7 @@ export interface TransactionLedgerItem {
     totalAmount: number
     paid: number
     pending: number
+    discount?: number
     paymentType: string
     remarks?: string | null
     shopId: string

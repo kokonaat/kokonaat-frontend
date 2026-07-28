@@ -74,6 +74,7 @@
     "customerVendor": "Customer/Vendor",
     "items": "Items",
     "amount": "Amount",
+    "discount": "Discount",
     "paid": "Paid",
     "due": "Due",
     "method": "Method"

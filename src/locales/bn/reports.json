@@ -74,6 +74,7 @@
     "customerVendor": "গ্রাহক/সরবরাহকারী",
     "items": "আইটেম",
     "amount": "পরিমাণ",
+    "discount": "ছাড়",
     "paid": "পরিশোধ",
     "due": "দেনা",
     "method": "পদ্ধতি"

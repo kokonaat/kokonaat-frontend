@@ -151,6 +151,14 @@ export function useTransactionReportColumns(): ColumnDef<TransactionReportItem>[
         cell: ({ getValue }) => `${Number(getValue()).toFixed(2)}`,
       },
       {
+        accessorKey: 'discount',
+        header: t('transactionReportColumns.discount'),
+        cell: ({ getValue }) => {
+          const v = Number(getValue()) || 0
+          return v > 0 ? <span className="text-red-500">-{v.toFixed(2)}</span> : '-'
+        },
+      },
+      {
         accessorKey: 'paid',
         header: t('transactionReportColumns.paid'),
         cell: ({ getValue }) => (

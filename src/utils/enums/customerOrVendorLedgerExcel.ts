@@ -10,6 +10,7 @@ export const generateLedgerExcel = (
   entityName: string,
   data: TransactionLedgerDetailItem[],
   dateRange?: { from: string; to: string },
+  totalDiscount?: number,
 ) => {
   const na = t('common.fallbacks.notAvailable')
   const exportT = t as ExportTFunction
@@ -72,6 +73,7 @@ export const generateLedgerExcel = (
     [t('customerOrVendorLedgerExcel.summary.title')],
     [t('customerOrVendorLedgerExcel.summary.totalTransactions'), data.length],
     [t('customerOrVendorLedgerExcel.summary.totalQuantity'), totalQuantity],
+    ...((totalDiscount ?? 0) > 0 ? [[t('customerOrVendorLedgerExcel.summary.totalDiscount'), `-${(totalDiscount!).toFixed(2)}`]] : []),
     [t('customerOrVendorLedgerExcel.summary.totalAmount'), totalAmount],
   ]
 

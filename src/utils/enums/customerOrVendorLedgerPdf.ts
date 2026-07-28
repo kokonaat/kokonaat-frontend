@@ -13,6 +13,7 @@ import { createPdfDocument, setPdfFont } from '@/utils/pdfFont'
 
 interface Summary {
   totalAmount: number
+  totalDiscount?: number
   totalPaid: number
 }
 
@@ -124,11 +125,13 @@ export const generateLedgerPDF = async (
 
   const finalY = (doc as any).lastAutoTable.finalY + 10
   const summaryX = pageWidth - 90
+  const hasDiscount = (summary.totalDiscount ?? 0) > 0
+  const summaryHeight = hasDiscount ? 35 : 28
 
   doc.setFillColor(248, 250, 252)
-  doc.rect(summaryX, finalY, 76, 28, 'F')
+  doc.rect(summaryX, finalY, 76, summaryHeight, 'F')
   doc.setDrawColor(226, 232, 240)
-  doc.rect(summaryX, finalY, 76, 28, 'S')
+  doc.rect(summaryX, finalY, 76, summaryHeight, 'S')
 
   const drawRow = (label: string, value: number, y: number, isBold = false) => {
     setPdfFont(doc, isBold ? 'bold' : 'normal')
@@ -142,15 +145,23 @@ export const generateLedgerPDF = async (
     setPdfFont(doc, 'normal')
   }
 
-  drawRow(t('customerOrVendorLedgerPdf.summary.totalAmount'), summary.totalAmount, finalY + 7)
-  drawRow(t('customerOrVendorLedgerPdf.summary.totalPaid'), summary.totalPaid, finalY + 14)
+  let sy = finalY + 7
+  drawRow(t('customerOrVendorLedgerPdf.summary.totalAmount'), summary.totalAmount, sy)
+  if (hasDiscount) {
+    sy += 7
+    drawRow(t('customerOrVendorLedgerPdf.summary.totalDiscount'), summary.totalDiscount!, sy)
+  }
+  sy += 7
+  drawRow(t('customerOrVendorLedgerPdf.summary.totalPaid'), summary.totalPaid, sy)
 
+  sy += 3
   doc.setDrawColor(200)
-  doc.line(summaryX + 2, finalY + 17, pageWidth - 16, finalY + 17)
+  doc.line(summaryX + 2, sy, pageWidth - 16, sy)
+  sy += 7
   drawRow(
     t('customerOrVendorLedgerPdf.summary.balanceDue'),
     summary.totalAmount - summary.totalPaid,
-    finalY + 24,
+    sy,
     true,
   )
 

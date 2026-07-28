@@ -37,6 +37,7 @@ interface Transaction {
   totalAmount: number
   paid: number
   pending: number
+  discount?: number
   createdAt: string
 }
 
@@ -338,8 +339,10 @@ export const generatePDF = async (
   const finalY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10
   const summaryX = pageWidth - 95
   const summaryWidth = 81
-  const summaryHeight = 32
   const padding = 8
+  const totalDiscount = transactions.reduce((sum, trx) => sum + (Number(trx.discount) || 0), 0)
+  const hasDiscount = totalDiscount > 0
+  const summaryHeight = hasDiscount ? 39 : 32
   const balanceDue = summary.totalAmount - summary.totalPaid
 
   doc.setFillColor(248, 250, 252)
@@ -373,17 +376,25 @@ export const generatePDF = async (
     doc.setTextColor(0, 0, 0)
   }
 
-  drawRow(t('transactionReportWithDetailsPdf.summary.totalAmount'), summary.totalAmount, finalY + 8)
-  drawRow(t('transactionReportWithDetailsPdf.summary.totalPaid'), summary.totalPaid, finalY + 15)
+  let pdfSy = finalY + 8
+  drawRow(t('transactionReportWithDetailsPdf.summary.totalAmount'), summary.totalAmount, pdfSy)
+  if (hasDiscount) {
+    pdfSy += 7
+    drawRow(t('transactionReportWithDetailsPdf.summary.totalDiscount'), totalDiscount, pdfSy)
+  }
+  pdfSy += 7
+  drawRow(t('transactionReportWithDetailsPdf.summary.totalPaid'), summary.totalPaid, pdfSy)
 
+  pdfSy += 5
   doc.setDrawColor(203, 213, 225)
   doc.setLineWidth(0.3)
-  doc.line(summaryX + padding, finalY + 20, summaryX + summaryWidth - padding, finalY + 20)
+  doc.line(summaryX + padding, pdfSy, summaryX + summaryWidth - padding, pdfSy)
 
+  pdfSy += 7
   drawRow(
     t('transactionReportWithDetailsPdf.summary.balanceDue'),
     balanceDue,
-    finalY + 27,
+    pdfSy,
     true,
     true,
   )

@@ -132,7 +132,11 @@ export interface TransactionLedgerInterface {
   vendor: {
     id: string
     name: string
-  }
+  } | null
+  customer?: {
+    id: string
+    name: string
+  } | null
   vendorId: string
   transactionType: string
   transactionStatus: string

@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Mail, Phone, MapPin, User, Briefcase, Contact } from "lucide-react"
-import { useCustomerById, useCustomerTransactions } from "@/hooks/useCustomer"
+import { useCustomerAnalytics, useCustomerById, useCustomerTransactions } from "@/hooks/useCustomer"
 import CustomerTransactionsTable from "./CustomerTransactionsTable"
 import { useTranslation } from "@/hooks/useTranslation"
 
@@ -45,6 +45,8 @@ const CustomerTransactionsProfile = () => {
 
   const transactions = transactionsResponse?.data ?? []
   const total = transactionsResponse?.total ?? 0
+
+  const { data: analytics } = useCustomerAnalytics(id ?? "")
 
   return (
     <CustomersProvider>
@@ -142,6 +144,29 @@ const CustomerTransactionsProfile = () => {
                   </div>
                 </div>
               </div>
+
+              <Separator />
+
+              {analytics && (
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="rounded-lg border bg-muted/40 p-4 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">{t('profile.totalSales')}</p>
+                    <p className="text-lg font-semibold">{Number(analytics.totalAmount ?? 0).toFixed(2)}</p>
+                  </div>
+                  <div className="rounded-lg border bg-muted/40 p-4 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">{t('profile.collected')}</p>
+                    <p className="text-lg font-semibold text-green-600">{Number(analytics.totalPaid ?? 0).toFixed(2)}</p>
+                  </div>
+                  <div className="rounded-lg border bg-muted/40 p-4 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">{t('profile.outstanding')}</p>
+                    <p className="text-lg font-semibold text-red-500">{Number(analytics.pending ?? 0).toFixed(2)}</p>
+                  </div>
+                  <div className="rounded-lg border bg-muted/40 p-4 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">{t('profile.totalTransactions')}</p>
+                    <p className="text-lg font-semibold">{analytics.totalTransactions ?? 0}</p>
+                  </div>
+                </div>
+              )}
 
               <Separator />
 

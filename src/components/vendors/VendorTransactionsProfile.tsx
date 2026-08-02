@@ -5,7 +5,7 @@ import { CustomersProvider } from "@/components/customers/customer-provider"
 import VendorDialogs from "@/components/vendors/VendorDialogs"
 import VendorTransactionsTable from "./VendorTransactionsTable"
 import { useShopStore } from "@/stores/shopStore"
-import { useVendorById, useVendorTransactions } from "@/hooks/useVendor"
+import { useVendorAnalytics, useVendorById, useVendorTransactions } from "@/hooks/useVendor"
 import {
   Card,
   CardHeader,
@@ -36,6 +36,8 @@ const VendorTransactionsProfile = () => {
 
   const transactions = transactionsResponse?.data ?? []
   const total = transactionsResponse?.total ?? 0
+
+  const { data: analytics } = useVendorAnalytics(id ?? "")
 
   return (
     <CustomersProvider>
@@ -134,6 +136,29 @@ const VendorTransactionsProfile = () => {
                   </div>
                 </div>
               </div>
+
+              <Separator />
+
+              {analytics && (
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="rounded-lg border bg-muted/40 p-4 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">Total Purchases</p>
+                    <p className="text-lg font-semibold">{Number(analytics.totalAmount ?? 0).toFixed(2)}</p>
+                  </div>
+                  <div className="rounded-lg border bg-muted/40 p-4 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">Paid</p>
+                    <p className="text-lg font-semibold text-green-600">{Number(analytics.paid ?? 0).toFixed(2)}</p>
+                  </div>
+                  <div className="rounded-lg border bg-muted/40 p-4 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">Outstanding (Payable)</p>
+                    <p className="text-lg font-semibold text-red-500">{Number(analytics.pending ?? 0).toFixed(2)}</p>
+                  </div>
+                  <div className="rounded-lg border bg-muted/40 p-4 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">Total Transactions</p>
+                    <p className="text-lg font-semibold">{analytics.totalTransactions ?? 0}</p>
+                  </div>
+                </div>
+              )}
 
               <Separator />
 

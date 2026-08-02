@@ -108,7 +108,11 @@
     "payment": "Payment",
     "addPaymentMethod": "Add Payment Method",
     "discount": "Discount",
-    "discountPlaceholder": "0.00"
+    "discountPlaceholder": "0.00",
+    "sourceTransaction": "Source Transaction (Optional)",
+    "sourceTransactionPlaceholder": "Select transaction to pay against...",
+    "sourceTransactionNone": "No reference transaction",
+    "pendingAmount": "Pending: {{amount}}"
   },
   "quickCreate": {
     "customerTitle": "New Customer",

@@ -79,6 +79,19 @@ export const deleteVendor = async ({ id, shopId }: { id: string; shopId: string 
     return res.data
 }
 
+// get vendor analytics (total transactions, amounts, pending)
+export const getVendorAnalytics = async (vendorId: string) => {
+  if (!vendorId) throw new Error("Vendor ID is required")
+  const path = apiEndpoints.vendor.vendorAnalytics.replace('{id}', vendorId)
+  const res = await axiosInstance.get<{
+    totalTransactions: number
+    totalAmount: number
+    paid: number
+    pending: number
+  }>(path)
+  return res.data
+}
+
 // get vendor transactions by vendorId
 export const getVendorTransactions = async (
     vendorId: string,

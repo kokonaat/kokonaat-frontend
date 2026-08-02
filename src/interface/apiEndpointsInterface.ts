@@ -30,6 +30,7 @@ export interface ApiEndpoints {
     deleteCustomer: string
     getCustomerById: string
     customerTransactions: string
+    customerAnalytics: string
   }
   vendor: {
     vendorList: string
@@ -38,6 +39,7 @@ export interface ApiEndpoints {
     deleteVendor: string
     getVendorById: string
     vendorTransactions: string
+    vendorAnalytics: string
   }
   transactions: {
     transactionsList: string

@@ -72,6 +72,19 @@ export const updateCustomer = async ({
     return res.data
 }
 
+// get customer analytics (total transactions, amounts, pending)
+export const getCustomerAnalytics = async (customerId: string) => {
+  if (!customerId) throw new Error("Customer ID is required")
+  const path = apiEndpoints.customer.customerAnalytics.replace('{id}', customerId)
+  const res = await axiosInstance.get<{
+    totalTransactions: number
+    totalAmount: number
+    totalPaid: number
+    pending: number
+  }>(path)
+  return res.data
+}
+
 // delete
 export const deleteCustomer = async ({ id, shopId }: { id: string; shopId: string }) => {
     if (!shopId) throw new Error("Shop ID is required")

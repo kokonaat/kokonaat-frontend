@@ -13,9 +13,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { Combobox } from '@/components/ui/combobox'
 import { useShopStore } from '@/stores/shopStore'
 import { useInventoryList } from '@/hooks/useInventory'
-import { useCreateTransaction, useUpdateTransaction } from '@/hooks/useTransaction'
+import { useCreateTransaction, useUpdateTransaction, useTransactionList } from '@/hooks/useTransaction'
 import { BusinessEntityType, FORM_ID } from '@/constance/transactionConstances'
 import type {
   TransactionMutateDrawerProps,
@@ -53,6 +54,7 @@ const TransactionMutateDrawer = ({
   const [showCloseConfirm, setShowCloseConfirm] = useState(false)
   const [pendingClose, setPendingClose] = useState(false)
   const [createdEntityCache, setCreatedEntityCache] = useState<{ id: string; name: string } | null>(null)
+  const [selectedSourceTransactionId, setSelectedSourceTransactionId] = useState<string>('')
 
   const shopId = useShopStore((s) => s.currentShopId)
 
@@ -96,6 +98,34 @@ const TransactionMutateDrawer = ({
   const showInventoryFields = requiresInventoryFields(transactionType)
   const showAmountField = requiresAmountField(transactionType)
   const showPartnerTypeSelector = transactionType === 'COMMISSION'
+
+  const isPaymentOrReceivable = transactionType === 'PAYMENT' || transactionType === 'RECEIVABLE'
+  const sourceTransactionTypes = transactionType === 'PAYMENT' ? ['PURCHASE'] : ['SALE']
+  const vendorIdsForSource = transactionType === 'PAYMENT' && entityTypeId ? [entityTypeId] : undefined
+  const customerIdsForSource = transactionType === 'RECEIVABLE' && entityTypeId ? [entityTypeId] : undefined
+
+  const { data: sourceTransactionsData } = useTransactionList(
+    isPaymentOrReceivable && !!entityTypeId ? (shopId || '') : '',
+    1,
+    50,
+    undefined,
+    undefined,
+    undefined,
+    isPaymentOrReceivable ? sourceTransactionTypes : undefined,
+    vendorIdsForSource,
+    customerIdsForSource,
+  )
+
+  const sourceTransactionOptions = useMemo(() => {
+    if (!isPaymentOrReceivable || !entityTypeId) return []
+    const transactions = sourceTransactionsData?.data || []
+    return transactions
+      .filter(tx => (tx.pending ?? 0) > 0)
+      .map(tx => ({
+        value: tx.id,
+        label: `${tx.no} — ${t('form.pendingAmount', { amount: Number(tx.pending).toFixed(2) })}`,
+      }))
+  }, [sourceTransactionsData, isPaymentOrReceivable, entityTypeId, t])
 
   // Debounce inventory search query
   const debouncedInventorySearch = useDebounce(inventorySearchQuery, 300)
@@ -281,6 +311,7 @@ const TransactionMutateDrawer = ({
     setShowCloseConfirm(false)
     onOpenChange(false)
     resetFormStates()
+    setSelectedSourceTransactionId('')
   }
 
   const handleTransactionTypeChange = (value: string) => {
@@ -293,6 +324,7 @@ const TransactionMutateDrawer = ({
     setInventoryInputValues({})
     setInventoryDisplayData({})
     setCreatedEntityCache(null)
+    setSelectedSourceTransactionId('')
 
     // For non-commission transactions, auto-set the partner type
     if (value !== 'COMMISSION') {
@@ -309,11 +341,23 @@ const TransactionMutateDrawer = ({
     setSelectedBusinessEntity(value as BusinessEntityType)
     form.setValue('entityTypeId', '')
     setCreatedEntityCache(null)
+    setSelectedSourceTransactionId('')
   }
 
   const handleEntityCreated = (entity: { id: string; name: string }) => {
     setCreatedEntityCache(entity)
     form.setValue('entityTypeId', entity.id, { shouldValidate: true })
+    setSelectedSourceTransactionId('')
+  }
+
+  const handleSourceTransactionSelect = (transactionId: string) => {
+    setSelectedSourceTransactionId(transactionId)
+    if (transactionId) {
+      const sourceTx = (sourceTransactionsData?.data || []).find(tx => tx.id === transactionId)
+      if (sourceTx && (sourceTx.pending ?? 0) > 0) {
+        form.setValue('transactionAmount', Number(sourceTx.pending))
+      }
+    }
   }
 
   const handleFormSubmit = (values: TransactionFormValues) => {
@@ -432,6 +476,7 @@ const TransactionMutateDrawer = ({
           totalAmount: totalAmountValue,
           details: inventoryDetailsPayload,
           payments: validPayments,
+          sourceTransactionId: selectedSourceTransactionId || undefined,
           ...extraCosts,
         }
         : {
@@ -444,6 +489,7 @@ const TransactionMutateDrawer = ({
           totalAmount: totalAmountValue,
           details: inventoryDetailsPayload,
           payments: validPayments,
+          sourceTransactionId: selectedSourceTransactionId || undefined,
           ...extraCosts,
         }
 
@@ -462,6 +508,7 @@ const TransactionMutateDrawer = ({
             toast.success(tToast('transaction.updated'))
             setPendingClose(true)
             resetFormStates()
+            setSelectedSourceTransactionId('')
             onOpenChange(false)
           },
           onError: (error: unknown) => {
@@ -489,6 +536,7 @@ const TransactionMutateDrawer = ({
         // Mark as pending close to bypass confirmation
         setPendingClose(true)
         resetFormStates()
+        setSelectedSourceTransactionId('')
         onOpenChange(false)
       },
       onError: (error: unknown) => {
@@ -576,6 +624,20 @@ const TransactionMutateDrawer = ({
                   </FormItem>
                 )}
               />
+            )}
+
+            {isPaymentOrReceivable && entityTypeId && (
+              <FormItem>
+                <FormLabel>{t('form.sourceTransaction')}</FormLabel>
+                <Combobox
+                  options={sourceTransactionOptions}
+                  placeholder={t('form.sourceTransactionPlaceholder')}
+                  value={selectedSourceTransactionId}
+                  onSelect={handleSourceTransactionSelect}
+                  className="w-full"
+                  emptyMessage={t('form.sourceTransactionNone')}
+                />
+              </FormItem>
             )}
 
             {entityTypeId && (

@@ -1,4 +1,4 @@
-import { createCustomer, customerList, deleteCustomer, getCustomerById, getCustomerTransactions, updateCustomer } from "@/api/customerApi"
+import { createCustomer, customerList, deleteCustomer, getCustomerAnalytics, getCustomerById, getCustomerTransactions, updateCustomer } from "@/api/customerApi"
 import type { CustomerFormInterface } from "@/interface/customerInterface"
 import type { VendorFormInterface, VendorTransactionApiResponse } from "@/interface/vendorInterface"
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -67,6 +67,15 @@ export const useDeleteCustomer = (shopId: string) => {
     return useMutation({
         mutationFn: ({ id }: { id: string }) => deleteCustomer({ id, shopId }),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: [...CUSTOMER_KEYS.all, shopId] }),
+    })
+}
+
+// customer analytics (totals)
+export const useCustomerAnalytics = (customerId: string) => {
+    return useQuery({
+        queryKey: ['customerAnalytics', customerId],
+        queryFn: () => getCustomerAnalytics(customerId),
+        enabled: !!customerId,
     })
 }
 

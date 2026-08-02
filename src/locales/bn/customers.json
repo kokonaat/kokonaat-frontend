@@ -98,7 +98,11 @@
     "individual": "ব্যক্তিগত",
     "contactPerson": "যোগাযোগকারী",
     "transactions": "লেনদেন",
-    "failedTransactions": "লেনদেন লোড করতে ব্যর্থ"
+    "failedTransactions": "লেনদেন লোড করতে ব্যর্থ",
+    "totalSales": "মোট বিক্রয়",
+    "collected": "সংগ্রহ",
+    "outstanding": "বকেয়া",
+    "totalTransactions": "মোট লেনদেন"
   },
   "ledger": {
     "loadingDetails": "বিবরণ লোড হচ্ছে...",

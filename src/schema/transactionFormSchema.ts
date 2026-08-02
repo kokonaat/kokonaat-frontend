@@ -36,6 +36,7 @@ export const createTransactionFormSchema = (t: TFunction) => {
       labourCost: zNumberOrZero.optional().default(0),
       transportCost: zNumberOrZero.optional().default(0),
       discount: zNumberOrZero.optional().default(0),
+      sourceTransactionId: z.string().optional(),
       payments: z.array(
         z.object({
           paymentType: z.string().optional().default(''),

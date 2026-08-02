@@ -28,3 +28,6 @@ src/**/*.js
 
 .yarn
 .yarnrc.yml
+
+.yarn/
+.yarnrc.yml

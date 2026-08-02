@@ -98,7 +98,11 @@
     "individual": "Individual",
     "contactPerson": "Contact Person",
     "transactions": "Transactions",
-    "failedTransactions": "Failed to load transactions"
+    "failedTransactions": "Failed to load transactions",
+    "totalSales": "Total Sales",
+    "collected": "Collected",
+    "outstanding": "Outstanding",
+    "totalTransactions": "Total Transactions"
   },
   "ledger": {
     "loadingDetails": "Loading details...",

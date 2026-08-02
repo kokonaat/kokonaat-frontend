@@ -34,6 +34,7 @@ export const apiEndpoints: ApiEndpoints = {
     deleteCustomer: '/customer',
     getCustomerById: '/customer/id',
     customerTransactions: '/transaction/customer/id',
+    customerAnalytics: '/customer/analytics/{id}',
   },
   vendor: {
     vendorList: '/vendor',
@@ -42,6 +43,7 @@ export const apiEndpoints: ApiEndpoints = {
     deleteVendor: '/vendor',
     getVendorById: '/vendor/id',
     vendorTransactions: '/transaction/vendor/id',
+    vendorAnalytics: '/vendor/analytics/{id}',
   },
   transactions: {
     transactionsList: '/transactions',

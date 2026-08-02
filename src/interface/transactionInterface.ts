@@ -70,6 +70,7 @@ export interface Transaction {
   labourCost: number
   transportCost: number
   discount: number
+  sourceTransactionId?: string
   payable: number
   receivable: number
   shopId: string
@@ -104,6 +105,7 @@ export interface CreateTransactionDto {
   labourCost?: number
   transportCost?: number
   discount?: number
+  sourceTransactionId?: string
   payments?: { paymentType: string; amount: number }[]
   details?: {
     inventoryId?: string

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query"
-import { createVendor, deleteVendor, getVendorById, getVendorTransactions, updateVendor, vendorList } from "@/api/vendorApi"
+import { createVendor, deleteVendor, getVendorAnalytics, getVendorById, getVendorTransactions, updateVendor, vendorList } from "@/api/vendorApi"
 import type { VendorFormInterface, VendorTransactionApiResponse } from "@/interface/vendorInterface"
 import type { UseQueryOptions, UseQueryResult } from "@tanstack/react-query"
 
@@ -69,6 +69,15 @@ export const useDeleteVendor = (shopId: string) => {
         mutationFn: ({ id }: { id: string }) => deleteVendor({ id, shopId }),
         onSuccess: () =>
             queryClient.invalidateQueries({ queryKey: [...VENDOR_KEYS.all, shopId] }),
+    })
+}
+
+// vendor analytics (totals)
+export const useVendorAnalytics = (vendorId: string) => {
+    return useQuery({
+        queryKey: ['vendorAnalytics', vendorId],
+        queryFn: () => getVendorAnalytics(vendorId),
+        enabled: !!vendorId,
     })
 }
 

@@ -21,12 +21,12 @@ interface DashboardExpenseBreakdownProps {
 }
 
 const COLORS = [
-  'hsl(221, 83%, 53%)',
-  'hsl(142, 76%, 36%)',
-  'hsl(38, 92%, 50%)',
-  'hsl(0, 72%, 51%)',
-  'hsl(262, 83%, 58%)',
-  'hsl(199, 89%, 48%)',
+  'hsl(0, 0%, 8%)',
+  'hsl(0, 0%, 25%)',
+  'hsl(0, 0%, 42%)',
+  'hsl(0, 0%, 58%)',
+  'hsl(0, 0%, 73%)',
+  'hsl(0, 0%, 86%)',
 ]
 
 const DashboardExpenseBreakdown = ({

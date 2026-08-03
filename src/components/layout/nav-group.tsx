@@ -24,6 +24,7 @@ export interface NavItem {
   url?: string
   icon?: LucideIcon
   badge?: string
+  highlight?: boolean
   items?: NavItem[]
 }
 export interface NavGroup { title: string; items: NavItem[] }
@@ -44,12 +45,22 @@ export function NavGroup({ title, items }: NavGroup) {
             // Single link
             return (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild isActive={checkIsActive(item.url)}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={checkIsActive(item.url)}
+                  className={item.highlight ? 'font-bold' : undefined}
+                >
                   <Link to={item.url ?? '#'} onClick={() => setOpenMobile(false)}>
-                    {item.icon && <item.icon />}
+                    {item.icon && (
+                      item.highlight
+                        ? <item.icon strokeWidth={2.5} />
+                        : <item.icon />
+                    )}
                     <span>{item.title}</span>
                     {item.badge && (
-                      <Badge className="rounded-full px-1 py-0 text-xs">{item.badge}</Badge>
+                      <Badge className="ms-auto animate-pulse rounded-none bg-foreground px-2 py-0 text-[10px] font-bold text-background hover:bg-foreground">
+                        {item.badge}
+                      </Badge>
                     )}
                   </Link>
                 </SidebarMenuButton>
@@ -70,7 +81,9 @@ export function NavGroup({ title, items }: NavGroup) {
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                     {item.badge && (
-                      <Badge className="rounded-full px-1 py-0 text-xs">{item.badge}</Badge>
+                      <Badge className="ms-auto animate-pulse rounded-none bg-foreground px-2 py-0 text-[10px] font-bold text-background hover:bg-foreground">
+                        {item.badge}
+                      </Badge>
                     )}
                     <ChevronRight className="ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>

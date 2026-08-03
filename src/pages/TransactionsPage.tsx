@@ -1,5 +1,6 @@
 import { useCallback, useState, useMemo } from "react"
 import { useTranslation } from '@/hooks/useTranslation'
+import { ArrowDownToLine, ArrowUpFromLine } from 'lucide-react'
 import { Main } from "@/components/layout/main"
 import { TransactionProvider } from "@/components/transactions/transaction-provider"
 import TransactionDialogs from "@/components/transactions/TransactionDialogs"
@@ -87,6 +88,28 @@ const TransactionsPage = () => {
             <p className="text-muted-foreground">{t('page.subtitle')}</p>
           </div>
           <TransactionPrimaryButtons />
+        </div>
+
+        {/* Hub callout */}
+        <div className="mb-4 grid grid-cols-2 divide-x divide-border border border-border overflow-hidden">
+          <div className="flex items-center gap-3 px-4 py-3">
+            <div className="flex size-8 shrink-0 items-center justify-center bg-foreground">
+              <ArrowDownToLine size={13} className="text-background" />
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-foreground">{t('page.hub.buy')}</p>
+              <p className="text-[10px] text-muted-foreground leading-tight">{t('page.hub.buyDesc')}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 px-4 py-3">
+            <div className="flex size-8 shrink-0 items-center justify-center bg-muted">
+              <ArrowUpFromLine size={13} className="text-foreground" />
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-foreground">{t('page.hub.sell')}</p>
+              <p className="text-[10px] text-muted-foreground leading-tight">{t('page.hub.sellDesc')}</p>
+            </div>
+          </div>
         </div>
 
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">

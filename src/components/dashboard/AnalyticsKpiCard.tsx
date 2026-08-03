@@ -43,8 +43,8 @@ const AnalyticsKpiCard = ({
                 variant="outline"
                 className={cn(
                   'max-w-full truncate text-xs',
-                  change > 0 && 'border-emerald-500 text-emerald-600',
-                  change < 0 && 'border-red-500 text-red-600',
+                  change > 0 && 'border-foreground/40 text-foreground',
+                  change < 0 && 'border-muted-foreground/40 text-muted-foreground',
                   change === 0 && 'text-muted-foreground',
                 )}
               >

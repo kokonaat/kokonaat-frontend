@@ -1,7 +1,8 @@
 {
   "page": {
     "title": "Dashboard",
-    "subtitle": "Cross-functional view of sales, purchases, expenses, and inventory",
+    "welcome": "Welcome, {{name}}!",
+    "subtitle": "Here's an overview of your shop",
     "errorLoading": "Error loading dashboard data."
   },
   "sections": {
@@ -101,5 +102,36 @@
     "expenseDescription": "Total operating expenses",
     "net": "Net",
     "netDescription": "Balance minus expenses"
+  },
+  "gettingStarted": {
+    "title": "Getting Started",
+    "subtitle": "Add a vendor → buy inventory → add a customer → sell to them",
+    "dismiss": "Got it, hide this",
+    "steps": {
+      "addVendor": {
+        "number": "1",
+        "title": "Add a Supplier",
+        "description": "Add the person or company you buy goods from",
+        "action": "Go to Suppliers"
+      },
+      "recordPurchase": {
+        "number": "2",
+        "title": "Buy from Supplier",
+        "description": "Go to Transactions and record what you bought",
+        "action": "Record a Purchase"
+      },
+      "addCustomer": {
+        "number": "3",
+        "title": "Add a Customer",
+        "description": "Add someone who buys goods from your shop",
+        "action": "Go to Customers"
+      },
+      "recordSale": {
+        "number": "4",
+        "title": "Sell to Customer",
+        "description": "Go to Transactions and record what you sold",
+        "action": "Record a Sale"
+      }
+    }
   }
 }

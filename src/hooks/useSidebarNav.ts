@@ -18,6 +18,8 @@ import type { SidebarData, SidebarItem, SidebarNavGroup } from '@/interface/side
 import { useShopPermissions } from '@/hooks/useShopPermissions'
 import { useShopStore } from '@/stores/shopStore'
 import { MODULE_NAV_ROUTES, type ModuleKey } from '@/lib/module-permissions'
+import { useGettingStartedStatus } from '@/hooks/useGettingStartedStatus'
+import { useGuideStore } from '@/stores/guideStore'
 
 function canAccessUrl(url: string, allowedRoutes: Set<string> | null, isOwner: boolean) {
   if (isOwner || allowedRoutes === null) return true
@@ -60,6 +62,19 @@ export function useSidebarNav(): Omit<SidebarData, 'teams'> {
   }, [permissions])
 
   const isOwner = permissions?.isOwner ?? false
+  const { hasVendor, hasPurchase, hasCustomer, hasSale } = useGettingStartedStatus()
+  const dismissedMap = useGuideStore((s) => s.dismissed)
+  const guideDismissed = shopId ? !!dismissedMap[shopId] : true
+
+  const transactionsBadge = (() => {
+    if (!guideDismissed) {
+      if (!hasVendor) return '★'
+      if (!hasPurchase) return '→ Buy'
+      if (!hasCustomer) return '★'
+      if (!hasSale) return '→ Sell'
+    }
+    return '★'
+  })()
 
   const navGroups: SidebarNavGroup[] = useMemo(() => {
     const allItems: SidebarItem[] = [
@@ -71,7 +86,7 @@ export function useSidebarNav(): Omit<SidebarData, 'teams'> {
       { title: t('vendor'), url: '/vendors', icon: UsersRound },
       { title: t('uom'), url: '/uom', icon: Scale },
       { title: t('inventory'), url: '/inventory', icon: ShoppingBag },
-      { title: t('transactionBoard'), url: '/transactions', icon: Package },
+      { title: t('transactionBoard'), url: '/transactions', icon: Package, badge: transactionsBadge, highlight: true },
       { title: t('expense'), url: '/expense', icon: ChartNoAxesCombined },
       { title: t('reports'), url: '/reports', icon: ClipboardPlus },
       ...(isOwner
@@ -107,7 +122,7 @@ export function useSidebarNav(): Omit<SidebarData, 'teams'> {
         items: filterNavItems(allItems, allowedRoutes, isOwner),
       },
     ]
-  }, [t, allowedRoutes, isOwner, permissions?.modules])
+  }, [t, allowedRoutes, isOwner, permissions?.modules, transactionsBadge])
 
   return useMemo(
     () => ({

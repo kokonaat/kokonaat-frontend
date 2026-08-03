@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useUserStore } from '@/stores/userStore'
 import {
   Card,
   CardContent,
@@ -16,6 +17,7 @@ import DashboardTopPartners from '@/components/dashboard/DashboardTopPartners'
 import DashboardInventoryHealth from '@/components/dashboard/DashboardInventoryHealth'
 import AnalyticsKpiCard from '@/components/dashboard/AnalyticsKpiCard'
 import RecenetTransactionsTable from '@/components/dashboard/RecenetTransactionsTable'
+import GettingStartedGuide from '@/components/dashboard/GettingStartedGuide'
 import { useShopStore } from '@/stores/shopStore'
 import DateRangeSearch from '@/components/DateRangeSearch'
 import { format, subDays } from 'date-fns'
@@ -29,6 +31,8 @@ const chartCardContentClass = 'min-w-0 overflow-hidden p-4 pt-0 sm:p-6 sm:pt-0'
 const Dashboard = () => {
   const { t } = useTranslation('dashboard')
   const shopId = useShopStore((s) => s.currentShopId)
+  const userName = useUserStore((s) => s.user?.name ?? '')
+  const firstName = userName.split(' ')[0]
 
   const defaultEndDate = useMemo(() => new Date(), [])
   const defaultStartDate = useMemo(
@@ -70,12 +74,18 @@ const Dashboard = () => {
     <Main className="min-w-0">
       <div className="mb-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight">{t('page.title')}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            👋 {firstName ? t('page.welcome', { name: firstName }) : t('page.title')}
+          </h1>
           <p className="text-muted-foreground">{t('page.subtitle')}</p>
         </div>
         <div className="shrink-0">
           <DateRangeSearch value={dateRange} onDateChange={handleDateChange} />
         </div>
+      </div>
+
+      <div className="mt-4">
+        <GettingStartedGuide />
       </div>
 
       <Tabs defaultValue="overview" className="mt-6 min-w-0 space-y-6">

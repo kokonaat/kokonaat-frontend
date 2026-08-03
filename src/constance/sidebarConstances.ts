@@ -30,7 +30,7 @@ export const sidebarData: Omit<SidebarData, 'teams'> = {
         { title: 'Vendor', url: '/vendors', icon: UsersRound },
         { title: 'Uom', url: '/uom', icon: Scale, },
         { title: 'Inventory', url: '/inventory', icon: ShoppingBag },
-        { title: 'Transaction Board', url: '/transactions', icon: Package },
+        { title: 'Transactions', url: '/transactions', icon: Package },
         { title: 'Expense', url: '/expense', icon: ChartNoAxesCombined },
         { title: 'Reports', url: '/reports', icon: ClipboardPlus },
         {

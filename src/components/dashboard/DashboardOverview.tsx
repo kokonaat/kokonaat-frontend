@@ -37,15 +37,15 @@ const DashboardOverview = ({ data, isLoading }: DashboardOverviewProps) => {
         inflow: {
           label: t('charts.cashFlow.legendIn'),
           theme: {
-            light: 'hsl(142, 76%, 36%)',
-            dark: 'hsl(142, 70%, 45%)',
+            light: 'hsl(0, 0%, 10%)',
+            dark: 'hsl(0, 0%, 90%)',
           },
         },
         outflow: {
           label: t('charts.cashFlow.legendOut'),
           theme: {
-            light: 'hsl(0, 72%, 51%)',
-            dark: 'hsl(0, 72%, 55%)',
+            light: 'hsl(0, 0%, 60%)',
+            dark: 'hsl(0, 0%, 45%)',
           },
         },
       }) satisfies ChartConfig,

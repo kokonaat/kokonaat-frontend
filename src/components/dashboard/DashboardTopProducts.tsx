@@ -31,8 +31,8 @@ const DashboardTopProducts = ({
         revenue: {
           label: t('charts.topProducts.labelRevenue'),
           theme: {
-            light: 'hsl(262, 83%, 58%)',
-            dark: 'hsl(262, 83%, 65%)',
+            light: 'hsl(0, 0%, 10%)',
+            dark: 'hsl(0, 0%, 88%)',
           },
         },
       }) satisfies ChartConfig,

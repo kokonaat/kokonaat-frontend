@@ -36,8 +36,8 @@ const DashboardSalesTrend = ({ data, isLoading }: DashboardSalesTrendProps) => {
         total: {
           label: t('charts.salesTrend.label'),
           theme: {
-            light: 'hsl(221, 83%, 53%)',
-            dark: 'hsl(221, 83%, 60%)',
+            light: 'hsl(0, 0%, 10%)',
+            dark: 'hsl(0, 0%, 90%)',
           },
         },
       }) satisfies ChartConfig,

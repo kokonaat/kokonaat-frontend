@@ -61,10 +61,10 @@ const DashboardInventoryHealth = ({
       <Card className="min-w-0 overflow-hidden">
         <CardHeader className="pb-2">
           <CardTitle className="flex flex-wrap items-center gap-2 text-sm font-medium">
-            <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" />
+            <AlertTriangle className="h-4 w-4 shrink-0 text-muted-foreground" />
             <span className="min-w-0">{t('inventoryHealth.lowStockAlerts')}</span>
             {!isLoading && lowStockItems.length > 0 && (
-              <Badge variant="destructive" className="ml-auto">
+              <Badge variant="outline" className="ml-auto border-foreground/40 text-foreground">
                 {lowStockItems.length}
               </Badge>
             )}

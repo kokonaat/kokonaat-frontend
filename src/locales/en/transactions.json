@@ -1,7 +1,13 @@
 {
   "page": {
-    "title": "Transactions Board",
-    "subtitle": "Here is a list of all your transactions",
+    "title": "Transactions",
+    "subtitle": "Everything your shop does passes through here",
+    "hub": {
+      "buy": "Buy from Vendor",
+      "buyDesc": "Record goods you purchased — builds your inventory",
+      "sell": "Sell to Customer",
+      "sellDesc": "Record goods you sold — earns your revenue"
+    },
     "noShopSelected": "No shop selected",
     "errorLoading": "Error loading transactions.",
     "loading": "Loading transactions data..."

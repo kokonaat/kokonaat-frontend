@@ -118,7 +118,9 @@
     "sourceTransaction": "Source Transaction (Optional)",
     "sourceTransactionPlaceholder": "Select transaction to pay against...",
     "sourceTransactionNone": "No reference transaction",
-    "pendingAmount": "Pending: {{amount}}"
+    "pendingAmount": "Pending: {{amount}}",
+    "totalReceivable": "Outstanding",
+    "totalPayable": "Outstanding"
   },
   "quickCreate": {
     "customerTitle": "New Customer",

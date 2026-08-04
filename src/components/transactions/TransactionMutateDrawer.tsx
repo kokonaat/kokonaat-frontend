@@ -17,6 +17,8 @@ import { Combobox } from '@/components/ui/combobox'
 import { useShopStore } from '@/stores/shopStore'
 import { useInventoryList } from '@/hooks/useInventory'
 import { useCreateTransaction, useUpdateTransaction, useTransactionList } from '@/hooks/useTransaction'
+import { useCustomerAnalytics } from '@/hooks/useCustomer'
+import { useVendorAnalytics } from '@/hooks/useVendor'
 import { BusinessEntityType, FORM_ID } from '@/constance/transactionConstances'
 import type {
   TransactionMutateDrawerProps,
@@ -270,6 +272,13 @@ const TransactionMutateDrawer = ({
 
   const totalPaid = (payments || []).reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
 
+  const { data: customerAnalytics } = useCustomerAnalytics(
+    transactionType === 'SALE' && entityTypeId ? entityTypeId : ''
+  )
+  const { data: vendorAnalytics } = useVendorAnalytics(
+    transactionType === 'PURCHASE' && entityTypeId ? entityTypeId : ''
+  )
+
   // Check if form has any data entered
   const hasFormData = useMemo(() => {
     const hasTransactionType = !!transactionType
@@ -321,6 +330,7 @@ const TransactionMutateDrawer = ({
     form.setValue('payments', [{ paymentType: '', amount: 0 }])
     form.setValue('transactionAmount', null)
     form.setValue('inventories', [])
+    if (value === 'SALE') form.setValue('cnfCost', 0)
     setInventoryInputValues({})
     setInventoryDisplayData({})
     setCreatedEntityCache(null)
@@ -674,30 +684,32 @@ const TransactionMutateDrawer = ({
               <div className='space-y-2'>
                 <p className='text-xs text-muted-foreground font-medium'>{t('form.additionalCosts')}</p>
                 <div className='flex items-end gap-4'>
-                  <FormField
-                    control={form.control}
-                    name='cnfCost'
-                    render={({ field }) => (
-                      <FormItem className='flex-1'>
-                        <FormLabel>{t('form.cnfCost')}</FormLabel>
-                        <FormControl>
-                          <Input
-                            type='number'
-                            {...field}
-                            placeholder={t('form.cnfCostPlaceholder')}
-                            min={0}
-                            step='0.01'
-                            value={field.value === 0 ? '' : (field.value ?? '')}
-                            onChange={(e) => {
-                              const val = e.target.value
-                              field.onChange(val === '' ? 0 : parseFloat(val))
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {transactionType !== 'SALE' && (
+                    <FormField
+                      control={form.control}
+                      name='cnfCost'
+                      render={({ field }) => (
+                        <FormItem className='flex-1'>
+                          <FormLabel>{t('form.cnfCost')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              type='number'
+                              {...field}
+                              placeholder={t('form.cnfCostPlaceholder')}
+                              min={0}
+                              step='0.01'
+                              value={field.value === 0 ? '' : (field.value ?? '')}
+                              onChange={(e) => {
+                                const val = e.target.value
+                                field.onChange(val === '' ? 0 : parseFloat(val))
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
                   <FormField
                     control={form.control}
                     name='labourCost'
@@ -783,6 +795,13 @@ const TransactionMutateDrawer = ({
                 total={total}
                 selectedBusinessEntity={selectedBusinessEntity}
                 transactionType={transactionType}
+                entityBalance={
+                  transactionType === 'SALE'
+                    ? customerAnalytics?.pending
+                    : transactionType === 'PURCHASE'
+                    ? vendorAnalytics?.pending
+                    : undefined
+                }
               />
             )}
           </form>

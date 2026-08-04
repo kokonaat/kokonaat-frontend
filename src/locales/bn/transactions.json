@@ -118,7 +118,9 @@
     "sourceTransaction": "উৎস লেনদেন (ঐচ্ছিক)",
     "sourceTransactionPlaceholder": "যে লেনদেনের বিপরীতে পরিশোধ...",
     "sourceTransactionNone": "কোনো রেফারেন্স লেনদেন নেই",
-    "pendingAmount": "বকেয়া: {{amount}}"
+    "pendingAmount": "বকেয়া: {{amount}}",
+    "totalReceivable": "বকেয়া",
+    "totalPayable": "বকেয়া"
   },
   "quickCreate": {
     "customerTitle": "নতুন গ্রাহক",

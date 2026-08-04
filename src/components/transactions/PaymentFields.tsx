@@ -23,6 +23,7 @@ interface PaymentFieldsProps {
     selectedBusinessEntity: BusinessEntityType | null
     transactionType: string
     total: number
+    entityBalance?: number
 }
 
 export const PaymentFields = ({
@@ -33,6 +34,7 @@ export const PaymentFields = ({
     selectedBusinessEntity,
     transactionType,
     total,
+    entityBalance,
 }: PaymentFieldsProps) => {
     const { t } = useTranslation('transactions')
     const paymentTypeOptions = usePaymentTypeOptions()
@@ -124,6 +126,16 @@ export const PaymentFields = ({
             </div>
 
             <div className='flex justify-end items-end gap-6 pt-2 border-t'>
+                {entityBalance !== undefined && (
+                    <div className='text-right'>
+                        <p className='text-xs text-muted-foreground mb-0.5'>
+                            {t('form.totalReceivable')}
+                        </p>
+                        <p className='text-sm font-semibold tabular-nums text-red-500'>
+                            {Number(entityBalance).toFixed(2)}
+                        </p>
+                    </div>
+                )}
                 <div className='text-right'>
                     <p className='text-xs text-muted-foreground mb-0.5'>{t('form.total')}</p>
                     <p className='text-sm font-semibold tabular-nums'>{total.toFixed(2)}</p>

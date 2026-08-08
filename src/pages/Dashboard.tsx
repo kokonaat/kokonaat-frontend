@@ -98,7 +98,7 @@ const Dashboard = () => {
                   <div className="flex-1 rounded-lg bg-green-50 dark:bg-green-950 p-4">
                     <p className="text-sm text-muted-foreground">{t('balanceNet.balance')}</p>
                     <p className="text-2xl font-bold text-green-700 dark:text-green-400">
-                      {isLoading ? '...' : (data?.salesSummary?.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {isLoading ? '...' : (data?.salesSummary?.totalPaid ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">{t('balanceNet.balanceDescription')}</p>
                   </div>
@@ -112,17 +112,17 @@ const Dashboard = () => {
                   </div>
                   <div className="hidden sm:flex text-2xl font-bold text-muted-foreground">=</div>
                   <div className={`flex-1 rounded-lg p-4 ${
-                    ((data?.salesSummary?.total ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)) >= 0
+                    ((data?.salesSummary?.totalPaid ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)) >= 0
                       ? 'bg-blue-50 dark:bg-blue-950'
                       : 'bg-orange-50 dark:bg-orange-950'
                   }`}>
                     <p className="text-sm text-muted-foreground">{t('balanceNet.net')}</p>
                     <p className={`text-2xl font-bold ${
-                      ((data?.salesSummary?.total ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)) >= 0
+                      ((data?.salesSummary?.totalPaid ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)) >= 0
                         ? 'text-blue-700 dark:text-blue-400'
                         : 'text-orange-600 dark:text-orange-400'
                     }`}>
-                      {isLoading ? '...' : ((data?.salesSummary?.total ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {isLoading ? '...' : ((data?.salesSummary?.totalPaid ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">{t('balanceNet.netDescription')}</p>
                   </div>

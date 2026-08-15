@@ -36,7 +36,7 @@ interface InventoryDetails {
 
 const formatNumber = (num: number | string | undefined | null) => {
   const n = Number(num) || 0
-  return n.toLocaleString(undefined, {
+  return n.toLocaleString('en-IN', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })

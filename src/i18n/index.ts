@@ -21,6 +21,7 @@ import enValidation from '@/locales/en/validation.json'
 import enToast from '@/locales/en/toast.json'
 import enExport from '@/locales/en/export.json'
 import enEnums from '@/locales/en/enums.json'
+import enLoans from '@/locales/en/loans.json'
 
 import bnCommon from '@/locales/bn/common.json'
 import bnNav from '@/locales/bn/nav.json'
@@ -40,6 +41,7 @@ import bnValidation from '@/locales/bn/validation.json'
 import bnToast from '@/locales/bn/toast.json'
 import bnExport from '@/locales/bn/export.json'
 import bnEnums from '@/locales/bn/enums.json'
+import bnLoans from '@/locales/bn/loans.json'
 
 export const SUPPORTED_LOCALES = ['en', 'bn'] as const
 export type Locale = (typeof SUPPORTED_LOCALES)[number]
@@ -67,6 +69,7 @@ const resources = {
     toast: enToast,
     export: enExport,
     enums: enEnums,
+    loans: enLoans,
   },
   bn: {
     common: bnCommon,
@@ -87,6 +90,7 @@ const resources = {
     toast: bnToast,
     export: bnExport,
     enums: bnEnums,
+    loans: bnLoans,
   },
 }
 
@@ -120,6 +124,7 @@ i18n
       'toast',
       'export',
       'enums',
+      'loans',
     ],
     returnEmptyString: false,
     interpolation: { escapeValue: false },

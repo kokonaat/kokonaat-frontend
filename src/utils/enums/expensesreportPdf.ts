@@ -50,7 +50,7 @@ export const generateExpenseReportPDF = async (
     item.title,
     item.remarks || na,
     item.type,
-    Number(item.amount).toLocaleString(),
+    Number(item.amount).toLocaleString('en-IN'),
   ])
 
   const totalExpenses = data.reduce((acc, item) => acc + Number(item.amount), 0)
@@ -59,7 +59,7 @@ export const generateExpenseReportPDF = async (
     '',
     '',
     t('expenseReportPdf.totals.totalExpensesRow'),
-    totalExpenses.toLocaleString(),
+    totalExpenses.toLocaleString('en-IN'),
   ])
 
   autoTable(doc, {

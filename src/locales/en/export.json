@@ -111,10 +111,12 @@
       "amount": "Amount"
     },
     "summary": {
-      "totalAmount": "Total Amount:",
+      "totalAmount": "Total Amount",
       "totalDiscount": "Total Discount:",
-      "totalPaid": "Total Paid:",
-      "balanceDue": "Balance Due:"
+      "totalPaid": "Total Paid",
+      "balanceDue": "Balance Due:",
+      "receivable": "Receivable",
+      "payable": "Payable"
     }
   },
   "transactionDetailsPdf": {
@@ -396,6 +398,18 @@
       "balanceDue": "Balance Due:"
     }
   },
+  "transactionLedgerTable": {
+    "title": "Transaction Ledger",
+    "accountStatement": "Account Statement",
+    "headers": {
+      "date": "Date",
+      "no": "No",
+      "type": "Type",
+      "amount": "Amount",
+      "paid": "Paid",
+      "balance": "Balance Due"
+    }
+  },
   "customerOrVendorLedgerExcel": {
     "title": "Ledger Report",
     "labels": {
@@ -422,5 +436,18 @@
       "totalAmount": "Total Amount:"
     },
     "sheetName": "Ledger"
+  },
+  "thermal": {
+    "no": "No",
+    "date": "Date",
+    "item": "Item",
+    "qty": "Qty",
+    "price": "Price",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "paid": "Paid",
+    "due": "Due",
+    "paymentType": "Payment",
+    "thankYou": "Thank you!"
   }
 }

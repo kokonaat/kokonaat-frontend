@@ -1,5 +1,6 @@
 import type { TransactionLedgerInterface } from '@/interface/transactionInterface'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { fmtAmount } from '@/lib/utils'
 
 export function DetailsRow({
     row,
@@ -35,13 +36,13 @@ export function DetailsRow({
                                     {item.inventory?.name ?? 'N/A'}
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    {Number(item.quantity || 0).toFixed(2)} {item.unitOfMeasurement?.name ?? ''}
+                                    {fmtAmount(item.quantity || 0, { min: 2, max: 2 })} {item.unitOfMeasurement?.name ?? ''}
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    {Number(item.price || 0).toLocaleString()}
+                                    {fmtAmount(item.price || 0)}
                                 </TableCell>
                                 <TableCell className="text-right font-medium">
-                                    {Number(item.total || 0).toLocaleString()}
+                                    {fmtAmount(item.total || 0)}
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -51,7 +52,7 @@ export function DetailsRow({
             {discount > 0 && (
                 <div className="flex justify-end pr-2">
                     <p className="text-sm text-red-600">
-                        Discount: <span className="font-semibold">-{discount.toLocaleString()}</span>
+                        Discount: <span className="font-semibold">-{fmtAmount(discount)}</span>
                     </p>
                 </div>
             )}

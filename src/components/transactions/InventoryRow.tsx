@@ -3,6 +3,7 @@ import { Minus, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/hooks/useTranslation'
+import { fmtAmount } from '@/lib/utils'
 import {
     FormControl,
     FormField,
@@ -252,7 +253,7 @@ export const InventoryRow = ({
                                     {itemDisplayData?.lastPrice !== undefined &&
                                         itemDisplayData.lastPrice !== null && (
                                             <p className='text-xs text-green-700 font-semibold mt-1'>
-                                                {t('form.lastPrice', { price: itemDisplayData.lastPrice.toFixed(2) })}
+                                                {t('form.lastPrice', { price: fmtAmount(itemDisplayData.lastPrice, { min: 2 }) })}
                                             </p>
                                         )}
                                 </div>

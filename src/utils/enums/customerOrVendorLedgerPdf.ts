@@ -74,8 +74,8 @@ export const generateLedgerPDF = async (
     item.unitOfMeasurement?.name || na,
     item.transactionType,
     item.quantity,
-    Number(item.price).toLocaleString(),
-    Number(item.total).toLocaleString(),
+    Number(item.price).toLocaleString('en-IN'),
+    Number(item.total).toLocaleString('en-IN'),
   ])
 
   const subtotal = data.reduce((acc, item) => acc + Number(item.total), 0)
@@ -87,7 +87,7 @@ export const generateLedgerPDF = async (
     t('customerOrVendorLedgerPdf.totals.subtotalRow'),
     '',
     '',
-    subtotal.toLocaleString(),
+    subtotal.toLocaleString('en-IN'),
   ])
 
   autoTable(doc, {

@@ -4,6 +4,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import type { TransactionLedgerInterface } from '@/interface/transactionInterface'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
+import { fmtAmount } from '@/lib/utils'
 
 export function useTransactionLedgerColumns(): ColumnDef<TransactionLedgerInterface>[] {
   const { t } = useTranslation('customers')
@@ -60,18 +61,18 @@ export function useTransactionLedgerColumns(): ColumnDef<TransactionLedgerInterf
         header: t('ledger.columns.amount'),
         cell: ({ row }) => {
           const amount = Number(row.original.totalAmount ?? 0)
-          return `${amount.toLocaleString()}`
+          return fmtAmount(amount)
         },
       },
       {
         accessorKey: 'paid',
         header: t('ledger.columns.paid'),
-        cell: ({ row }) => `${row.original.paid.toLocaleString()}`,
+        cell: ({ row }) => fmtAmount(row.original.paid),
       },
       {
         accessorKey: 'pending',
         header: t('ledger.columns.pending'),
-        cell: ({ row }) => `${row.original.pending.toLocaleString()}`,
+        cell: ({ row }) => fmtAmount(row.original.pending),
       },
       {
         accessorKey: 'createdAt',

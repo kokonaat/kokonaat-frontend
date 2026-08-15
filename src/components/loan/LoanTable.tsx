@@ -12,38 +12,22 @@ import {
     getFacetedUniqueValues,
     useReactTable,
 } from '@tanstack/react-table'
-
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+    Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
-
-import { useExpenseColumns } from './ExpenseColumns'
-import { ExpenseTableBulkActions } from './ExpenseTableBulkActions'
-import ExpenseViewDrawer from './ExpenseViewDrawer'
-
+import { useLoanColumns } from './LoanColumns'
 import { DataTableViewOptions } from '@/features/users/components/data-table-view-options'
 import { DataTablePagination } from '@/features/users/components/data-table-pagination'
 import DateRangeSearch from '../DateRangeSearch'
-import type { DateRange } from 'react-day-picker'
 import { NoDataFound } from '../NoDataFound'
-
-import type {
-    ExpenseItemInterface,
-    ExpenseTableProps,
-} from '@/interface/expenseInterface'
-
+import type { LoanTableProps } from '@/interface/loanInterface'
+import type { DateRange } from 'react-day-picker'
 import { useDebounce } from '@/hooks/useDebounce'
-import { useShopStore } from '@/stores/shopStore'
 import { useTranslation } from '@/hooks/useTranslation'
 
-const ExpenseTable = ({
+const LoanTable = ({
     data,
     pageIndex,
     pageSize,
@@ -51,26 +35,17 @@ const ExpenseTable = ({
     onPageChange,
     onSearchChange,
     onDateChange,
-    initialDateRange,
-}: ExpenseTableProps & {
-    onDateChange?: (from?: Date, to?: Date) => void
-    initialDateRange?: DateRange
-}) => {
-    const { t } = useTranslation('expense')
-    const columns = useExpenseColumns()
-    const shopId = useShopStore(s => s.currentShopId)
+    defaultDateRange,
+}: LoanTableProps) => {
+    const { t } = useTranslation('loans')
+    const columns = useLoanColumns()
 
-    const [rowSelection, setRowSelection] = useState({})
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
-
     const [searchInput, setSearchInput] = useState('')
     const debouncedSearch = useDebounce(searchInput, 300)
-
-    const [currentRow, setCurrentRow] = useState<ExpenseItemInterface | null>(null)
-    const [drawerOpen, setDrawerOpen] = useState(false)
 
     useEffect(() => {
         onPageChange(0)
@@ -83,20 +58,17 @@ const ExpenseTable = ({
         state: {
             sorting,
             columnVisibility,
-            rowSelection,
             columnFilters,
             globalFilter,
             pagination: { pageIndex, pageSize },
         },
         manualPagination: true,
         pageCount: Math.ceil(total / pageSize),
-        enableRowSelection: true,
-        onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
         onColumnFiltersChange: setColumnFilters,
         onGlobalFilterChange: setGlobalFilter,
-        onPaginationChange: updater => {
+        onPaginationChange: (updater) => {
             if (typeof updater === 'function') {
                 const newState = updater({ pageIndex, pageSize })
                 onPageChange(newState.pageIndex)
@@ -110,89 +82,58 @@ const ExpenseTable = ({
         getPaginationRowModel: getPaginationRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        globalFilterFn: (row, _columnId, filterValue) => {
-            const id = String(row.index + 1).toLowerCase()
-            const title = String(row.getValue('title')).toLowerCase()
-            const searchValue = String(filterValue).toLowerCase()
-
-            return id.includes(searchValue) || title.includes(searchValue)
-        },
     })
 
     const pageCount = table.getPageCount()
-
     useEffect(() => {
         if (table.getState().pagination.pageIndex >= pageCount) {
-            table.setPageIndex(pageCount - 1)
+            table.setPageIndex(Math.max(0, pageCount - 1))
         }
     }, [table, pageCount])
 
     return (
-        <div className="space-y-4 max-sm:has-[div[role='toolbar']]:mb-16">
-            <div className="flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex flex-col gap-2 md:flex-row md:items-center gap-x-2">
-                    <DateRangeSearch value={initialDateRange} onDateChange={onDateChange} />
+        <div className='space-y-4'>
+            <div className='flex flex-1 flex-col-reverse gap-y-2 sm:flex-row sm:items-center sm:justify-between'>
+                <div className='flex flex-col gap-2 md:flex-row md:items-center gap-x-2'>
+                    <DateRangeSearch value={defaultDateRange as DateRange | undefined} onDateChange={onDateChange} />
                     <Input
                         placeholder={t('table.searchPlaceholder')}
                         value={searchInput}
-                        onChange={e => setSearchInput(e.target.value)}
-                        className="h-8 w-[150px] lg:w-[250px]"
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        className='h-8 w-[150px] lg:w-[250px]'
                     />
                 </div>
-
                 <DataTableViewOptions table={table} />
             </div>
 
-            <div className="rounded-md border">
+            <div className='rounded-md border'>
                 <Table>
                     <TableHeader>
-                        {table.getHeaderGroups().map(headerGroup => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map(header => (
-                                    <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
+                        {table.getHeaderGroups().map((hg) => (
+                            <TableRow key={hg.id}>
+                                {hg.headers.map((h) => (
+                                    <TableHead key={h.id}>
+                                        {h.isPlaceholder ? null : flexRender(h.column.columnDef.header, h.getContext())}
                                     </TableHead>
                                 ))}
                             </TableRow>
                         ))}
                     </TableHeader>
-
                     <TableBody>
                         {table.getRowModel().rows.length ? (
-                            table.getRowModel().rows.map(row => (
-                                <TableRow
-                                    key={row.id}
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                        if (!shopId) return
-                                        setCurrentRow({
-                                            ...row.original,
-                                            shopId,
-                                            remarks: row.original.remarks || '',
-                                        })
-                                        setDrawerOpen(true)
-                                    }}
-                                    data-state={row.getIsSelected() && 'selected'}
-                                >
-                                    {row.getVisibleCells().map(cell => (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                                    {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    <Card className="m-4">
+                                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                                    <Card className='m-4'>
                                         <CardContent>
                                             <NoDataFound
                                                 message={t('table.emptyMessage')}
@@ -208,16 +149,8 @@ const ExpenseTable = ({
             </div>
 
             {data.length > 0 && <DataTablePagination table={table} />}
-
-            <ExpenseTableBulkActions table={table} />
-
-            <ExpenseViewDrawer
-                open={drawerOpen}
-                onOpenChange={setDrawerOpen}
-                currentRow={currentRow}
-            />
         </div>
     )
 }
 
-export default ExpenseTable
+export default LoanTable

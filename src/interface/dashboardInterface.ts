@@ -1,10 +1,20 @@
 import type { ExpenseType } from '@/constance/expenseConstance'
 
+export interface PaymentMethodBreakdownItem {
+  paymentType: string
+  amount: number
+}
+
+export interface PaymentMethodBreakdown {
+  items: PaymentMethodBreakdownItem[]
+}
+
 export interface SummaryAmounts {
   total: number
   totalPaid: number
   totalPayable: number
   totalReceivable: number
+  paymentMethodBreakdown?: PaymentMethodBreakdown
 }
 
 export interface OperatingSummary {

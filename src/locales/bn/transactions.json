@@ -20,7 +20,9 @@
     "cancel": "বাতিল",
     "recordPayment": "পেমেন্ট রেকর্ড",
     "recordCollection": "আদায় রেকর্ড",
-    "downloadPdf": "PDF ডাউনলোড"
+    "downloadPdf": "PDF ডাউনলোড",
+    "saveAndInvoice": "সেভ ও ইনভয়েস",
+    "saveAndThermal": "সেভ ও থার্মাল"
   },
   "table": {
     "filterPlaceholder": "লেনদেন ফিল্টার...",
@@ -113,6 +115,7 @@
     "additionalCosts": "অতিরিক্ত খরচ (ঐচ্ছিক)",
     "payment": "পেমেন্ট",
     "addPaymentMethod": "পেমেন্ট পদ্ধতি যোগ করুন",
+    "paymentRemarks": "মন্তব্য (ঐচ্ছিক)",
     "discount": "ছাড়",
     "discountPlaceholder": "০.০০",
     "sourceTransaction": "উৎস লেনদেন (ঐচ্ছিক)",
@@ -120,7 +123,12 @@
     "sourceTransactionNone": "কোনো রেফারেন্স লেনদেন নেই",
     "pendingAmount": "বকেয়া: {{amount}}",
     "totalReceivable": "বকেয়া",
-    "totalPayable": "বকেয়া"
+    "totalPayable": "বকেয়া",
+    "vendorLedger": "সরবরাহকারীর ব্যালেন্স",
+    "customerLedger": "গ্রাহকের ব্যালেন্স",
+    "ledgerTotal": "মোট",
+    "ledgerPaid": "পরিশোধিত",
+    "ledgerPending": "বাকি"
   },
   "quickCreate": {
     "customerTitle": "নতুন গ্রাহক",

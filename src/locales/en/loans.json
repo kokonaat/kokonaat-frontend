@@ -1,0 +1,75 @@
+{
+  "page": {
+    "title": "Loans",
+    "subtitle": "Track loans and repayments",
+    "errorLoading": "Error loading loans.",
+    "loading": "Loading loan data..."
+  },
+  "summary": {
+    "totalLoan": "Total Loan",
+    "totalPaid": "Paid",
+    "totalPending": "Pending"
+  },
+  "buttons": {
+    "create": "Add Loan",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "close": "Close",
+    "delete": "Delete"
+  },
+  "table": {
+    "searchPlaceholder": "Search loans...",
+    "emptyMessage": "No loans found!",
+    "emptyDetails": "Add a loan to get started.",
+    "columns": {
+      "no": "No",
+      "loanFrom": "Loan From",
+      "purpose": "Purpose",
+      "amount": "Amount",
+      "paid": "Paid",
+      "pending": "Pending",
+      "date": "Date"
+    }
+  },
+  "drawer": {
+    "titleCreate": "Add Loan",
+    "titleUpdate": "Update Loan",
+    "descriptionCreate": "Record a new loan by providing the details below.",
+    "descriptionUpdate": "Update the loan details below.",
+    "fields": {
+      "loanFrom": "Loan From",
+      "purpose": "Purpose",
+      "amount": "Loan Amount",
+      "remarks": "Remarks"
+    },
+    "placeholders": {
+      "loanFrom": "Name of lender",
+      "purpose": "Reason for loan (optional)",
+      "amount": "0.00",
+      "remarks": "Optional notes"
+    }
+  },
+  "payDrawer": {
+    "title": "Pay Loan",
+    "description": "Record a payment towards this loan.",
+    "loanFrom": "Loan From",
+    "purpose": "Purpose",
+    "totalAmount": "Total Amount",
+    "alreadyPaid": "Already Paid",
+    "outstanding": "Outstanding",
+    "paymentAmount": "Payment Amount",
+    "confirm": "Record Payment",
+    "exceedsOutstanding": "Payment cannot exceed the outstanding amount"
+  },
+  "rowActions": {
+    "openMenu": "Open menu",
+    "payLoan": "Pay Loan",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "deleteDialog": {
+    "title": "Delete loan {{no}}?",
+    "description": "This will permanently delete the loan from {{loanFrom}}. This action cannot be undone.",
+    "confirm": "Delete"
+  }
+}

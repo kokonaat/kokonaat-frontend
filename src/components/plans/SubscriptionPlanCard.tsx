@@ -13,12 +13,12 @@ interface SubscriptionPlanCardProps {
 
 function formatLimit(value: number, unlimitedLabel: string): string {
   if (value === -1) return unlimitedLabel
-  return value.toLocaleString()
+  return value.toLocaleString('en-IN')
 }
 
 function formatPrice(value: number): string {
   if (value === 0) return "0"
-  return value.toLocaleString()
+  return value.toLocaleString('en-IN')
 }
 
 const SubscriptionPlanCard = ({ plan, isYearly, isCurrent }: SubscriptionPlanCardProps) => {

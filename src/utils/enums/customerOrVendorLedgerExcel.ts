@@ -73,7 +73,7 @@ export const generateLedgerExcel = (
     [t('customerOrVendorLedgerExcel.summary.title')],
     [t('customerOrVendorLedgerExcel.summary.totalTransactions'), data.length],
     [t('customerOrVendorLedgerExcel.summary.totalQuantity'), totalQuantity],
-    ...((totalDiscount ?? 0) > 0 ? [[t('customerOrVendorLedgerExcel.summary.totalDiscount'), `-${(totalDiscount!).toFixed(2)}`]] : []),
+    ...((totalDiscount ?? 0) > 0 ? [[t('customerOrVendorLedgerExcel.summary.totalDiscount'), `-${(totalDiscount!).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`]] : []),
     [t('customerOrVendorLedgerExcel.summary.totalAmount'), totalAmount],
   ]
 

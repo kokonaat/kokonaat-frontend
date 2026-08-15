@@ -107,13 +107,13 @@ export const generateTransactionReportPDF = async (
       partyName,
       itemsSummary,
       item.paymentType,
-      Number(item.totalAmount).toLocaleString(),
-      cnf > 0 ? cnf.toLocaleString() : '-',
-      labour > 0 ? labour.toLocaleString() : '-',
-      transport > 0 ? transport.toLocaleString() : '-',
-      discount > 0 ? `-${discount.toLocaleString()}` : '-',
-      Number(item.paid).toLocaleString(),
-      Number(item.pending).toLocaleString(),
+      Number(item.totalAmount).toLocaleString('en-IN'),
+      cnf > 0 ? cnf.toLocaleString('en-IN') : '-',
+      labour > 0 ? labour.toLocaleString('en-IN') : '-',
+      transport > 0 ? transport.toLocaleString('en-IN') : '-',
+      discount > 0 ? `-${discount.toLocaleString('en-IN')}` : '-',
+      Number(item.paid).toLocaleString('en-IN'),
+      Number(item.pending).toLocaleString('en-IN'),
     ]
   })
 
@@ -127,13 +127,13 @@ export const generateTransactionReportPDF = async (
     '',
     '',
     t('transactionReportPdf.totals.totalRow'),
-    subtotalAmount.toLocaleString(),
+    subtotalAmount.toLocaleString('en-IN'),
     '',
     '',
     '',
-    subtotalDiscount > 0 ? `-${subtotalDiscount.toLocaleString()}` : '-',
-    subtotalPaid.toLocaleString(),
-    subtotalDue.toLocaleString(),
+    subtotalDiscount > 0 ? `-${subtotalDiscount.toLocaleString('en-IN')}` : '-',
+    subtotalPaid.toLocaleString('en-IN'),
+    subtotalDue.toLocaleString('en-IN'),
   ])
 
   autoTable(doc, {
@@ -202,7 +202,7 @@ export const generateTransactionReportPDF = async (
     doc.text(label, summaryX + 2, y)
     const formattedValue = showCurrency
       ? formatCurrencyTaka(exportT, value)
-      : value.toLocaleString()
+      : value.toLocaleString('en-IN')
     doc.text(formattedValue, pageWidth - 16, y, { align: 'right' })
     setPdfFont(doc, 'normal')
   }

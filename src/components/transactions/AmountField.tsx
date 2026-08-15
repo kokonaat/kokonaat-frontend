@@ -31,10 +31,10 @@ export const AmountField = ({ form }: AmountFieldProps) => {
                                 {...field}
                                 placeholder={t('form.amountPlaceholder')}
                                 min={0}
-                                value={field.value ?? ''}
+                                value={field.value === 0 ? '' : (field.value ?? '')}
                                 onChange={(e) =>
                                     field.onChange(
-                                        e.target.value ? Number(e.target.value) : null
+                                        e.target.value === '' ? 0 : Number(e.target.value)
                                     )
                                 }
                             />

@@ -70,7 +70,7 @@ export function formatCurrencyTaka(
   amount: number,
 ): string {
   return t('common.financial.currencyTakaFormatted', {
-    amount: amount.toLocaleString(),
+    amount: amount.toLocaleString('en-IN'),
   })
 }
 

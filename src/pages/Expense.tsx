@@ -14,8 +14,9 @@ const Expense = () => {
 
   const [pageIndex, setPageIndex] = useState(0)
   const [searchBy, setSearchBy] = useState("")
-  const [startDate, setStartDate] = useState<Date | undefined>()
-  const [endDate, setEndDate] = useState<Date | undefined>()
+  const today = new Date()
+  const [startDate, setStartDate] = useState<Date | undefined>(today)
+  const [endDate, setEndDate] = useState<Date | undefined>(today)
 
   const pageSize = 10
 
@@ -73,6 +74,7 @@ const Expense = () => {
               onPageChange={handlePageChange}
               onSearchChange={handleSearchChange}
               onDateChange={handleDateChange}
+              initialDateRange={{ from: startDate, to: endDate }}
             />
           )}
         </div>

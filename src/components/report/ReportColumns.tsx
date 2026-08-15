@@ -12,6 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/
 import { Badge } from '../ui/badge'
 import { useTranslation } from '@/hooks/useTranslation'
 import { formatExpenseType } from '@/utils/dashboardFormatters'
+import { fmtAmount } from '@/lib/utils'
 
 const getTransactionTypeColor = (type: string) => {
   switch (type) {
@@ -65,12 +66,12 @@ export function useLedgerReportColumns(): ColumnDef<TransactionLedgerDetailItem>
       {
         accessorKey: 'price',
         header: t('ledgerColumns.price'),
-        cell: ({ getValue }) => `${parseFloat(getValue() as string).toFixed(2)}`,
+        cell: ({ getValue }) => fmtAmount(parseFloat(getValue() as string), { min: 2 }),
       },
       {
         accessorKey: 'total',
         header: t('ledgerColumns.total'),
-        cell: ({ getValue }) => `${parseFloat(getValue() as string).toFixed(2)}`,
+        cell: ({ getValue }) => fmtAmount(parseFloat(getValue() as string), { min: 2 }),
       },
       {
         accessorKey: 'paymentType',
@@ -148,21 +149,21 @@ export function useTransactionReportColumns(): ColumnDef<TransactionReportItem>[
       {
         accessorKey: 'totalAmount',
         header: t('transactionReportColumns.amount'),
-        cell: ({ getValue }) => `${Number(getValue()).toFixed(2)}`,
+        cell: ({ getValue }) => fmtAmount(Number(getValue()), { min: 2 }),
       },
       {
         accessorKey: 'discount',
         header: t('transactionReportColumns.discount'),
         cell: ({ getValue }) => {
           const v = Number(getValue()) || 0
-          return v > 0 ? <span className="text-red-500">-{v.toFixed(2)}</span> : '-'
+          return v > 0 ? <span className="text-red-500">-{fmtAmount(v, { min: 2 })}</span> : '-'
         },
       },
       {
         accessorKey: 'paid',
         header: t('transactionReportColumns.paid'),
         cell: ({ getValue }) => (
-          <span className="text-green-600">{Number(getValue()).toFixed(2)}</span>
+          <span className="text-green-600">{fmtAmount(Number(getValue()), { min: 2 })}</span>
         ),
       },
       {
@@ -170,7 +171,7 @@ export function useTransactionReportColumns(): ColumnDef<TransactionReportItem>[
         header: t('transactionReportColumns.due'),
         cell: ({ getValue }) => (
           <span className={Number(getValue()) > 0 ? 'text-destructive font-bold' : ''}>
-            {Number(getValue()).toFixed(2)}
+            {fmtAmount(Number(getValue()), { min: 2 })}
           </span>
         ),
       },
@@ -199,7 +200,7 @@ export function useExpensesReportColumns(): ColumnDef<ExpenseReportItem>[] {
       {
         accessorKey: 'amount',
         header: t('expenseReportColumns.amount'),
-        cell: ({ getValue }) => `${Number(getValue()).toFixed(2)}`,
+        cell: ({ getValue }) => fmtAmount(Number(getValue()), { min: 2 }),
       },
       {
         accessorKey: 'remarks',
@@ -237,7 +238,7 @@ export function useStocksReportColumns(): ColumnDef<StockReportItem>[] {
       {
         accessorKey: 'lastPrice',
         header: t('stockReportColumns.lastPrice'),
-        cell: ({ getValue }) => `${Number(getValue()).toFixed(2)}`,
+        cell: ({ getValue }) => fmtAmount(Number(getValue()), { min: 2 }),
       },
     ],
     [t],
@@ -278,7 +279,7 @@ export function useStockTrackReportColumns(): ColumnDef<StockTrackReportItem>[] 
       {
         accessorKey: 'price',
         header: t('stockTrackColumns.price'),
-        cell: ({ getValue }) => `${Number(getValue()).toFixed(2)}`,
+        cell: ({ getValue }) => fmtAmount(Number(getValue()), { min: 2 }),
       },
     ],
     [t, tEnums],
@@ -354,9 +355,9 @@ export function useBalanceSheetReportColumns(): ColumnDef<BalanceSheetTableItem>
         cell: ({ row }) => {
           const item = row.original
           if (item.itemType === 'transaction') {
-            return `${(item.totalAmount || 0).toFixed(2)}`
+            return fmtAmount(item.totalAmount || 0, { min: 2 })
           }
-          return `${(item.expenseAmount || 0).toFixed(2)}`
+          return fmtAmount(item.expenseAmount || 0, { min: 2 })
         },
       },
       {
@@ -365,7 +366,7 @@ export function useBalanceSheetReportColumns(): ColumnDef<BalanceSheetTableItem>
         cell: ({ row }) => {
           const item = row.original
           if (item.itemType === 'transaction' && item.paid !== undefined) {
-            return <span className="text-green-600">{item.paid.toFixed(2)}</span>
+            return <span className="text-green-600">{fmtAmount(item.paid, { min: 2 })}</span>
           }
           return na
         },
@@ -378,7 +379,7 @@ export function useBalanceSheetReportColumns(): ColumnDef<BalanceSheetTableItem>
           if (item.itemType === 'transaction' && item.pending !== undefined) {
             return (
               <span className={item.pending > 0 ? 'text-destructive font-bold' : ''}>
-                {item.pending.toFixed(2)}
+                {fmtAmount(item.pending, { min: 2 })}
               </span>
             )
           }

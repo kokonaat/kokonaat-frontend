@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import axios from 'axios'
+import { fmtAmount } from '@/lib/utils'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
@@ -90,7 +91,7 @@ const TransactionPaymentDrawer = ({
     const pending = Number(sourceTransaction.pending ?? 0)
     if (values.amount > pending) {
       toast.error(
-        tToast('transaction.exceedsPending', { amount: pending.toFixed(2) })
+        tToast('transaction.exceedsPending', { amount: fmtAmount(pending) })
       )
       return
     }
@@ -190,7 +191,7 @@ const TransactionPaymentDrawer = ({
               <span className="text-muted-foreground">
                 {t('paymentDrawer.pending')}
               </span>
-              <span className="font-medium">{pending.toFixed(2)}</span>
+              <span className="font-medium">{fmtAmount(pending)}</span>
             </div>
           </div>
         )}

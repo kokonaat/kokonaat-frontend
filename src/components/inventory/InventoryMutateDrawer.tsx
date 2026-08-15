@@ -217,9 +217,9 @@ const InventoryMutateDrawer = ({
                         type="number"
                         placeholder={t('drawer.placeholders.quantity')}
                         min={0}
-                        value={field.value ?? ''}
+                        value={field.value === 0 ? '' : (field.value ?? '')}
                         onChange={(e) =>
-                          field.onChange(e.target.value ? Number(e.target.value) : null)
+                          field.onChange(e.target.value === '' ? 0 : Number(e.target.value))
                         }
                       />
                     </FormControl>
@@ -265,10 +265,10 @@ const InventoryMutateDrawer = ({
                         placeholder={t('drawer.placeholders.lastPrice')}
                         min={0}
                         step="0.01"
-                        value={field.value ?? ''}
+                        value={field.value === 0 ? '' : (field.value ?? '')}
                         onChange={(e) => {
                           const value = e.target.value
-                          field.onChange(value === '' ? null : parseFloat(value))
+                          field.onChange(value === '' ? 0 : parseFloat(value))
                         }}
                       />
                     </FormControl>

@@ -111,10 +111,12 @@
       "amount": "পরিমাণ"
     },
     "summary": {
-      "totalAmount": "মোট পরিমাণ:",
+      "totalAmount": "মোট পরিমাণ",
       "totalDiscount": "মোট ছাড়:",
-      "totalPaid": "মোট পরিশোধ:",
-      "balanceDue": "বকেয়া ব্যালেন্স:"
+      "totalPaid": "মোট পরিশোধ",
+      "balanceDue": "বকেয়া ব্যালেন্স:",
+      "receivable": "পাওনা",
+      "payable": "দেনা"
     }
   },
   "transactionDetailsPdf": {
@@ -396,6 +398,18 @@
       "balanceDue": "বকেয়া ব্যালেন্স:"
     }
   },
+  "transactionLedgerTable": {
+    "title": "লেনদেন খাতা",
+    "accountStatement": "হিসাব বিবৃতি",
+    "headers": {
+      "date": "তারিখ",
+      "no": "নং",
+      "type": "ধরন",
+      "amount": "পরিমাণ",
+      "paid": "পরিশোধ",
+      "balance": "বকেয়া"
+    }
+  },
   "customerOrVendorLedgerExcel": {
     "title": "খাতা রিপোর্ট",
     "labels": {
@@ -422,5 +436,18 @@
       "totalAmount": "মোট পরিমাণ:"
     },
     "sheetName": "খাতা"
+  },
+  "thermal": {
+    "no": "নং",
+    "date": "তারিখ",
+    "item": "পণ্য",
+    "qty": "পরিমাণ",
+    "price": "মূল্য",
+    "total": "মোট",
+    "subtotal": "উপমোট",
+    "paid": "পরিশোধিত",
+    "due": "বাকি",
+    "paymentType": "পেমেন্ট",
+    "thankYou": "ধন্যবাদ!"
   }
 }

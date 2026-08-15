@@ -101,7 +101,13 @@
     "expense": "Expense",
     "expenseDescription": "Total operating expenses",
     "net": "Net",
-    "netDescription": "Paid sales minus expenses"
+    "netDescription": "Paid sales minus expenses",
+    "paymentBreakdown": {
+      "label": "Breakdown",
+      "cash": "Cash",
+      "bank": "Bank",
+      "others": "Others"
+    }
   },
   "gettingStarted": {
     "title": "Getting Started",

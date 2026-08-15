@@ -41,6 +41,7 @@ export const createTransactionFormSchema = (t: TFunction) => {
         z.object({
           paymentType: z.string().optional().default(''),
           amount: zNumberOrZero,
+          remarks: z.string().optional().default(''),
         }).superRefine((val, ctx) => {
           if ((val.amount || 0) > 0 && !val.paymentType) {
             ctx.addIssue({
@@ -97,10 +98,7 @@ export const createTransactionFormSchema = (t: TFunction) => {
     )
     .refine(
       (data) => {
-        if (
-          data.transactionType &&
-          !inventoryRequiredTypes.includes(data.transactionType)
-        ) {
+        if (data.transactionType === 'COMMISSION') {
           return (
             data.transactionAmount !== null &&
             data.transactionAmount !== undefined &&
@@ -112,6 +110,19 @@ export const createTransactionFormSchema = (t: TFunction) => {
       {
         path: ['transactionAmount'],
         message: t('transactionForm.transactionAmountRequired'),
+      }
+    )
+    .refine(
+      (data) => {
+        if (data.transactionType === 'PAYMENT' || data.transactionType === 'RECEIVABLE') {
+          const total = (data.payments || []).reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
+          return total > 0
+        }
+        return true
+      },
+      {
+        path: ['payments'],
+        message: t('transactionForm.amountPositive'),
       }
     )
 }

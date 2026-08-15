@@ -3,6 +3,7 @@ import {
   ClipboardPlus,
   ContactRound,
   LayoutDashboard,
+  Landmark,
   Package,
   PanelTopOpenIcon,
   Scale,
@@ -32,6 +33,7 @@ export const sidebarData: Omit<SidebarData, 'teams'> = {
         { title: 'Inventory', url: '/inventory', icon: ShoppingBag },
         { title: 'Transactions', url: '/transactions', icon: Package },
         { title: 'Expense', url: '/expense', icon: ChartNoAxesCombined },
+        { title: 'Loans', url: '/loans', icon: Landmark },
         { title: 'Reports', url: '/reports', icon: ClipboardPlus },
         {
           title: 'User Management',

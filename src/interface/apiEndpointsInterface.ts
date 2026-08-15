@@ -71,6 +71,15 @@ export interface ApiEndpoints {
     deleteExpense: string
     getExpenseById: string
   }
+  loan: {
+    loanList: string
+    createLoan: string
+    updateLoan: string
+    deleteLoan: string
+    getLoanById: string
+    payLoan: string
+    loanSummary: string
+  }
   user: {
     currentUser: string
     userList: string

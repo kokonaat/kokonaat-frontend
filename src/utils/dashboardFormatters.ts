@@ -8,7 +8,7 @@ export const LOW_STOCK_THRESHOLD = 10
 
 export const formatCurrency = (value: number | undefined | null): string => {
   const n = Number(value ?? 0)
-  return n.toLocaleString(undefined, {
+  return n.toLocaleString('en-IN', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   })

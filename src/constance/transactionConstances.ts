@@ -25,7 +25,7 @@ export const DEFAULT_VALUES = {
   discount: 0,
   transactionAmount: null,
   inventories: [],
-  payments: [{ paymentType: '', amount: 0 }],
+  payments: [{ paymentType: '', amount: 0, remarks: '' }],
 }
 
 export const PAYMENT_TYPES: ComboboxOptionInterface[] = [

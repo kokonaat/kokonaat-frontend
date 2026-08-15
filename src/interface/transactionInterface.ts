@@ -42,6 +42,7 @@ export interface TransactionPayment {
   id: string
   paymentType: "CASH" | "CREDIT_CARD" | "BANK_TRANSFER" | "MOBILE_PAYMENT"
   amount: number
+  remarks?: string
 }
 
 export interface Transaction {

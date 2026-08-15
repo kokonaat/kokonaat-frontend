@@ -4,6 +4,7 @@ import {
   ChartNoAxesCombined,
   ClipboardPlus,
   ContactRound,
+  Landmark,
   LayoutDashboard,
   Package,
   PanelTopOpenIcon,
@@ -88,6 +89,7 @@ export function useSidebarNav(): Omit<SidebarData, 'teams'> {
       { title: t('inventory'), url: '/inventory', icon: ShoppingBag },
       { title: t('transactionBoard'), url: '/transactions', icon: Package, badge: transactionsBadge, highlight: true },
       { title: t('expense'), url: '/expense', icon: ChartNoAxesCombined },
+      { title: t('loans'), url: '/loans', icon: Landmark },
       { title: t('reports'), url: '/reports', icon: ClipboardPlus },
       ...(isOwner
         ? [

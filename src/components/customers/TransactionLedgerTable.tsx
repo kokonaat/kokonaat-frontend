@@ -27,6 +27,7 @@ import { useShopStore } from "@/stores/shopStore"
 import { useTranslation } from '@/hooks/useTranslation'
 import { generateTransactionDetailsPDF } from "@/utils/enums/transactionDetailsPdf"
 import { toast } from "sonner"
+import { fmtAmount } from "@/lib/utils"
 
 const TransactionLedgerTable = ({
     data,
@@ -278,16 +279,16 @@ const TransactionLedgerTable = ({
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-right font-medium">
-                                                {Number(transaction.totalAmount ?? 0).toLocaleString()}
+                                                {fmtAmount(transaction.totalAmount ?? 0)}
                                             </TableCell>
                                             <TableCell className="text-right font-medium text-red-500">
-                                                {Number(transaction.discount ?? 0) > 0 ? `-${Number(transaction.discount).toLocaleString()}` : '-'}
+                                                {Number(transaction.discount ?? 0) > 0 ? `-${fmtAmount(transaction.discount)}` : '-'}
                                             </TableCell>
                                             <TableCell className="text-right font-medium text-green-600">
-                                                {transaction.paid.toLocaleString()}
+                                                {fmtAmount(transaction.paid)}
                                             </TableCell>
                                             <TableCell className="text-right font-medium text-orange-600">
-                                                {transaction.pending.toLocaleString()}
+                                                {fmtAmount(transaction.pending)}
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="text-sm">

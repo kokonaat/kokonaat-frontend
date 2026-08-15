@@ -75,6 +75,15 @@ export const apiEndpoints: ApiEndpoints = {
     deleteExpense: '/expense/{id}',
     getExpenseById: '/expense/{id}',
   },
+  loan: {
+    loanList: '/loan',
+    createLoan: '/loan',
+    updateLoan: '/loan/{id}',
+    deleteLoan: '/loan/{id}',
+    getLoanById: '/loan/{id}',
+    payLoan: '/loan/{id}/pay',
+    loanSummary: '/loan/summary',
+  },
   user: {
     currentUser: '/user/me',
     userList: '/user/get-users-by-shop-id',

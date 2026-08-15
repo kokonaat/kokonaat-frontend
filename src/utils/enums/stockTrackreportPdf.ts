@@ -75,7 +75,7 @@ export const generateStockTrackReportPDF = async (
         : t('common.transactionTypes.saleTitleCase'),
       item.inventory.name || na,
       item.stock,
-      Number(item.price).toLocaleString(),
+      Number(item.price).toLocaleString('en-IN'),
     ])
 
     const subtotalPrice = items.reduce((acc, item) => acc + Number(item.price || 0), 0)
@@ -86,7 +86,7 @@ export const generateStockTrackReportPDF = async (
       '',
       t('common.labels.subtotalUppercase'),
       totalStock.toString(),
-      subtotalPrice.toLocaleString(),
+      subtotalPrice.toLocaleString('en-IN'),
     ])
 
     autoTable(doc, {
@@ -144,7 +144,7 @@ export const generateStockTrackReportPDF = async (
     setPdfFont(doc, 'bold')
     doc.setFontSize(11)
     doc.text(t('stockTrackReportPdf.summary.grandTotalStock'), summaryX + 2, y + 7)
-    doc.text(grandTotalStock.toLocaleString(), pageWidth - 16, y + 7, { align: 'right' })
+    doc.text(grandTotalStock.toLocaleString('en-IN'), pageWidth - 16, y + 7, { align: 'right' })
 
     doc.text(t('stockTrackReportPdf.summary.grandTotalAmount'), summaryX + 2, y + 15)
     doc.text(formatCurrencyTaka(exportT, grandTotal), pageWidth - 16, y + 15, {

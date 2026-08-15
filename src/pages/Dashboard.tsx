@@ -8,6 +8,11 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import { Main } from '@/components/layout/main'
 import DashboardOverview from '@/components/dashboard/DashboardOverview'
 import DashboardSalesTrend from '@/components/dashboard/DashboardSalesTrend'
@@ -24,12 +29,16 @@ import { format, subDays } from 'date-fns'
 import { useDashboardData } from '@/hooks/useDashboard'
 import { useTranslation } from '@/hooks/useTranslation'
 import type { DateRange } from 'react-day-picker'
+import { ChevronDown } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { formatCurrency } from '@/utils/dashboardFormatters'
 
 const chartCardClass = 'min-w-0 overflow-hidden'
 const chartCardContentClass = 'min-w-0 overflow-hidden p-4 pt-0 sm:p-6 sm:pt-0'
 
 const Dashboard = () => {
   const { t } = useTranslation('dashboard')
+  const { t: tEnums } = useTranslation('enums')
   const shopId = useShopStore((s) => s.currentShopId)
   const userName = useUserStore((s) => s.user?.name ?? '')
   const firstName = userName.split(' ')[0]
@@ -44,6 +53,7 @@ const Dashboard = () => {
     from: defaultStartDate,
     to: defaultEndDate,
   })
+  const [paymentBreakdownOpen, setPaymentBreakdownOpen] = useState(false)
 
   const params = useMemo(
     () => ({
@@ -95,18 +105,55 @@ const Dashboard = () => {
             <Card className="min-w-0">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
-                  <div className="flex-1 rounded-lg bg-green-50 dark:bg-green-950 p-4">
-                    <p className="text-sm text-muted-foreground">{t('balanceNet.balance')}</p>
-                    <p className="text-2xl font-bold text-green-700 dark:text-green-400">
-                      {isLoading ? '...' : (data?.salesSummary?.totalPaid ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">{t('balanceNet.balanceDescription')}</p>
-                  </div>
+                  <Collapsible
+                    open={paymentBreakdownOpen}
+                    onOpenChange={setPaymentBreakdownOpen}
+                    className="flex-1"
+                  >
+                    <div className="rounded-lg bg-green-50 dark:bg-green-950 p-4">
+                      <p className="text-sm text-muted-foreground">{t('balanceNet.balance')}</p>
+                      <p className="text-2xl font-bold text-green-700 dark:text-green-400">
+                        {isLoading ? '...' : (data?.salesSummary?.totalPaid ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">{t('balanceNet.balanceDescription')}</p>
+                      <CollapsibleTrigger asChild>
+                        <button className="mt-2 flex items-center gap-1 text-xs font-medium text-green-700 dark:text-green-400 hover:underline focus:outline-none">
+                          {t('balanceNet.paymentBreakdown.label')}
+                          <ChevronDown
+                            className={cn(
+                              'h-3 w-3 transition-transform duration-200',
+                              paymentBreakdownOpen && 'rotate-180',
+                            )}
+                          />
+                        </button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="mt-2 space-y-1 border-t border-green-200 dark:border-green-800 pt-2">
+                          {isLoading ? (
+                            <p className="text-xs text-muted-foreground">...</p>
+                          ) : (data?.salesSummary?.paymentMethodBreakdown?.items ?? []).length === 0 ? (
+                            <p className="text-xs text-muted-foreground">—</p>
+                          ) : (
+                            (data?.salesSummary?.paymentMethodBreakdown?.items ?? []).map(({ paymentType, amount }) => (
+                              <div key={paymentType} className="flex justify-between text-xs">
+                                <span className="text-muted-foreground">
+                                  {tEnums(`paymentType.${paymentType}`)}
+                                </span>
+                                <span className="font-medium text-green-700 dark:text-green-400">
+                                  {formatCurrency(amount)}
+                                </span>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </CollapsibleContent>
+                    </div>
+                  </Collapsible>
                   <div className="hidden sm:flex text-2xl font-bold text-muted-foreground">−</div>
                   <div className="flex-1 rounded-lg bg-red-50 dark:bg-red-950 p-4">
                     <p className="text-sm text-muted-foreground">{t('balanceNet.expense')}</p>
                     <p className="text-2xl font-bold text-red-600 dark:text-red-400">
-                      {isLoading ? '...' : (data?.operatingSummary?.totalExpenses ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {isLoading ? '...' : (data?.operatingSummary?.totalExpenses ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">{t('balanceNet.expenseDescription')}</p>
                   </div>
@@ -122,7 +169,7 @@ const Dashboard = () => {
                         ? 'text-blue-700 dark:text-blue-400'
                         : 'text-orange-600 dark:text-orange-400'
                     }`}>
-                      {isLoading ? '...' : ((data?.salesSummary?.totalPaid ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {isLoading ? '...' : ((data?.salesSummary?.totalPaid ?? 0) - (data?.operatingSummary?.totalExpenses ?? 0)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">{t('balanceNet.netDescription')}</p>
                   </div>

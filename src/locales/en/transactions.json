@@ -20,7 +20,9 @@
     "cancel": "Cancel",
     "recordPayment": "Record payment",
     "recordCollection": "Record collection",
-    "downloadPdf": "Download PDF"
+    "downloadPdf": "Download PDF",
+    "saveAndInvoice": "Save & Invoice",
+    "saveAndThermal": "Save & Thermal"
   },
   "table": {
     "filterPlaceholder": "Filter transactions...",
@@ -113,6 +115,7 @@
     "additionalCosts": "Additional Costs (Optional)",
     "payment": "Payment",
     "addPaymentMethod": "Add Payment Method",
+    "paymentRemarks": "Remarks (optional)",
     "discount": "Discount",
     "discountPlaceholder": "0.00",
     "sourceTransaction": "Source Transaction (Optional)",
@@ -120,7 +123,12 @@
     "sourceTransactionNone": "No reference transaction",
     "pendingAmount": "Pending: {{amount}}",
     "totalReceivable": "Outstanding",
-    "totalPayable": "Outstanding"
+    "totalPayable": "Outstanding",
+    "vendorLedger": "Vendor Balance",
+    "customerLedger": "Customer Balance",
+    "ledgerTotal": "Total",
+    "ledgerPaid": "Paid",
+    "ledgerPending": "Pending"
   },
   "quickCreate": {
     "customerTitle": "New Customer",

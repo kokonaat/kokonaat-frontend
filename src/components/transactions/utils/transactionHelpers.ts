@@ -53,5 +53,5 @@ export const requiresInventoryFields = (transactionType: string): boolean => {
 
 // Check if transaction type requires amount field
 export const requiresAmountField = (transactionType: string): boolean => {
-    return transactionType === 'PAYMENT' || transactionType === 'RECEIVABLE' || transactionType === 'COMMISSION'
+    return transactionType === 'COMMISSION'
 }

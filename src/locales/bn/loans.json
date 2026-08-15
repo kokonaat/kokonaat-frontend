@@ -1,0 +1,75 @@
+{
+  "page": {
+    "title": "ঋণ",
+    "subtitle": "ঋণ এবং পরিশোধ ট্র্যাক করুন",
+    "errorLoading": "ঋণ লোড করতে ত্রুটি।",
+    "loading": "ঋণ তথ্য লোড হচ্ছে..."
+  },
+  "summary": {
+    "totalLoan": "মোট ঋণ",
+    "totalPaid": "পরিশোধ",
+    "totalPending": "বকেয়া"
+  },
+  "buttons": {
+    "create": "ঋণ যোগ করুন",
+    "saveChanges": "পরিবর্তন সংরক্ষণ",
+    "saving": "সংরক্ষণ হচ্ছে...",
+    "close": "বন্ধ",
+    "delete": "মুছুন"
+  },
+  "table": {
+    "searchPlaceholder": "ঋণ অনুসন্ধান...",
+    "emptyMessage": "কোনো ঋণ পাওয়া যায়নি!",
+    "emptyDetails": "শুরু করতে একটি ঋণ যোগ করুন।",
+    "columns": {
+      "no": "নং",
+      "loanFrom": "ঋণদাতা",
+      "purpose": "উদ্দেশ্য",
+      "amount": "পরিমাণ",
+      "paid": "পরিশোধ",
+      "pending": "বকেয়া",
+      "date": "তারিখ"
+    }
+  },
+  "drawer": {
+    "titleCreate": "ঋণ যোগ করুন",
+    "titleUpdate": "ঋণ আপডেট",
+    "descriptionCreate": "নিচের তথ্য দিয়ে নতুন ঋণ রেকর্ড করুন।",
+    "descriptionUpdate": "নিচের ঋণের তথ্য আপডেট করুন।",
+    "fields": {
+      "loanFrom": "ঋণদাতা",
+      "purpose": "উদ্দেশ্য",
+      "amount": "ঋণের পরিমাণ",
+      "remarks": "মন্তব্য"
+    },
+    "placeholders": {
+      "loanFrom": "ঋণদাতার নাম",
+      "purpose": "ঋণের কারণ (ঐচ্ছিক)",
+      "amount": "০.০০",
+      "remarks": "ঐচ্ছিক নোট"
+    }
+  },
+  "payDrawer": {
+    "title": "ঋণ পরিশোধ",
+    "description": "এই ঋণের বিপরীতে পেমেন্ট রেকর্ড করুন।",
+    "loanFrom": "ঋণদাতা",
+    "purpose": "উদ্দেশ্য",
+    "totalAmount": "মোট পরিমাণ",
+    "alreadyPaid": "ইতিমধ্যে পরিশোধ",
+    "outstanding": "বকেয়া",
+    "paymentAmount": "পেমেন্টের পরিমাণ",
+    "confirm": "পেমেন্ট রেকর্ড করুন",
+    "exceedsOutstanding": "পেমেন্ট বকেয়ার বেশি হতে পারবে না"
+  },
+  "rowActions": {
+    "openMenu": "মেনু খুলুন",
+    "payLoan": "ঋণ পরিশোধ",
+    "edit": "সম্পাদনা",
+    "delete": "মুছুন"
+  },
+  "deleteDialog": {
+    "title": "ঋণ {{no}} মুছবেন?",
+    "description": "{{loanFrom}}-এর এই ঋণটি স্থায়ীভাবে মুছে যাবে। এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "confirm": "মুছুন"
+  }
+}

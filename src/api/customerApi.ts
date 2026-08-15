@@ -79,7 +79,7 @@ export const getCustomerAnalytics = async (customerId: string) => {
   const res = await axiosInstance.get<{
     totalTransactions: number
     totalAmount: number
-    totalPaid: number
+    paid: number
     pending: number
   }>(path)
   return res.data

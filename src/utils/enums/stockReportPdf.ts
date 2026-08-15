@@ -49,9 +49,9 @@ export const generateStockReportPDF = async (
     item.no,
     item.name,
     item.description || na,
-    Number(item.quantity).toLocaleString(),
+    Number(item.quantity).toLocaleString('en-IN'),
     item.unitOfMeasurement?.name || na,
-    Number(item.lastPrice).toLocaleString(),
+    Number(item.lastPrice).toLocaleString('en-IN'),
   ])
 
   const totalQuantity = data.reduce((acc, item) => acc + Number(item.quantity), 0)
@@ -64,9 +64,9 @@ export const generateStockReportPDF = async (
     '',
     '',
     t('stockReportPdf.totals.totalRow'),
-    totalQuantity.toLocaleString(),
+    totalQuantity.toLocaleString('en-IN'),
     '',
-    totalValue.toLocaleString(),
+    totalValue.toLocaleString('en-IN'),
   ])
 
   autoTable(doc, {
@@ -117,7 +117,7 @@ export const generateStockReportPDF = async (
   doc.text(`${data.length}`, pageWidth - 16, finalY + 8, { align: 'right' })
 
   doc.text(t('stockReportPdf.summary.totalQuantity'), summaryX + 2, finalY + 15)
-  doc.text(`${totalQuantity.toLocaleString()}`, pageWidth - 16, finalY + 15, {
+  doc.text(`${totalQuantity.toLocaleString('en-IN')}`, pageWidth - 16, finalY + 15, {
     align: 'right',
   })
 

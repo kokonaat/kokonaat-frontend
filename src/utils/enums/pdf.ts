@@ -34,6 +34,7 @@ interface Transaction {
   customer?: { id: string; name: string }
   vendor?: { id: string; name: string }
   details: TransactionDetail[]
+  payments?: { paymentType: string; amount: number }[]
   totalAmount: number
   paid: number
   pending: number
@@ -77,7 +78,7 @@ const getTotal = (item: TransactionDetail) => {
 
 const formatNumber = (num: number | string | undefined | null) => {
   const n = Number(num) || 0
-  return n.toLocaleString(undefined, {
+  return n.toLocaleString('en-IN', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })
@@ -149,6 +150,44 @@ export const generatePDF = async (
     )
   }
 
+  // Summary boxes: Total | Paid | Receivable/Payable
+  const balanceDueTop = summary.totalAmount - summary.totalPaid
+  const isVendor = transactions.length > 0 && !!transactions[0].vendor
+  const balanceLabel = isVendor
+    ? t('transactionReportWithDetailsPdf.summary.payable')
+    : t('transactionReportWithDetailsPdf.summary.receivable')
+
+  const boxY = entity.phone ? 52 : 46
+  const boxH = 18
+  const usableWidth = pageWidth - 28
+  const gap = 4
+  const boxW = (usableWidth - gap * 2) / 3
+
+  const summaryBoxes = [
+    { label: t('transactionReportWithDetailsPdf.summary.totalAmount'), value: summary.totalAmount, color: [17, 24, 39] as [number, number, number] },
+    { label: t('transactionReportWithDetailsPdf.summary.totalPaid'), value: summary.totalPaid, color: [22, 101, 52] as [number, number, number] },
+    { label: balanceLabel, value: balanceDueTop, color: balanceDueTop > 0 ? [185, 28, 28] as [number, number, number] : [17, 24, 39] as [number, number, number] },
+  ]
+
+  summaryBoxes.forEach((box, i) => {
+    const bx = 14 + i * (boxW + gap)
+    doc.setFillColor(248, 250, 252)
+    doc.setDrawColor(203, 213, 225)
+    doc.setLineWidth(0.3)
+    doc.rect(bx, boxY, boxW, boxH, 'FD')
+
+    setPdfFont(doc, 'normal')
+    doc.setFontSize(7.5)
+    doc.setTextColor(100, 116, 139)
+    doc.text(box.label.toUpperCase(), bx + boxW / 2, boxY + 6, { align: 'center' })
+
+    setPdfFont(doc, 'bold')
+    doc.setFontSize(10)
+    doc.setTextColor(...box.color)
+    doc.text(formatNumber(box.value), bx + boxW / 2, boxY + 13, { align: 'center' })
+    doc.setTextColor(0, 0, 0)
+  })
+
   const tableRows: (string | Record<string, unknown>)[][] = []
   let subtotalQty = 0
   let subtotalTotal = 0
@@ -174,9 +213,11 @@ export const generatePDF = async (
         styles: headerStyles,
       },
       {
-        content: trx.paymentType
-          ? translatePaymentType(trx.paymentType)
-          : '-',
+        content: (() => {
+          const entries = (trx.payments ?? []).filter((p) => Number(p.amount) > 0)
+          if (entries.length > 0) return entries.map((p) => translatePaymentType(p.paymentType)).join(', ')
+          return trx.paymentType ? translatePaymentType(trx.paymentType) : '-'
+        })(),
         styles: { ...headerStyles, halign: 'center' as const },
       },
       { content: '', styles: { fillColor: [241, 245, 249] } },
@@ -225,34 +266,51 @@ export const generatePDF = async (
       }
     } else {
       const amount = trx.paid || trx.totalAmount || 0
-      subtotalTotal += amount
+      // Only SALE/PURCHASE rows count toward the subtotal; RECEIVABLE/PAYMENT are collections, not new amounts
+      const isInventoryTrx = trx.transactionType === 'SALE' || trx.transactionType === 'PURCHASE'
+      if (isInventoryTrx) subtotalTotal += amount
 
-      tableRows.push([
-        '',
-        '',
-        translateTransactionType(trx.transactionType),
-        '',
-        { content: '-', styles: { halign: 'center' as const } },
-        { content: '-', styles: { halign: 'right' as const } },
-        { content: formatNumber(amount), styles: { halign: 'right' as const } },
-      ])
-
-      if (trx.paid > 0) {
+      const paymentEntries = (trx.payments ?? []).filter((p) => Number(p.amount) > 0)
+      if (paymentEntries.length > 0) {
+        paymentEntries.forEach((p) => {
+          tableRows.push([
+            '',
+            '',
+            translatePaymentType(p.paymentType),
+            '',
+            { content: '-', styles: { halign: 'center' as const } },
+            { content: '-', styles: { halign: 'right' as const } },
+            { content: formatNumber(Number(p.amount)), styles: { halign: 'right' as const } },
+          ])
+        })
+      } else {
         tableRows.push([
           '',
           '',
-          {
-            content: t('common.financial.paidWithAmount', {
-              amount: formatNumber(trx.paid),
-            }),
-            colSpan: 5,
-            styles: {
-              fontStyle: 'italic' as const,
-              textColor: [100, 116, 139] as [number, number, number],
-              fontSize: 8,
-            },
-          },
+          translateTransactionType(trx.transactionType),
+          '',
+          { content: '-', styles: { halign: 'center' as const } },
+          { content: '-', styles: { halign: 'right' as const } },
+          { content: formatNumber(amount), styles: { halign: 'right' as const } },
         ])
+
+        if (trx.paid > 0) {
+          tableRows.push([
+            '',
+            '',
+            {
+              content: t('common.financial.paidWithAmount', {
+                amount: formatNumber(trx.paid),
+              }),
+              colSpan: 5,
+              styles: {
+                fontStyle: 'italic' as const,
+                textColor: [100, 116, 139] as [number, number, number],
+                fontSize: 8,
+              },
+            },
+          ])
+        }
       }
     }
 
@@ -290,7 +348,7 @@ export const generatePDF = async (
   ])
 
   autoTable(doc, {
-    startY: entity.phone ? 50 : 44,
+    startY: entity.phone ? 76 : 70,
     head: [[
       t('transactionReportWithDetailsPdf.tableHeaders.date'),
       t('transactionReportWithDetailsPdf.tableHeaders.trxNo'),
@@ -335,69 +393,6 @@ export const generatePDF = async (
       doc.setLineWidth(0.2)
     },
   })
-
-  const finalY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10
-  const summaryX = pageWidth - 95
-  const summaryWidth = 81
-  const padding = 8
-  const totalDiscount = transactions.reduce((sum, trx) => sum + (Number(trx.discount) || 0), 0)
-  const hasDiscount = totalDiscount > 0
-  const summaryHeight = hasDiscount ? 39 : 32
-  const balanceDue = summary.totalAmount - summary.totalPaid
-
-  doc.setFillColor(248, 250, 252)
-  doc.rect(summaryX, finalY, summaryWidth, summaryHeight, 'F')
-  doc.setDrawColor(31, 41, 55)
-  doc.setLineWidth(0.4)
-  doc.rect(summaryX, finalY, summaryWidth, summaryHeight, 'S')
-
-  const drawRow = (
-    label: string,
-    value: number,
-    y: number,
-    isBold = false,
-    isNegativeValue = false,
-  ) => {
-    setPdfFont(doc, isBold ? 'bold' : 'normal')
-    doc.setFontSize(9)
-    doc.setTextColor(0, 0, 0)
-    doc.text(label, summaryX + padding, y)
-
-    if (isNegativeValue && value < 0) {
-      doc.setTextColor(220, 38, 38)
-    }
-    doc.text(
-      formatNumber(Math.abs(value)),
-      summaryX + summaryWidth - padding,
-      y,
-      { align: 'right' },
-    )
-    setPdfFont(doc, 'normal')
-    doc.setTextColor(0, 0, 0)
-  }
-
-  let pdfSy = finalY + 8
-  drawRow(t('transactionReportWithDetailsPdf.summary.totalAmount'), summary.totalAmount, pdfSy)
-  if (hasDiscount) {
-    pdfSy += 7
-    drawRow(t('transactionReportWithDetailsPdf.summary.totalDiscount'), totalDiscount, pdfSy)
-  }
-  pdfSy += 7
-  drawRow(t('transactionReportWithDetailsPdf.summary.totalPaid'), summary.totalPaid, pdfSy)
-
-  pdfSy += 5
-  doc.setDrawColor(203, 213, 225)
-  doc.setLineWidth(0.3)
-  doc.line(summaryX + padding, pdfSy, summaryX + summaryWidth - padding, pdfSy)
-
-  pdfSy += 7
-  drawRow(
-    t('transactionReportWithDetailsPdf.summary.balanceDue'),
-    balanceDue,
-    pdfSy,
-    true,
-    true,
-  )
 
   drawPdfFooter(doc, t as ExportTFunction, pageWidth)
   doc.save(`Transaction_Report_${entity.name.replace(/\s+/g, '_')}_${Date.now()}.pdf`)

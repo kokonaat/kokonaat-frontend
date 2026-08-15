@@ -16,6 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Mail, Phone, MapPin, User, Briefcase, Contact } from "lucide-react"
+import { fmtAmount } from "@/lib/utils"
 
 const VendorTransactionsProfile = () => {
   const shopId = useShopStore((s) => s.currentShopId)
@@ -143,15 +144,15 @@ const VendorTransactionsProfile = () => {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="rounded-lg border bg-muted/40 p-4 text-center">
                     <p className="text-xs text-muted-foreground mb-1">Total Purchases</p>
-                    <p className="text-lg font-semibold">{Number(analytics.totalAmount ?? 0).toFixed(2)}</p>
+                    <p className="text-lg font-semibold">{fmtAmount(analytics.totalAmount ?? 0, { min: 2 })}</p>
                   </div>
                   <div className="rounded-lg border bg-muted/40 p-4 text-center">
                     <p className="text-xs text-muted-foreground mb-1">Paid</p>
-                    <p className="text-lg font-semibold text-green-600">{Number(analytics.paid ?? 0).toFixed(2)}</p>
+                    <p className="text-lg font-semibold text-green-600">{fmtAmount(analytics.paid ?? 0, { min: 2 })}</p>
                   </div>
                   <div className="rounded-lg border bg-muted/40 p-4 text-center">
                     <p className="text-xs text-muted-foreground mb-1">Outstanding (Payable)</p>
-                    <p className="text-lg font-semibold text-red-500">{Number(analytics.pending ?? 0).toFixed(2)}</p>
+                    <p className="text-lg font-semibold text-red-500">{fmtAmount(analytics.pending ?? 0, { min: 2 })}</p>
                   </div>
                   <div className="rounded-lg border bg-muted/40 p-4 text-center">
                     <p className="text-xs text-muted-foreground mb-1">Total Transactions</p>

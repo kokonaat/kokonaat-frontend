@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Download } from "lucide-react"
 import type { BalanceSheetDayItem, BalanceSheetItem } from "@/interface/reportInterface"
 import { useTranslation } from "@/hooks/useTranslation"
+import { fmtAmount } from "@/lib/utils"
 
 interface BalanceSheetTableProps {
   data: BalanceSheetDayItem[]
@@ -81,10 +82,10 @@ export const BalanceSheetTable = ({
             </Badge>
           </TableCell>
           <TableCell>{item.customerName || item.vendorName || na}</TableCell>
-          <TableCell className="text-right">{item.totalAmount.toFixed(2)}</TableCell>
-          <TableCell className="text-right text-green-600">{item.paid.toFixed(2)}</TableCell>
+          <TableCell className="text-right">{fmtAmount(item.totalAmount, { min: 2 })}</TableCell>
+          <TableCell className="text-right text-green-600">{fmtAmount(item.paid, { min: 2 })}</TableCell>
           <TableCell className={`text-right ${item.pending > 0 ? "text-destructive font-bold" : ""}`}>
-            {item.pending.toFixed(2)}
+            {fmtAmount(item.pending, { min: 2 })}
           </TableCell>
           <TableCell>{item.paymentType ? tEnums(`paymentType.${item.paymentType}`) : na}</TableCell>
           <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
@@ -101,7 +102,7 @@ export const BalanceSheetTable = ({
           </Badge>
         </TableCell>
         <TableCell>{item.expenseTitle}</TableCell>
-        <TableCell className="text-right">{item.expenseAmount.toFixed(2)}</TableCell>
+        <TableCell className="text-right">{fmtAmount(item.expenseAmount, { min: 2 })}</TableCell>
         <TableCell className="text-right">{na}</TableCell>
         <TableCell className="text-right">{na}</TableCell>
         <TableCell>{na}</TableCell>
@@ -180,19 +181,19 @@ export const BalanceSheetTable = ({
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">{t('balanceSheet.openingBalance')}</span>
-                    <span className="ml-2 font-semibold">{dayItem.closingBalance.openingBalance.toFixed(2)}</span>
+                    <span className="ml-2 font-semibold">{fmtAmount(dayItem.closingBalance.openingBalance, { min: 2 })}</span>
                   </div>
                   <div>
                     <span className="text-green-600">{t('balanceSheet.totalIn')}</span>
-                    <span className="ml-2 font-semibold">{dayItem.closingBalance.totalInflow.toFixed(2)}</span>
+                    <span className="ml-2 font-semibold">{fmtAmount(dayItem.closingBalance.totalInflow, { min: 2 })}</span>
                   </div>
                   <div>
                     <span className="text-red-600">{t('balanceSheet.totalOut')}</span>
-                    <span className="ml-2 font-semibold">{dayItem.closingBalance.totalOutflow.toFixed(2)}</span>
+                    <span className="ml-2 font-semibold">{fmtAmount(dayItem.closingBalance.totalOutflow, { min: 2 })}</span>
                   </div>
                   <div>
                     <span className="text-blue-600">{t('balanceSheet.closingBalance')}</span>
-                    <span className="ml-2 font-semibold">{dayItem.closingBalance.closingBalance.toFixed(2)}</span>
+                    <span className="ml-2 font-semibold">{fmtAmount(dayItem.closingBalance.closingBalance, { min: 2 })}</span>
                   </div>
                 </div>
               </div>

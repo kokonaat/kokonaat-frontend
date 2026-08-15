@@ -101,7 +101,13 @@
     "expense": "খরচ",
     "expenseDescription": "মোট পরিচালন খরচ",
     "net": "নিট",
-    "netDescription": "পরিশোধিত বিক্রয় বিয়োগ খরচ"
+    "netDescription": "পরিশোধিত বিক্রয় বিয়োগ খরচ",
+    "paymentBreakdown": {
+      "label": "বিভাজন",
+      "cash": "নগদ",
+      "bank": "ব্যাংক",
+      "others": "অন্যান্য"
+    }
   },
   "gettingStarted": {
     "title": "শুরু করুন",

@@ -9,6 +9,7 @@ import { TransactionDetailsDownload } from "./TransactionDetailsDownload"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "../ui/tooltip"
 import { Receipt, User, Calendar, CreditCard, FileText, DollarSign, CheckCircle2, Clock, Briefcase } from "lucide-react"
 import { Badge } from "../ui/badge"
+import { fmtAmount } from "@/lib/utils"
 
 const TransactionDetails = () => {
     const { t } = useTranslation('transactions')
@@ -34,6 +35,9 @@ const TransactionDetails = () => {
     const paymentType = transaction.paymentType
         ? tEnums(`paymentType.${transaction.paymentType}`)
         : notAvailable
+
+    const payments: { id?: string; paymentType: string; amount: number; remarks?: string }[] = transaction.payments ?? []
+    const hasPaymentBreakdown = payments.length > 0
     const status = transaction.transactionStatus ?? notAvailable
     const isPaid = transaction.isPaid || transaction.pending === 0
 
@@ -79,7 +83,23 @@ const TransactionDetails = () => {
                                         <CreditCard className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-xs text-muted-foreground mb-0.5">{t('details.paymentType')}</p>
-                                            <p className="text-sm font-medium">{paymentType}</p>
+                                            {hasPaymentBreakdown ? (
+                                                <div className="space-y-1">
+                                                    {payments.map((p, i) => (
+                                                        <div key={p.id ?? `${p.paymentType}-${i}`}>
+                                                            <div className="flex justify-between text-sm">
+                                                                <span className="font-medium">{tEnums(`paymentType.${p.paymentType}`)}</span>
+                                                                <span className="tabular-nums text-muted-foreground">{fmtAmount(p.amount)}</span>
+                                                            </div>
+                                                            {p.remarks && (
+                                                                <p className="text-xs text-muted-foreground pl-0.5">{p.remarks}</p>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <p className="text-sm font-medium">{paymentType}</p>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
@@ -113,45 +133,45 @@ const TransactionDetails = () => {
                                         <div>
                                             <p className="text-xs text-muted-foreground mb-0.5">{t('details.subtotal')}</p>
                                             <p className="text-sm font-medium">
-                                                {(transaction.details || []).reduce((s: number, d: { total?: number | string }) => s + Number(d.total || 0), 0).toLocaleString()}
+                                                {fmtAmount((transaction.details || []).reduce((s: number, d: { total?: number | string }) => s + Number(d.total || 0), 0))}
                                             </p>
                                         </div>
                                     )}
                                     {showDetailsTable && Number(transaction.cnfCost) > 0 && (
                                         <div>
                                             <p className="text-xs text-muted-foreground mb-0.5">{t('details.cnfCost')}</p>
-                                            <p className="text-sm font-medium">{Number(transaction.cnfCost).toLocaleString()}</p>
+                                            <p className="text-sm font-medium">{fmtAmount(transaction.cnfCost)}</p>
                                         </div>
                                     )}
                                     {showDetailsTable && Number(transaction.labourCost) > 0 && (
                                         <div>
                                             <p className="text-xs text-muted-foreground mb-0.5">{t('details.labourCost')}</p>
-                                            <p className="text-sm font-medium">{Number(transaction.labourCost).toLocaleString()}</p>
+                                            <p className="text-sm font-medium">{fmtAmount(transaction.labourCost)}</p>
                                         </div>
                                     )}
                                     {showDetailsTable && Number(transaction.transportCost) > 0 && (
                                         <div>
                                             <p className="text-xs text-muted-foreground mb-0.5">{t('details.transportCost')}</p>
-                                            <p className="text-sm font-medium">{Number(transaction.transportCost).toLocaleString()}</p>
+                                            <p className="text-sm font-medium">{fmtAmount(transaction.transportCost)}</p>
                                         </div>
                                     )}
                                     {showDetailsTable && Number(transaction.discount) > 0 && (
                                         <div>
                                             <p className="text-xs text-muted-foreground mb-0.5">{t('details.discount')}</p>
-                                            <p className="text-sm font-medium text-red-600">-{Number(transaction.discount).toLocaleString()}</p>
+                                            <p className="text-sm font-medium text-red-600">-{fmtAmount(transaction.discount)}</p>
                                         </div>
                                     )}
                                     <div>
                                         <p className="text-xs text-muted-foreground mb-0.5">{t('details.totalAmount')}</p>
-                                        <p className="text-sm font-semibold">{transaction.totalAmount.toLocaleString()}</p>
+                                        <p className="text-sm font-semibold">{fmtAmount(transaction.totalAmount)}</p>
                                     </div>
                                     <div>
                                         <p className="text-xs text-muted-foreground mb-0.5">{t('details.paid')}</p>
-                                        <p className="text-sm font-medium text-green-600">{transaction.paid.toLocaleString()}</p>
+                                        <p className="text-sm font-medium text-green-600">{fmtAmount(transaction.paid)}</p>
                                     </div>
                                     <div>
                                         <p className="text-xs text-muted-foreground mb-0.5">{t('details.pending')}</p>
-                                        <p className="text-sm font-medium text-amber-600">{transaction.pending.toLocaleString()}</p>
+                                        <p className="text-sm font-medium text-amber-600">{fmtAmount(transaction.pending)}</p>
                                     </div>
                                 </div>
                             </div>

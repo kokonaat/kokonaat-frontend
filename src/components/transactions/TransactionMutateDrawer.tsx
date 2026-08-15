@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import axios from 'axios'
 import { useFieldArray, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -43,6 +43,11 @@ import { useDebounce } from '@/hooks/useDebounce'
 import { useTranslation } from '@/hooks/useTranslation'
 import { Input } from '../ui/input'
 import { useUomList } from '@/hooks/useUom'
+import { generateTransactionDetailsPDF } from '@/utils/enums/transactionDetailsPdf'
+import { generateThermalPDF } from '@/utils/enums/thermalPdf'
+import { getTransactionById } from '@/api/transactionApi'
+import { useTranslation as useI18nTranslation } from 'react-i18next'
+import { fmtAmount } from '@/lib/utils'
 
 const TransactionMutateDrawer = ({
   open,
@@ -59,6 +64,9 @@ const TransactionMutateDrawer = ({
   const [selectedSourceTransactionId, setSelectedSourceTransactionId] = useState<string>('')
 
   const shopId = useShopStore((s) => s.currentShopId)
+  const shopName = useShopStore((s) => s.currentShopName) ?? ''
+  const submitModeRef = useRef<'save' | 'invoice' | 'thermal'>('save')
+  const { t: tExport } = useI18nTranslation('export')
 
   const {
     form,
@@ -125,7 +133,7 @@ const TransactionMutateDrawer = ({
       .filter(tx => (tx.pending ?? 0) > 0)
       .map(tx => ({
         value: tx.id,
-        label: `${tx.no} — ${t('form.pendingAmount', { amount: Number(tx.pending).toFixed(2) })}`,
+        label: `${tx.no} — ${t('form.pendingAmount', { amount: fmtAmount(tx.pending, { min: 2, max: 2 }) })}`,
       }))
   }, [sourceTransactionsData, isPaymentOrReceivable, entityTypeId, t])
 
@@ -210,9 +218,7 @@ const TransactionMutateDrawer = ({
     const entityId = currentRow.vendorId || currentRow.customerId || ''
     const isInventoryType =
       currentRow.transactionType === 'PURCHASE' || currentRow.transactionType === 'SALE'
-    const isAmountOnlyType = ['PAYMENT', 'RECEIVABLE', 'COMMISSION'].includes(
-      currentRow.transactionType,
-    )
+    const isAmountOnlyType = currentRow.transactionType === 'COMMISSION'
 
     form.reset({
       transactionType: currentRow.transactionType,
@@ -220,8 +226,8 @@ const TransactionMutateDrawer = ({
       entityTypeId: entityId,
       remarks: currentRow.remarks || '',
       payments: currentRow.payments && currentRow.payments.length > 0
-        ? currentRow.payments.map((p) => ({ paymentType: p.paymentType, amount: Number(p.amount) }))
-        : [{ paymentType: currentRow.paymentType || '', amount: isInventoryType ? Number(currentRow.paid) : 0 }],
+        ? currentRow.payments.map((p) => ({ paymentType: p.paymentType, amount: Number(p.amount), remarks: p.remarks || '' }))
+        : [{ paymentType: currentRow.paymentType || '', amount: Number(currentRow.paid), remarks: '' }],
       cnfCost: Number(currentRow.cnfCost) || 0,
       labourCost: Number(currentRow.labourCost) || 0,
       transportCost: Number(currentRow.transportCost) || 0,
@@ -268,22 +274,47 @@ const TransactionMutateDrawer = ({
   const inventorySubtotal = calculateTotal(inventories)
   const total = inventorySubtotal + cnfCost + labourCost + transportCost - discount
   const transactionAmount = form.watch('transactionAmount')
+
   const remarks = form.watch('remarks')
 
   const totalPaid = (payments || []).reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
 
   const { data: customerAnalytics } = useCustomerAnalytics(
-    transactionType === 'SALE' && entityTypeId ? entityTypeId : ''
+    (transactionType === 'SALE' || transactionType === 'RECEIVABLE') && entityTypeId ? entityTypeId : ''
   )
   const { data: vendorAnalytics } = useVendorAnalytics(
-    transactionType === 'PURCHASE' && entityTypeId ? entityTypeId : ''
+    (transactionType === 'PURCHASE' || transactionType === 'PAYMENT') && entityTypeId ? entityTypeId : ''
   )
+
+  // Pre-populate first payment amount with total + outstanding for new SALE/PURCHASE
+  useEffect(() => {
+    if (currentRow) return
+    if (!showInventoryFields) return
+    if (total <= 0) return
+    const outstanding = transactionType === 'SALE'
+      ? Number(customerAnalytics?.pending) || 0
+      : transactionType === 'PURCHASE'
+      ? Number(vendorAnalytics?.pending) || 0
+      : 0
+    form.setValue('payments.0.amount', total + outstanding, { shouldValidate: false })
+  }, [total, transactionType, customerAnalytics?.pending, vendorAnalytics?.pending, showInventoryFields, currentRow, form])
+
+  // Pre-populate first payment amount with entity's pending balance for PAYMENT/RECEIVABLE
+  useEffect(() => {
+    if (currentRow) return
+    if (!isPaymentOrReceivable) return
+    const pending = transactionType === 'PAYMENT'
+      ? Number(vendorAnalytics?.pending) || 0
+      : Number(customerAnalytics?.pending) || 0
+    if (pending <= 0) return
+    form.setValue('payments.0.amount', pending, { shouldValidate: false })
+  }, [transactionType, vendorAnalytics?.pending, customerAnalytics?.pending, isPaymentOrReceivable, currentRow, form])
 
   // Check if form has any data entered
   const hasFormData = useMemo(() => {
     const hasTransactionType = !!transactionType
     const hasEntityId = !!entityTypeId
-    const hasAmount = showAmountField ? (transactionAmount ?? 0) > 0 : false
+    const hasAmount = showAmountField ? (transactionAmount ?? 0) > 0 : isPaymentOrReceivable ? totalPaid > 0 : false
     const hasInventories = showInventoryFields ? (inventories?.length ?? 0) > 0 &&
       inventories?.some(inv => inv.inventoryId || inv.quantity > 0 || inv.price > 0) : false
     const hasPayments = totalPaid > 0 || (payments || []).some(p => p.paymentType)
@@ -327,7 +358,7 @@ const TransactionMutateDrawer = ({
     // Reset dependent fields
     form.setValue('partnerType', '')
     form.setValue('entityTypeId', '')
-    form.setValue('payments', [{ paymentType: '', amount: 0 }])
+    form.setValue('payments', [{ paymentType: '', amount: 0, remarks: '' }])
     form.setValue('transactionAmount', null)
     form.setValue('inventories', [])
     if (value === 'SALE') form.setValue('cnfCost', 0)
@@ -446,7 +477,7 @@ const TransactionMutateDrawer = ({
 
     // For PAYMENT, RECEIVABLE, COMMISSION: paid = entered amount, totalAmount = 0
     // For PURCHASE, SALE: paid is sum of payment rows, totalAmount calculated from inventory
-    const isAmountOnlyTransaction = ['PAYMENT', 'RECEIVABLE', 'COMMISSION'].includes(transactionTypeCasted)
+    const isAmountOnlyTransaction = transactionTypeCasted === 'COMMISSION'
 
     const paymentsTotal = (values.payments || []).reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
     // Primary payment type = entry with the highest amount (or first entry)
@@ -457,8 +488,16 @@ const TransactionMutateDrawer = ({
       ? Number(values.transactionAmount)
       : paymentsTotal
 
-    const totalAmountValue = isAmountOnlyTransaction
-      ? 0
+    // For PAYMENT/RECEIVABLE: set totalAmount to entity's current outstanding so that
+    // pending = outstanding - paid gives the remaining balance visible in the transaction list.
+    const entityOutstanding = transactionTypeCasted === 'PAYMENT'
+      ? Number(vendorAnalytics?.pending) || 0
+      : transactionTypeCasted === 'RECEIVABLE'
+      ? Number(customerAnalytics?.pending) || 0
+      : 0
+
+    const totalAmountValue = (transactionTypeCasted === 'PAYMENT' || transactionTypeCasted === 'RECEIVABLE' || isAmountOnlyTransaction)
+      ? entityOutstanding > 0 ? entityOutstanding : paidValue
       : undefined // Let backend calculate from inventory details
 
     const extraCosts = showInventoryFields
@@ -470,9 +509,9 @@ const TransactionMutateDrawer = ({
         }
       : {}
 
-    const validPayments = (values.payments || []).filter(
-      (p) => p.paymentType && (Number(p.amount) || 0) > 0
-    )
+    const validPayments = (values.payments || [])
+      .filter((p) => p.paymentType && (Number(p.amount) || 0) > 0)
+      .map((p) => ({ ...p, remarks: p.remarks?.trim() || undefined }))
 
     const payload =
       selectedBusinessEntity === BusinessEntityType.VENDOR
@@ -508,14 +547,30 @@ const TransactionMutateDrawer = ({
         paid: paidValue,
         remarks: values.remarks,
         paymentType: primaryPaymentType,
-        totalAmount: isAmountOnlyTransaction ? Number(values.transactionAmount) : undefined,
+        totalAmount: (transactionTypeCasted === 'PAYMENT' || transactionTypeCasted === 'RECEIVABLE' || isAmountOnlyTransaction) ? totalAmountValue : undefined,
         payments: validPayments,
       }
       updateTransaction(
         { id: currentRow.id, data: updatePayload },
         {
-          onSuccess: () => {
+          onSuccess: async () => {
             toast.success(tToast('transaction.updated'))
+
+            const mode = submitModeRef.current
+            if ((mode === 'invoice' || mode === 'thermal') && currentRow?.id) {
+              try {
+                const full = await getTransactionById(shopId!, currentRow.id)
+                const txn = full?.data ?? full
+                if (mode === 'invoice') {
+                  await generateTransactionDetailsPDF(tExport as any, txn, shopName)
+                } else {
+                  await generateThermalPDF(tExport as any, txn, shopName)
+                }
+              } catch (_) {
+                toast.error('PDF generation failed')
+              }
+            }
+
             setPendingClose(true)
             resetFormStates()
             setSelectedSourceTransactionId('')
@@ -536,14 +591,24 @@ const TransactionMutateDrawer = ({
     }
 
     createTransaction(payload as CreateTransactionDto, {
-      onSuccess: async () => {
+      onSuccess: async (res) => {
         toast.success(tToast('transaction.created'))
 
-        try {
-          // await refetchInventories()
-        } catch (_) { /* empty */ }
+        const mode = submitModeRef.current
+        if ((mode === 'invoice' || mode === 'thermal') && res?.id) {
+          try {
+            const full = await getTransactionById(shopId!, res.id)
+            const txn = full?.data ?? full
+            if (mode === 'invoice') {
+              await generateTransactionDetailsPDF(tExport as any, txn, shopName)
+            } else {
+              await generateThermalPDF(tExport as any, txn, shopName)
+            }
+          } catch (_) {
+            toast.error('PDF generation failed')
+          }
+        }
 
-        // Mark as pending close to bypass confirmation
         setPendingClose(true)
         resetFormStates()
         setSelectedSourceTransactionId('')
@@ -615,6 +680,34 @@ const TransactionMutateDrawer = ({
                 />
               </div>
             </div>
+
+            {isPaymentOrReceivable && entityTypeId && (() => {
+              const analytics = transactionType === 'PAYMENT' ? vendorAnalytics : customerAnalytics
+              if (!analytics) return null
+              const total = Number(analytics.totalAmount) || 0
+              const paid = Number(analytics.paid) || 0
+              const pending = Number(analytics.pending) || 0
+              const label = transactionType === 'PAYMENT' ? t('form.vendorLedger') : t('form.customerLedger')
+              return (
+                <div className='rounded-md border bg-muted/40 p-3'>
+                  <p className='text-xs font-medium text-muted-foreground mb-2'>{label}</p>
+                  <div className='grid grid-cols-3 gap-2 text-center'>
+                    <div>
+                      <p className='text-[10px] text-muted-foreground uppercase tracking-wide'>{t('form.ledgerTotal')}</p>
+                      <p className='text-sm font-semibold tabular-nums'>{fmtAmount(total, { min: 2, max: 2 })}</p>
+                    </div>
+                    <div>
+                      <p className='text-[10px] text-muted-foreground uppercase tracking-wide'>{t('form.ledgerPaid')}</p>
+                      <p className='text-sm font-semibold tabular-nums text-green-600'>{fmtAmount(paid, { min: 2, max: 2 })}</p>
+                    </div>
+                    <div>
+                      <p className='text-[10px] text-muted-foreground uppercase tracking-wide'>{t('form.ledgerPending')}</p>
+                      <p className={`text-sm font-semibold tabular-nums ${pending > 0 ? 'text-red-500' : 'text-muted-foreground'}`}>{fmtAmount(pending, { min: 2, max: 2 })}</p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })()}
 
             {entityTypeId && (
               <FormField
@@ -786,13 +879,19 @@ const TransactionMutateDrawer = ({
               </div>
             )}
 
-            {showInventoryFields && entityTypeId && (
+            {(showInventoryFields || isPaymentOrReceivable) && entityTypeId && (
               <PaymentFields
                 form={form}
                 fields={paymentFields}
-                onAppend={() => appendPayment({ paymentType: '', amount: 0 })}
+                onAppend={() => appendPayment({ paymentType: '', amount: 0, remarks: '' })}
                 onRemove={removePayment}
-                total={total}
+                total={
+                  isPaymentOrReceivable
+                    ? (transactionType === 'PAYMENT'
+                        ? Number(vendorAnalytics?.pending) || 0
+                        : Number(customerAnalytics?.pending) || 0)
+                    : total
+                }
                 selectedBusinessEntity={selectedBusinessEntity}
                 transactionType={transactionType}
                 entityBalance={
@@ -807,15 +906,44 @@ const TransactionMutateDrawer = ({
           </form>
         </Form>
 
-        <SheetFooter className='gap-2'>
-          <Button 
-            variant='outline' 
+        <SheetFooter className='flex flex-col gap-3'>
+          <div className='flex gap-2'>
+            <Button
+              form={FORM_ID}
+              type='submit'
+              variant='outline'
+              disabled={isPending}
+              className='flex-1'
+              onClick={() => { submitModeRef.current = 'invoice' }}
+            >
+              {isPending && submitModeRef.current === 'invoice' ? t('buttons.saving') : t('buttons.saveAndInvoice')}
+            </Button>
+            <Button
+              form={FORM_ID}
+              type='submit'
+              disabled={isPending}
+              className='flex-1'
+              onClick={() => { submitModeRef.current = 'save' }}
+            >
+              {isPending && submitModeRef.current === 'save' ? t('buttons.saving') : t('buttons.saveChanges')}
+            </Button>
+            <Button
+              form={FORM_ID}
+              type='submit'
+              variant='outline'
+              disabled={isPending}
+              className='flex-1'
+              onClick={() => { submitModeRef.current = 'thermal' }}
+            >
+              {isPending && submitModeRef.current === 'thermal' ? t('buttons.saving') : t('buttons.saveAndThermal')}
+            </Button>
+          </div>
+          <Button
+            variant='outline'
+            className='w-full'
             onClick={() => handleOpenChange(false)}
           >
             {t('buttons.close')}
-          </Button>
-          <Button form={FORM_ID} type='submit' disabled={isPending}>
-            {isPending ? t('buttons.saving') : t('buttons.saveChanges')}
           </Button>
         </SheetFooter>
       </SheetContent>

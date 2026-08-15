@@ -211,10 +211,10 @@ const ExpenseMutateDrawer = ({
                                                 step="any"
                                                 min="0"
                                                 placeholder={t('drawer.placeholders.amount')}
-                                                value={field.value ?? ""}
+                                                value={field.value === 0 ? '' : (field.value ?? '')}
                                                 onChange={(e) => {
                                                     const val = e.target.value
-                                                    field.onChange(val === '' ? '' : Number(val))
+                                                    field.onChange(val === '' ? 0 : Number(val))
                                                 }}
                                             />
                                         </FormControl>

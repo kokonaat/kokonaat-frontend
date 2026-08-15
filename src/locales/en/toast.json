@@ -83,6 +83,16 @@
     "creationFailed": "Creation failed",
     "deleted": "The expense has been deleted successfully"
   },
+  "loan": {
+    "created": "Loan recorded successfully.",
+    "updated": "Loan updated successfully.",
+    "paid": "Payment recorded successfully.",
+    "deleted": "Loan deleted successfully.",
+    "updateFailed": "Update failed",
+    "creationFailed": "Creation failed",
+    "payFailed": "Payment failed",
+    "shopIdNotFound": "Shop ID not found!"
+  },
   "uom": {
     "shopIdNotFound": "Shop ID not found!",
     "noChanges": "No changes detected. Please modify something before saving.",

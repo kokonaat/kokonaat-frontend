@@ -1,5 +1,6 @@
 import type { TFunction } from 'i18next'
 import autoTable from 'jspdf-autotable'
+import i18n from '@/i18n'
 import type { Transaction } from '@/interface/transactionInterface'
 import {
   drawPdfFooter,
@@ -65,6 +66,7 @@ export const generateTransactionDetailsPDF = async (
       ? t('common.partnerTypes.customer')
       : na
   const paymentType = (transaction.paymentType ?? na).replace('_', ' ')
+  const paymentBreakdown = (transaction.payments ?? []).filter((p) => Number(p.amount) > 0)
   const status =
     transaction.transactionStatus ?? t('common.fallbacks.defaultStatusPending')
 
@@ -119,7 +121,28 @@ export const generateTransactionDetailsPDF = async (
   )
   let leftY = currentY
   leftY = drawField(partnerType, name, leftX, leftY)
-  leftY = drawField(t('transactionDetailsPdf.fields.paymentType'), paymentType, leftX, leftY)
+
+  if (paymentBreakdown.length > 0) {
+    setPdfFont(doc, 'normal')
+    doc.setFontSize(8)
+    doc.setTextColor(107, 114, 128)
+    doc.text(t('transactionDetailsPdf.fields.paymentType'), leftX, leftY)
+    leftY += 5
+    paymentBreakdown.forEach((p) => {
+      const pLabel = i18n.t(`enums:paymentType.${p.paymentType}`, { defaultValue: p.paymentType })
+      const pValue = Number(p.amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      setPdfFont(doc, 'bold')
+      doc.setFontSize(9)
+      doc.setTextColor(0, 0, 0)
+      doc.text(pLabel, leftX, leftY)
+      doc.text(pValue, leftX + columnWidth, leftY, { align: 'right' })
+      leftY += 6
+    })
+    leftY += 2
+  } else {
+    leftY = drawField(t('transactionDetailsPdf.fields.paymentType'), paymentType, leftX, leftY)
+  }
+
   leftY = drawField(t('transactionDetailsPdf.fields.status'), status, leftX, leftY)
 
   let rightY = startY
@@ -142,41 +165,41 @@ export const generateTransactionDetailsPDF = async (
   if (isInventoryTransaction) {
     rightY = drawField(
       t('transactionDetailsPdf.fields.subtotal'),
-      subtotal.toLocaleString(),
+      subtotal.toLocaleString('en-IN'),
       rightX,
       rightY,
       true,
     )
     if (cnfCost > 0) {
-      rightY = drawField(t('transactionDetailsPdf.fields.cnfCost'), cnfCost.toLocaleString(), rightX, rightY, true)
+      rightY = drawField(t('transactionDetailsPdf.fields.cnfCost'), cnfCost.toLocaleString('en-IN'), rightX, rightY, true)
     }
     if (labourCost > 0) {
-      rightY = drawField(t('transactionDetailsPdf.fields.labourCost'), labourCost.toLocaleString(), rightX, rightY, true)
+      rightY = drawField(t('transactionDetailsPdf.fields.labourCost'), labourCost.toLocaleString('en-IN'), rightX, rightY, true)
     }
     if (transportCost > 0) {
-      rightY = drawField(t('transactionDetailsPdf.fields.transportCost'), transportCost.toLocaleString(), rightX, rightY, true)
+      rightY = drawField(t('transactionDetailsPdf.fields.transportCost'), transportCost.toLocaleString('en-IN'), rightX, rightY, true)
     }
     if (discount > 0) {
-      rightY = drawField(t('transactionDetailsPdf.fields.discount'), `-${discount.toLocaleString()}`, rightX, rightY, true)
+      rightY = drawField(t('transactionDetailsPdf.fields.discount'), `-${discount.toLocaleString('en-IN')}`, rightX, rightY, true)
     }
   }
   rightY = drawField(
     t('transactionDetailsPdf.fields.totalAmount'),
-    transaction.totalAmount.toLocaleString(),
+    transaction.totalAmount.toLocaleString('en-IN'),
     rightX,
     rightY,
     true,
   )
   rightY = drawField(
     t('transactionDetailsPdf.fields.paid'),
-    transaction.paid.toLocaleString(),
+    transaction.paid.toLocaleString('en-IN'),
     rightX,
     rightY,
     true,
   )
   rightY = drawField(
     t('transactionDetailsPdf.fields.pending'),
-    transaction.pending.toLocaleString(),
+    transaction.pending.toLocaleString('en-IN'),
     rightX,
     rightY,
     true,
@@ -231,6 +254,8 @@ export const generateTransactionDetailsPDF = async (
 
   startY = Math.max(leftY, rightY) + 15
 
+  let ledgerTableY = startY
+
   if (transaction.details && transaction.details.length > 0) {
     setPdfFont(doc, 'bold')
     doc.setFontSize(11)
@@ -239,7 +264,7 @@ export const generateTransactionDetailsPDF = async (
 
     const formatNumber = (num: number | string | undefined | null) => {
       const n = Number(num) || 0
-      return n.toLocaleString(undefined, {
+      return n.toLocaleString('en-IN', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       })
@@ -383,7 +408,57 @@ export const generateTransactionDetailsPDF = async (
     doc.line(summaryX + padding, sy, summaryX + summaryWidth - padding, sy)
     sy += rowH - 2
     drawSummaryRow(t('transactionDetailsPdf.summary.pending'), pending, sy, true)
+    ledgerTableY = finalY + summaryHeight + 14
   }
+
+  // Transaction Ledger table (shows for all types, especially useful for RECEIVABLE/PAYMENT)
+  setPdfFont(doc, 'bold')
+  doc.setFontSize(10)
+  doc.setTextColor(0, 0, 0)
+  doc.text(t('transactionLedgerTable.title'), 14, ledgerTableY)
+
+  const translateType = (type: string) =>
+    i18n.t(`enums:transactionType.${type}`, { defaultValue: type })
+
+  const ledgerBalance = Number(transaction.totalAmount) - Number(transaction.paid)
+  autoTable(doc, {
+    startY: ledgerTableY + 5,
+    head: [[
+      t('transactionLedgerTable.headers.date'),
+      t('transactionLedgerTable.headers.no'),
+      t('transactionLedgerTable.headers.type'),
+      t('transactionLedgerTable.headers.amount'),
+      t('transactionLedgerTable.headers.paid'),
+      t('transactionLedgerTable.headers.balance'),
+    ]],
+    body: [[
+      new Date(transaction.createdAt).toLocaleDateString('en-GB'),
+      transaction.no,
+      translateType(transaction.transactionType),
+      { content: Number(transaction.totalAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), styles: { halign: 'right' as const } },
+      { content: Number(transaction.paid).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), styles: { halign: 'right' as const } },
+      { content: ledgerBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), styles: { halign: 'right' as const, textColor: ledgerBalance > 0 ? [220, 38, 38] as [number, number, number] : [0, 0, 0] as [number, number, number] } },
+    ]],
+    theme: 'grid',
+    headStyles: {
+      fillColor: [31, 41, 55] as [number, number, number],
+      textColor: 255,
+      halign: 'center',
+      fontStyle: 'bold',
+      fontSize: 9,
+      cellPadding: 3,
+      font: tableFont,
+    },
+    columnStyles: {
+      0: { cellWidth: 24, halign: 'left' },
+      1: { cellWidth: 34, halign: 'left' },
+      2: { cellWidth: 'auto', halign: 'left' },
+      3: { cellWidth: 28, halign: 'right' },
+      4: { cellWidth: 24, halign: 'right' },
+      5: { cellWidth: 28, halign: 'right' },
+    },
+    styles: { fontSize: 8.5, font: tableFont, cellPadding: 2.5 },
+  })
 
   drawPdfFooter(doc, t as ExportTFunction, pageWidth)
   doc.save(`Transaction_${transaction.no}_${Date.now()}.pdf`)

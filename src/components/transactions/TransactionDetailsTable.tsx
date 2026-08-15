@@ -11,6 +11,7 @@ import {
     type ColumnDef,
 } from "@tanstack/react-table"
 import { useTranslation } from '@/hooks/useTranslation'
+import { fmtAmount } from '@/lib/utils'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { DataTableViewOptions } from "@/features/users/components/data-table-view-options"
@@ -71,7 +72,7 @@ export const TransactionDetailsTable = ({ data, cnfCost = 0, labourCost = 0, tra
                 id: "landedCost",
                 header: t('details.detailsTable.columns.landedCost'),
                 cell: ({ row }: { row: { original: TransactionDetail } }) =>
-                    (Number(row.original.price) + extraCostPerUnit).toFixed(2),
+                    fmtAmount(Number(row.original.price) + extraCostPerUnit, { min: 2 }),
             } as ColumnDef<TransactionDetail>] : []),
             {
                 header: t('details.detailsTable.columns.total'),
@@ -178,7 +179,7 @@ export const TransactionDetailsTable = ({ data, cnfCost = 0, labourCost = 0, tra
             {discount > 0 && (
                 <div className="flex justify-end pt-2 border-t">
                     <p className="text-sm text-red-600">
-                        {t('details.discount')}: <span className="font-semibold">-{Number(discount).toLocaleString()}</span>
+                        {t('details.discount')}: <span className="font-semibold">-{fmtAmount(discount)}</span>
                     </p>
                 </div>
             )}

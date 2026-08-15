@@ -4,6 +4,7 @@ export const ASSIGNABLE_MODULE_KEYS = [
   'customers',
   'vendors',
   'expenses',
+  'loans',
   'reports',
 ] as const
 
@@ -15,6 +16,7 @@ export const MODULE_NAV_ROUTES: Record<ModuleKey, string[]> = {
   customers: ['/customers'],
   vendors: ['/vendors'],
   expenses: ['/expense'],
+  loans: ['/loans'],
   reports: ['/reports', '/'],
 }
 

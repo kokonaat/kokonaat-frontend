@@ -7,6 +7,7 @@ import { Tooltip, TooltipContent } from '../ui/tooltip'
 import { TooltipTrigger } from '@radix-ui/react-tooltip'
 import { Badge } from '../ui/badge'
 import { TransactionRowActions } from './TransactionRowActions'
+import { fmtAmount } from '@/lib/utils'
 
 const getTransactionTypeColor = (type: string) => {
   switch (type) {
@@ -115,7 +116,7 @@ export function useTransactionColumns(): ColumnDef<Transaction>[] {
 
           return (
             <div className="font-mono">
-              {total.toFixed(2)} / {paid.toFixed(2)} / {pending.toFixed(2)}
+              {fmtAmount(total, { min: 2 })} / {fmtAmount(paid, { min: 2 })} / {fmtAmount(pending, { min: 2 })}
             </div>
           )
         },

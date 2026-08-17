@@ -86,6 +86,7 @@ const TransactionLedger = () => {
   const totalAmount = data?.totalAmount ?? 0
   const totalPaid = data?.paid ?? 0
   const totalPending = data?.totalPending ?? 0
+  const openingBalance = data?.openingBalance ?? 0
 
   // loading handler
   if (isCustomerLoading || isVendorLoading) {
@@ -224,6 +225,13 @@ const TransactionLedger = () => {
                     </div>
                   ) : (
                     <div className="flex flex-wrap gap-4">
+                      {openingBalance > 0 && (
+                        <div className="flex items-center gap-2 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 px-3 py-2 rounded-lg">
+                          <span className="text-sm">{t('ledger.openingBalance')}</span>
+                          <span className="font-semibold">{openingBalance}</span>
+                        </div>
+                      )}
+
                       <div className="flex items-center gap-2 bg-muted/40 px-3 py-2 rounded-lg">
                         <span className="text-sm text-muted-foreground">{t('ledger.total')}</span>
                         <span className="font-semibold">{totalAmount}</span>

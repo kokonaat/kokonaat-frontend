@@ -41,6 +41,7 @@
   "userForm": {
     "nameRequired": "Name is required.",
     "loginUsernameRequired": "Login username is required.",
+    "loginUsernameFormat": "Username can only contain letters, numbers, dots, underscores, and hyphens (no @ or spaces).",
     "usernameRequired": "Username is required.",
     "phoneRequired": "Phone number is required.",
     "roleRequired": "Role is required.",

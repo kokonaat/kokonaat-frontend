@@ -15,6 +15,7 @@ export const createVendorFormSchema = (t: TFunction) =>
     isB2B: z.boolean().optional(),
     contactPerson: z.string().optional().nullable(),
     contactPersonPhone: z.string().optional().nullable(),
+    openingBalance: z.number().min(0),
   })
 
 export type VendorFormValues = z.infer<ReturnType<typeof createVendorFormSchema>>

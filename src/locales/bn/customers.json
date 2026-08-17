@@ -51,6 +51,7 @@
       "b2b": "B2B",
       "contactPerson": "যোগাযোগকারী",
       "contactPersonPhone": "যোগাযোগকারীর ফোন",
+      "openingBalance": "প্রারম্ভিক ব্যালেন্স",
       "emptyValue": "—"
     },
     "placeholders": {
@@ -61,7 +62,8 @@
       "city": "ঢাকা",
       "country": "বাংলাদেশ",
       "contactPerson": "রমেশ রায়",
-      "contactPersonPhone": "01711111111"
+      "contactPersonPhone": "01711111111",
+      "openingBalance": "০"
     }
   },
   "deleteDialog": {
@@ -102,7 +104,8 @@
     "totalSales": "মোট বিক্রয়",
     "collected": "সংগ্রহ",
     "outstanding": "বকেয়া",
-    "totalTransactions": "মোট লেনদেন"
+    "totalTransactions": "মোট লেনদেন",
+    "openingBalance": "প্রারম্ভিক ব্যালেন্স (পূর্ববর্তী)"
   },
   "ledger": {
     "loadingDetails": "বিবরণ লোড হচ্ছে...",
@@ -112,6 +115,7 @@
     "businessDetails": "ব্যবসায়িক বিবরণ",
     "customerLedger": "গ্রাহক খাতা",
     "vendorLedger": "সরবরাহকারী খাতা",
+    "openingBalance": "প্রারম্ভিক ব্যালেন্স",
     "total": "মোট",
     "paid": "পরিশোধ",
     "balance": "ব্যালেন্স",

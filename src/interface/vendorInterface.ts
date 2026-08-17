@@ -17,6 +17,7 @@ export interface VendorListInterface {
   isB2B: boolean
   contactPerson?: string
   contactPersonPhone?: string
+  openingBalance?: number
 }
 
 export interface Vendor {
@@ -31,6 +32,7 @@ export interface Vendor {
   isB2B: boolean
   contactPerson: string | null
   contactPersonPhone: string | null
+  openingBalance?: number
   shop: Shop
 }
 
@@ -68,6 +70,7 @@ export interface VendorFormInterface {
   isB2B: boolean
   contactPerson?: string | null
   contactPersonPhone?: string | null
+  openingBalance?: number
   shopId?: string
   shop?: Shop | null
 }

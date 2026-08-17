@@ -14,6 +14,7 @@ export interface CustomerFormInterface {
   isB2B?: boolean;
   contactPerson?: string | null;
   contactPersonPhone?: string | null;
+  openingBalance?: number;
   shopId: string;
 }
 
@@ -29,6 +30,7 @@ export interface Customer {
   isB2B: boolean;
   contactPerson: string | null;
   contactPersonPhone: string | null;
+  openingBalance?: number;
   shop: Shop;
 }
 

@@ -4,7 +4,8 @@
     "PURCHASE": "ক্রয়",
     "PAYMENT": "পেমেন্ট",
     "RECEIVABLE": "পাওনা",
-    "COMMISSION": "কমিশন"
+    "COMMISSION": "কমিশন",
+    "OPENING_BALANCE": "প্রারম্ভিক ব্যালেন্স"
   },
   "paymentType": {
     "CASH": "নগদ",

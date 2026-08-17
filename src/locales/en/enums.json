@@ -4,7 +4,8 @@
     "PURCHASE": "Purchase",
     "PAYMENT": "Payment",
     "RECEIVABLE": "Receivable",
-    "COMMISSION": "Commission"
+    "COMMISSION": "Commission",
+    "OPENING_BALANCE": "Opening Balance"
   },
   "paymentType": {
     "CASH": "Cash",

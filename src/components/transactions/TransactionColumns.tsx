@@ -21,6 +21,8 @@ const getTransactionTypeColor = (type: string) => {
       return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
     case 'COMMISSION':
       return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400'
+    case 'OPENING_BALANCE':
+      return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
     default:
       return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
   }

@@ -59,7 +59,7 @@ export interface Transaction {
   }
   vendorId?: string
   customerId?: string
-  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT" | "RECEIVABLE"
+  transactionType: "PAYMENT" | "PURCHASE" | "COMMISSION" | "SALE" | "SELL_OUT" | "RECEIVABLE" | "OPENING_BALANCE"
   transactionStatus: string | null
   totalAmount: number
   paid: number

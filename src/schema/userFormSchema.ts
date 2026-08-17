@@ -15,10 +15,17 @@ export const createUserFormSchema = (t: TFunction) =>
         })
         .superRefine((data, ctx) => {
             if (!data.isEdit) {
+                const USERNAME_PATTERN = /^[a-z0-9._-]{2,32}$/i
                 if (!data.loginUsername || data.loginUsername.trim().length < 2) {
                     ctx.addIssue({
                         code: z.ZodIssueCode.custom,
                         message: t('userForm.loginUsernameRequired'),
+                        path: ['loginUsername'],
+                    })
+                } else if (!USERNAME_PATTERN.test(data.loginUsername.trim())) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: t('userForm.loginUsernameFormat'),
                         path: ['loginUsername'],
                     })
                 }

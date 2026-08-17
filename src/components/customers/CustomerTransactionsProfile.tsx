@@ -150,6 +150,12 @@ const CustomerTransactionsProfile = () => {
 
               {analytics && (
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  {(analytics.openingBalance ?? 0) > 0 && (
+                    <div className="rounded-lg border bg-yellow-50 dark:bg-yellow-900/20 p-4 text-center col-span-2 lg:col-span-4">
+                      <p className="text-xs text-muted-foreground mb-1">{t('profile.openingBalance')}</p>
+                      <p className="text-lg font-semibold text-yellow-700 dark:text-yellow-400">{fmtAmount(analytics.openingBalance ?? 0, { min: 2 })}</p>
+                    </div>
+                  )}
                   <div className="rounded-lg border bg-muted/40 p-4 text-center">
                     <p className="text-xs text-muted-foreground mb-1">{t('profile.totalSales')}</p>
                     <p className="text-lg font-semibold">{fmtAmount(analytics.totalAmount ?? 0, { min: 2 })}</p>

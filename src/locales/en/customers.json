@@ -51,6 +51,7 @@
       "b2b": "B2B",
       "contactPerson": "Contact Person",
       "contactPersonPhone": "Contact Person Phone",
+      "openingBalance": "Opening Balance",
       "emptyValue": "—"
     },
     "placeholders": {
@@ -61,7 +62,8 @@
       "city": "Dhaka",
       "country": "Bangladesh",
       "contactPerson": "Ramesh Roy",
-      "contactPersonPhone": "01711111111"
+      "contactPersonPhone": "01711111111",
+      "openingBalance": "0"
     }
   },
   "deleteDialog": {
@@ -102,7 +104,8 @@
     "totalSales": "Total Sales",
     "collected": "Collected",
     "outstanding": "Outstanding",
-    "totalTransactions": "Total Transactions"
+    "totalTransactions": "Total Transactions",
+    "openingBalance": "Opening Balance (Previous)"
   },
   "ledger": {
     "loadingDetails": "Loading details...",
@@ -112,6 +115,7 @@
     "businessDetails": "Business Details",
     "customerLedger": "Customer Ledger",
     "vendorLedger": "Vendor Ledger",
+    "openingBalance": "Opening Balance",
     "total": "Total",
     "paid": "Paid",
     "balance": "Balance",

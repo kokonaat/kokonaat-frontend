@@ -47,6 +47,7 @@
       "country": "দেশ",
       "contactPerson": "যোগাযোগকারী",
       "contactPhone": "যোগাযোগ ফোন",
+      "openingBalance": "প্রারম্ভিক ব্যালেন্স",
       "emptyValue": "—"
     },
     "placeholders": {
@@ -57,7 +58,8 @@
       "city": "ঢাকা",
       "country": "বাংলাদেশ",
       "contactPerson": "রমেশ রায়",
-      "contactPersonPhone": "01711111111"
+      "contactPersonPhone": "01711111111",
+      "openingBalance": "০"
     }
   },
   "deleteDialog": {

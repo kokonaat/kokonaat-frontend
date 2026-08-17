@@ -47,6 +47,7 @@
       "country": "Country",
       "contactPerson": "Contact Person",
       "contactPhone": "Contact Phone",
+      "openingBalance": "Opening Balance",
       "emptyValue": "—"
     },
     "placeholders": {
@@ -57,7 +58,8 @@
       "city": "Dhaka",
       "country": "Bangladesh",
       "contactPerson": "Ramesh Roy",
-      "contactPersonPhone": "01711111111"
+      "contactPersonPhone": "01711111111",
+      "openingBalance": "0"
     }
   },
   "deleteDialog": {

@@ -81,6 +81,7 @@ export const getCustomerAnalytics = async (customerId: string) => {
     totalAmount: number
     paid: number
     pending: number
+    openingBalance: number
   }>(path)
   return res.data
 }

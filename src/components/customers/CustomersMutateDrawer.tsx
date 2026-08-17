@@ -97,7 +97,7 @@ const CustomersMutateDrawer = ({
       isB2B: data.isB2B ?? false,
       contactPerson: data.contactPerson?.trim() || null,
       contactPersonPhone: data.contactPersonPhone?.trim() || null,
-      openingBalance: isUpdate ? undefined : (data.openingBalance ?? 0),
+      openingBalance: data.openingBalance ?? 0,
       shopId,
     }
 
@@ -241,29 +241,27 @@ const CustomersMutateDrawer = ({
               )}
             />
 
-            {!isUpdate && (
-              <FormField
-                control={form.control}
-                name="openingBalance"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('drawer.fields.openingBalance')}</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min={0}
-                        step="0.01"
-                        {...field}
-                        value={field.value ?? 0}
-                        onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
-                        placeholder={t('drawer.placeholders.openingBalance')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
+            <FormField
+              control={form.control}
+              name="openingBalance"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('drawer.fields.openingBalance')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      {...field}
+                      value={field.value ?? 0}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
+                      placeholder={t('drawer.placeholders.openingBalance')}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

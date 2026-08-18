@@ -420,7 +420,7 @@ export const generateTransactionDetailsPDF = async (
   const translateType = (type: string) =>
     i18n.t(`enums:transactionType.${type}`, { defaultValue: type })
 
-  const ledgerBalance = Number(transaction.totalAmount) - Number(transaction.paid)
+  const ledgerBalance = Math.max(0, Number(transaction.totalAmount) - Number(transaction.paid))
   autoTable(doc, {
     startY: ledgerTableY + 5,
     head: [[

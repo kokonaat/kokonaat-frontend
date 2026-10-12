@@ -45,14 +45,21 @@ export const generateStockReportPDF = async (
   setPdfFont(doc, 'normal')
   doc.text(formatGeneratedDate(), pageWidth - 14, 45, { align: 'right' })
 
-  const tableRows = data.map((item) => [
-    item.no,
-    item.name,
-    item.description || na,
-    Number(item.quantity).toLocaleString('en-IN'),
-    item.unitOfMeasurement?.name || na,
-    Number(item.lastPrice).toLocaleString('en-IN'),
-  ])
+  const tableRows = data.map((item) => {
+    const qty = Number(item.quantity)
+    const uom = item.unitOfMeasurement
+    const totalItems = uom?.baseQuantity && uom.baseUom?.name
+      ? `${qty} · ${Math.round(qty * uom.baseQuantity)} ${uom.baseUom.name}`
+      : qty.toLocaleString('en-IN')
+    return [
+      item.no,
+      item.name,
+      item.description || na,
+      totalItems,
+      uom?.name || na,
+      Number(item.lastPrice).toLocaleString('en-IN'),
+    ]
+  })
 
   const totalQuantity = data.reduce((acc, item) => acc + Number(item.quantity), 0)
   const totalValue = data.reduce(

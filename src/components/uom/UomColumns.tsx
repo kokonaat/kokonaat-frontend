@@ -6,6 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/
 import type { UomInterface } from "@/interface/uomInterface"
 import { DataTableRowActions } from "./DataTableRowActions"
 import { useTranslation } from '@/hooks/useTranslation'
+import { fmtConversionTag } from '@/lib/uomUtils'
 
 export function useUomColumns(): ColumnDef<UomInterface>[] {
     const { t } = useTranslation('uom')
@@ -63,6 +64,16 @@ export function useUomColumns(): ColumnDef<UomInterface>[] {
                     </TooltipProvider>
                 )
             }
+        },
+        {
+            id: 'conversion',
+            header: ({ column }) => <DataTableColumnHeader column={column} title={t('table.columns.conversion')} />,
+            cell: ({ row }) => {
+                const tag = fmtConversionTag(row.original)
+                return tag
+                    ? <span className="inline-flex items-center rounded-sm bg-accent px-2 py-0.5 text-xs font-mono text-accent-foreground">{tag}</span>
+                    : <span className="text-muted-foreground text-xs">—</span>
+            },
         },
         {
             id: 'actions',

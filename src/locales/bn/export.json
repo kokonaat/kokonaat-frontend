@@ -317,6 +317,7 @@
       "name": "নাম",
       "description": "বিবরণ",
       "quantity": "পরিমাণ",
+      "totalItems": "মোট আইটেম",
       "uom": "পরিমাপ একক",
       "lastPrice": "সর্বশেষ মূল্য",
       "totalValue": "মোট মূল্য"

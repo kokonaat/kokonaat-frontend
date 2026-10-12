@@ -2,6 +2,7 @@ import { Suspense, lazy } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
 import { Toaster } from "sonner"
 import ProtectedRoute from "./ProtectedRoute"
+import ShopGuard from "./ShopGuard"
 import AuthenticatedLayout from "@/components/layout/authenticated-layout"
 import Loader from "@/components/layout/Loader"
 import { useUser } from "@/hooks/useUser"
@@ -48,8 +49,11 @@ const AppRoutes = () => {
                     <Route path="/reset-password" element={<ResetPassword />} />
 
                     <Route element={<ProtectedRoute />}>
-                        <Route path="/create-shop" element={<CreateShop />} />
+                        {/* change-password is allowed before a shop exists */}
                         <Route path="/change-password" element={<ChangePassword />} />
+
+                        <Route element={<ShopGuard />}>
+                        <Route path="/create-shop" element={<CreateShop />} />
                         <Route element={<AuthenticatedLayout />}>
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/shops" element={<Shops />} />
@@ -72,6 +76,7 @@ const AppRoutes = () => {
                             <Route path="/help-center" element={<ComingSoon />} />
                             <Route path="*" element={<Navigate to="/" replace />} />
                         </Route>
+                        </Route> {/* ShopGuard */}
                     </Route>
                 </Routes>
             </Suspense>

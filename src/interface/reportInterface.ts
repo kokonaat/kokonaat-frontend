@@ -80,6 +80,8 @@ export interface InventoryItem {
 export interface UnitOfMeasurement {
     id: string
     name: string
+    baseQuantity?: number | null
+    baseUom?: { id: string; name: string } | null
 }
 
 export interface TransactionLedgerDetailItem {
@@ -148,6 +150,8 @@ export interface StockReportItem {
     unitOfMeasurement: {
         id: string
         name: string
+        baseQuantity?: number | null
+        baseUom?: { id: string; name: string } | null
     }
 }
 

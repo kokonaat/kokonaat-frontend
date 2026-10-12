@@ -1,6 +1,8 @@
 export interface UnitOfMeasurement {
   id: string
   name: string
+  baseQuantity?: number | null
+  baseUom?: { id: string; name: string } | null
 }
 export interface InventoryItemInterface {
   id: string
@@ -24,6 +26,8 @@ export interface InventoryItem {
   unitOfMeasurement?: {
     id: string
     name: string
+    baseQuantity?: number | null
+    baseUom?: { id: string; name: string } | null
   }
 }
 

@@ -5,6 +5,8 @@ export interface UomInterface {
   shopId: string
   createdAt?: string
   updatedAt?: string
+  baseQuantity?: number | null
+  baseUom?: { id: string; name: string } | null
 }
 
 export interface UomFormInterface {
@@ -12,6 +14,8 @@ export interface UomFormInterface {
   name: string
   description?: string
   shopId: string
+  baseQuantity?: number | null
+  baseUomId?: string | null
 }
 
 export interface UomTableProps {
@@ -38,4 +42,6 @@ export interface CreateUomFormInterface {
   name: string
   description?: string
   shopId: string
+  baseQuantity?: number | null
+  baseUomId?: string | null
 }

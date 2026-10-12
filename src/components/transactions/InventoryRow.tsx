@@ -19,6 +19,7 @@ import type { InventoryItem } from '@/interface/inventoryInterface'
 import { Tooltip, TooltipContent, TooltipProvider } from '../ui/tooltip'
 import { TooltipTrigger } from '@radix-ui/react-tooltip'
 import type { UomInterface } from '@/interface/uomInterface'
+import { fmtConversionLine, fmtConversionTag } from '@/lib/uomUtils'
 
 interface InventoryRowProps {
     form: UseFormReturn<TransactionFormValues>
@@ -68,7 +69,7 @@ export const InventoryRow = ({
     onRemove,
     // showRemoveButton,
     uomOptions,
-    // uomList,
+    uomList,
     isUomLoading,
     // uomSearchQuery,
     onUomSelect,
@@ -79,10 +80,22 @@ export const InventoryRow = ({
     const { t } = useTranslation('transactions')
 
     const stock = itemDisplayData?.stockQuantity
+    const currentQty = form.watch(`inventories.${index}.quantity`)
+    const currentUomId = form.watch(`inventories.${index}.unitOfMeasurementId`)
+
+    const selectedUom = uomList.find((u) => u.id === currentUomId) ?? null
+    const conversionHint = fmtConversionLine(currentQty, selectedUom)
+
+    const uomOptionsWithConversion = uomOptions.map((opt) => {
+        const uom = uomList.find((u) => u.id === opt.value)
+        const tag = fmtConversionTag(uom)
+        return tag ? { ...opt, label: `${opt.label} · ${tag}` } : opt
+    })
+
     const isOverStock = transactionType === 'SALE' &&
         stock !== null &&
         stock !== undefined &&
-        (form.watch(`inventories.${index}.quantity`) > stock)
+        (currentQty > stock)
 
     return (
         <div>
@@ -162,7 +175,7 @@ export const InventoryRow = ({
                                     <FormLabel>{t('form.uom')}</FormLabel>
                                     <FormControl>
                                         <Combobox
-                                            options={uomOptions}
+                                            options={uomOptionsWithConversion}
                                             className='w-full'
                                             placeholder={t('form.uomPlaceholder')}
                                             value={displayValue}
@@ -233,6 +246,12 @@ export const InventoryRow = ({
                                 {isOverStock && (
                                     <p className="text-[0.8rem] font-medium text-destructive mt-1">
                                         {t('form.insufficientStock', { max: stock })}
+                                    </p>
+                                )}
+
+                                {conversionHint && !isOverStock && (
+                                    <p className="text-xs font-mono text-emerald-700 mt-1">
+                                        {conversionHint}
                                     </p>
                                 )}
 

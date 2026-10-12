@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react"
+import { fmtConversionTag } from '@/lib/uomUtils'
 import {
     useReactTable,
     flexRender,
@@ -23,7 +24,11 @@ interface TransactionDetail {
     quantity: number
     price: number
     total: number
-    unitOfMeasurement?: { name?: string }
+    unitOfMeasurement?: {
+        name?: string
+        baseQuantity?: number | null
+        baseUom?: { name?: string } | null
+    }
 }
 
 interface TransactionDetailsTableProps {
@@ -62,7 +67,23 @@ export const TransactionDetailsTable = ({ data, cnfCost = 0, labourCost = 0, tra
                 accessorKey: "unitOfMeasurement.name",
                 cell: (info) => info.row.original.unitOfMeasurement?.name ?? notAvailable,
             },
-            { header: t('details.detailsTable.columns.qty'), accessorKey: "quantity" },
+            {
+                header: t('details.detailsTable.columns.qty'),
+                accessorKey: "quantity",
+                cell: ({ row }) => {
+                    const qty = Number(row.original.quantity)
+                    const uom = row.original.unitOfMeasurement
+                    const convTag = fmtConversionTag(uom)
+                    if (!convTag || !uom?.baseQuantity) return <>{qty}</>
+                    const total = Math.round(qty * uom.baseQuantity)
+                    return (
+                        <div>
+                            <span>{qty}</span>
+                            <span className="ml-1 text-xs text-muted-foreground font-mono">· {total} {uom.baseUom?.name}</span>
+                        </div>
+                    )
+                },
+            },
             {
                 header: t('details.detailsTable.columns.price'),
                 accessorKey: "price",

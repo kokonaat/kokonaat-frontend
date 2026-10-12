@@ -22,15 +22,23 @@ export const generateStockReportExcel = (
     [],
   ]
 
-  const rows = data.map((item) => ({
-    RefNo: item.no,
-    Name: item.name,
-    Description: item.description || na,
-    Quantity: Number(item.quantity),
-    UOM: item.unitOfMeasurement?.name || na,
-    LastPrice: Number(item.lastPrice),
-    TotalValue: Number(item.quantity) * Number(item.lastPrice),
-  }))
+  const rows = data.map((item) => {
+    const qty = Number(item.quantity)
+    const uom = item.unitOfMeasurement
+    const totalItems = uom?.baseQuantity && uom.baseUom?.name
+      ? Math.round(qty * uom.baseQuantity)
+      : null
+    return {
+      RefNo: item.no,
+      Name: item.name,
+      Description: item.description || na,
+      Quantity: qty,
+      TotalItems: totalItems ?? '',
+      UOM: uom?.name || na,
+      LastPrice: Number(item.lastPrice),
+      TotalValue: qty * Number(item.lastPrice),
+    }
+  })
 
   const totalQuantity = data.reduce((acc, item) => acc + Number(item.quantity), 0)
   const totalValue = data.reduce(
@@ -43,6 +51,7 @@ export const generateStockReportExcel = (
     Name: t('stockReportExcel.totals.totalRow'),
     Description: '',
     Quantity: totalQuantity,
+    TotalItems: '',
     UOM: '',
     LastPrice: 0,
     TotalValue: totalValue,
@@ -53,6 +62,7 @@ export const generateStockReportExcel = (
     row.Name,
     row.Description,
     row.Quantity,
+    row.TotalItems,
     row.UOM,
     row.LastPrice,
     row.TotalValue,
@@ -65,6 +75,7 @@ export const generateStockReportExcel = (
       t('stockReportExcel.tableHeaders.name'),
       t('stockReportExcel.tableHeaders.description'),
       t('stockReportExcel.tableHeaders.quantity'),
+      t('stockReportExcel.tableHeaders.totalItems'),
       t('stockReportExcel.tableHeaders.uom'),
       t('stockReportExcel.tableHeaders.lastPrice'),
       t('stockReportExcel.tableHeaders.totalValue'),
@@ -84,6 +95,7 @@ export const generateStockReportExcel = (
     { wch: 25 },
     { wch: 35 },
     { wch: 12 },
+    { wch: 14 },
     { wch: 10 },
     { wch: 12 },
     { wch: 15 },

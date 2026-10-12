@@ -19,6 +19,7 @@
     "columns": {
       "name": "নাম",
       "description": "বিবরণ",
+      "conversion": "রূপান্তর",
       "selectAll": "সব নির্বাচন",
       "selectRow": "সারি নির্বাচন"
     }
@@ -30,12 +31,18 @@
     "descriptionUpdate": "প্রয়োজনীয় তথ্য দিয়ে পরিমাপ একক আপডেট করুন। শেষে সংরক্ষণ ক্লিক করুন।",
     "fields": {
       "name": "নাম",
-      "description": "বিবরণ"
+      "description": "বিবরণ",
+      "baseQuantity": "প্রতি একক আইটেম",
+      "baseUom": "মূল একক"
     },
     "placeholders": {
       "name": "পরিমাপ এককের নাম",
-      "description": "পরিমাপ এককের বিবরণ"
-    }
+      "description": "পরিমাপ এককের বিবরণ",
+      "baseQuantity": "যেমন: ৫",
+      "baseUom": "মূল একক নির্বাচন করুন..."
+    },
+    "conversionHint": "যদি এটি মূল একক হয় তাহলে খালি রাখুন (পিস, কেজি, লিটার…)",
+    "conversionPreview": "১ {{name}} = {{qty}} {{baseUom}}"
   },
   "deleteDialog": {
     "title": "এই পরিমাপ একক মুছবেন: {{name}}?",

@@ -32,6 +32,8 @@ export interface TransactionDetail {
   unitOfMeasurement?: {
     id: string
     name: string
+    baseQuantity?: number | null
+    baseUom?: { id: string; name: string } | null
   }
   shopId: string
   createdAt: string

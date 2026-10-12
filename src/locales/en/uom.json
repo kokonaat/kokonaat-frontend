@@ -19,6 +19,7 @@
     "columns": {
       "name": "Name",
       "description": "Description",
+      "conversion": "Conversion",
       "selectAll": "Select all",
       "selectRow": "Select row"
     }
@@ -30,12 +31,18 @@
     "descriptionUpdate": "Update the uom by providing necessary info. Click save when you're done.",
     "fields": {
       "name": "Name",
-      "description": "Description"
+      "description": "Description",
+      "baseQuantity": "Items per unit",
+      "baseUom": "Base unit"
     },
     "placeholders": {
       "name": "Uom name",
-      "description": "Uom description"
-    }
+      "description": "Uom description",
+      "baseQuantity": "e.g. 5",
+      "baseUom": "Select base unit..."
+    },
+    "conversionHint": "Leave empty if this is a base unit (pcs, kg, liter…)",
+    "conversionPreview": "1 {{name}} = {{qty}} {{baseUom}}"
   },
   "deleteDialog": {
     "title": "Delete this UOM: {{name}}?",

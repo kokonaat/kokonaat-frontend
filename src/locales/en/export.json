@@ -317,6 +317,7 @@
       "name": "Name",
       "description": "Description",
       "quantity": "Quantity",
+      "totalItems": "Total Items",
       "uom": "UOM",
       "lastPrice": "Last Price",
       "totalValue": "Total Value"

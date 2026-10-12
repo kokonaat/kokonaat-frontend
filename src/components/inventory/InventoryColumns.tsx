@@ -7,6 +7,7 @@ import { DataTableRowActions } from "./DataTableRowActions"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import { ChevronRight } from "lucide-react"
 import { useTranslation } from '@/hooks/useTranslation'
+import { calcTotalItems } from '@/lib/uomUtils'
 
 export function useInventoryColumns(): ColumnDef<InventoryItemInterface>[] {
     const { t } = useTranslation('inventory')
@@ -68,6 +69,18 @@ export function useInventoryColumns(): ColumnDef<InventoryItemInterface>[] {
         {
             accessorKey: 'quantity',
             header: ({ column }) => <DataTableColumnHeader column={column} title={t('table.columns.quantity')} />,
+            cell: ({ row }) => {
+                const qty = Number(row.original.quantity)
+                const uom = row.original.unitOfMeasurement
+                const totalItems = calcTotalItems(qty, uom)
+                if (totalItems == null) return <>{qty}</>
+                return (
+                    <div>
+                        <span>{qty}</span>
+                        <span className="ml-1 text-xs text-muted-foreground font-mono">· {totalItems} {uom?.baseUom?.name}</span>
+                    </div>
+                )
+            },
         },
         {
             accessorFn: (row) => row.unitOfMeasurement?.name ?? t('viewDrawer.notAvailable'),
